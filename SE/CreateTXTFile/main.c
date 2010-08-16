@@ -71,7 +71,7 @@ void DestroyList(BOOK * bk, GUI* )
 {
   if (CreateFileBook->list)
   {
-    GUI_Free(CreateFileBook->list);
+    GUIObject_Destroy(CreateFileBook->list);
     CreateFileBook->list=0;
   }
 }
@@ -80,7 +80,7 @@ void DestroyOOM(BOOK * bk, GUI* )
 {
   if (CreateFileBook->oom_list)
   {
-    GUI_Free(CreateFileBook->oom_list);
+    GUIObject_Destroy(CreateFileBook->oom_list);
     CreateFileBook->oom_list=0;
   }
 }
@@ -89,7 +89,7 @@ int DestroyNameInput()
 {
   if (CreateFileBook->NameInput)
   {
-    GUI_Free(CreateFileBook->NameInput);
+    GUIObject_Destroy(CreateFileBook->NameInput);
     CreateFileBook->NameInput=0;
   }
   return(0);
@@ -99,7 +99,7 @@ int DestroyTextInput()
 {
   if (CreateFileBook->TextInput)
   {
-    GUI_Free(CreateFileBook->TextInput);
+    GUIObject_Destroy(CreateFileBook->TextInput);
     CreateFileBook->TextInput=0;
   }
   return(0);
@@ -154,7 +154,7 @@ void CreateBrowser(wchar_t const ** folder_list)
   int str_id;
   textidname2id(L"DB_OTHER_TXT",SID_ANY_LEN,&str_id);
   DataBrowserDesc_SetHeaderText(DB_Desc,str_id);
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID((BOOK*)CreateFileBook));
+  DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID((BOOK*)CreateFileBook));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,1);
   DataBrowserDesc_SetSelectAction(DB_Desc,1);
@@ -202,16 +202,16 @@ int list_callback(GUI_MESSAGE * msg)
     if (GUIonMessage_GetCreatedItemIndex(msg))
     {
       textidname2id(L"CAMI_HZ_SAVE_TO_MS_TXT",SID_ANY_LEN,&str_id);
-      SetMenuItemText0(msg,str_id);
+      GUIonMessage_SetMenuItemText(msg,str_id);
       iconidname2id(L"DB_2ROW_MS_ICN",SID_ANY_LEN,&str_id);
-      SetListObjectItemIcon(msg,0,str_id);
+      GUIonMessage_SetMenuItemIcon(msg,0,str_id);
     }
     else
     {
       textidname2id(L"CAMI_HZ_SAVE_TO_PHONE_TXT",SID_ANY_LEN,&str_id);
-      SetMenuItemText0(msg,str_id);
+      GUIonMessage_SetMenuItemText(msg,str_id);
       iconidname2id(L"DB_2ROW_PHONE_ICN",SID_ANY_LEN,&str_id);
-      SetListObjectItemIcon(msg,0,str_id);
+      GUIonMessage_SetMenuItemIcon(msg,0,str_id);
     }
 
   }
@@ -221,18 +221,18 @@ int list_callback(GUI_MESSAGE * msg)
 
 void CreateList(void)
 {
-  GUI_LIST * list_menu=CreateListObject((BOOK*)CreateFileBook,0);
+  GUI_LIST * list_menu=CreateListMenu((BOOK*)CreateFileBook,0);
   CreateFileBook->list=list_menu;
   int str_id;
   textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",SID_ANY_LEN,&str_id);
-  GuiObject_SetTitleText(list_menu,str_id);
-  SetNumOfMenuItem(list_menu,2);
-  OneOfMany_SetonMessage(list_menu,list_callback);
-  SetCursorToItem(list_menu,0);
-  GUIObject_Softkey_SetAction(list_menu,ACTION_BACK,DestroyList);
-  GUIObject_Softkey_SetAction(list_menu,ACTION_LONG_BACK,ExitActionList);
-  GUIObject_Softkey_SetAction(list_menu,ACTION_SELECT1,onEnter);
-  ShowWindow(list_menu);
+  GUIObject_SetTitleText(list_menu,str_id);
+  ListMenu_SetItemCount(list_menu,2);
+  OneOfMany_SetOnMessage(list_menu,list_callback);
+  ListMenu_SetCursorToItem(list_menu,0);
+  GUIObject_SoftKeys_SetAction(list_menu,ACTION_BACK,DestroyList);
+  GUIObject_SoftKeys_SetAction(list_menu,ACTION_LONG_BACK,ExitActionList);
+  GUIObject_SoftKeys_SetAction(list_menu,ACTION_SELECT1,onEnter);
+  GUIObject_Show(list_menu);
 };
 
 void oom_onEnter(BOOK * bk, GUI* )
@@ -248,11 +248,11 @@ int oom_callback(GUI_MESSAGE * msg)
   case 1:
     if (GUIonMessage_GetCreatedItemIndex(msg))
     {
-      SetMenuItemText0(msg,STR("Unicode"));
+      GUIonMessage_SetMenuItemText(msg,STR("Unicode"));
     }
     else
     {
-      SetMenuItemText0(msg,STR("ASCII"));
+      GUIonMessage_SetMenuItemText(msg,STR("ASCII"));
     }
   }
   return(1);
@@ -264,15 +264,15 @@ void CreateOOMList(void)
   CreateFileBook->oom_list=oom_menu;
   int str_id;
   textidname2id(L"ES_TEXT_FORMAT_TXT",SID_ANY_LEN,&str_id);
-  GuiObject_SetTitleText(oom_menu,str_id);
+  GUIObject_SetTitleText(oom_menu,str_id);
   OneOfMany_SetItemCount(oom_menu,2);
-  OneOfMany_SetonMessage(oom_menu,oom_callback);
+  OneOfMany_SetOnMessage(oom_menu,oom_callback);
   OneOfMany_SetChecked(oom_menu,0);
-  GUIObject_Softkey_SetAction(oom_menu,ACTION_BACK,DestroyOOM);
-  GUIObject_Softkey_SetAction(oom_menu,ACTION_LONG_BACK,ExitActionList);
-  GUIObject_Softkey_SetAction(oom_menu,ACTION_SELECT1,oom_onEnter);
-  GUIObject_Softkey_SetAction(oom_menu,0xBC3,oom_onEnter);
-  ShowWindow(oom_menu);
+  GUIObject_SoftKeys_SetAction(oom_menu,ACTION_BACK,DestroyOOM);
+  GUIObject_SoftKeys_SetAction(oom_menu,ACTION_LONG_BACK,ExitActionList);
+  GUIObject_SoftKeys_SetAction(oom_menu,ACTION_SELECT1,oom_onEnter);
+  GUIObject_SoftKeys_SetAction(oom_menu,0xBC3,oom_onEnter);
+  GUIObject_Show(oom_menu);
 };
 
 const PAGE_MSG CreateFile_PageEvents[]@ "DYN_PAGE" ={
@@ -323,7 +323,7 @@ void CreateNameInput(int editable_strID,u16 cursor_pos,char hz)
   int str_id;
   textidname2id(L"MSG_UI_FILENAMEP_TXT",SID_ANY_LEN,&str_id);
   DestroyNameInput();
-  CreateFileBook->NameInput=CreateStringInput(0,
+  CreateFileBook->NameInput=CreateStringInputVA(0,
                                                          VAR_PREV_ACTION_PROC(DestroyNameInput),
                                                          VAR_LONG_BACK_PROC(ExitAction),
                                                          VAR_BOOK(CreateFileBook),
@@ -357,9 +357,9 @@ void elf_exit(void)
 
 int isMyDataBrowser(BOOK * book)
 {
-  if (isDataBrowserBook(book))
+  if (IsDataBrowserBook(book))
   {
-    if (((DB_BOOK*)book)->bookID==BOOK_GetBookID((BOOK*)CreateFileBook))
+    if (((DB_BOOK*)book)->bookID==BookObj_GetBookID((BOOK*)CreateFileBook))
     {
       return(1);
     }
@@ -397,7 +397,7 @@ int CreateCreateFileBook()
   CreateFileBook->oom_list=0;
   int str_id;
   textidname2id(L"BL_BLOG_TEXTP_TXT",SID_ANY_LEN,&str_id);
-  CreateFileBook->TextInput=CreateStringInput(0,
+  CreateFileBook->TextInput=CreateStringInputVA(0,
                                               VAR_PREV_ACTION_PROC(ExitAction),
                                               VAR_LONG_BACK_PROC(ExitAction),
                                               VAR_BOOK(CreateFileBook),

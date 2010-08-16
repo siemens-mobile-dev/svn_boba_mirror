@@ -50,15 +50,15 @@ void custom_destr( GUI* )
 GUI_CUSTOM *custom_create(BOOK *bk)
 {
   GUI_CUSTOM *gui_cs=new GUI_CUSTOM;
-  if (!CreateObject(gui_cs,custom_destr, custom_constr,bk,0,0,0))
+  if (!GUIObject_Create(gui_cs,custom_destr, custom_constr,bk,0,0,0))
   {
     delete gui_cs;
     return 0;    
   }
-  if (bk) addGui2book(bk,gui_cs);
-  GUI_SetStyle(gui_cs, 4);
-  GuiObject_SetTitleType(gui_cs, 1);
-  GUIObject_HideSoftkeys(gui_cs);
+  if (bk) BookObj_AddGUIObject(bk,gui_cs);
+  GUIObject_SetStyle(gui_cs, 4);
+  GUIObject_SetTitleType(gui_cs, 1);
+  GUIObject_SoftKeys_Hide(gui_cs);
   return gui_cs;
 };
 
@@ -69,7 +69,7 @@ void DrawCub(int cx, int cy, int ob)
   int y=MyBK()->dis[GetDis()]->y;
   if(MyBK()->image->fi[2])
   {
-    putchar(get_DisplayGC() , cx*cub, y-(cy*cub), 0, 0, MyBK()->image->im[2]->ImageID);
+    GC_PutChar(get_DisplayGC() , cx*cub, y-(cy*cub), 0, 0, MyBK()->image->im[2]->ImageID);
   }
   else
   {
@@ -149,7 +149,7 @@ void myOnRedraw(DISP_OBJ *DO, int a, int b, int c)
   int y=MyBK()->dis[GetDis()]->y;
   if(MyBK()->image->fi[0] && MyBK()->nast->im->on)
   {
-    putchar(get_DisplayGC() , 0, 0, 0, 0, MyBK()->image->im[0]->ImageID);
+    GC_PutChar(get_DisplayGC() , 0, 0, 0, 0, MyBK()->image->im[0]->ImageID);
   }
   else
   {
@@ -157,7 +157,7 @@ void myOnRedraw(DISP_OBJ *DO, int a, int b, int c)
   }
   if(MyBK()->image->fi[1] && MyBK()->nast->im->on)
   {
-    putchar(get_DisplayGC() , 0, y-(20*cub), 0, 0, MyBK()->image->im[1]->ImageID);
+    GC_PutChar(get_DisplayGC() , 0, y-(20*cub), 0, 0, MyBK()->image->im[1]->ImageID);
   }
   else
   {
@@ -176,7 +176,7 @@ void myOnRedraw(DISP_OBJ *DO, int a, int b, int c)
   {
     iconidname2id(L"TR_ALARM_OFF_ICN", -1, &id);
   }
-  putchar(get_DisplayGC() , MyBK()->dis[GetDis()]->x-2*cub, MyBK()->dis[GetDis()]->y-2*cub, 0, 0, id);
+  GC_PutChar(get_DisplayGC() , MyBK()->dis[GetDis()]->x-2*cub, MyBK()->dis[GetDis()]->y-2*cub, 0, 0, id);
   if(MyBK()->pause)
   {
     DrawPause(MyBK()->dis[GetDis()]->FP, x, y);
@@ -209,7 +209,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
   }
   if(key==KEY_ESC && type==KBD_LONG_PRESS)
   {
-    GUI_Free(np);
+    GUIObject_Destroy(np);
     BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
     Timer_Kill(&ftimer);
     return;
@@ -219,7 +219,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
     if(MyBK()->pause==0) MyBK()->pause=1;
     else MyBK()->pause=0;
     PlayMyMusic(4);
-    InvalidateRect(db,0);
+    DispObject_InvalidateRect(db,0);
     return;
   }
   if(key==KEY_DIGITAL_0+10 && type==KBD_SHORT_RELEASE)
@@ -237,7 +237,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
     rs->x2=MyBK()->dis[GetDis()]->x;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*2;
     rs->y2=MyBK()->dis[GetDis()]->y;
-    InvalidateRect(db,rs);
+    DispObject_InvalidateRect(db,rs);
     return;
   }
   if((key==KEY_LEFT || key==KEY_DIGITAL_0+4) && type==KBD_SHORT_RELEASE && !MyBK()->pause)
@@ -264,13 +264,13 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
   }
   rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*4;
   rs->y2=MyBK()->dis[GetDis()]->y;
-  InvalidateRect(db,rs);
+  DispObject_InvalidateRect(db,rs);
   for(int i=0; i<2; i++)
   {
   if(!Check(MyBK()->p[i], MyBK()->tank))
     {
       vibra();
-      GUI_Free(np);
+      GUIObject_Destroy(np);
       BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
       Timer_Kill(&ftimer);
       return;
@@ -333,29 +333,29 @@ void onfTimer (u16 tmr , void *)
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->p[0]->y*MyBK()->dis[GetDis()]->cub-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->p[0]->y*MyBK()->dis[GetDis()]->cub+MyBK()->dis[GetDis()]->cub;
-    InvalidateRect( GUIObj_GetDISPObj(np), rs);
+    DispObject_InvalidateRect( GUIObject_GetDispObject(np), rs);
     rs->x1=0;
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->p[1]->y*MyBK()->dis[GetDis()]->cub-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->p[1]->y*MyBK()->dis[GetDis()]->cub+MyBK()->dis[GetDis()]->cub;
-    InvalidateRect( GUIObj_GetDISPObj(np), rs);
+    DispObject_InvalidateRect( GUIObject_GetDispObject(np), rs);
     rs->x1=MyBK()->dis[GetDis()]->cub*12;
     rs->x2=MyBK()->dis[GetDis()]->x;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*20;
     rs->y2=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub*20+MyBK()->dis[GetDis()]->FS*8;
-    InvalidateRect( GUIObj_GetDISPObj(np), rs);
+    DispObject_InvalidateRect( GUIObject_GetDispObject(np), rs);
     rs->x1=0;
     rs->x2=MyBK()->dis[GetDis()]->cub*12;
     rs->y1=MyBK()->dis[GetDis()]->y-MyBK()->dis[GetDis()]->cub;
     rs->y2=MyBK()->dis[GetDis()]->y;
-    InvalidateRect( GUIObj_GetDISPObj(np), rs);
+    DispObject_InvalidateRect( GUIObject_GetDispObject(np), rs);
     for(int i=0; i<2; i++)
     {
       if(!Check(MyBK()->p[i], MyBK()->tank))
       {
         PlayMyMusic(2);
         vibra();
-        GUI_Free(np);
+        GUIObject_Destroy(np);
         BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_go);
         Timer_Kill(&ftimer);
         return;
@@ -387,10 +387,10 @@ int CreateGame(void*, BOOK*bk)
   MyBK()->pause=0;
   MyBK()->palka=0;
   np=custom_create(bk);
-  dd=DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(np) ); 
+  dd=DispObject_GetDESC ( GUIObject_GetDispObject(np) ); 
   DISP_DESC_SetOnKey(dd, myOnKey);
   DISP_DESC_SetOnRedraw(dd, myOnRedraw);
-  ShowWindow(np);
+  GUIObject_Show(np);
   BookObj_Show(bk, 0);
   BookObj_SetFocus(bk, 0);
   PlayMyMusic(0);

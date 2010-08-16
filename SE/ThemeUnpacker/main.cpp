@@ -102,7 +102,7 @@ static int CreateDB(void *data, BOOK * book)
   folder_list[1]=GetDir(MEM_EXTERNAL+DIR_THEME);
   folder_list[2]=0;
   DataBrowserDesc_SetHeaderText(DB_Desc,STR("Select theme"));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(book));
+  DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID(book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetItemFilter(DB_Desc,DB_Filter);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,2);

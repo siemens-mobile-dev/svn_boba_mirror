@@ -15,7 +15,7 @@ GUI *CreateVolInput(BOOK *bk, int vol, int maxvol)
                              VAR_PERINP_ROWNUM(maxvol),
                              VAR_PERINP_CURPERC(vol), 
                              VAR_HEADER_TEXT(Str2ID(lng[VOLUME],0,SID_ANY_LEN)));
-  InputFeedback_SetIcon(g, 0xEB42);
+  GUIInput_SetIcon(g, 0xEB42);
   return g;
 };
 
@@ -46,9 +46,9 @@ static int VolInputPage_OnEnter(void *,BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->vol=CreateVolInput(bk, mbk->curvol, mbk->maxvol);
-  GUIObject_Softkey_SetAction(mbk->vol,ACTION_SAVE,Vol_OnSave);
-  GUIObject_Softkey_SetAction(mbk->vol,ACTION_BACK,Vol_OnBack);
-  ShowWindow(mbk->vol);
+  GUIObject_SoftKeys_SetAction(mbk->vol,ACTION_SAVE,Vol_OnSave);
+  GUIObject_SoftKeys_SetAction(mbk->vol,ACTION_BACK,Vol_OnBack);
+  GUIObject_Show(mbk->vol);
   return (1);
 };
 

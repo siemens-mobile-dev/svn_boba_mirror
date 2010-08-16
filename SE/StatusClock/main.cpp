@@ -13,7 +13,7 @@ void onTimer (u16 tmr, LPARAM lparam)
   REQUEST_DATEANDTIME_GET(SYNC,&dt);
   if (dt.time.sec==0)
   {
-    InvalidateRect(*StatusRow_p(),0);
+    DispObject_InvalidateRect(*StatusRow_p(),0);
   }
   Timer_ReSet(&timer,1000,onTimer,0);
 }

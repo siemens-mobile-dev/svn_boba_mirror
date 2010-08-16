@@ -39,12 +39,12 @@ void custom_destr(DISP_DESC *desc)
 GUI_CUSTOM *custom_create(BOOK *bk)
 {
   GUI_CUSTOM *gui_cs=new GUI_CUSTOM;
-  if (!CreateObject((GUI*)gui_cs,custom_destr, custom_constr,bk,0,0,0))
+  if (!GUIObject_Create((GUI*)gui_cs,custom_destr, custom_constr,bk,0,0,0))
   {
     delete gui_cs;
     return 0;    
   }
-  if (bk) addGui2book(bk,(GUI*)gui_cs);
+  if (bk) BookObj_AddGUIObject(bk,(GUI*)gui_cs);
   return gui_cs;
 };
 
@@ -78,7 +78,7 @@ GUI_METHOD getelem(LIST *lst, int act)
   int x;
   for (x=0;x<lst->FirstFree;x++)
   {
-    SOFTKEY *sk=(SOFTKEY*)ListElement_GetByIndex(lst,x);
+    SOFTKEY *sk=(SOFTKEY*)List_Get(lst,x);
     if (sk->action==act)
     {
       return sk->proc;
@@ -106,22 +106,22 @@ void myOnKey(DISP_OBJ *DO,int key,int,int repeat,int type)
   {
     if (key==KEY_ESC)
     {
-      if (BOOK*bk=FindBook(isAudioPlayerBook()))
+      if (BOOK*bk=FindBook(get_IsAudioPlayerBook()))
       {
         Set(bk,0);
-        //GUI_Free((GUI*)gc);
+        //GUIObject_Destroy((GUI*)gc);
         //gc=0;
         //BookObj_Hide(bk,0);
         //BookObj_Show(bk,0);
-        //GUI *g=(GUI*)ListElement_GetByIndex(book->xguilist->guilist,0);
+        //GUI *g=(GUI*)List_Get(book->xguilist->guilist,0);
         //DISP_OBJ *DO=g->DISP_OBJ;
-        //DISP_OBJ_ONKEY_METHOD onkey=DISP_OBJ_GetOnKey (DO);
+        //DISP_OBJ_ONKEY_METHOD onkey=DispObject_GetOnKey (DO);
         //onkey(DO, KEY_CAMERA_FOCUS, 0 , 1/*èëè 0, õç*/ , KBD_SHORT_PRESS);
         //LIST *lst = DispObject_Softkeys_GetList(g_DO,bk, 0);
         //GUI_METHOD gm=getelem(lst, ACTION_BACK);
         //gm(bk,0);
         //UI_Event(0x2A49);
-        //GUI_Free((GUI*)gc);
+        //GUIObject_Destroy((GUI*)gc);
         //gc=0;
         BK *b=(BK*)bk;
         b->stat=2;
@@ -141,18 +141,18 @@ void myOnRedraw(DISP_OBJ *DO, int a, int b, int c)
 void CreatePlayer(BOOK *bk)
 {
   if (gc)
-    GUI_Free((GUI*)gc);
+    GUIObject_Destroy((GUI*)gc);
   gc=custom_create(bk);
   
-  DISP_DESC *dd=DISP_OBJ_GetDESC (((GUI*)gc)->DISP_OBJ); 
+  DISP_DESC *dd=DispObject_GetDESC (((GUI*)gc)->DISP_OBJ); 
   DISP_DESC_SetOnKey(dd, myOnKey);
   DISP_DESC_SetOnRedraw(dd, myOnRedraw);
-  ShowWindow(gc);
+  GUIObject_Show(gc);
 };
 
 void Kill()
 {
   if (gc)
-    GUI_Free((GUI*)gc);
+    GUIObject_Destroy((GUI*)gc);
   gc=0;
 };

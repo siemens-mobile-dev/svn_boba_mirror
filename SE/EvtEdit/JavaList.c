@@ -19,7 +19,7 @@ void onEnter_JavaList(BOOK * book, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)book;
   
-  java_list_elem * elem=(java_list_elem *)ListElement_GetByIndex(java_list,ListMenu_GetSelectedItem(mbk->javalst));
+  java_list_elem * elem=(java_list_elem *)List_Get(java_list,ListMenu_GetSelectedItem(mbk->javalst));
 
   DELETE(mbk->selev->param);
   mbk->selev->param=new wchar_t[wstrlen(elem->name)+1];
@@ -62,8 +62,8 @@ int onExit_JavaList(void *data, BOOK * book)
   FREE_GUI(mbk->javalst);
   if (java_list)
   {
-    List_FreeElements(java_list,elem_filter,elem_free);
-    List_Free(java_list);
+    List_DestroyElements(java_list,elem_filter,elem_free);
+    List_Destroy(java_list);
     java_list=0;
   }
   return(0);
@@ -75,10 +75,10 @@ int java_list_callback(GUI_MESSAGE * msg)
   switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
-    java_list_elem * elem=(java_list_elem*)ListElement_GetByIndex(java_list,GUIonMessage_GetCreatedItemIndex(msg));
-    SetMenuItemText0(msg,Str2ID(elem->name,0,SID_ANY_LEN));
+    java_list_elem * elem=(java_list_elem*)List_Get(java_list,GUIonMessage_GetCreatedItemIndex(msg));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(elem->name,0,SID_ANY_LEN));
     JavaApp_LogoImageID_Get(elem->fullpath,&elem->imageID);
-    SetListObjectItemIcon(msg,0,elem->imageID);
+    GUIonMessage_SetMenuItemIcon(msg,0,elem->imageID);
   }
   return(1);
 };
@@ -102,10 +102,10 @@ int CreateJavaList(void *data, BOOK * book)
   MyBOOK *mbk=(MyBOOK*)book;
   if (java_list)
   {
-    List_FreeElements(java_list,elem_filter,elem_free);
-    List_Free(java_list);
+    List_DestroyElements(java_list,elem_filter,elem_free);
+    List_Destroy(java_list);
   }
-  java_list=List_New();
+  java_list=List_Create();
   char sp1;
   void * JavaDesc;
   JavaDialog_Open(0,&sp1,&JavaDesc);
@@ -114,21 +114,21 @@ int CreateJavaList(void *data, BOOK * book)
     int result=0;
     while (!result)
     {
-      ListElement_Add(java_list,CreateElem(JavaDesc));
+      List_InsertLast(java_list,CreateElem(JavaDesc));
       result=JavaAppDesc_GetNextApp(JavaDesc);
     }
   }
   JavaDialog_Close(sp1);
   FREE_GUI(mbk->javalst);
-  mbk->javalst=CreateListObject(book,0);
-  GuiObject_SetTitleText(mbk->javalst,GetStrID(L"OAF_APPLICATIONS_TXT"));
-  SetNumOfMenuItem(mbk->javalst,java_list->FirstFree);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)mbk->javalst,java_list_callback);
-  SetCursorToItem(mbk->javalst,0);
-  GUIObject_Softkey_SetAction(mbk->javalst,ACTION_BACK,DestroyJavaList);
-  GUIObject_Softkey_SetAction(mbk->javalst,ACTION_LONG_BACK,ExitJavaList);
-  GUIObject_Softkey_SetAction(mbk->javalst,ACTION_SELECT1,onEnter_JavaList);
-  ShowWindow(mbk->javalst);
+  mbk->javalst=CreateListMenu(book,0);
+  GUIObject_SetTitleText(mbk->javalst,GetStrID(L"OAF_APPLICATIONS_TXT"));
+  ListMenu_SetItemCount(mbk->javalst,java_list->FirstFree);
+  OneOfMany_SetOnMessage((GUI_ONEOFMANY*)mbk->javalst,java_list_callback);
+  ListMenu_SetCursorToItem(mbk->javalst,0);
+  GUIObject_SoftKeys_SetAction(mbk->javalst,ACTION_BACK,DestroyJavaList);
+  GUIObject_SoftKeys_SetAction(mbk->javalst,ACTION_LONG_BACK,ExitJavaList);
+  GUIObject_SoftKeys_SetAction(mbk->javalst,ACTION_SELECT1,onEnter_JavaList);
+  GUIObject_Show(mbk->javalst);
   return(0);
 };
 

@@ -99,7 +99,7 @@ void DestroyStringList(MyBOOK *mbk)
 {
   while(mbk->astr->FirstFree)
   {
-    char *str=(char *)ListElement_Remove(mbk->astr,0);
+    char *str=(char *)List_RemoveAt(mbk->astr,0);
     SafeFreeString(mbk, str);
   }
 }
@@ -229,7 +229,7 @@ void SaveIni(MyBOOK *mbk)
   if ((f=w_fopen(path, WA_Write|WA_Create|WA_Truncate, 0x1FF, NULL)) >=0){
     for(int i=0; i<mbk->astr->FirstFree; i++)
     {
-      char *str=(char *)ListElement_GetByIndex(mbk->astr,i);
+      char *str=(char *)List_Get(mbk->astr,i);
       char *s=str;
       while(*s==' ') s++; 
       if (s[0]=='[' && s[1]=='E' && s[2]=='X' && s[3]=='T' &&
@@ -268,7 +268,7 @@ void ReadIni(MyBOOK *mbk)
     do {
       s+=skip;
       if (!*s) break;  // не фиг последнюю строку добавлять если ее нету
-      ListElement_Add(mbk->astr, s);
+      List_InsertLast(mbk->astr, s);
       s=find_eol(s, &skip);
       if (s) *s=0;
     } while(s);
@@ -344,7 +344,7 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
     filefilter=DataBrowser_isFileInListExt_adr();
   }
   DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(L"SelectFile",0,SID_ANY_LEN));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(&mbk->book));
+  DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID(&mbk->book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,folder_num);
 
@@ -435,7 +435,7 @@ void CreateSI_EditExt(MyBOOK *myBook)
   header_name=Str2ID(L"Input new ext",0,SID_ANY_LEN);
   win12512unicode(ustr,myBook->el_ext,MAXELEMS(ustr)-1);
   text=Str2ID(ustr,0,SID_ANY_LEN);
-  myBook->si_editext = CreateStringInput(0,
+  myBook->si_editext = CreateStringInputVA(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(0),
                                               VAR_STRINP_MAX_LEN(35),
@@ -510,13 +510,13 @@ void YesNoOnBackExt(BOOK * bk, int i)
     strcpy(newstr,tmp);
     if (mbk->edit_id!=-1)
     {
-      char *str=(char *)ListElement_Remove(mbk->astr,mbk->edit_id);
+      char *str=(char *)List_RemoveAt(mbk->astr,mbk->edit_id);
       SafeFreeString(mbk, str);
-      ListElement_Insert(mbk->astr, mbk->edit_id, newstr);
+      List_Insert(mbk->astr, mbk->edit_id, newstr);
     }
     else
     {
-      ListElement_Add(mbk->astr, newstr);
+      List_InsertLast(mbk->astr, newstr);
     }
     mbk->is_changed=1;
     CreateGuiList(mbk);
@@ -530,7 +530,7 @@ void OnBackEditExtList(BOOK * bk, GUI* )
   int cmp=0;
   if (mbk->edit_id!=-1)
   {
-    char *str=(char *)ListElement_GetByIndex(mbk->astr,mbk->edit_id);
+    char *str=(char *)List_Get(mbk->astr,mbk->edit_id);
     char el_ext[36];
     char el_elf[128];
     char el_smicon[64];
@@ -587,20 +587,20 @@ int onLBMessageEditExtList(GUI_MESSAGE * msg)
       first_txt=L"big img";
       break;
     }
-    SetMenuItemText0(msg,Str2ID(first_txt,0,SID_ANY_LEN));
-    SetMenuItemText1(msg,Str2ID(str,6,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(first_txt,0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(str,6,SID_ANY_LEN));
   }
   return(1);
 };
 
 GUI_LIST *CreateEditExtList(MyBOOK *mbk, int list_id)
 {
-  GUI_LIST * lo=CreateListObject(&mbk->book,0);
+  GUI_LIST * lo=CreateListMenu(&mbk->book,0);
   wchar_t *title, ustr[32];
   mbk->edit_id=list_id;
   if (list_id!=-1)
   {
-    char *str=(char *)ListElement_GetByIndex(mbk->astr,list_id);
+    char *str=(char *)List_Get(mbk->astr,list_id);
     GetExtInfo(str, mbk->el_ext, mbk->el_elf, mbk->el_smicon, mbk->el_bicon);
     snwprintf(ustr,MAXELEMS(ustr)-1,L"Edit ext: %s",mbk->el_ext);
     title=ustr;
@@ -613,13 +613,13 @@ GUI_LIST *CreateEditExtList(MyBOOK *mbk, int list_id)
     *mbk->el_smicon=0;
     *mbk->el_bicon=0;
   }
-  GuiObject_SetTitleText(lo,Str2ID(title, 0, SID_ANY_LEN));
-  SetNumOfMenuItem(lo,4);
-  SetMenuItemStyle(lo,3);
-  SetCursorToItem(lo,0);
-  ListMenu_SetOnMessages(lo,onLBMessageEditExtList);
-  GUIObject_Softkey_SetAction(lo,ACTION_BACK,OnBackEditExtList);
-  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,OnSelect1EditExtList);
+  GUIObject_SetTitleText(lo,Str2ID(title, 0, SID_ANY_LEN));
+  ListMenu_SetItemCount(lo,4);
+  ListMenu_SetItemStyle(lo,3);
+  ListMenu_SetCursorToItem(lo,0);
+  ListMenu_SetOnMessage(lo,onLBMessageEditExtList);
+  GUIObject_SoftKeys_SetAction(lo,ACTION_BACK,OnBackEditExtList);
+  GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,OnSelect1EditExtList);
   return (lo);
 }
 
@@ -643,7 +643,7 @@ int onLBMessage(GUI_MESSAGE * msg)
       for (int i=0, icount=1; i<myBook->astr->FirstFree; i++)
       {
       
-        str=(char *)ListElement_GetByIndex(myBook->astr,i);
+        str=(char *)List_Get(myBook->astr,i);
         if (IsStringValid(str))
         {
           if (icount==item)
@@ -653,12 +653,12 @@ int onLBMessage(GUI_MESSAGE * msg)
         }
       }
       GetExtInfo(str, el_ext, el_elf, 0, 0);
-      SetMenuItemText0(msg,Str2ID(el_ext,6,SID_ANY_LEN));
-      SetMenuItemText1(msg,Str2ID(el_elf,6,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(el_ext,6,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(el_elf,6,SID_ANY_LEN));
     }
     else
     {
-      SetMenuItemText0(msg,Str2ID(L"add new ext",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(L"add new ext",0,SID_ANY_LEN));
     }
   }
   return(1);
@@ -694,7 +694,7 @@ void OnSelect1GuiList(BOOK * bk, GUI* )
     listitem=0;
     for (int icount=1; listitem<mbk->astr->FirstFree; listitem++)
     {
-      char *str=(char *)ListElement_GetByIndex(mbk->astr,listitem);
+      char *str=(char *)List_Get(mbk->astr,listitem);
       if (IsStringValid(str))
       {
         if (icount==item)
@@ -707,7 +707,7 @@ void OnSelect1GuiList(BOOK * bk, GUI* )
   else
     listitem=-1;
   mbk->edit_list=CreateEditExtList(mbk, listitem);
-  ShowWindow(mbk->edit_list);
+  GUIObject_Show(mbk->edit_list);
 }
 
 void OnDeleteGuiList(BOOK * bk, GUI* )
@@ -719,14 +719,14 @@ void OnDeleteGuiList(BOOK * bk, GUI* )
     int listitem=0;
     for (int icount=1; listitem<mbk->astr->FirstFree; listitem++)
     {
-      char *str=(char *)ListElement_GetByIndex(mbk->astr,listitem);
+      char *str=(char *)List_Get(mbk->astr,listitem);
       if (IsStringValid(str))
       {
         if (icount++==item)
           break;
       }
     }
-    char *str=(char *)ListElement_Remove(mbk->astr,listitem);
+    char *str=(char *)List_RemoveAt(mbk->astr,listitem);
     SafeFreeString(mbk, str);
     mbk->is_changed=1;
     CreateGuiList(mbk);
@@ -737,26 +737,26 @@ GUI_LIST * CreateGuiList(MyBOOK * mbk)
 {
   int count=1;
   FREE_GUI(mbk->main_gui);
-  mbk->main_gui=CreateListObject(&mbk->book,0);
-  GuiObject_SetTitleText(mbk->main_gui,Str2ID(L"ExtEditor", 0, SID_ANY_LEN));
+  mbk->main_gui=CreateListMenu(&mbk->book,0);
+  GUIObject_SetTitleText(mbk->main_gui,Str2ID(L"ExtEditor", 0, SID_ANY_LEN));
   
   for (int i=0; i<mbk->astr->FirstFree; i++)
   {
-    char *str=(char *)ListElement_GetByIndex(mbk->astr, i);
+    char *str=(char *)List_Get(mbk->astr, i);
     if (IsStringValid(str))
     {
       count++;
     }
   }
-  SetNumOfMenuItem(mbk->main_gui,count);
-  ListMenu_SetOnMessages(mbk->main_gui,onLBMessage);
-  SetMenuItemStyle(mbk->main_gui,3);
-  SetCursorToItem(mbk->main_gui,0);
-  GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_BACK, OnBackGuiList);
-  GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_SELECT1,OnSelect1GuiList);
-  GUIObject_Softkey_SetAction(mbk->main_gui,ACTION_DELETE,OnDeleteGuiList);
-  GUIObject_SoftKey_SetVisible(mbk->main_gui,ACTION_DELETE,0);
-  ShowWindow(mbk->main_gui);
+  ListMenu_SetItemCount(mbk->main_gui,count);
+  ListMenu_SetOnMessage(mbk->main_gui,onLBMessage);
+  ListMenu_SetItemStyle(mbk->main_gui,3);
+  ListMenu_SetCursorToItem(mbk->main_gui,0);
+  GUIObject_SoftKeys_SetAction(mbk->main_gui,ACTION_BACK, OnBackGuiList);
+  GUIObject_SoftKeys_SetAction(mbk->main_gui,ACTION_SELECT1,OnSelect1GuiList);
+  GUIObject_SoftKeys_SetAction(mbk->main_gui,ACTION_DELETE,OnDeleteGuiList);
+  GUIObject_SoftKeys_SetVisible(mbk->main_gui,ACTION_DELETE,0);
+  GUIObject_Show(mbk->main_gui);
   return(mbk->main_gui);
 };
 
@@ -774,7 +774,7 @@ GUI *CreateEditGui(MyBOOK *bk)
 static int MainPageOnEnter(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  mbk->astr=List_New();
+  mbk->astr=List_Create();
   CreateEditGui(mbk);
   return (1);
 }
@@ -787,7 +787,7 @@ static int MainPageOnExit(void *, BOOK *bk)
   FREE_GUI(mbk->main_gui);
   FREE_GUI(mbk->yes_no);
   DestroyStringList(mbk);
-  List_Free(mbk->astr);
+  List_Destroy(mbk->astr);
   delete mbk->ebuf;
   mbk->ebuf=NULL;
   mbk->ebuf_len=0;

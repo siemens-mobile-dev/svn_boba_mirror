@@ -68,8 +68,8 @@ int onLBMessage(GUI_MESSAGE * msg)
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    EVENT* evt=(EVENT *)ListElement_GetByIndex(events,item);
-    SetMenuItemText0(msg,Str2ID(items[evt->type],0,SID_ANY_LEN));
+    EVENT* evt=(EVENT *)List_Get(events,item);
+    GUIonMessage_SetMenuItemText(msg,Str2ID(items[evt->type],0,SID_ANY_LEN));
     break;
   }
   return(1);
@@ -78,7 +78,7 @@ int onLBMessage(GUI_MESSAGE * msg)
 void OnSelect1Gui(BOOK *bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(g);
-  EVENT *ev=(EVENT*)ListElement_GetByIndex(events,item);
+  EVENT *ev=(EVENT*)List_Get(events,item);
   MMIPROC(action_processor,ev);
 };
 
@@ -86,13 +86,13 @@ void OnSelect2Gui(BOOK *bk, GUI* )
 {
   int item=ListMenu_GetSelectedItem(g);
   wchar_t text[1024];
-  EVENT *ev=(EVENT*)ListElement_GetByIndex(events,item);
+  EVENT *ev=(EVENT*)List_Get(events,item);
   snwprintf(text, 1023, L"%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n%d:%d:%d", ev->days[0], ev->days[1], ev->days[2], ev->days[3], ev->days[4], ev->days[5], ev->days[6], ev->remdays[0], ev->remdays[1], ev->remdays[2], ev->remdays[3], ev->remdays[4], ev->remdays[5], ev->remdays[6], ev->remdays2[0], ev->remdays2[1], ev->remdays2[2], ev->remdays2[3], ev->remdays2[4], ev->remdays2[5], ev->remdays2[6], ev->tm_start, ev->ask_before, ev->ask_after);
   MessageBox(EMPTY_SID,Str2ID(text,0,SID_ANY_LEN),NOIMAGE,1,0,0);
 };
 void OnBackGui(BOOK * bk, GUI* )
 {
-  GUI_Free(g);
+  GUIObject_Destroy(g);
   g=0;
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->g_test=0;
@@ -102,17 +102,17 @@ void OnBackGui(BOOK * bk, GUI* )
 GUI_LIST * CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    SetNumOfMenuItem(lo,events->FirstFree);
-    SetCursorToItem(lo,0);
-    ListMenu_SetOnMessages(lo,onLBMessage);
-    SetMenuItemStyle(lo,3);
-    GuiObject_SetTitleText(lo,Str2ID(lng[LNG_EVENTS_TEST],0,SID_ANY_LEN));
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, OnBackGui);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,OnSelect1Gui);
-    GUIObject_Softkey_SetAction(lo,0,OnSelect2Gui);
-    GUIObject_Softkey_SetText(lo,0,Str2ID(lng[LNG_INFO],0,SID_ANY_LEN));
+    ListMenu_SetItemCount(lo,events->FirstFree);
+    ListMenu_SetCursorToItem(lo,0);
+    ListMenu_SetOnMessage(lo,onLBMessage);
+    ListMenu_SetItemStyle(lo,3);
+    GUIObject_SetTitleText(lo,Str2ID(lng[LNG_EVENTS_TEST],0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, OnBackGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,OnSelect1Gui);
+    GUIObject_SoftKeys_SetAction(lo,0,OnSelect2Gui);
+    GUIObject_SoftKeys_SetText(lo,0,Str2ID(lng[LNG_INFO],0,SID_ANY_LEN));
   }
   return(lo);
 };
@@ -124,7 +124,7 @@ GUI_LIST *create_ed(BOOK *book)
     MyBOOK *mbk=(MyBOOK*)book;
     g=CreateGuiList(book);
     mbk->g_test=g;
-    ShowWindow(g);
+    GUIObject_Show(g);
     BookObj_Show(book, 0);
     BookObj_SetFocus(book, 0);
   }

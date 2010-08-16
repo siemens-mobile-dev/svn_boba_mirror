@@ -25,7 +25,7 @@ int onkey(int key)
 {
   if (works)
   {
-    BOOK *bk=DISPLAY_GetTopBook(0);
+    BOOK *bk=Display_GetTopBook(0);
     if (BookObj_GetDisplayOrientation(bk)==1 && DB==2010)return key;
     if (isImageViewer(bk))return key;
     __getitem(bk);
@@ -73,7 +73,7 @@ int NewKey(int key, int r1 , int mode)
       pressed[0]=true;
       pressed[1]=false;
       pressed[2]=false;
-      InvalidateRect(soft,&rect);
+      DispObject_InvalidateRect(soft,&rect);
       DispObject_SetRefreshTimer(soft,100);
     }
     else if (key==KEY_ENTER)
@@ -81,7 +81,7 @@ int NewKey(int key, int r1 , int mode)
       pressed[0]=false;
       pressed[1]=true;
       pressed[2]=false;
-      InvalidateRect(soft,&rect);
+      DispObject_InvalidateRect(soft,&rect);
       DispObject_SetRefreshTimer(soft,100);
     }
     else if (key==KEY_RIGHT_SOFT)
@@ -89,7 +89,7 @@ int NewKey(int key, int r1 , int mode)
       pressed[0]=false;
       pressed[1]=false;
       pressed[2]=true;
-      InvalidateRect(soft,&rect);
+      DispObject_InvalidateRect(soft,&rect);
       DispObject_SetRefreshTimer(soft,100);
     }
     else
@@ -105,7 +105,7 @@ int NewKey(int key, int r1 , int mode)
     if (mode==KBD_SHORT_PRESS)
     {
       save();
-      BOOK*bk=DISPLAY_GetTopBook(0);
+      BOOK*bk=Display_GetTopBook(0);
       wchar_t ws[100];
       if (strcmp(bk->xbook->name,"CUIDisplayableBook")==0)
       {
@@ -151,8 +151,8 @@ typedef struct
 
 void save()
 {
-  BOOK *bk=DISPLAY_GetTopBook(0);
-  LIST *lst = DispObject_Softkeys_GetList(DISPBASE_GetFocused(0),bk, 0);
+  BOOK *bk=Display_GetTopBook(0);
+  LIST *lst = DispObject_SoftKeys_GetList(Display_GetFocusedDispObject(0),bk, 0);
   int file;
   FSTAT fst;
   char cr=0x0D;
@@ -162,7 +162,7 @@ void save()
   {
     if (fstat(GetDir(MEM_EXTERNAL+DIR_OTHER),L"Softs.txt",&fst)==0)
     {
-      JUST_BYTEARRAY *xls=(JUST_BYTEARRAY*)bk;//DispObject_Softkeys_GetParams(DISPBASE_GetFocused(0));
+      JUST_BYTEARRAY *xls=(JUST_BYTEARRAY*)bk;//DispObject_SoftKeys_GetParams(Display_GetFocusedDispObject(0));
       int x;
       for (x=0;x<199;x++)
       {
@@ -185,7 +185,7 @@ void save()
       fwrite(file,&lf,1);
       for (x=0;x<lst->FirstFree;x++)
       {
-        SOFTKEY * sk = (SOFTKEY*)ListElement_GetByIndex(lst,x);
+        SOFTKEY * sk = (SOFTKEY*)List_Get(lst,x);
         char pattern[1024];
         
         wchar_t name[128];
@@ -243,7 +243,7 @@ void save()
       fwrite(file,&lf,1);
       for (x=0;x<lst->FirstFree;x++)
       {
-        SOFTKEY * sk = (SOFTKEY*)ListElement_GetByIndex(lst,x);
+        SOFTKEY * sk = (SOFTKEY*)List_Get(lst,x);
         if (sk->visible && sk->action!=ACTION_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=EMPTY_SID && sk->parent_action==0xFFFF)
         {
           char pattern[1024];

@@ -38,7 +38,7 @@ void RemoveItem(int index)
   if (!customsofts)return;
   if (index<customsofts->FirstFree && index>=0)
   {
-    ITEM *it=(ITEM*)ListElement_Remove(customsofts,index);
+    ITEM *it=(ITEM*)List_RemoveAt(customsofts,index);
     if (it)
     {
       DELETE(it->name);
@@ -49,10 +49,10 @@ void RemoveItem(int index)
       {
         while (it->keys->FirstFree)
         {
-          KEY *k=(KEY*)ListElement_Remove(it->keys,0);
+          KEY *k=(KEY*)List_RemoveAt(it->keys,0);
           DELETE(k);
         }
-        List_Free(it->keys);
+        List_Destroy(it->keys);
         it->keys=0;
       }
       DELETE(it);
@@ -69,7 +69,7 @@ void OnDelGui( BOOK* bk, GUI* )
     mbk->main_lastindex=item;   
     if (customsofts)
     {
-      ITEM *it=(ITEM*)ListElement_GetByIndex(customsofts,item);
+      ITEM *it=(ITEM*)List_Get(customsofts,item);
       if (item>=0 && item<(customsofts->FirstFree))
       {
         if (wstrcmp(it->name,L"DEFAULT") && wstrcmp(it->name,L"StandbyBook"))
@@ -78,7 +78,7 @@ void OnDelGui( BOOK* bk, GUI* )
         }
       }
     }
-    SetNumOfMenuItem(mbk->lst,customsofts->FirstFree+1);
+    ListMenu_SetItemCount(mbk->lst,customsofts->FirstFree+1);
     BookObj_Hide(bk,0);
     BookObj_Show(bk,0);
     smthchanged=true;
@@ -139,7 +139,7 @@ void OnDelGui( BOOK* bk, GUI* )
       }
       if (key!=-1)
       {
-        KEY *k=(KEY*)ListElement_Remove(mbk->curit->keys, key);
+        KEY *k=(KEY*)List_RemoveAt(mbk->curit->keys, key);
         DELETE(k);
         BookObj_CallPage(bk,&bk_main);
       }
@@ -151,7 +151,7 @@ GUI *g_save=0;
 
 void OnYesExitGui( BOOK* bk, GUI* )
 {
-  GUI_Free(g_save);
+  GUIObject_Destroy(g_save);
   savecustomcfg(GetDir(MEM_EXTERNAL+DIR_ELFS_CONFIG), L"AdvSoftkeys.cfg");
   TryToUpdate();
   FreeBook(bk);
@@ -159,7 +159,7 @@ void OnYesExitGui( BOOK* bk, GUI* )
 
 void OnBackExitGui( BOOK* bk, GUI* )
 {
-  GUI_Free(g_save);
+  GUIObject_Destroy(g_save);
   FreeBook(bk);
 };
     
@@ -174,13 +174,13 @@ void Escape(MyBOOK *mbk, bool save)
                                    VAR_YESNO_PRE_QUESTION(Str2ID(L"Options were changed.",0,SID_ANY_LEN)),
                                    VAR_YESNO_QUESTION(Str2ID(L"Do you want to save?",0,SID_ANY_LEN)),
                                    0);
-      GUIObject_Softkey_SetAction(g_save,ACTION_YES,OnYesExitGui);
-      GUIObject_Softkey_SetAction(g_save,ACTION_NO,OnBackExitGui);
-      GUIObject_Softkey_SetAction(g_save,ACTION_BACK,OnBackExitGui);
+      GUIObject_SoftKeys_SetAction(g_save,ACTION_YES,OnYesExitGui);
+      GUIObject_SoftKeys_SetAction(g_save,ACTION_NO,OnBackExitGui);
+      GUIObject_SoftKeys_SetAction(g_save,ACTION_BACK,OnBackExitGui);
     }
     else
     {
-      GUI_Free(g_save);
+      GUIObject_Destroy(g_save);
       FreeBook(&mbk->book);
     }
   }
@@ -230,9 +230,9 @@ void OnSelectGui( BOOK* bk, GUI* )
           smthchanged=true;
           ITEM *it = new ITEM;
           memset(it,0,sizeof(ITEM));
-          ListElement_Add(customsofts, it);
+          List_InsertLast(customsofts, it);
         }
-        mbk->curit=(ITEM*)ListElement_GetByIndex(customsofts,item);
+        mbk->curit=(ITEM*)List_Get(customsofts,item);
         FREE_GUI(mbk->lst);
         openeditor(bk);
       }
@@ -241,9 +241,9 @@ void OnSelectGui( BOOK* bk, GUI* )
     {
       ITEM *it = new ITEM;
       memset(it,0,sizeof(ITEM));
-      if (!customsofts)customsofts=List_New();
-      ListElement_Add(customsofts, it);
-      mbk->curit=(ITEM*)ListElement_GetByIndex(customsofts,item);
+      if (!customsofts)customsofts=List_Create();
+      List_InsertLast(customsofts, it);
+      mbk->curit=(ITEM*)List_Get(customsofts,item);
       FREE_GUI(mbk->lst);
       openeditor(bk);
       smthchanged=true;
@@ -315,8 +315,8 @@ void OnSelectGui( BOOK* bk, GUI* )
       {
         key = new KEY;
         memset(key,0,sizeof(KEY));
-        if (!mbk->curit->keys)mbk->curit->keys=List_New();
-        ListElement_Add(mbk->curit->keys, key);
+        if (!mbk->curit->keys)mbk->curit->keys=List_Create();
+        List_InsertLast(mbk->curit->keys, key);
       }
       else if (mbk->curit->keys)
       {
@@ -324,12 +324,12 @@ void OnSelectGui( BOOK* bk, GUI* )
         {
           key = new KEY;
           memset(key,0,sizeof(KEY));
-          if (!mbk->curit->keys)mbk->curit->keys=List_New();
-          ListElement_Add(mbk->curit->keys, key);
+          if (!mbk->curit->keys)mbk->curit->keys=List_Create();
+          List_InsertLast(mbk->curit->keys, key);
         }
         else
         {
-          key=(KEY*)ListElement_GetByIndex(mbk->curit->keys, index);
+          key=(KEY*)List_Get(mbk->curit->keys, index);
         }
       }
       if (key)
@@ -347,48 +347,48 @@ void OnSelectGui( BOOK* bk, GUI* )
 GUI_LIST * CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
     MyBOOK *bk=(MyBOOK*)book;
     if (!bk->curit)
     {
-      GUIObject_Softkey_SetAction(lo,1, onSave);
-      GUIObject_Softkey_SetText(lo,1,Str2ID(L"Save",0,SID_ANY_LEN));
-      GUIObject_Softkey_SetAction(lo,2, onSkin);
-      GUIObject_Softkey_SetText(lo,2,Str2ID(L"Skin",0,SID_ANY_LEN));
-      GUIObject_Softkey_SetAction(lo,ACTION_HELP, OnAuthor);
-      GUIObject_Softkey_SetText(lo,ACTION_HELP, GetStrID(L"JAVA_APP_NR_ABOUT"));
-      GuiObject_SetTitleText(lo,Str2ID(L"SoftEdit",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,1, onSave);
+      GUIObject_SoftKeys_SetText(lo,1,Str2ID(L"Save",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,2, onSkin);
+      GUIObject_SoftKeys_SetText(lo,2,Str2ID(L"Skin",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,ACTION_HELP, OnAuthor);
+      GUIObject_SoftKeys_SetText(lo,ACTION_HELP, GetStrID(L"JAVA_APP_NR_ABOUT"));
+      GUIObject_SetTitleText(lo,Str2ID(L"SoftEdit",0,SID_ANY_LEN));
       if (customsofts)
       {
         if (customsofts->FirstFree)
         {
-          SetNumOfMenuItem(lo,customsofts->FirstFree+1);
+          ListMenu_SetItemCount(lo,customsofts->FirstFree+1);
           if (bk->main_lastindex>=0 && bk->main_lastindex<customsofts->FirstFree+1)
           {
-            SetCursorToItem(lo,bk->main_lastindex);
+            ListMenu_SetCursorToItem(lo,bk->main_lastindex);
           }
           else
           {
-            SetCursorToItem(lo,0);
+            ListMenu_SetCursorToItem(lo,0);
           }
-          ListMenu_SetOnMessages(lo,onLBMessage);
+          ListMenu_SetOnMessage(lo,onLBMessage);
         }
         else
         {
           ListMenu_SetNoItemText(lo,GetStrID(L"MP_AUDIO_NO_ITEMS_TXT"));
-          SetNumOfMenuItem(lo,1);
-          SetCursorToItem(lo,0);
-          ListMenu_SetOnMessages(lo,onLBMessage);
+          ListMenu_SetItemCount(lo,1);
+          ListMenu_SetCursorToItem(lo,0);
+          ListMenu_SetOnMessage(lo,onLBMessage);
         }
       }
       else
       {
-        SetNumOfMenuItem(lo,1);
-        SetCursorToItem(lo,0);
-        ListMenu_SetOnMessages(lo,onLBMessage);
+        ListMenu_SetItemCount(lo,1);
+        ListMenu_SetCursorToItem(lo,0);
+        ListMenu_SetOnMessage(lo,onLBMessage);
       }
-      SetMenuItemStyle(lo,0);
+      ListMenu_SetItemStyle(lo,0);
     }
     else
     {
@@ -401,32 +401,32 @@ GUI_LIST * CreateGuiList(BOOK * book)
       {
         wstrcpy(text,L"-empty-");
       }
-      GuiObject_SetTitleText(lo,Str2ID(text,0,SID_ANY_LEN));
+      GUIObject_SetTitleText(lo,Str2ID(text,0,SID_ANY_LEN));
       int howmany=0;
       if (bk->curit->keys)
       {
         howmany=howmany+bk->curit->keys->FirstFree;
       }
       howmany=howmany+6;
-      SetNumOfMenuItem(lo,howmany);
+      ListMenu_SetItemCount(lo,howmany);
       if (bk->opt_lastindex>0 && bk->opt_lastindex<howmany)
       {
-        SetCursorToItem(lo,bk->opt_lastindex);
+        ListMenu_SetCursorToItem(lo,bk->opt_lastindex);
       }
       else if (bk->opt_lastindex>howmany)
       {
-        SetCursorToItem(lo,howmany);
+        ListMenu_SetCursorToItem(lo,howmany);
       }
       else
       {
-        SetCursorToItem(lo,0);
+        ListMenu_SetCursorToItem(lo,0);
       }
-      SetMenuItemStyle(lo,3);
-      ListMenu_SetOnMessages(lo,onLBMessage2);
+      ListMenu_SetItemStyle(lo,3);
+      ListMenu_SetOnMessage(lo,onLBMessage2);
     }
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, OnBackGui);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1, OnSelectGui);
-    GUIObject_Softkey_SetAction(lo,ACTION_DELETE, OnDelGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, OnBackGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1, OnSelectGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_DELETE, OnDelGui);
   }
   return(lo);
 };
@@ -435,7 +435,7 @@ void openeditor(BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->lst=CreateGuiList(bk);
-  ShowWindow(mbk->lst);
+  GUIObject_Show(mbk->lst);
 };
 
 static int main_OnEnter(void *, BOOK *bk)

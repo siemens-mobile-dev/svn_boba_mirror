@@ -6,7 +6,7 @@
 
 int isDataBrowser1(BOOK * book, int * id)
 {
-  if (isDataBrowserBook(book))
+  if (IsDataBrowserBook(book))
   {
     if (((DB_BOOK*)book)->bookID==*id)
     {

@@ -77,7 +77,7 @@ int NotSupported(BOOK *bk)
       return 1;
     }
   }
-  if (bk==FindBook(isMediaPlayerVideoBook()))
+  if (bk==FindBook(get_IsMediaPlayerVideoBook()))
   {
     return 1;
   }
@@ -87,12 +87,12 @@ int NotSupported(BOOK *bk)
 int ourredraw(DISP_OBJ *DO, int a, int b, int c)
 {
   if (!works) return 0;
-  DISP_OBJ *foc=DISPBASE_GetFocused(0);
-  BOOK *bk=DISPLAY_GetTopBook(0);
+  DISP_OBJ *foc=Display_GetFocusedDispObject(0);
+  BOOK *bk=Display_GetTopBook(0);
   __getitem(bk);
   if (lastitem){ if (lastitem->style==2) return 0; }
   int stat=GetOrientation(bk);
-  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(foc);
+  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_SoftKeys_GetParams(foc);
   if (xls->visible_softs_count==3 && bk!=Find_StandbyBook())return 0;
   GC* gc=get_DisplayGC();
   if (!gc)return 1;
@@ -105,7 +105,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
       {
         if (images[DESKTOP]!=NOIMAGE)
         {
-          putchar(gc,0,SoftSize-height,0,0,images[DESKTOP]);
+          GC_PutChar(gc,0,SoftSize-height,0,0,images[DESKTOP]);
         }
       }
     }
@@ -113,7 +113,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     {
       if (images[NAVIGATION]!=NOIMAGE)
       {
-        putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
+        GC_PutChar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
     }
   }
@@ -123,11 +123,11 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     {
       if (images[STANDBY]!=NOIMAGE)
       {
-        putchar(gc,0,SoftSize-height,0,0,images[STANDBY]);
+        GC_PutChar(gc,0,SoftSize-height,0,0,images[STANDBY]);
       }
       if (images[STANDBY_SOFTKEY]!=NOIMAGE)
       {
-        putchar(gc,0,0,0,0,images[STANDBY_SOFTKEY]);
+        GC_PutChar(gc,0,0,0,0,images[STANDBY_SOFTKEY]);
       }
     }
   }
@@ -139,7 +139,7 @@ int ourredraw(DISP_OBJ *DO, int a, int b, int c)
     L_draw:
       if (images[NAVIGATION]!=NOIMAGE)
       {
-        putchar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
+        GC_PutChar(gc,0,SoftSize-height,0,0,images[NAVIGATION]);
       }
     }
   }
@@ -159,7 +159,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
 {
   int stat=GetOrientation(bk);
   GC* gc=get_DisplayGC();
-  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(DISPBASE_GetFocused(0));
+  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_SoftKeys_GetParams(Display_GetFocusedDispObject(0));
   if (!xls)return;
   if (!gc)return;
   int color=xls->color;
@@ -171,20 +171,20 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
       pressed[1]=false;
       pressed[0]=true;
     }
-    if (xls->background==0 && !FindBook(isMMBrowserBook) && bk!=FindBook(isAudioPlayerBook()) && bk!=FindBook(isMediaPlayerVideoBook()))//bk!=FindBook(isImageViewerBook) && ) ) && NotSupported(bk)==false && xls->background==0 && stat==0)
+    if (xls->background==0 && !FindBook(isMMBrowserBook) && bk!=FindBook(get_IsAudioPlayerBook()) && bk!=FindBook(get_IsMediaPlayerVideoBook()))//bk!=FindBook(isImageViewerBook) && ) ) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
     L_draw2:
       if (pressed[0] && images[LEFT_PRESSED]!=NOIMAGE && lbl->strids[0]!=EMPTY_SID && lastitem->type>T_STANDBY)
       {
-        putchar(gc,0,0,0,0,images[LEFT_PRESSED]);
+        GC_PutChar(gc,0,0,0,0,images[LEFT_PRESSED]);
       }
       else if (pressed[1] && images[MIDDLE_PRESSED]!=NOIMAGE && lbl->strids[1]!=EMPTY_SID)
       {
-        putchar(gc,0,0,0,0,images[MIDDLE_PRESSED]);
+        GC_PutChar(gc,0,0,0,0,images[MIDDLE_PRESSED]);
       }
       else if (pressed[2] && images[RIGHT_PRESSED]!=NOIMAGE && lbl->strids[2]!=EMPTY_SID && lastitem->type>T_STANDBY)
       {
-        putchar(gc,0,0,0,0,images[RIGHT_PRESSED]);
+        GC_PutChar(gc,0,0,0,0,images[RIGHT_PRESSED]);
       }
     }
   }
@@ -242,7 +242,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
         b=clBlack;
         c=clWhite;
       }
-      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,height-DISP_OBJ_GetWindowWidth(DO),width,b, c, xls->background);
+      DrawHighlightID(sk[x].hfont,lbl->strids[x],sk[x].hct,sk[x].hx,sk[x].hy,height-DispObject_GetWindowWidth(DO),width,b, c, xls->background);
     }
   }
 };
@@ -270,15 +270,15 @@ void __getitem(BOOK *bk)
 
 void DispDraw(DISP_OBJ* DO,int a,int b,int c)
 { 
-  BOOK *bk=DISPLAY_GetTopBook(0);
-  DISP_OBJ *focused = DISPBASE_GetFocused(0);
+  BOOK *bk=Display_GetTopBook(0);
+  DISP_OBJ *focused = Display_GetFocusedDispObject(0);
   if (!bk)return;
   __getitem(bk);
   DREDRAW(DO, a, b, c);
   if (!works)return;
-  Softkeys_Update(DO);
+  SoftKeys_Update(DO);
   if (!focused)return;
-  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_Softkeys_GetParams(focused);
+  SOFTKEY_PARAMS *xls=(SOFTKEY_PARAMS*)DispObject_SoftKeys_GetParams(focused);
   int vis=0;
   if (xls)
   {
@@ -333,7 +333,7 @@ void RefreshTimer(DISP_OBJ *DO)
   pressed[0]=false;
   pressed[1]=false;
   pressed[2]=false;
-  InvalidateRect(DO,&rect);
+  DispObject_InvalidateRect(DO,&rect);
   DispObject_KillRefreshTimer(soft);
 };
 
@@ -361,10 +361,10 @@ int redraw_init()
   soft=DispObject_SoftKeys_Get();
   if (soft)
   {
-    DREDRAW=DISP_OBJ_GetOnRedraw(soft);
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(soft), DispDraw);
-    DREFRESH=DISP_OBJ_GetonRefresh(soft);
-    DISP_DESC_SetonRefresh(DISP_OBJ_GetDESC(soft), RefreshTimer);
+    DREDRAW=DispObject_GetOnRedraw(soft);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(soft), DispDraw);
+    DREFRESH=DispObject_GetonRefresh(soft);
+    DISP_DESC_SetOnRefresh(DispObject_GetDESC(soft), RefreshTimer);
     //---------------------------------------------------------
   }
   return 1;

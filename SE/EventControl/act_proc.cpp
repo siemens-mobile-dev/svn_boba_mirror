@@ -48,7 +48,7 @@ BOOK* findbook(char* name)
     session=root_list_get_session(sess);
     for (bk=0;bk<session->listbook->FirstFree;bk++)
     {
-      book=(BOOK*)ListElement_GetByIndex(session->listbook,bk);
+      book=(BOOK*)List_Get(session->listbook,bk);
       if(!strcmp(book->xbook->name,name))return book;
     }   
   }
@@ -328,7 +328,7 @@ void act_proc(EVENT *ev)
   }
   else if (t==5)
   {
-    DISPLAY_SetBrightness(0, wcstoul(ev->param,0,10));
+    Display_SetBrightness(0, wcstoul(ev->param,0,10));
   }
   else if (t==6)
   {
@@ -420,12 +420,12 @@ void act_proc(EVENT *ev)
     {
       if (CheckEv(bk,TERMINATE_SESSION_EVENT))
       {
-        UI_Event_toBookID(TERMINATE_SESSION_EVENT,BOOK_GetBookID(bk));
-        UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BOOK_GetBookID(bk));
+        UI_Event_toBookID(TERMINATE_SESSION_EVENT,BookObj_GetBookID(bk));
+        UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BookObj_GetBookID(bk));
       }
       if (CheckEv(bk,ELF_TERMINATE_EVENT))
       {
-        UI_Event_toBookID(ELF_TERMINATE_EVENT,BOOK_GetBookID(bk));
+        UI_Event_toBookID(ELF_TERMINATE_EVENT,BookObj_GetBookID(bk));
       }
     }
     delete(book);
@@ -593,7 +593,7 @@ void act_proc(EVENT *ev)
       wchar_t *hz2=wstrrchr(ev->param,L'/');
       hz2++;
       wstrcpy(name,hz2);
-      SetTheme(path, name, BOOK_GetBookID(bk), 1);
+      SetTheme(path, name, BookObj_GetBookID(bk), 1);
       UI_Event(THEME_CHANGED_EVENT);
     }
   }

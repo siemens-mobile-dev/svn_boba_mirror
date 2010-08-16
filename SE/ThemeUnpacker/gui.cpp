@@ -22,7 +22,7 @@ void OnEnterGui( BOOK* bk, GUI* )
   if (x==0)
   {
     BOOK *bk=SESSION_GetTopBook(root_list_get_session(root_list_get_session_count() - 1));
-    SetTheme(mbk->path, mbk->name, BOOK_GetBookID(bk), 1);
+    SetTheme(mbk->path, mbk->name, BookObj_GetBookID(bk), 1);
     UI_Event(THEME_CHANGED_EVENT);
     FreeBook(bk);
   }
@@ -50,11 +50,11 @@ int onLBMessage(GUI_MESSAGE * msg)
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     if (item==0)
     {
-      SetMenuItemText0(msg,Str2ID(L"Activate",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Activate",0,SID_ANY_LEN));
     }
     else
     {
-      SetMenuItemText0(msg,Str2ID(L"Unpack",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Unpack",0,SID_ANY_LEN));
     }
   }
   return(1);
@@ -63,16 +63,16 @@ int onLBMessage(GUI_MESSAGE * msg)
 GUI_LIST * CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    GuiObject_SetTitleText(lo,Str2ID(L"Install theme",0,SID_ANY_LEN));
-    SetNumOfMenuItem(lo,2);
-    SetCursorToItem(lo,0);
-    ListMenu_SetOnMessages(lo,onLBMessage);
-    SetMenuItemStyle(lo,0);
-    GUI_SetStyle(lo,9);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, OnBackGui);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1, OnEnterGui);
+    GUIObject_SetTitleText(lo,Str2ID(L"Install theme",0,SID_ANY_LEN));
+    ListMenu_SetItemCount(lo,2);
+    ListMenu_SetCursorToItem(lo,0);
+    ListMenu_SetOnMessage(lo,onLBMessage);
+    ListMenu_SetItemStyle(lo,0);
+    GUIObject_SetStyle(lo,9);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, OnBackGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1, OnEnterGui);
   }
   return(lo);
 };
@@ -81,7 +81,7 @@ GUI_LIST *create_ed(BOOK *book)
 {
   MyBOOK *mbk=(MyBOOK *)book;
   mbk->lst=CreateGuiList(book);
-  ShowWindow(mbk->lst);
+  GUIObject_Show(mbk->lst);
   return(mbk->lst);
 };
 
@@ -95,7 +95,7 @@ int CreateGui(void *data, BOOK * book)
 int RemoveGUI(void *data, BOOK * book)
 {
   MyBOOK *mbk=(MyBOOK*)book;
-  GUI_Free(mbk->lst);
+  GUIObject_Destroy(mbk->lst);
   return 0;
 };
 

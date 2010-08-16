@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>RTConfigPath</name>
-          <state>$TOOLKIT_DIR$\LIB\dl5tptinl8n.h</state>
+          <state>$TOOLKIT_DIR$\LIB\dl5tpainl8n.h</state>
         </option>
         <option>
           <name>RTLibraryPath</name>
@@ -961,7 +961,6 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

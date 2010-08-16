@@ -139,7 +139,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Standby_DefaultRedraw=sbm->SB_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Standby_DO),Standby_CARedraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(Standby_DO),Standby_CARedraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
     res->SB_OldOnRedraw=EMPTY_REDRAW_METHOD;
@@ -153,7 +153,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
     if (sbm->SI_OldOnRedraw!=EMPTY_REDRAW_METHOD) StatusIndication_DefaultRedraw=sbm->SI_OldOnRedraw;
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication_DO),StatusIndication_CARedraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication_DO),StatusIndication_CARedraw);
     res->SI_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SI_NewOnRedraw=StatusIndication_CARedraw;
   }
@@ -165,7 +165,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),Softkey_CARedraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(Softkey_DO),Softkey_CARedraw);
     res->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SK_NewOnRedraw=Softkey_CARedraw;
   }
@@ -179,9 +179,9 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
 
 void ReInit()
 {
-  if (FindBook(isAudioPlayerBook()))
+  if (FindBook(get_IsAudioPlayerBook()))
   {
-    TRACK_DESC *ntrack=TrackDesc_Get(FindBook(isAudioPlayerBook()));
+    TRACK_DESC *ntrack=TrackDesc_Get(FindBook(get_IsAudioPlayerBook()));
     if (TrackDesc_Compare(currenttrack,ntrack)==false)
     {
       TrackDesc_Free(currenttrack);
@@ -209,7 +209,7 @@ int CABook_onPlay(void * ,BOOK* bk)
 
 int CABook_onCreate(void *, BOOK *bk)
 {
-  if (FindBook(isAudioPlayerBook()))
+  if (FindBook(get_IsAudioPlayerBook()))
   {
     //PlayerRunned=true;
 #ifdef DEBUG
@@ -230,7 +230,7 @@ int CABook_onDestroy(void *, BOOK *bk)
 
 int CABook_onPlayTimer(void *message,BOOK* bk)
 {
-  if (FindBook(isAudioPlayerBook()))
+  if (FindBook(get_IsAudioPlayerBook()))
   {
     if (!currenttrack)
     {
@@ -248,7 +248,7 @@ int CABook_onPlayTimer(void *message,BOOK* bk)
 
 int CABook_onPause(void *, BOOK* book)
 {
-  if (FindBook(isAudioPlayerBook()))
+  if (FindBook(get_IsAudioPlayerBook()))
   {
     PlayerRunned=true;
   }
@@ -278,7 +278,7 @@ PAGE_DESC base_page ={"CoverArtpage",
 
 int CheckStandby()
 {
-  if (DISPLAY_GetTopBook(0)==Find_StandbyBook())
+  if (Display_GetTopBook(0)==Find_StandbyBook())
   {
     return 1;
   }

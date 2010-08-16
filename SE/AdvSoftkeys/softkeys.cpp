@@ -95,7 +95,7 @@ void preset_calculate(LABELS *lbl, BOOK *bk, DISP_OBJ *DO, LIST *lst, int left, 
 {
   MyBOOK *our=(MyBOOK*)FindBook(isSoftkeysBook);
   int cnt=getcount(lst,1);
-  if ( GUIObj_GetDISPObj(SBY_GetMainInput(Find_StandbyBook()))==DO)
+  if (GUIObject_GetDispObject(SBY_GetMainInput(Find_StandbyBook()))==DO)
   {
     lastitem->type=T_STANDBY;
     preset_standby(lbl,bk,DO, lst, cnt, our, left, right);
@@ -146,16 +146,16 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
   ret->strids[2]=EMPTY_SID;
   
   SKLABEL left;
-  Softkeys_GetLabel(sk,&left, 0);
+  SoftKeys_GetLabel(sk,&left, 0);
   SKLABEL right;
   right.text=0xFFFFFFFF;
   if (vis==2)
   {
-    Softkeys_GetLabel(sk,&right, 1);
+    SoftKeys_GetLabel(sk,&right, 1);
   }
   if (lastitem && csofts)
   {
-    LIST *lst = DispObject_Softkeys_GetList(DO,bk, 0);
+    LIST *lst = DispObject_SoftKeys_GetList(DO,bk, 0);
     if (lst)
     {
       if (lastitem->style==0)

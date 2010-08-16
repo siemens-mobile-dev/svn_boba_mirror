@@ -204,7 +204,7 @@ void OnOkCreateWinOrPassGui(BOOK * bk, wchar_t *string, int len)
           strcpy(ev->gps, mbk->selev->gps);
         }
         extern LIST *events;
-        ListElement_Add(events,ev);
+        List_InsertLast(events,ev);
         i++;
       }
       else break;
@@ -355,7 +355,7 @@ void CreateTextInput(MyBOOK *myBook)
   {
     en=1;
   }
-  myBook->text_input = CreateStringInput(0,
+  myBook->text_input = CreateStringInputVA(0,
                                               VAR_HEADER_TEXT(get_headerstrid(myBook->TextInputType)),
                                               VAR_STRINP_FIXED_TEXT(GetStrID(L"EC_TEXTP_TXT")),
                                               VAR_STRINP_ENABLE_EMPTY_STR(en),

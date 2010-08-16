@@ -125,16 +125,16 @@ void ViewSex(int indx)
     bk->cur_indx = indx;
     GUI_ONEOFMANY *om=CreateOneOfMany(&bk->book);
     bk->cbox_gui=om;
-    GuiObject_SetTitleText(om,Str2ID(LG_SEX,0,SID_ANY_LEN));
+    GUIObject_SetTitleText(om,Str2ID(LG_SEX,0,SID_ANY_LEN));
     STRID strid[2];
     strid[0]=Str2ID(LG_FEMALE,0,SID_ANY_LEN);
     strid[1]=Str2ID(LG_MALE,0,SID_ANY_LEN);
     OneOfMany_SetTexts(om,strid,2);
     if(Pets[indx].Status.Sex != 2) OneOfMany_SetChecked(om,Pets[indx].Status.Sex);
     else OneOfMany_SetChecked(om,0);
-    GUIObject_Softkey_SetAction(om,ACTION_BACK,OnCloseSetSex);
-    GUIObject_Softkey_SetAction(om,ACTION_SELECT1,OnSelectSetSex);
-    ShowWindow(om);
+    GUIObject_SoftKeys_SetAction(om,ACTION_BACK,OnCloseSetSex);
+    GUIObject_SoftKeys_SetAction(om,ACTION_SELECT1,OnSelectSetSex);
+    GUIObject_Show(om);
   }
 }
 
@@ -216,7 +216,7 @@ int status_list_callback(GUI_MESSAGE * msg)
     int curitem=GUIonMessage_GetCreatedItemIndex(msg);
 //    MyBOOK * bk = (MyBOOK *)msg->book;
     MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
-    int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+    int indx = TabMenuBar_GetFocusedTab(bk->gui);
     icon_id = img_menu[smenuiconsnum[curitem]].ImageID;
     {
       switch(curitem)
@@ -258,7 +258,7 @@ int status_list_callback(GUI_MESSAGE * msg)
     strID_array[0]=icon_id+0x78000000;
     strID_array[1]=0x78000020;
     strID_array[2]=str_id;
-    SetMenuItemText0(msg,Str2ID(strID_array,5,3));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(strID_array,5,3));
   }
   return(1);
 }
@@ -278,7 +278,7 @@ void Status_onEnter( BOOK* book, GUI* )
 {
   MyBOOK *bk = (MyBOOK *)book;
   int item_num = ListMenu_GetSelectedItem(bk->stat_list);
-  int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+  int indx = TabMenuBar_GetFocusedTab(bk->gui);
   smenuprocs[item_num](indx);
   //BookObj_ReturnPage(book,ACCEPT_EVENT);
 }
@@ -294,13 +294,13 @@ void Status_OnKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
     {
       int item = ListMenu_GetSelectedItem(bk->stat_list) - 1;
       if(item < 0) item = STATUS_ITEMS_COUNT - 1;
-      SetCursorToItem(bk->stat_list,item);
+      ListMenu_SetCursorToItem(bk->stat_list,item);
     }
     else if((num == 8) || (num == 0))
     {
       int item = ListMenu_GetSelectedItem(bk->stat_list) + 1;
       if(item >= STATUS_ITEMS_COUNT) item = 0;
-      SetCursorToItem(bk->stat_list,item);
+      ListMenu_SetCursorToItem(bk->stat_list,item);
     }
     else if(num == 5)
     {
@@ -313,29 +313,29 @@ int CreateStatusList(void *data, BOOK * book)
 {
   int stat_pos=0;
   MyBOOK * bk = (MyBOOK *)book;
-  int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+  int indx = TabMenuBar_GetFocusedTab(bk->gui);
   FREE_GUI(bk->stat_list);
 
-  bk->stat_list=CreateListObject(book,0);
+  bk->stat_list=CreateListMenu(book,0);
 
-  GuiObject_SetTitleText(bk->stat_list,Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
+  GUIObject_SetTitleText(bk->stat_list,Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
 
-  SetNumOfMenuItem(bk->stat_list,STATUS_ITEMS_COUNT);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)bk->stat_list,status_list_callback);
+  ListMenu_SetItemCount(bk->stat_list,STATUS_ITEMS_COUNT);
+  OneOfMany_SetOnMessage((GUI_ONEOFMANY*)bk->stat_list,status_list_callback);
 
-  SetCursorToItem(bk->stat_list,stat_pos);
+  ListMenu_SetCursorToItem(bk->stat_list,stat_pos);
 
-  GUIObject_Softkey_SetAction(bk->stat_list,ACTION_BACK,DestroyStatusList);
-  GUIObject_Softkey_SetAction(bk->stat_list,ACTION_LONG_BACK,CancelStatusList);
-  GUIObject_Softkey_SetAction(bk->stat_list,ACTION_SELECT1,Status_onEnter);
+  GUIObject_SoftKeys_SetAction(bk->stat_list,ACTION_BACK,DestroyStatusList);
+  GUIObject_SoftKeys_SetAction(bk->stat_list,ACTION_LONG_BACK,CancelStatusList);
+  GUIObject_SoftKeys_SetAction(bk->stat_list,ACTION_SELECT1,Status_onEnter);
 
-  bk->Status_oldOnKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(bk->stat_list) );
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(bk->stat_list) ), Status_OnKey );
+  bk->Status_oldOnKey = DispObject_GetOnKey( GUIObject_GetDispObject(bk->stat_list) );
+  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(bk->stat_list) ), Status_OnKey );
 
   CountSex = 0;
 
   //  BookObj_SetFocus(book,0);
-  ShowWindow(bk->stat_list);
+  GUIObject_Show(bk->stat_list);
   return(0);
 }
 

@@ -24,5 +24,5 @@ typedef struct {
 typedef GUI_type MAIN_GUI;
 
 extern int is_db2020;
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #endif

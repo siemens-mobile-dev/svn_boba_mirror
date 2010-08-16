@@ -42,14 +42,14 @@ int onCancel_MainMenu_DB(void *data, BOOK * book)
 int CreateMainMenu(void *data, BOOK * book)
 {
   BOOK * MainMenu;
-  if (MainMenu=MenuBook_Desktop(1,BOOK_GetBookID(book)))
+  if (MainMenu=MenuBook_Desktop(1,BookObj_GetBookID(book)))
   {
     
-    int MainMenuID=BOOK_GetBookID(MainMenu);
-    BookObj_Softkey_SetAction(MainMenu,0x0,onShortcutSet);
+    int MainMenuID=BookObj_GetBookID(MainMenu);
+    BookObj_SoftKeys_SetAction(MainMenu,0x0,onShortcutSet);
     int str_id;
     textidname2id(L"SHC_SET_SHORTCUT_SK",SID_ANY_LEN,&str_id);
-    BookObj_Softkey_SetText(MainMenu,0x0,str_id);
+    BookObj_SoftKeys_SetText(MainMenu,0x0,str_id);
     return(1);
   }
   BookObj_ReturnPage(book,ACCEPT_EVENT);

@@ -90,7 +90,7 @@ void Startup_OnTimer(u16 timer,LPARAM lparam)
   }
   else if (StartupMode==2)
   {
-    if (FindBook(isAudioPlayerBook()))
+    if (FindBook(get_IsAudioPlayerBook()))
     {
       Startup();
       Timer_Kill(&StartupTimer);
@@ -128,7 +128,7 @@ int checkevents()
 int main()
 {   
 #ifdef launchDEBUG
-  TRACK_DESC *ntrack=TrackDesc_Get(FindBook(isAudioPlayerBook()));
+  TRACK_DESC *ntrack=TrackDesc_Get(FindBook(get_IsAudioPlayerBook()));
   wchar_t hz[500];
   snwprintf(hz,499,L"%ls/%ls\n\n%d:%d:%d",ntrack->path, ntrack->name, ntrack->fulltime, ntrack->pos, ntrack->tracks_count);
   MessageBox(SID_NULL,Str2ID(hz,0,SID_ANY_LEN),NOIMAGE,1,0,0);

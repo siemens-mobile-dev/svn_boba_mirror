@@ -35,16 +35,16 @@ void OnEntII(BOOK * bk,wchar_t * string,int len)
     }
     break;
   }
-  GUI_Free(((MyBook*)bk)->gui1);
+  GUIObject_Destroy(((MyBook*)bk)->gui1);
   ((MyBook*)bk)->gui1=0;
   BookObj_GotoPage(isBookX(NameMyElf, 0),&bk_gm);  
 }
 
 void CreateInputName(BOOK*bk)
 {
-  if(((MyBook*)bk)->gui1) GUI_Free(((MyBook*)bk)->gui1);
+  if(((MyBook*)bk)->gui1) GUIObject_Destroy(((MyBook*)bk)->gui1);
   ((MyBook*)bk)->gui1=0;
-  ((MyBook*)bk)->gui1=CreateStringInput(0,
+  ((MyBook*)bk)->gui1=CreateStringInputVA(0,
                                        //VAR_PREV_ACTION_PROC(DestroyII),
                                        //VAR_LONG_BACK_PROC(DestroyII),
                                        VAR_BOOK((BOOK*)bk),

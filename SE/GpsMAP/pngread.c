@@ -78,7 +78,7 @@ void end_callback(png_structp png_ptr, png_infop info)
   png_list->height=usr_png->height;
   png_list->image=usr_png->image;
   usr_png->image=NULL;
-  ListElement_AddtoTop(usr_png->png_files,png_list);
+  List_InsertFirst(usr_png->png_files,png_list);
 }
 
 PNG_CONVERT *InitPng(LIST *pnglist, int index_x, int index_y)

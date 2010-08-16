@@ -77,7 +77,7 @@ int onElfKilled(void *mess ,BOOK* book)
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) DREDRAW=sbm->SK_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(DispObject_SoftKeys_Get()),DispDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(DispObject_SoftKeys_Get()),DispDraw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
     ms->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
@@ -96,8 +96,8 @@ void MyBook_OnClose(BOOK * book)
     csofts_destroy();
     ModifyKeyHook(NewKey,0);
     DISP_OBJ *soft=DispObject_SoftKeys_Get();
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(soft), DREDRAW);
-    DISP_DESC_SetonRefresh(DISP_OBJ_GetDESC(soft), DREFRESH);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(soft), DREDRAW);
+    DISP_DESC_SetOnRefresh(DispObject_GetDESC(soft), DREFRESH);
     SUBPROC(elf_exit);
   }
 };
@@ -152,7 +152,7 @@ wchar_t* update()
 void Change(UI_SOFTKEY *s,int x)
 {
   memcpy(&sk[x], s, sizeof(UI_SOFTKEY));
-  InvalidateRect(soft,0);
+  DispObject_InvalidateRect(soft,0);
 };
 
 void SetWorkState(bool state)

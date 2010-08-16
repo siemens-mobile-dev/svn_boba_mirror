@@ -211,7 +211,7 @@ void AddEvent2(char *line)
   }
   ev->txt=getwchr(line,&x,0xFE);
   ev->param=getwchr(line,&x,0xFF);
-  ListElement_Add(events, ev);
+  List_InsertLast(events, ev);
 }
 void *memmem(const unsigned char *haystack, size_t haystacklen, const void *needle, size_t needlelen)
 {
@@ -332,7 +332,7 @@ int readConfig(BOOK *myBook, wchar_t *myFolder, wchar_t *name)
 
 int InitializeEvents(BOOK *myBook, wchar_t *path, wchar_t *fname)
 {
-  events=List_New();
+  events=List_Create();
   if (path && fname)
   {
     readConfig(myBook, path, fname);
@@ -386,7 +386,7 @@ void saveevents(wchar_t *folder, wchar_t *name)
         for (x=0;x<events->FirstFree;x++)
         {
           //Запишем в файл объекты в юникодной кодировке
-          EVENT *ev=(EVENT*)ListElement_GetByIndex(events,x);
+          EVENT *ev=(EVENT*)List_Get(events,x);
           char pattern[1024];
           if (ev->isMinusInBefore==true)
           {
@@ -509,7 +509,7 @@ void Saver_OnSelect(BOOK*bk, GUI* )
   {
     while (events->FirstFree)
     {
-      EVENT* event=(EVENT*)ListElement_Remove(events,0);
+      EVENT* event=(EVENT*)List_RemoveAt(events,0);
       if (event)
       {
         DELETE(event->txt);
@@ -518,14 +518,14 @@ void Saver_OnSelect(BOOK*bk, GUI* )
         delete(event);
       }
     }
-    List_Free(events);
+    List_Destroy(events);
     events=0;
   }
   FreeBook(bk);
 };
 void Saver_OnBack(BOOK *bk, GUI* )
 {
-  GUI_Free(g);
+  GUIObject_Destroy(g);
 };
 //wchar_t *str[]={L"На карту",L"На телефон"};
 int Saver_onLBMessage(GUI_MESSAGE * msg)
@@ -534,8 +534,8 @@ int Saver_onLBMessage(GUI_MESSAGE * msg)
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    EVENT* evt=(EVENT *)ListElement_GetByIndex(events,item);
-    SetMenuItemText0(msg,Str2ID(lng[LNG_ONCARD+item],0,SID_ANY_LEN));
+    EVENT* evt=(EVENT *)List_Get(events,item);
+    GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_ONCARD+item],0,SID_ANY_LEN));
     break;
   }
   return(1);
@@ -544,16 +544,16 @@ int Saver_onLBMessage(GUI_MESSAGE * msg)
 GUI_LIST * CreateSaverList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    SetNumOfMenuItem(lo,2);
-    SetCursorToItem(lo,0);
-    ListMenu_SetOnMessages(lo,Saver_onLBMessage);
-    SetMenuItemStyle(lo,0);
-    GUI_SetStyle(lo,9);
-    GuiObject_SetTitleText(lo,Str2ID(lng[LNG_SAVE],0,SID_ANY_LEN));
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, Saver_OnBack);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,Saver_OnSelect);
+    ListMenu_SetItemCount(lo,2);
+    ListMenu_SetCursorToItem(lo,0);
+    ListMenu_SetOnMessage(lo,Saver_onLBMessage);
+    ListMenu_SetItemStyle(lo,0);
+    GUIObject_SetStyle(lo,9);
+    GUIObject_SetTitleText(lo,Str2ID(lng[LNG_SAVE],0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Saver_OnBack);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Saver_OnSelect);
   }
   return(lo);
 };
@@ -561,7 +561,7 @@ GUI_LIST * CreateSaverList(BOOK * book)
 GUI_LIST *create_saver(BOOK *book)
 {
   g=(GUI_LIST*)CreateSaverList(book);
-  ShowWindow(g);
+  GUIObject_Show(g);
   return(g);
 };
 
@@ -584,7 +584,7 @@ int DestroyEvents(MyBOOK *mbk, bool save)
     }
     while (events->FirstFree)
     {
-      EVENT* event=(EVENT*)ListElement_Remove(events,0);
+      EVENT* event=(EVENT*)List_RemoveAt(events,0);
       if (event)
       {
         DELETE(event->txt);
@@ -593,7 +593,7 @@ int DestroyEvents(MyBOOK *mbk, bool save)
         delete(event);
       }
     }
-    List_Free(events);
+    List_Destroy(events);
     events=0;
   }
   return 0;

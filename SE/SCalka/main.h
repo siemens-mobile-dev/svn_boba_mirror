@@ -19,6 +19,6 @@ int isScalkaBook(BOOK * struc);
 void win12512unicode(wchar_t *ws, const char *s, int len);
 char *unicode2win1251(char *s, wchar_t *ws, int len);
 
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 
 #endif

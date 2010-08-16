@@ -235,7 +235,7 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
   }
   
   wchar_t icon=file->attr & FA_CHECK?STD_ICONS[ICN_CHMARK]:file->icon;
-  putchar(gc,ICO_X, y+ICO_DY, ico_w,ico_h,icon);
+  GC_PutChar(gc,ICO_X, y+ICO_DY, ico_w,ico_h,icon);
   
   
   int tc;
@@ -244,12 +244,12 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
   //else
   SetFont(CONFIG_FONT_FILES);
   RECT tmp_rc, txt_rc;
-  get_GC_RECT(gc, &tmp_rc);
+  GC_GetRect(gc, &tmp_rc);
   txt_rc.x1=TXT_X;
   txt_rc.x2=ITM_X2-ITM_B-2;
   txt_rc.y1=tmp_rc.y1;
   txt_rc.y2=tmp_rc.y2;
-  GC_validate_RECT(gc, &txt_rc);
+  GC_ValidateRect(gc, &txt_rc);
   if (ind==_CurIndex-_CurBase)
   {
     tc=clSelFileNormal;
@@ -277,7 +277,7 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
     DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
                Colors[tc],0);
   }
-  GC_validate_RECT(gc, &tmp_rc);
+  GC_ValidateRect(gc, &tmp_rc);
 }
 
 void ShowFiles(GC *gc, RECT *rc)

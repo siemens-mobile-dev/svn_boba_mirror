@@ -33,5 +33,5 @@ typedef struct
 
 GUI_LIST * CreateGuiList(MyBOOK * bk);
 #define LGP_NULL 0x6FFFFFFF
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #endif

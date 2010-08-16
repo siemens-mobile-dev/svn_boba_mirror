@@ -11,7 +11,7 @@ extern "C" long strtol(const char *, char **, int);
 
 void MainIniInit(MAIN_INI *ini)
 {
-  ini->towns=List_New();
+  ini->towns=List_Create();
   ini->cur_town=NULL; 
   ReadMainIni(ini);
 }
@@ -21,12 +21,12 @@ void MainIniDeInit(MAIN_INI *ini)
   TOWN *town;
   while(ini->towns->FirstFree)
   {
-    town=(TOWN *)ListElement_Remove(ini->towns,0);
+    town=(TOWN *)List_RemoveAt(ini->towns,0);
     DestroyCsvList(town);
-    List_Free(town->bs_dat);
+    List_Destroy(town->bs_dat);
     delete town->name;
   }
-  List_Free(ini->towns);
+  List_Destroy(ini->towns);
 }
 
 char *find_eol(char *s)
@@ -123,10 +123,10 @@ void ReadMainIni(MAIN_INI *ini)
             if (strncmp(s,"Town ",5)==0)
             {
               s+=5;
-              if (town) ListElement_AddtoTop(ini->towns,town);
+              if (town) List_InsertFirst(ini->towns,town);
               town=new TOWN;
               memset(town,0,sizeof(TOWN));
-              town->bs_dat=List_New();
+              town->bs_dat=List_Create();
               town->map_index=strtol(s,NULL,10);
               s=find_eol(s);
               continue;
@@ -183,7 +183,7 @@ void ReadMainIni(MAIN_INI *ini)
           }
           s=find_eol(s);
         }
-        if (town) ListElement_AddtoTop(ini->towns,town);
+        if (town) List_InsertFirst(ini->towns,town);
         delete buf;
       }
       fclose(f);

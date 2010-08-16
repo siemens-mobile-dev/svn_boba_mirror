@@ -961,7 +961,6 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>OLDFUNCTIONS</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

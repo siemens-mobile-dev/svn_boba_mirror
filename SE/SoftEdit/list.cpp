@@ -29,16 +29,16 @@ void addline(char *line)
       KEY *key=new KEY;
       key->oldkey=getint(line,&x,'-');
       key->newkey=getint(line,&x,':');
-      if (!it->keys)it->keys=List_New();
-      ListElement_Add(it->keys, key);
+      if (!it->keys)it->keys=List_Create();
+      List_InsertLast(it->keys, key);
     }
   }
   else
   {
-    it->keys=List_New();
+    it->keys=List_Create();
   }
-  if (!customsofts)customsofts=List_New();
-  ListElement_Add(customsofts, it);
+  if (!customsofts)customsofts=List_Create();
+  List_InsertLast(customsofts, it);
 };
 
 void destroylists()
@@ -48,7 +48,7 @@ void destroylists()
   {
     while (csofts->FirstFree)
     {
-      ITEM *it=(ITEM*)ListElement_Remove(csofts,0);
+      ITEM *it=(ITEM*)List_RemoveAt(csofts,0);
       DELETE(it->name);
       DELETE(it->lsi);
       DELETE(it->msi);
@@ -57,15 +57,15 @@ void destroylists()
       {
         while (it->keys->FirstFree)
         {
-          KEY *k=(KEY*)ListElement_Remove(it->keys,0);
+          KEY *k=(KEY*)List_RemoveAt(it->keys,0);
           DELETE(k);
         }
-        List_Free(it->keys);
+        List_Destroy(it->keys);
         it->keys=0;
       }
       DELETE(it);
     }
-    List_Free(csofts);
+    List_Destroy(csofts);
     csofts=0;
   }
 };
@@ -78,7 +78,7 @@ int readcustomcfg(wchar_t *path, wchar_t *name)
   {
     char *param=0;
     int x=0;
-    if (!customsofts)customsofts=List_New();
+    if (!customsofts)customsofts=List_Create();
     while (1)
     {
       char pattern[128];
@@ -116,7 +116,7 @@ void savecustomcfg(wchar_t *path, wchar_t *name)
       for (x=0;x<customsofts->FirstFree;x++)
       {
         //Запишем в файлик объекты, парся их в чар, перекодируя в вин1251
-        ITEM *it=(ITEM*)ListElement_GetByIndex(customsofts,x);
+        ITEM *it=(ITEM*)List_Get(customsofts,x);
         if (it)
         {
           char pattern[512];
@@ -152,7 +152,7 @@ void savecustomcfg(wchar_t *path, wchar_t *name)
             LIST *lst=it->keys;
             for (y=0;y<lst->FirstFree;y++)
             {
-              KEY *key=(KEY*)ListElement_GetByIndex(lst,y);
+              KEY *key=(KEY*)List_Get(lst,y);
               if (key && key->oldkey>0 && key->oldkey<100 && key->newkey>0 && key->newkey<100)
               {
                 char pat[500];

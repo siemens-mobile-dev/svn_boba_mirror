@@ -411,8 +411,8 @@ void InitVar()
   DisplayWidth  = Display_GetWidth(0);
   DisplayHeight = Display_GetHeight(0);
 
-  StatusBarY    = DISP_OBJ_GetWindowHeight(*StatusRow_p());
-  SoftBarY      = DisplayHeight - DISP_OBJ_GetWindowHeight(DispObject_SoftKeys_Get());
+  StatusBarY    = DispObject_GetWindowHeight(*StatusRow_p());
+  SoftBarY      = DisplayHeight - DispObject_GetWindowHeight(DispObject_SoftKeys_Get());
 
   FSTAT _fstat;
   if(auto_image.ImageID != NOIMAGE)
@@ -513,12 +513,12 @@ void DrawParams(int y)
 
   if ((cfg_show_type & 2) && visible && (location_image.ImageID != NOIMAGE))
   {
-    putchar(GC_DISP, cfg_location_image.x1, cfg_location_image.y1 - y, imageWidth, imageHeight, location_image.ImageID);
+    GC_PutChar(GC_DISP, cfg_location_image.x1, cfg_location_image.y1 - y, imageWidth, imageHeight, location_image.ImageID);
   }
 
   if(cfg_auto_image_show && AutoLocation && (auto_image.ImageID != NOIMAGE))
   {
-    putchar(GC_DISP, cfg_auto_image_x, cfg_auto_image_y - y, 0, 0, auto_image.ImageID);
+    GC_PutChar(GC_DISP, cfg_auto_image_x, cfg_auto_image_y - y, 0, 0, auto_image.ImageID);
   }
 
   if((cfg_location == 9) && (cfg_show_type & 1) && visible && (CellNameID != empty))
@@ -553,7 +553,7 @@ void Status_ReDraw(DISP_OBJ * d, int a, int b, int c)
 void Soft_ReDraw(DISP_OBJ* DO,int a,int b,int c)
 {
   BOOK *bk1 = FindBook(isImageViewerBook);
-  BOOK *bk2 = FindBook(isCameraBook());
+  BOOK *bk2 = FindBook(get_IsCameraBook());
   bool flag = (!cfg_standby_only) && (!bk1) && (!bk2);
 
   if(IsInStandby)
@@ -570,9 +570,9 @@ void Soft_ReDraw(DISP_OBJ* DO,int a,int b,int c)
 
 void InvalidateAll()
 {
-    if(GUI_display) InvalidateRect(GUI_display,0);
-    if(GUI_status)  InvalidateRect(*GUI_status,0);
-    if(GUI_soft)    InvalidateRect(GUI_soft,0);
+    if(GUI_display) DispObject_InvalidateRect(GUI_display,0);
+    if(GUI_status)  DispObject_InvalidateRect(*GUI_status,0);
+    if(GUI_soft)    DispObject_InvalidateRect(GUI_soft,0);
 }
 
 int CheckCurrentCell()
@@ -768,7 +768,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     if (sbm->SI_OldOnRedraw!=EMPTY_REDRAW_METHOD) Status_oldReDraw = sbm->SI_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(*GUI_status), Status_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(*GUI_status), Status_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SI_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -789,7 +789,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Display_oldReDraw = sbm->SB_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_display), Display_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(GUI_display), Display_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SB_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -810,7 +810,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Soft_oldReDraw = sbm->SK_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_soft), Soft_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(GUI_soft), Soft_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SK_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -955,7 +955,7 @@ int NewKey(int key, int r1, int mode)
 {
   if(!isKeylocked() || cfg_ignore_keylock)
   {
-    if(DISPLAY_GetTopBook(0)==Find_StandbyBook())
+    if(Display_GetTopBook(0)==Find_StandbyBook())
     {
       if(cfg_ctrlmode == 0)
       {
@@ -978,9 +978,9 @@ int NewKey(int key, int r1, int mode)
         {
           if (AutoLocation == false)
           {
-            if(MiniGPSBook->text_input) GUI_Free(MiniGPSBook->text_input);
+            if(MiniGPSBook->text_input) GUIObject_Destroy(MiniGPSBook->text_input);
             STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
-            MiniGPSBook->text_input = CreateStringInput(0,
+            MiniGPSBook->text_input = CreateStringInputVA(0,
                                           VAR_BOOK(MiniGPSBook),
                                           VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
                                           VAR_STRINP_TEXT(text),
@@ -992,7 +992,7 @@ int NewKey(int key, int r1, int mode)
                                           VAR_PREV_ACTION_PROC(BackPressed),
                                           0);
             BookObj_SetFocus( &MiniGPSBook->book,0);
-            ShowWindow(MiniGPSBook->text_input);
+            GUIObject_Show(MiniGPSBook->text_input);
           }
           else
           {
@@ -1070,18 +1070,18 @@ int MainPageEnter(void *, BOOK *bk)
   myModifyUIHook(STANDBY_IDLE_EVENT,PHONE_IN_STBY_EVENT,StandbyModeActivatedHook,1);
   
   GUI_status = StatusRow_p();
-  Status_desc = DISP_OBJ_GetDESC (* GUI_status);
-  Status_oldReDraw = DISP_OBJ_GetOnRedraw (* GUI_status);
+  Status_desc = DispObject_GetDESC (* GUI_status);
+  Status_oldReDraw = DispObject_GetOnRedraw (* GUI_status);
   DISP_DESC_SetOnRedraw (Status_desc, (DISP_OBJ_ONREDRAW_METHOD)Status_ReDraw);
   
   GUI_soft = DispObject_SoftKeys_Get();
-  Soft_desc = DISP_OBJ_GetDESC (GUI_soft);
-  Soft_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_soft);
+  Soft_desc = DispObject_GetDESC (GUI_soft);
+  Soft_oldReDraw = DispObject_GetOnRedraw(GUI_soft);
   DISP_DESC_SetOnRedraw(Soft_desc, (DISP_OBJ_ONREDRAW_METHOD)Soft_ReDraw);
   
-  GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
-  Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
-  Display_desc = DISP_OBJ_GetDESC (GUI_display);
+  GUI_display = GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
+  Display_oldReDraw = DispObject_GetOnRedraw(GUI_display);
+  Display_desc = DispObject_GetDESC (GUI_display);
   DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
   
   ModifyKeyHook(NewKey, 1);

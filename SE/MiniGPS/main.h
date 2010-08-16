@@ -7,7 +7,7 @@
 #define LAUTHORINFO L"© copini\ntweaks by\nzoyd, Ploik, mousex, Joker XT, Stonos, BigHercules"
 #define LTRANSLATED L"Translated by "
 
-#define FREE_GUI(a) if (a) {GUI_Free(a); a=0;}
+#define FREE_GUI(a) if (a) {GUIObject_Destroy(a); a=0;}
 #define COLOR_RGBA(r,g,b,a) (((unsigned int)r<<16)|((unsigned int)g<<8)|((unsigned int)b)|((unsigned int)a<<24))
 
 #define empty 0x6FFFFFFF

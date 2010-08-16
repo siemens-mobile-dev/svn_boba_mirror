@@ -145,7 +145,7 @@ int menu_list_callback(GUI_MESSAGE * msg)
     int curitem=GUIonMessage_GetCreatedItemIndex(msg);
 //    MyBOOK * bk = (MyBOOK *)msg->book;
     MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
-    int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+    int indx = TabMenuBar_GetFocusedTab(bk->gui);
     icon_id = img_menu[menuiconsnum[curitem]].ImageID;
     if (curitem!= SLEEP_CMD){
       str_id  = Str2ID(menutexts[curitem],0,SID_ANY_LEN);
@@ -164,7 +164,7 @@ int menu_list_callback(GUI_MESSAGE * msg)
     strID_array[0]=icon_id+0x78000000;
     strID_array[1]=0x78000020;
     strID_array[2]=str_id;
-    SetMenuItemText0(msg,Str2ID(strID_array,5,3));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(strID_array,5,3));
   }
   return(1);
 }
@@ -183,7 +183,7 @@ void CancelMenuList( BOOK* book, GUI* )
 void Menu_onEnter( BOOK* book, GUI* )
 {
   MyBOOK * bk = (MyBOOK *)book;
-  int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+  int indx = TabMenuBar_GetFocusedTab(bk->gui);
   int item_num = ActivePOS = ListMenu_GetSelectedItem(bk->menu_list[indx]);
   menuprocs[item_num](indx, book,(!GetSilent() || sndOnSilent) && sndEnable);
   //BookObj_ReturnPage(book,ACCEPT_EVENT);
@@ -192,7 +192,7 @@ void Menu_onEnter( BOOK* book, GUI* )
 void Menu_OnKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 {
   MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
-  int indx = TabMenuBar_GetFocusedTabIndex(bk->gui);
+  int indx = TabMenuBar_GetFocusedTab(bk->gui);
   bk->Menu_oldOnKey[indx](p,i1,i2,i3,i4);
   if(i4==KBD_SHORT_RELEASE)
   {
@@ -201,13 +201,13 @@ void Menu_OnKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
     {
       int item = ListMenu_GetSelectedItem(bk->menu_list[indx]) - 1;
       if(item < 0) item = MENU_ITEMS_COUNT - 1;
-      SetCursorToItem(bk->menu_list[indx],item);
+      ListMenu_SetCursorToItem(bk->menu_list[indx],item);
     }
     else if((num == 8) || (num == 0))
     {
       int item = ListMenu_GetSelectedItem(bk->menu_list[indx]) + 1;
       if(item >= MENU_ITEMS_COUNT) item = 0;
-      SetCursorToItem(bk->menu_list[indx],item);
+      ListMenu_SetCursorToItem(bk->menu_list[indx],item);
     }
     else if(num == 5)
     {
@@ -228,37 +228,37 @@ int CreateMenuList(void *data, BOOK * book)
   if(tab_pos >= Pets[0].Status.Count) tab_pos = 0;
   if(menu_pos >= MENU_ITEMS_COUNT) menu_pos = 0;
   MyBOOK * bk = (MyBOOK *)book;
-  if(bk->gui) GUI_Free( bk->gui);
+  if(bk->gui) GUIObject_Destroy( bk->gui);
   FREE_GUI(bk->stat_list);
 
   bk->gui = CreateTabMenuBar(book);
   TabMenuBar_SetTabCount(bk->gui,Pets[0].Status.Count);
   for(int indx=0; indx < Pets[0].Status.Count; indx++)
   {
-    if (bk->menu_list[indx]) GUI_Free( bk->menu_list[indx]);
-    bk->menu_list[indx]=CreateListObject(book,0);
-    GuiObject_SetTitleText(bk->menu_list[indx],Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
+    if (bk->menu_list[indx]) GUIObject_Destroy( bk->menu_list[indx]);
+    bk->menu_list[indx]=CreateListMenu(book,0);
+    GUIObject_SetTitleText(bk->menu_list[indx],Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
 
-    SetNumOfMenuItem(bk->menu_list[indx],MENU_ITEMS_COUNT);
-    OneOfMany_SetonMessage((GUI_ONEOFMANY*)bk->menu_list[indx],menu_list_callback);
-    SetCursorToItem(bk->menu_list[indx],menu_pos);
+    ListMenu_SetItemCount(bk->menu_list[indx],MENU_ITEMS_COUNT);
+    OneOfMany_SetOnMessage((GUI_ONEOFMANY*)bk->menu_list[indx],menu_list_callback);
+    ListMenu_SetCursorToItem(bk->menu_list[indx],menu_pos);
 
-    GUIObject_Softkey_SetAction(bk->menu_list[indx],ACTION_BACK,DestroyMenuList);
-    GUIObject_Softkey_SetAction(bk->menu_list[indx],ACTION_LONG_BACK,CancelMenuList);
-    GUIObject_Softkey_SetAction(bk->menu_list[indx],ACTION_SELECT1,Menu_onEnter);
+    GUIObject_SoftKeys_SetAction(bk->menu_list[indx],ACTION_BACK,DestroyMenuList);
+    GUIObject_SoftKeys_SetAction(bk->menu_list[indx],ACTION_LONG_BACK,CancelMenuList);
+    GUIObject_SoftKeys_SetAction(bk->menu_list[indx],ACTION_SELECT1,Menu_onEnter);
 
-    bk->Menu_oldOnKey[indx] = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(bk->menu_list[indx]) );
-    DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(bk->menu_list[indx]) ), Menu_OnKey );
+    bk->Menu_oldOnKey[indx] = DispObject_GetOnKey( GUIObject_GetDispObject(bk->menu_list[indx]) );
+    DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(bk->menu_list[indx]) ), Menu_OnKey );
 
-    TabMenuBar_AssignGuiObj(bk->gui,indx,bk->menu_list[indx]);
+    TabMenuBar_SetTabGui(bk->gui,indx,bk->menu_list[indx]);
 
     TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_BOREDOM_ICN].ImageID,0);
     TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_SMILE_ICN].ImageID,1);
   }
-  TabMenuBar_SetTabFocused(bk->gui,tab_pos);
+  TabMenuBar_SetFocusedTab(bk->gui,tab_pos);
   TabMenuBar_SetOnTabSwitch(bk->gui,onTabSwitch);
   BookObj_SetFocus(book,0);
-  ShowWindow(bk->gui);
+  GUIObject_Show(bk->gui);
   return(0);
 }
 
@@ -268,7 +268,7 @@ int ExitMenuList(void *data, BOOK * book)
 
   if (bk->stat_list)
   {
-    GUI_Free( bk->stat_list);
+    GUIObject_Destroy( bk->stat_list);
     bk->stat_list=0;
   }
 
@@ -276,15 +276,15 @@ int ExitMenuList(void *data, BOOK * book)
   {
     if (bk->menu_list[i])
     {
-      GUI_Free( bk->menu_list[i]);
+      GUIObject_Destroy( bk->menu_list[i]);
       bk->menu_list[i]=0;
     }
   }
 
   if (bk->gui)
   {
-    ActiveTAB = TabMenuBar_GetFocusedTabIndex(bk->gui);
-    GUI_Free( bk->gui);
+    ActiveTAB = TabMenuBar_GetFocusedTab(bk->gui);
+    GUIObject_Destroy( bk->gui);
     bk->gui=0;
   }
 

@@ -187,7 +187,7 @@ void CreateTextInput(MyBOOK *myBook)
   {
     en=1;
   }
-  myBook->StringInput = CreateStringInput(0,
+  myBook->StringInput = CreateStringInputVA(0,
                                               VAR_HEADER_TEXT(GetStrID(L"WAP_ENTER_SK")),
                                               VAR_STRINP_FIXED_TEXT(GetStrID(L"EC_TEXTP_TXT")),
                                               VAR_STRINP_ENABLE_EMPTY_STR(en),

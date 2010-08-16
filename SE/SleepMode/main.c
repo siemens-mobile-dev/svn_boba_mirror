@@ -178,12 +178,12 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
 int onSleepModeActivate (void * ,BOOK * book)
 {
   // после создания SleepMode заменяем onRedraw
-  BOOK * ScreenSaverBook = FindBook(isScreenSaverBook());
+  BOOK * ScreenSaverBook = FindBook(get_IsScreenSaverBook());
   if (ScreenSaverBook)
   {
-    DISP_OBJ * g=GUIObj_GetDISPObj(((ScrSavBook*)ScreenSaverBook)->SleepMode);
-    OldonRedraw=DISP_OBJ_GetOnRedraw(g);
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(g),DrawScreenSaver);
+    DISP_OBJ * g=GUIObject_GetDispObject(((ScrSavBook*)ScreenSaverBook)->SleepMode);
+    OldonRedraw=DispObject_GetOnRedraw(g);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(g),DrawScreenSaver);
   }
   return(0);
 }

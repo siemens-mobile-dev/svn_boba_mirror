@@ -50,13 +50,13 @@ void KeyCode_OnClose(BOOK *bk)
       if (mbk->curit->keys && mbk->curit->keys->FirstFree>0)
       {
         int old=mbk->curit->keys->FirstFree;
-        KEY *k=(KEY*)ListElement_GetByIndex(mbk->curit->keys,mbk->curit->keys->FirstFree-1);
+        KEY *k=(KEY*)List_Get(mbk->curit->keys,mbk->curit->keys->FirstFree-1);
         if (k==mbk->curkey)
         {
-          delete((KEY*)ListElement_Remove(mbk->curit->keys,mbk->curit->keys->FirstFree-1));
+          delete((KEY*)List_RemoveAt(mbk->curit->keys,mbk->curit->keys->FirstFree-1));
           if ((old-1)==0)
           {
-            List_Free(mbk->curit->keys);
+            List_Destroy(mbk->curit->keys);
             mbk->curit->keys=0;
           }
         }
@@ -101,10 +101,10 @@ int KeyCode_OnEnter(void *, BOOK * bk)
     sid[1]=Str2ID(L"-empty-",0,SID_ANY_LEN);
   }
   Feedback_SetTextExtended(mbk->keyselect,Str2ID(sid,5,2),0);
-  GUI_SetStyle(mbk->keyselect,1);
+  GUIObject_SetStyle(mbk->keyselect,1);
   Feedback_SetKeyHook(mbk->keyselect,KeyCode_KeyHook);
   Feedback_SetOnClose(mbk->keyselect,KeyCode_OnClose);
-  ShowWindow(mbk->keyselect);
+  GUIObject_Show(mbk->keyselect);
   return (1);
 };
 

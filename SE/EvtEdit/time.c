@@ -62,12 +62,12 @@ static int TI_OnEnter(void *,BOOK * bk)
                                 VAR_TIMEINP_TIME(&t),
                                 VAR_BOOK(&mbk->book),
                                 0);
-  GUIObject_Softkey_SetAction(mbk->tinput,ACTION_ACCEPT, AcceptTIinput);
-  GUIObject_Softkey_SetText(mbk->tinput,ACTION_ACCEPT,GetStrID(L"CB_MESSAGE_RECEIVED_SAVE_SK"));
-  GUIObject_SoftKey_SetVisible(mbk->tinput,ACTION_ACCEPT,1);
-  GUIObject_Softkey_SetAction(mbk->tinput,ACTION_BACK, CloseTIinput);
+  GUIObject_SoftKeys_SetAction(mbk->tinput,ACTION_ACCEPT, AcceptTIinput);
+  GUIObject_SoftKeys_SetText(mbk->tinput,ACTION_ACCEPT,GetStrID(L"CB_MESSAGE_RECEIVED_SAVE_SK"));
+  GUIObject_SoftKeys_SetVisible(mbk->tinput,ACTION_ACCEPT,1);
+  GUIObject_SoftKeys_SetAction(mbk->tinput,ACTION_BACK, CloseTIinput);
   if (iconidname2id(IDN_TIME_INPUT_ICON,-1,&icon_id))
-    InputFeedback_SetIcon(mbk->tinput,icon_id);
+    GUIInput_SetIcon(mbk->tinput,icon_id);
   return (1);
 };
 

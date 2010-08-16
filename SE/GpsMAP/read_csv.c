@@ -66,7 +66,7 @@ int ReadCsvFile(TOWN *town)
               bs->point_x=point_x;
               bs->point_y=point_y;
               created_elem++;
-              ListElement_Add(town->bs_dat,bs);
+              List_InsertLast(town->bs_dat,bs);
             }
             if (!c) break;
             state=CSV_CI;
@@ -85,7 +85,7 @@ void DestroyCsvList(TOWN *town)
 {
   while(town->bs_dat->FirstFree)
   {
-    BS_POINT *bs=(BS_POINT *)ListElement_Remove(town->bs_dat,0);
+    BS_POINT *bs=(BS_POINT *)List_RemoveAt(town->bs_dat,0);
     delete bs;    
   }
 }
@@ -109,12 +109,12 @@ TOWN *FindTownByCiLac(MAIN_INI *ini, int ci, int lac)
 {
   for (int t=0; t<ini->towns->FirstFree; t++)
   {
-    TOWN *town=(TOWN *)ListElement_GetByIndex(ini->towns,t);
+    TOWN *town=(TOWN *)List_Get(ini->towns,t);
     if (ReadCsvFile(town))
     {
       for (int b=0; b<town->bs_dat->FirstFree; b++)
       {
-        BS_POINT *bs=(BS_POINT *)ListElement_GetByIndex(town->bs_dat,b);
+        BS_POINT *bs=(BS_POINT *)List_Get(town->bs_dat,b);
         if (bs->ci==ci/10 && bs->lac==lac)
         {
           if (bs->point_x>=town->start_x && bs->point_x<=town->end_x &&

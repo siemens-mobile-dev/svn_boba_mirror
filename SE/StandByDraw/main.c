@@ -59,7 +59,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
     if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) SIonRedraw=sbm->SB_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),Draw);
 
     // и шлём мессагу снова, чтоб следующие эльфы сделали тоже самое
     res->SB_OldOnRedraw=EMPTY_REDRAW_METHOD;
@@ -89,7 +89,7 @@ void elf_exit(void)
 
 void onfTimer (u16 tmr , void *)
 {
-  InvalidateRect(StatusIndication,0);
+  DispObject_InvalidateRect(StatusIndication,0);
   Timer_ReSet(&ftimer,20,onfTimer,0);
 }
 
@@ -112,7 +112,7 @@ void onCloseMyBook(BOOK * book)
   if (book)
   {
     Timer_Kill(&ftimer);
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),SIonRedraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),SIonRedraw);
     SUBPROC(elf_exit);
   }
 }
@@ -138,9 +138,9 @@ int main (void)
   Width=Display_GetWidth(0);;
   CreateSBDBook();
 
-  StatusIndication=GUIObj_GetDISPObj ( SBY_GetStatusIndication(Find_StandbyBook()) );
-  SIonRedraw=DISP_OBJ_GetOnRedraw(StatusIndication);
-  DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
+  StatusIndication=GUIObject_GetDispObject ( SBY_GetStatusIndication(Find_StandbyBook()) );
+  SIonRedraw=DispObject_GetOnRedraw(StatusIndication);
+  DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),Draw);
   ftimer=Timer_Set(20,onfTimer,0);
   return(0);
 }

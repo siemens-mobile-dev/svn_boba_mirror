@@ -44,7 +44,7 @@ void Init()
   }
   skin_execute_xml(folder, L"Theme.xml");
   delete(folder);   
-  InvalidateRect(DispObject_SoftKeys_Get(),&rect);
+  DispObject_InvalidateRect(DispObject_SoftKeys_Get(),&rect);
 };
 
 int isSoftkeysBook_ByName(BOOK *bk);
@@ -53,14 +53,14 @@ GUI *help=0;
 
 void OnYesExitGui(BOOK * bk, GUI *)
 {
-  GUI_Free(help);
+  GUIObject_Destroy(help);
   FreeBook(bk);
   SUBPROC(elf_exit);
 };
 
 void OnBackExitGui(BOOK * bk, GUI *)
 {
-  GUI_Free(help);
+  GUIObject_Destroy(help);
   BookObj_Hide(bk, 0);
   SUBPROC(elf_exit);
 };
@@ -76,9 +76,9 @@ int main(wchar_t *elfpath)
                                      VAR_YESNO_PRE_QUESTION(Str2ID(L"AdvSoftkeys is already runned",0,SID_ANY_LEN)),
                                      VAR_YESNO_QUESTION(Str2ID(L"Do you want to close it now?",0,SID_ANY_LEN)),
                                      0);
-    GUIObject_Softkey_SetAction(help,ACTION_YES,OnYesExitGui);
-    GUIObject_Softkey_SetAction(help,ACTION_NO,OnBackExitGui);
-    GUIObject_Softkey_SetAction(help,ACTION_BACK,OnBackExitGui);
+    GUIObject_SoftKeys_SetAction(help,ACTION_YES,OnYesExitGui);
+    GUIObject_SoftKeys_SetAction(help,ACTION_NO,OnBackExitGui);
+    GUIObject_SoftKeys_SetAction(help,ACTION_BACK,OnBackExitGui);
     return 0;
   }
   wstrcpy(myelfpath,elfpath);

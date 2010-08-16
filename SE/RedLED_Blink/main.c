@@ -42,7 +42,7 @@ int BeginTimer_event(void *,BOOK * RLBook)
 void BeginTimer(u16 unk,void * RLBook)
 {
   BATT bat_struct;
-  GetBattaryState(SYNC,&bat_struct);
+  GetBatteryState(SYNC,&bat_struct);
   if ((bat_struct.ChargingState!=7)&&(bat_struct.ChargingState!=8))
   {
     RedLED_On(0);

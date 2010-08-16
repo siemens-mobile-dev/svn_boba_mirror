@@ -587,17 +587,17 @@ void DestroyInputBooks2()
 {
   if(TagBook->InputTitle2)
   {
-    GUI_Free(TagBook->InputTitle2);
+    GUIObject_Destroy(TagBook->InputTitle2);
     TagBook->InputTitle2=0;
   }
   if(TagBook->InputAlbum2)
   {
-    GUI_Free(TagBook->InputAlbum2);
+    GUIObject_Destroy(TagBook->InputAlbum2);
     TagBook->InputAlbum2=0;
   }
   if(TagBook->InputAutor2)
   {
-    GUI_Free(TagBook->InputAutor2);
+    GUIObject_Destroy(TagBook->InputAutor2);
     TagBook->InputAutor2=0;
   }
 }
@@ -609,7 +609,7 @@ void OnEntInputTitle2(BOOK *,wchar_t * string,int len)
   wstrcpy(TagBook->UTitle2, string);
   TagBook->change++;
   DestroyInputBooks2();
-  ShowWindow(TagBook->MenuList2);
+  GUIObject_Show(TagBook->MenuList2);
 }
 
 void OnEntInputAutor2(BOOK *,wchar_t * string,int len)
@@ -619,7 +619,7 @@ void OnEntInputAutor2(BOOK *,wchar_t * string,int len)
   wstrcpy(TagBook->UAutor2, string);
   TagBook->change++;
   DestroyInputBooks2();
-  ShowWindow(TagBook->MenuList2);
+  GUIObject_Show(TagBook->MenuList2);
 }
 
 void OnEntInputAlbum2(BOOK *,wchar_t * string,int len)
@@ -629,12 +629,12 @@ void OnEntInputAlbum2(BOOK *,wchar_t * string,int len)
   wstrcpy(TagBook->UAlbum2, string);
   TagBook->change++;
   DestroyInputBooks2();
-  ShowWindow(TagBook->MenuList2);
+  GUIObject_Show(TagBook->MenuList2);
 }
 
 void InputTitleF2()
 {
-  TagBook->InputTitle2=CreateStringInput(0,
+  TagBook->InputTitle2=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks2),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks2),
                                        VAR_BOOK(TagBook),
@@ -649,7 +649,7 @@ void InputTitleF2()
 
 void InputAutorF2()
 {
-    TagBook->InputAutor2=CreateStringInput(0,
+    TagBook->InputAutor2=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks2),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks2),
                                        VAR_BOOK(TagBook),
@@ -663,7 +663,7 @@ void InputAutorF2()
 
 void InputAlbumF2()
 {
-    TagBook->InputAlbum2=CreateStringInput(0,
+    TagBook->InputAlbum2=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks2),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks2),
                                        VAR_BOOK(TagBook),
@@ -694,7 +694,7 @@ void OnEntML2( BOOK* bk, GUI* )
 
 void ExitML2( BOOK*, GUI* )
 {
-  GUI_Free(TagBook->MenuList2);
+  GUIObject_Destroy(TagBook->MenuList2);
   TagBook->MenuList2=0;
   CreateGlavMenu(1);
 }
@@ -709,24 +709,24 @@ int SetTitleML2(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_TITLE,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UTitle2,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_TITLE,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UTitle2,0,SID_ANY_LEN));
         iconidname2id(Iconr,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==1)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_ARTIST,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UAutor2,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_ARTIST,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UAutor2,0,SID_ANY_LEN));
         iconidname2id(Icont,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==2)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_ALBUM,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UAlbum2,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_ALBUM,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UAlbum2,0,SID_ANY_LEN));
         iconidname2id(Icony,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }      
   }
   return(1);        
@@ -738,14 +738,14 @@ void PlayF2( BOOK* bk, GUI* )
   {
     PlayFile(TagBook->path,TagBook->name);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_STOP);
-    GUIObject_Softkey_SetText(TagBook->MenuList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->MenuList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=1;
   }
   else
   {
     PlaySystemSound(7);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_PLAY);
-    GUIObject_Softkey_SetText(TagBook->MenuList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->MenuList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=0;
   }
 }
@@ -774,7 +774,7 @@ void DeleteTag2(int x){
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
+  if(TagBook->MenuList2) GUIObject_Destroy(TagBook->MenuList2);
   CreateML2(x);
 }
 
@@ -876,7 +876,7 @@ void CopyFromName2(int x)
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
+  if(TagBook->MenuList2) GUIObject_Destroy(TagBook->MenuList2);
   CreateML2(x);
 }
 
@@ -908,7 +908,7 @@ void CopyFromID3v1(int x)
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList2) GUI_Free(TagBook->MenuList2);
+  if(TagBook->MenuList2) GUIObject_Destroy(TagBook->MenuList2);
   CreateML2(x);
 }
   
@@ -955,28 +955,28 @@ void NewKey2(DISP_OBJ * p, int i1, int i2, int i3, int i4)
 
 void CreateML2(int x)
 {
-  GUI_LIST*MList2=CreateListObject((BOOK*)TagBook,0);
+  GUI_LIST*MList2=CreateListMenu((BOOK*)TagBook,0);
   TagBook->MenuList2=MList2;
-  GuiObject_SetTitleText(MList2, Str2ID(NAME_EDIT2,0,SID_ANY_LEN));
-  SetNumOfMenuItem(MList2, 3);
-  OneOfMany_SetonMessage(MList2,SetTitleML2);
-  SetCursorToItem(MList2,x);
-  SetMenuItemStyle(MList2,3);
-  GUIObject_Softkey_SetAction(MList2,ACTION_BACK,ExitML2);
-  GUIObject_Softkey_SetAction(MList2,ACTION_LONG_BACK,ExitML2);
-  GUIObject_Softkey_SetAction(MList2,ACTION_SELECT1,OnEntML2);	
-  GUIObject_Softkey_SetAction(MList2,1,PlayF2);
-  GUIObject_Softkey_SetText(MList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey2 = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(MList2) );
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(MList2) ), NewKey2);
-  ShowWindow(MList2);
+  GUIObject_SetTitleText(MList2, Str2ID(NAME_EDIT2,0,SID_ANY_LEN));
+  ListMenu_SetItemCount(MList2, 3);
+  OneOfMany_SetOnMessage(MList2,SetTitleML2);
+  ListMenu_SetCursorToItem(MList2,x);
+  ListMenu_SetItemStyle(MList2,3);
+  GUIObject_SoftKeys_SetAction(MList2,ACTION_BACK,ExitML2);
+  GUIObject_SoftKeys_SetAction(MList2,ACTION_LONG_BACK,ExitML2);
+  GUIObject_SoftKeys_SetAction(MList2,ACTION_SELECT1,OnEntML2);	
+  GUIObject_SoftKeys_SetAction(MList2,1,PlayF2);
+  GUIObject_SoftKeys_SetText(MList2,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+  TagBook->OldKey2 = DispObject_GetOnKey( GUIObject_GetDispObject(MList2) );
+  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(MList2) ), NewKey2);
+  GUIObject_Show(MList2);
 }
 
 void ExitMG( BOOK*, GUI* )
 {
-  GUI_Free(TagBook->GList);
+  GUIObject_Destroy(TagBook->GList);
   TagBook->GList=0;
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void OnEntMG( BOOK* bk, GUI* )
@@ -1006,7 +1006,7 @@ int SetTitlePunktsMG(GUI_MESSAGE * msg)
         {
           wchar_t * Genre=new wchar_t[strlen(GetGenre(i))+1];
           win12512unicode(Genre,GetGenre(i),strlen(GetGenre(i))+1);
-          SetMenuItemText0(msg,Str2ID(Genre,0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemText(msg,Str2ID(Genre,0,SID_ANY_LEN));
           delete Genre;
         }
       }
@@ -1016,16 +1016,16 @@ int SetTitlePunktsMG(GUI_MESSAGE * msg)
       
 int MGList()
 {
-  GUI_LIST*MGList=CreateListObject((BOOK*)TagBook,0);
+  GUI_LIST*MGList=CreateListMenu((BOOK*)TagBook,0);
   TagBook->GList=MGList;
-  GuiObject_SetTitleText(MGList, Str2ID(NAME_GENRE,0,SID_ANY_LEN));
-  SetNumOfMenuItem(MGList, 148);
-  OneOfMany_SetonMessage(MGList,SetTitlePunktsMG);
-  SetCursorToItem(MGList,TagBook->genre);
-  GUIObject_Softkey_SetAction(MGList,ACTION_BACK,ExitMG);
-  GUIObject_Softkey_SetAction(MGList,ACTION_LONG_BACK,ExitMG);
-  GUIObject_Softkey_SetAction(MGList,ACTION_SELECT1,OnEntMG);	
-  ShowWindow(MGList);
+  GUIObject_SetTitleText(MGList, Str2ID(NAME_GENRE,0,SID_ANY_LEN));
+  ListMenu_SetItemCount(MGList, 148);
+  OneOfMany_SetOnMessage(MGList,SetTitlePunktsMG);
+  ListMenu_SetCursorToItem(MGList,TagBook->genre);
+  GUIObject_SoftKeys_SetAction(MGList,ACTION_BACK,ExitMG);
+  GUIObject_SoftKeys_SetAction(MGList,ACTION_LONG_BACK,ExitMG);
+  GUIObject_SoftKeys_SetAction(MGList,ACTION_SELECT1,OnEntMG);	
+  GUIObject_Show(MGList);
   return(0);
 }
 
@@ -1033,27 +1033,27 @@ void DestroyInputBooks()
 {
   if(TagBook->InputTitle)
   {
-    GUI_Free(TagBook->InputTitle);
+    GUIObject_Destroy(TagBook->InputTitle);
     TagBook->InputTitle=0;
   }
   if(TagBook->InputAlbum)
   {
-    GUI_Free(TagBook->InputAlbum);
+    GUIObject_Destroy(TagBook->InputAlbum);
     TagBook->InputAlbum=0;
   }
   if(TagBook->InputAutor)
   {
-    GUI_Free(TagBook->InputAutor);
+    GUIObject_Destroy(TagBook->InputAutor);
     TagBook->InputAutor=0;
   }
   if(TagBook->InputYear)
   {
-    GUI_Free(TagBook->InputYear);
+    GUIObject_Destroy(TagBook->InputYear);
     TagBook->InputYear=0;
   }
   if(TagBook->InputComment)
   {
-    GUI_Free(TagBook->InputComment);
+    GUIObject_Destroy(TagBook->InputComment);
     TagBook->InputComment=0;
   }
 }
@@ -1070,7 +1070,7 @@ void OnEntInputTitle(BOOK *,wchar_t * string,int len)
   }
   TagBook->change++;
   DestroyInputBooks();
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void OnEntInputAutor(BOOK *,wchar_t * string,int len)
@@ -1085,7 +1085,7 @@ void OnEntInputAutor(BOOK *,wchar_t * string,int len)
   }
   TagBook->change++;
   DestroyInputBooks();
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void OnEntInputAlbum(BOOK *,wchar_t * string,int len)
@@ -1100,7 +1100,7 @@ void OnEntInputAlbum(BOOK *,wchar_t * string,int len)
   }
   TagBook->change++;
   DestroyInputBooks();
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void OnEntInputYear(BOOK *,wchar_t * string,int len)
@@ -1115,7 +1115,7 @@ void OnEntInputYear(BOOK *,wchar_t * string,int len)
   }
   TagBook->change++;
   DestroyInputBooks();
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void OnEntInputComment(BOOK *,wchar_t * string,int len)
@@ -1130,12 +1130,12 @@ void OnEntInputComment(BOOK *,wchar_t * string,int len)
   }
   TagBook->change++;
   DestroyInputBooks();
-  ShowWindow(TagBook->MenuList1);
+  GUIObject_Show(TagBook->MenuList1);
 }
 
 void InputTitleF()
 {
-  TagBook->InputTitle=CreateStringInput(0,
+  TagBook->InputTitle=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks),
                                        VAR_BOOK(TagBook),
@@ -1150,7 +1150,7 @@ void InputTitleF()
 
 void InputAutorF()
 {
-    TagBook->InputAutor=CreateStringInput(0,
+    TagBook->InputAutor=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks),
                                        VAR_BOOK(TagBook),
@@ -1164,7 +1164,7 @@ void InputAutorF()
 
 void InputAlbumF()
 {
-    TagBook->InputAlbum=CreateStringInput(0,
+    TagBook->InputAlbum=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks),
                                        VAR_BOOK(TagBook),
@@ -1178,7 +1178,7 @@ void InputAlbumF()
 
 void InputYearF()
 {
-    TagBook->InputYear=CreateStringInput(0,
+    TagBook->InputYear=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks),
                                        VAR_BOOK(TagBook),
@@ -1192,7 +1192,7 @@ void InputYearF()
 
 void InputCommentF()
 {
-  TagBook->InputComment=CreateStringInput(0,
+  TagBook->InputComment=CreateStringInputVA(0,
                                        VAR_PREV_ACTION_PROC(DestroyInputBooks),
                                        VAR_LONG_BACK_PROC(DestroyInputBooks),
                                        VAR_BOOK(TagBook),
@@ -1232,7 +1232,7 @@ void OnEntML1( BOOK* bk, GUI* )
 
 void ExitML1( BOOK*, GUI* )
 {
-  GUI_Free(TagBook->MenuList1);
+  GUIObject_Destroy(TagBook->MenuList1);
   TagBook->MenuList1=0;
   CreateGlavMenu(0);
 }
@@ -1247,47 +1247,47 @@ int SetTitleML1(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_TITLE,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UTitle,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_TITLE,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UTitle,0,SID_ANY_LEN));
         iconidname2id(Iconr,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==1)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_ARTIST,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UAutor,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_ARTIST,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UAutor,0,SID_ANY_LEN));
         iconidname2id(Icont,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==2)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_ALBUM,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UAlbum,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_ALBUM,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UAlbum,0,SID_ANY_LEN));
         iconidname2id(Icony,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==3)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_YEAR,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UYear,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_YEAR,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UYear,0,SID_ANY_LEN));
         iconidname2id(Iconu,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==4)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_COMMENT,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->UComment,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_COMMENT,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UComment,0,SID_ANY_LEN));
         iconidname2id(Iconi,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==5)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_GENRE,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_GENRE,0,SID_ANY_LEN));
         TagBook->UGenre=new wchar_t[strlen(GetGenre(TagBook->genre))+1];
         win12512unicode(TagBook->UGenre,GetGenre(TagBook->genre),strlen(GetGenre(TagBook->genre))+1);
-        SetMenuItemText1(msg,Str2ID(TagBook->UGenre,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->UGenre,0,SID_ANY_LEN));
         iconidname2id(Icono,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
   }
   return(1);        
@@ -1299,14 +1299,14 @@ void PlayF1( BOOK* bk, GUI* )
   {
     PlayFile(TagBook->path,TagBook->name);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_STOP);
-    GUIObject_Softkey_SetText(TagBook->MenuList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->MenuList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=1;
   }
   else
   {
     PlaySystemSound(7);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_PLAY);
-    GUIObject_Softkey_SetText(TagBook->MenuList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->MenuList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=0;
   }
 }
@@ -1350,7 +1350,7 @@ void DeleteTag1(int x)
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
+  if(TagBook->MenuList1) GUIObject_Destroy(TagBook->MenuList1);
   CreateML1(x);
 }
 
@@ -1403,7 +1403,7 @@ void CopyFromName1(int x)
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
+  if(TagBook->MenuList1) GUIObject_Destroy(TagBook->MenuList1);
   CreateML1(x);
 }
 
@@ -1456,7 +1456,7 @@ void CopyFromID3v2(int x)
     }
   }
   TagBook->change++;
-  if(TagBook->MenuList1) GUI_Free(TagBook->MenuList1);
+  if(TagBook->MenuList1) GUIObject_Destroy(TagBook->MenuList1);
   CreateML1(x);
 }
       
@@ -1517,21 +1517,21 @@ void NewKey1(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 
 void CreateML1(int x)
 {
-  GUI_LIST*MList1=CreateListObject((BOOK*)TagBook,0);
+  GUI_LIST*MList1=CreateListMenu((BOOK*)TagBook,0);
   TagBook->MenuList1=MList1;
-  GuiObject_SetTitleText(MList1, Str2ID(NAME_EDIT1,0,SID_ANY_LEN));
-  SetNumOfMenuItem(MList1, 6);
-  OneOfMany_SetonMessage(MList1,SetTitleML1);
-  SetCursorToItem(MList1,x);
-  SetMenuItemStyle(MList1,3);
-  GUIObject_Softkey_SetAction(MList1,ACTION_BACK,ExitML1);
-  GUIObject_Softkey_SetAction(MList1,ACTION_LONG_BACK,ExitML1);
-  GUIObject_Softkey_SetAction(MList1,ACTION_SELECT1,OnEntML1);	
-  GUIObject_Softkey_SetAction(MList1,1,PlayF1);
-  GUIObject_Softkey_SetText(MList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey1 = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(MList1) );
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(MList1) ), NewKey1);
-  ShowWindow(MList1);
+  GUIObject_SetTitleText(MList1, Str2ID(NAME_EDIT1,0,SID_ANY_LEN));
+  ListMenu_SetItemCount(MList1, 6);
+  OneOfMany_SetOnMessage(MList1,SetTitleML1);
+  ListMenu_SetCursorToItem(MList1,x);
+  ListMenu_SetItemStyle(MList1,3);
+  GUIObject_SoftKeys_SetAction(MList1,ACTION_BACK,ExitML1);
+  GUIObject_SoftKeys_SetAction(MList1,ACTION_LONG_BACK,ExitML1);
+  GUIObject_SoftKeys_SetAction(MList1,ACTION_SELECT1,OnEntML1);	
+  GUIObject_SoftKeys_SetAction(MList1,1,PlayF1);
+  GUIObject_SoftKeys_SetText(MList1,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+  TagBook->OldKey1 = DispObject_GetOnKey( GUIObject_GetDispObject(MList1) );
+  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(MList1) ), NewKey1);
+  GUIObject_Show(MList1);
 }
   
   
@@ -1553,7 +1553,7 @@ void OnEntGM( BOOK* bk, GUI* )
   }
   if(item!=2)
   {
-    GUI_Free(TagBook->GlavMenu);
+    GUIObject_Destroy(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
 }
@@ -1604,7 +1604,7 @@ static int CreateDB(void *, BOOK * book)
   folder_list[1]=GetDir(DIR_AUDIO|MEM_EXTERNAL);
   folder_list[2]=0;
   DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(NAME_OPEN_FILE, 0, SID_ANY_LEN));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(book));
+  DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID(book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetSelectActionOnFolders(DB_Desc,1);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,2);
@@ -1627,9 +1627,9 @@ const PAGE_DESC base_db = {"TagEditor_openFile",0,bk_msglst_db};
 
 void YesPress( BOOK* bk, GUI* )
 {
-  GUI_Free(TagBook->yn);
+  GUIObject_Destroy(TagBook->yn);
   TagBook->yn=0;
-  GUI_Free(TagBook->GlavMenu);
+  GUIObject_Destroy(TagBook->GlavMenu);
   TagBook->GlavMenu=0;
   FileWrite();
   BookObj_GotoPage(&TagBook->book, &base_db);
@@ -1641,18 +1641,18 @@ void NoPress( BOOK* bk, GUI* )
   {
     elfload(TagBook->TON,0,0,0);
   }
-  GUI_Free(TagBook->yn);
+  GUIObject_Destroy(TagBook->yn);
   TagBook->yn=0;
-  GUI_Free(TagBook->GlavMenu);
+  GUIObject_Destroy(TagBook->GlavMenu);
   TagBook->GlavMenu=0;
   BookObj_GotoPage(&TagBook->book, &base_db);
 }
 
 void ExitYN( BOOK* bk, GUI* )
 {
-  GUI_Free(TagBook->yn);
+  GUIObject_Destroy(TagBook->yn);
   TagBook->yn=0;
-  ShowWindow(TagBook->GlavMenu);
+  GUIObject_Show(TagBook->GlavMenu);
 }
 
 void YesNo()
@@ -1665,10 +1665,10 @@ void YesNo()
                                     VAR_BOOK(TagBook),
                                     VAR_YESNO_QUESTION(Str2ID(QUESTION_SAVE_FILE, 0, SID_ANY_LEN)),
                                     0);
-  GUIObject_Softkey_SetAction(TagBook->yn, ACTION_YES, YesPress);
-  GUIObject_Softkey_SetAction(TagBook->yn, ACTION_NO, NoPress);
-  GUIObject_Softkey_SetAction(TagBook->yn, ACTION_BACK, ExitYN);
-  GUIObject_Softkey_SetAction(TagBook->yn, ACTION_LONG_BACK, ExitYN);
+  GUIObject_SoftKeys_SetAction(TagBook->yn, ACTION_YES, YesPress);
+  GUIObject_SoftKeys_SetAction(TagBook->yn, ACTION_NO, NoPress);
+  GUIObject_SoftKeys_SetAction(TagBook->yn, ACTION_BACK, ExitYN);
+  GUIObject_SoftKeys_SetAction(TagBook->yn, ACTION_LONG_BACK, ExitYN);
 }
 
 void ExitGM( BOOK* bk, GUI* )
@@ -1679,7 +1679,7 @@ void ExitGM( BOOK* bk, GUI* )
   }
   else
   {
-    GUI_Free(TagBook->GlavMenu);
+    GUIObject_Destroy(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
     BookObj_GotoPage(&TagBook->book, &base_db);
   }
@@ -1695,25 +1695,25 @@ int SetTitlePunktsGM(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        SetMenuItemText0(msg,Str2ID(L"ID3v1",0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(NAME_EDIT1,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(L"ID3v1",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(NAME_EDIT1,0,SID_ANY_LEN));
         iconidname2id(Iconq,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
       if(item==1)
       {
-        SetMenuItemText0(msg,Str2ID(L"ID3v2",0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(NAME_EDIT2,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(L"ID3v2",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(NAME_EDIT2,0,SID_ANY_LEN));
         iconidname2id(Iconw,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
         
       }
       if(item==2)
       {
-        SetMenuItemText0(msg,Str2ID(MENU_ITEM_TEXT_INFO,0,SID_ANY_LEN));
-        SetMenuItemText1(msg,Str2ID(TagBook->name,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(MENU_ITEM_TEXT_INFO,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(TagBook->name,0,SID_ANY_LEN));
         iconidname2id(Icone,-1,&imgID);
-        SetListObjectItemIcon(msg, 0, imgID);
+        GUIonMessage_SetMenuItemIcon(msg, 0, imgID);
       }
   }
   return(1);        
@@ -1725,12 +1725,12 @@ void PlayF( BOOK* bk, GUI* )
   {
     PlayFile(TagBook->path,TagBook->name);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_STOP);
-    GUIObject_Softkey_SetText(TagBook->GlavMenu,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->GlavMenu,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=1;
   }else{
     PlaySystemSound(7);
     wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_PLAY);
-    GUIObject_Softkey_SetText(TagBook->GlavMenu,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(TagBook->GlavMenu,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
     TagBook->PlayMode=0;
   }
 }
@@ -1787,13 +1787,13 @@ void NewKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+1))
   {
     CreateML1(0);
-    GUI_Free(TagBook->GlavMenu);
+    GUIObject_Destroy(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+2))
   {
     CreateML2(0);
-    GUI_Free(TagBook->GlavMenu);
+    GUIObject_Destroy(TagBook->GlavMenu);
     TagBook->GlavMenu=0;
   }
   if(i4==KBD_SHORT_RELEASE && i1==(KEY_DIGITAL_0+3))
@@ -1808,21 +1808,21 @@ void NewKey(DISP_OBJ* p, int i1, int i2, int i3, int i4)
 
 void CreateGlavMenu(int x)
 {
-  GUI_LIST*GM=CreateListObject((BOOK*)TagBook,0);
+  GUI_LIST*GM=CreateListMenu((BOOK*)TagBook,0);
   TagBook->GlavMenu=GM;
-  GuiObject_SetTitleText(GM, Str2ID(NAME_TAG_EDITOR,0,SID_ANY_LEN));
-  SetNumOfMenuItem(GM, 3);
-  OneOfMany_SetonMessage(GM,SetTitlePunktsGM);
-  SetCursorToItem(GM,x);
-  SetMenuItemStyle(GM,3);
-  GUIObject_Softkey_SetAction(GM,ACTION_BACK,ExitGM);
-  GUIObject_Softkey_SetAction(GM,ACTION_LONG_BACK,ExitGM);
-  GUIObject_Softkey_SetAction(GM,ACTION_SELECT1,OnEntGM);	
-  GUIObject_Softkey_SetAction(GM,1,PlayF);
-  GUIObject_Softkey_SetText(GM,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
-  TagBook->OldKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(GM) );
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(GM) ), NewKey);
-  ShowWindow(GM);
+  GUIObject_SetTitleText(GM, Str2ID(NAME_TAG_EDITOR,0,SID_ANY_LEN));
+  ListMenu_SetItemCount(GM, 3);
+  OneOfMany_SetOnMessage(GM,SetTitlePunktsGM);
+  ListMenu_SetCursorToItem(GM,x);
+  ListMenu_SetItemStyle(GM,3);
+  GUIObject_SoftKeys_SetAction(GM,ACTION_BACK,ExitGM);
+  GUIObject_SoftKeys_SetAction(GM,ACTION_LONG_BACK,ExitGM);
+  GUIObject_SoftKeys_SetAction(GM,ACTION_SELECT1,OnEntGM);	
+  GUIObject_SoftKeys_SetAction(GM,1,PlayF);
+  GUIObject_SoftKeys_SetText(GM,1,Str2ID(TagBook->PlayText,0,SID_ANY_LEN));
+  TagBook->OldKey = DispObject_GetOnKey( GUIObject_GetDispObject(GM) );
+  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(GM) ), NewKey);
+  GUIObject_Show(GM);
 }
   
 

@@ -370,7 +370,7 @@ int onSessionEstablished(void * r0, BOOK *)
     elem_gprs->ID=((ses_est*)r0)->unkID;
     elem_gprs->SesEst=new(DATETIME);
     REQUEST_DATEANDTIME_GET(SYNC,elem_gprs->SesEst);
-    ListElement_AddtoTop(myList_gprs,elem_gprs);
+    List_InsertFirst(myList_gprs,elem_gprs);
   }
   return(0);
 }
@@ -391,10 +391,10 @@ int onSessionTerminated(void * r0, BOOK *)
     
     myList_gprs_elem * temp_elem_gprs=new(myList_gprs_elem);
     temp_elem_gprs->ID=((ses_term*)r0)->unkID;
-    int pos=ListElement_Find(myList_gprs,temp_elem_gprs,myList_gprs_Find);
+    int pos=List_Find(myList_gprs,temp_elem_gprs,myList_gprs_Find);
     if (pos!=LIST_ERROR)
     {
-      myList_gprs_elem * elem_gprs=(myList_gprs_elem*)ListElement_Remove(myList_gprs,pos);
+      myList_gprs_elem * elem_gprs=(myList_gprs_elem*)List_RemoveAt(myList_gprs,pos);
       wstrcpy(fpath_gprs,GetDir(DIR_OTHER | MEM_EXTERNAL));
       wstrcat(fpath_gprs,L"/Call Logger/");
       snwprintf(folder_gprs,20,L"%04d-%02d-%02d",elem_gprs->SesEst->date.year,elem_gprs->SesEst->date.mon,elem_gprs->SesEst->date.day);
@@ -690,7 +690,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
     PNUM2str(sp,cms.PNUM,length,length+1);
     str2wstr(temp_elem->PNUM,sp);
     delete(sp);
-    if (ListElement_Find(myList,temp_elem,myList_Find)==LIST_ERROR)
+    if (List_Find(myList,temp_elem,myList_Find)==LIST_ERROR)
     {
       temp_elem->startdatetime=new DATETIME;
       REQUEST_DATEANDTIME_GET(SYNC,temp_elem->startdatetime);
@@ -721,7 +721,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
       temp_elem->begindatetime->time.hour=0;
       temp_elem->begindatetime->time.min=0;
       temp_elem->begindatetime->time.sec=0;
-      ListElement_AddtoTop(myList,temp_elem);
+      List_InsertFirst(myList,temp_elem);
     }
     else
     {
@@ -729,7 +729,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
       {
         DATETIME * enddatetime=new DATETIME;
         REQUEST_DATEANDTIME_GET(SYNC,enddatetime);
-        myList_elem * elem=(myList_elem*)ListElement_Remove(myList,ListElement_Find(myList,temp_elem,myList_Find));
+        myList_elem * elem=(myList_elem*)List_RemoveAt(myList,List_Find(myList,temp_elem,myList_Find));
         int f;
         int sub;
         int m;
@@ -898,7 +898,7 @@ int OnCallManager(void * CallManStruct, BOOK *)
       }
       if (cms.CallState==1)
       {
-        myList_elem * elem=(myList_elem*)ListElement_GetByIndex(myList,ListElement_Find(myList,temp_elem,myList_Find));
+        myList_elem * elem=(myList_elem*)List_Get(myList,List_Find(myList,temp_elem,myList_Find));
         if (elem->last_callstate!=1)
         {
           elem->last_callstate=1;
@@ -950,10 +950,10 @@ void elf_exit(void)
 
 void onCloseCLBook(BOOK * CLBook)
 {
-  List_FreeElements(myList,myList_elem_Filter,myList_elem_Free);
-  List_Free(myList);
-  List_FreeElements(myList_gprs,myList_elem_Filter,myList_gprs_elem_Free);
-  List_Free(myList_gprs);
+  List_DestroyElements(myList,myList_elem_Filter,myList_elem_Free);
+  List_Destroy(myList);
+  List_DestroyElements(myList_gprs,myList_elem_Filter,myList_gprs_elem_Free);
+  List_Destroy(myList_gprs);
   if (Money) delete(Money);
   delete(cur_date);
   SUBPROC(elf_exit);
@@ -963,8 +963,8 @@ BOOK * CreateCLBook()
 {
   CLBook=new(BOOK);
   CreateBook(CLBook,onCloseCLBook,&base_page,"Call Logger",-1,0);
-  myList=List_New();
-  myList_gprs=List_New();
+  myList=List_Create();
+  myList_gprs=List_Create();
   cur_date=new(DATETIME);
   REQUEST_DATEANDTIME_GET(SYNC,cur_date);
   get_bcfg_key();

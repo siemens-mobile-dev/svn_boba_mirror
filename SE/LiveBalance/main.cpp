@@ -156,7 +156,7 @@ static void ussd_timeout(u16 timer, void *)
 static void ussd_send(u16 timer, void *)
 {FUNCTION
   if ( Display_GetFocusedDispObject(0) == GUIObject_GetDispObject(SBY_GetMainInput(Find_StandbyBook()))
-      || FindBook(isAudioPlayerBook()) || FindBook(isFmRadioBook()) || FindBook(isScreenSaverBook()))
+      || FindBook(get_IsAudioPlayerBook()) || FindBook(get_IsFmRadioBook()) || FindBook(get_IsScreenSaverBook()))
   {
     char mv[256];
     wchar_t ws[80];

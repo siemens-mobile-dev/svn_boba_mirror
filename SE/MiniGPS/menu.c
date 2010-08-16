@@ -26,7 +26,7 @@ void CreateAutoLacationInput()
   MyBOOK * bk = (MyBOOK *) FindBook(isMiniGPSBook);
   FREE_GUI(bk->text_input);
   STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
-  bk->text_input = CreateStringInput(0,
+  bk->text_input = CreateStringInputVA(0,
                             VAR_BOOK(bk),
                             VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
                             VAR_STRINP_TEXT(text),
@@ -38,7 +38,7 @@ void CreateAutoLacationInput()
                             VAR_PREV_ACTION_PROC(AutoBackPressed),
                             0);
   BookObj_SetFocus( &bk->book,0);
-  ShowWindow(bk->text_input);
+  GUIObject_Show(bk->text_input);
 }
 
 int menu_callback(GUI_MESSAGE * msg)
@@ -77,7 +77,7 @@ int menu_callback(GUI_MESSAGE * msg)
         break;
       }
     }
-    SetMenuItemText0(msg,str_id);
+    GUIonMessage_SetMenuItemText(msg,str_id);
   }
   return(1);
 }
@@ -137,13 +137,13 @@ void MenuOnKey(DISP_OBJ *db, int key, int unk, int repeat, int type)
     {
       int item = ListMenu_GetSelectedItem(bk->menu) - 1;
       if(item < 0) item = MENU_ITEM_NUM - 1;
-      SetCursorToItem(bk->menu, item);
+      ListMenu_SetCursorToItem(bk->menu, item);
     }
     else if((num == 8) || (num == 0))
     {
       int item = ListMenu_GetSelectedItem(bk->menu) + 1;
       if(item >= MENU_ITEM_NUM) item = 0;
-      SetCursorToItem(bk->menu, item);
+      ListMenu_SetCursorToItem(bk->menu, item);
     }
     else if(num == 5)
     {
@@ -154,24 +154,24 @@ void MenuOnKey(DISP_OBJ *db, int key, int unk, int repeat, int type)
 
 void CreateMenu(MyBOOK *mbk)
 {
-  mbk->menu = CreateListObject(&mbk->book,0);
+  mbk->menu = CreateListMenu(&mbk->book,0);
 
-  GuiObject_SetTitleText(mbk->menu, Str2ID(LELFNAME,0,SID_ANY_LEN));
-  SetNumOfMenuItem(mbk->menu, MENU_ITEM_NUM);
-  OneOfMany_SetonMessage((GUI_ONEOFMANY*)mbk->menu, menu_callback);
-  SetCursorToItem(mbk->menu,0);
+  GUIObject_SetTitleText(mbk->menu, Str2ID(LELFNAME,0,SID_ANY_LEN));
+  ListMenu_SetItemCount(mbk->menu, MENU_ITEM_NUM);
+  OneOfMany_SetOnMessage((GUI_ONEOFMANY*)mbk->menu, menu_callback);
+  ListMenu_SetCursorToItem(mbk->menu,0);
 
-//  SetMenuItemStyle(mbk->menu, 4);
+//  ListMenu_SetItemStyle(mbk->menu, 4);
 
-  GUIObject_Softkey_SetAction(mbk->menu,ACTION_BACK, MenuOnBack);
-  GUIObject_Softkey_SetAction(mbk->menu,ACTION_LONG_BACK, MenuOnBack);
-  GUIObject_Softkey_SetAction(mbk->menu,ACTION_SELECT1, MenuOnEnter);
+  GUIObject_SoftKeys_SetAction(mbk->menu,ACTION_BACK, MenuOnBack);
+  GUIObject_SoftKeys_SetAction(mbk->menu,ACTION_LONG_BACK, MenuOnBack);
+  GUIObject_SoftKeys_SetAction(mbk->menu,ACTION_SELECT1, MenuOnEnter);
 
-  mbk->oldOnKey = DISP_OBJ_GetOnKey( GUIObj_GetDISPObj(mbk->menu) );
-  DISP_DESC_SetOnKey( DISP_OBJ_GetDESC ( GUIObj_GetDISPObj(mbk->menu) ), MenuOnKey );
+  mbk->oldOnKey = DispObject_GetOnKey( GUIObject_GetDispObject(mbk->menu) );
+  DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject(mbk->menu) ), MenuOnKey );
 
   BookObj_SetFocus( &mbk->book,0);
-  ShowWindow(mbk->menu);
+  GUIObject_Show(mbk->menu);
 }
 
 static int MenuPageOnEnter(void *, BOOK *bk)

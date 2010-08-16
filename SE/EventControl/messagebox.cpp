@@ -18,7 +18,7 @@ extern MyBOOK *ECBook;
 void mbox_OnClose(BOOK *bk)
 {
   MBK(bk);
-  GUI_Free(mbk->g_mbox);
+  GUIObject_Destroy(mbk->g_mbox);
   mbk->g_mbox=0;
   if (bk==&ECBook->bk)
     BookObj_Hide(bk, 0);
@@ -32,7 +32,7 @@ void mbox_OnClose(BOOK *bk)
 void mbox_onOK(BOOK *bk, GUI* )
 {
   MBK(bk);
-  GUI_Free(mbk->g_mbox);
+  GUIObject_Destroy(mbk->g_mbox);
   mbk->g_mbox=0;
   if (bk==&ECBook->bk)
     BookObj_Hide(bk, 0);
@@ -79,16 +79,16 @@ void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra)
     Feedback_SetTextExtended(gMBox,Str2ID(strids,5,2),1);
   }
   Feedback_SetOnClose(gMBox, mbox_OnClose);
-  GUIObject_Softkey_SetAction(gMBox,ACTION_OK,mbox_onOK);
-  GUIObject_Softkey_SetText(gMBox,ACTION_OK,Str2ID(L"OK",0,SID_ANY_LEN));
-  GUIObject_Softkey_SetAction(gMBox,ACTION_BACK,mbox_onOK);
-  GUI_SetStyle(gMBox, 4);
-  GuiObject_SetTitleType(gMBox, 1);
-  GUIObject_HideSoftkeys(gMBox);
+  GUIObject_SoftKeys_SetAction(gMBox,ACTION_OK,mbox_onOK);
+  GUIObject_SoftKeys_SetText(gMBox,ACTION_OK,Str2ID(L"OK",0,SID_ANY_LEN));
+  GUIObject_SoftKeys_SetAction(gMBox,ACTION_BACK,mbox_onOK);
+  GUIObject_SetStyle(gMBox, 4);
+  GUIObject_SetTitleType(gMBox, 1);
+  GUIObject_SoftKeys_Hide(gMBox);
   Feedback_SetTimeout(gMBox, 5000);
   if (created==true)
   {
-    ShowWindow(gMBox);
+    GUIObject_Show(gMBox);
     BookObj_Show(bk, 0);
     BookObj_SetFocus(bk, 0);
   }

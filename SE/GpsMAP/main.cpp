@@ -16,14 +16,14 @@ void CloseMyBook( BOOK* bk, GUI* )
   FreeBook(bk);
 }
 
-//extern "C" void GuiObject_SetTitleType(GUI *gui, int type);
+//extern "C" void GUIObject_SetTitleType(GUI *gui, int type);
 static int MainPageOnCreate(void *, BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
   GUI * map_gui = CreateMapGUI(bk);
-  GUIObject_Softkey_SetAction(map_gui,ACTION_BACK, CloseMyBook);
-  GuiObject_SetTitleType(map_gui, 1);
-  ShowWindow(map_gui);
+  GUIObject_SoftKeys_SetAction(map_gui,ACTION_BACK, CloseMyBook);
+  GUIObject_SetTitleType(map_gui, 1);
+  GUIObject_Show(map_gui);
   mbk->map_gui=map_gui;
   return (1);
 }

@@ -229,7 +229,7 @@ int CheckEv(BOOK * bk, int ev)
 int GetJavaName(BOOK * bk)
 {
   wchar_t ws[100];
-  TextID2wstr(Book_GetSession(bk)->name,ws,100);
+  TextID2wstr(BookObj_GetSession(bk)->name,ws,100);
   if (!wstrncmp(ws,L"Foreign app",11))
   {
     return(JavaSession_GetName());
@@ -447,10 +447,10 @@ void Light()
 {
   if(Is_Screen_Enabled)
   {
-    BOOK * ScreenSaverBook = FindBook(isScreenSaverBook());
+    BOOK * ScreenSaverBook = FindBook(get_IsScreenSaverBook());
     if (ScreenSaverBook)
     {
-      UI_Event_toBookID(UI_SCREENSAVER_DEACTIVATE_EVENT,BOOK_GetBookID(ScreenSaverBook));
+      UI_Event_toBookID(UI_SCREENSAVER_DEACTIVATE_EVENT,BookObj_GetBookID(ScreenSaverBook));
     }
     timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
     offtimerScreen=Timer_Set(cfg_screen_time*1000,offTimerScreen,0);
@@ -482,7 +482,7 @@ int FindName()
     session=root_list_get_session(j);
     for (k=0;k<session->listbook->FirstFree;k++)
     {
-      book=(BOOK*)ListElement_GetByIndex(session->listbook,k);
+      book=(BOOK*)List_Get(session->listbook,k);
       if( (book->xguilist->guilist->FirstFree) || (((((int)book->onClose)&0xF8000000) != mask)))
       {
         char s[100];
@@ -526,12 +526,12 @@ int GameDetected(void)
       return 1;
     }
   }
-  else if(FindBook(isAudioPlayerBook())) // ищем медиаплеер
+  else if(FindBook(get_IsAudioPlayerBook())) // ищем медиаплеер
   {
     set_all_simg_status(MUSIC_ICN);
     return 1;
   }
-  else if(FindBook(isFmRadioBook())) // ищем радио
+  else if(FindBook(get_IsFmRadioBook())) // ищем радио
   {
     set_all_simg_status(MUSIC_ICN);
     return 1;
@@ -883,7 +883,7 @@ void ChangeName(int indx, BOOK * book, int snd)
   header_name = Str2ID(LG_NAME,0,SID_ANY_LEN);
   text = Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN);
   FREE_GUI(bk->text_input);
-  bk->text_input = CreateStringInput(0,
+  bk->text_input = CreateStringInputVA(0,
                                           VAR_HEADER_TEXT(header_name),
                                           VAR_STRINP_MIN_LEN(1),
                                           VAR_STRINP_MAX_LEN(MAXELEMS(Pets[indx].Status.name)),
@@ -969,7 +969,7 @@ void onTimer_refresh (u16 timerID, LPARAM lparam)
       UpdatePosition(i);
     }
   }
-  if(GUI_display) InvalidateRect(GUI_display,0);
+  if(GUI_display) DispObject_InvalidateRect(GUI_display,0);
   Timer_ReSet(&timer_refresh,REFRESH*TMR_SECOND/10,onTimer_refresh,0);
 }
 
@@ -987,7 +987,7 @@ void life_proc(int indx, BOOK *bk, int snd)
 
   BATT batt;
   int isCharging = 0;
-  GetBattaryState(SYNC,&batt);
+  GetBatteryState(SYNC,&batt);
   if((batt.ChargingState == 2) || (batt.ChargingState == 8))
   {
     isCharging = 1;
@@ -1119,13 +1119,13 @@ void life_proc(int indx, BOOK *bk, int snd)
            session=root_list_get_session(j);
            for (k=0;k<session->listbook->FirstFree;k++)
            {
-             book=(BOOK*)ListElement_GetByIndex(session->listbook,k);
+             book=(BOOK*)List_Get(session->listbook,k);
              if (fkill)
              if (!isBookmanDaemonBook(book))
              {
                if((book->xguilist->guilist->FirstFree)||(((((int)book->onClose)&0xF8000000)!=mask)))
                {
-                 if((!isVolumeControllerBook(book))&&(!isRightNowBook(book)))
+                 if((!IsVolumeControllerBook(book))&&(!IsRightNowBook(book)))
                  {
                    if (((((int)book->onClose)&0xF8000000)==mask))
                    {// book or java
@@ -1137,8 +1137,8 @@ void life_proc(int indx, BOOK *bk, int snd)
                        }
                        else
                        {
-                         UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BOOK_GetBookID(book));
-                         UI_Event_toBookID(TERMINATE_SESSION_EVENT,BOOK_GetBookID(book));
+                         UI_Event_toBookID(RETURN_TO_STANDBY_EVENT,BookObj_GetBookID(book));
+                         UI_Event_toBookID(TERMINATE_SESSION_EVENT,BookObj_GetBookID(book));
                        }
                        fkill=0;
                        Pets[indx].Status.Behaviour = Pets[indx].Status.MaxBehaviour/3;
@@ -1153,7 +1153,7 @@ void life_proc(int indx, BOOK *bk, int snd)
                        {
                          if (CheckEv(book,ELF_TERMINATE_EVENT))
                          {
-                           UI_Event_toBookID(ELF_TERMINATE_EVENT,BOOK_GetBookID(book));
+                           UI_Event_toBookID(ELF_TERMINATE_EVENT,BookObj_GetBookID(book));
                            fkill=0;
                            Pets[indx].Status.Behaviour = Pets[indx].Status.MaxBehaviour/3;
                            if(snd) PlayFileV(sound_path, SoundName[OHDEER_SND], sndVolume);
@@ -1191,7 +1191,7 @@ void life_proc(int indx, BOOK *bk, int snd)
       if(Music_Ena)
       if(Pets[indx].Status.Boredom > (Pets[indx].Status.MaxBoredom - 10))
       {
-        if(!FindBook(isAudioPlayerBook()) && (!FindBook(isFmRadioBook())))
+        if(!FindBook(get_IsAudioPlayerBook()) && (!FindBook(get_IsFmRadioBook())))
         {
           GoMusic();
         }
@@ -1414,11 +1414,11 @@ void DrawParams(int y)
   GC *GC_DISP=get_DisplayGC ();
   for(int i=0; i<Pets[0].Status.Count; i++)
   {
-    putchar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus].ImageID);
-    if(Pets[i].simg_status) putchar(GC_DISP, Pets[i].x + Pets[i].img_size - StatSize, Pets[i].y + Pets[i].img_size - StatSize - y, StatSize, StatSize, img_status[Pets[i].simg_status].ImageID);
+    GC_PutChar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus].ImageID);
+    if(Pets[i].simg_status) GC_PutChar(GC_DISP, Pets[i].x + Pets[i].img_size - StatSize, Pets[i].y + Pets[i].img_size - StatSize - y, StatSize, StatSize, img_status[Pets[i].simg_status].ImageID);
   }
 //  if(ImageID != NOIMAGE) DrawString(ImageID + 0x78000000,0,50,50,150,150,1,1,clGreen,clRed);
-//  if(ImageID != NOIMAGE) putchar(GC_DISP, 150, 150, 0, 0, ImageID);
+//  if(ImageID != NOIMAGE) GC_PutChar(GC_DISP, 150, 150, 0, 0, ImageID);
 }
 
 void Display_ReDraw(DISP_OBJ* DO,int a,int b,int c)
@@ -1680,22 +1680,22 @@ static int MainPageOnCreate(void *, BOOK *bk)
   if(!GUI_status)
   {
     GUI_status = StatusRow_p();
-    Status_desc = DISP_OBJ_GetDESC (* GUI_status);
-    Status_oldReDraw = DISP_OBJ_GetOnRedraw (* GUI_status);
+    Status_desc = DispObject_GetDESC (* GUI_status);
+    Status_oldReDraw = DispObject_GetOnRedraw (* GUI_status);
     DISP_DESC_SetOnRedraw (Status_desc, (DISP_OBJ_ONREDRAW_METHOD)Status_ReDraw);
   }
   if(!GUI_soft)
   {
     GUI_soft = DispObject_SoftKeys_Get();
-    Soft_desc = DISP_OBJ_GetDESC (GUI_soft);
-    Soft_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_soft);
+    Soft_desc = DispObject_GetDESC (GUI_soft);
+    Soft_oldReDraw = DispObject_GetOnRedraw(GUI_soft);
     DISP_DESC_SetOnRedraw(Soft_desc, (DISP_OBJ_ONREDRAW_METHOD)Soft_ReDraw);
   }
   if(!GUI_display)
   {
-    GUI_display = GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
-    Display_oldReDraw = DISP_OBJ_GetOnRedraw(GUI_display);
-    Display_desc = DISP_OBJ_GetDESC (GUI_display);
+    GUI_display = GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
+    Display_oldReDraw = DispObject_GetOnRedraw(GUI_display);
+    Display_desc = DispObject_GetDESC (GUI_display);
     DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
   }
 
@@ -1749,7 +1749,7 @@ int SB_ELF_Killed(void *mess, BOOK* book)
     if (sbm->SI_OldOnRedraw!=EMPTY_REDRAW_METHOD) Status_oldReDraw = sbm->SI_OldOnRedraw;
 
     // ставим свой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(*GUI_status), Status_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(*GUI_status), Status_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SI_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -1770,7 +1770,7 @@ int SB_ELF_Killed(void *mess, BOOK* book)
     if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Display_oldReDraw = sbm->SB_OldOnRedraw;
 
     // ставим сdой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_display), Display_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(GUI_display), Display_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SB_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -1791,7 +1791,7 @@ int SB_ELF_Killed(void *mess, BOOK* book)
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Soft_oldReDraw = sbm->SK_OldOnRedraw;
 
     // ставим сdой метод наверх
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(GUI_soft), Soft_ReDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(GUI_soft), Soft_ReDraw);
 
     // и шлём мессагу снова, чтоб следующие ельфы сделали тоже самое
     ms->SK_OldOnRedraw = EMPTY_REDRAW_METHOD;
@@ -1950,7 +1950,7 @@ void onCloseTamagochiBook(BOOK * book)
 
     if(bk->gui)
     {
-      GUI_Free( bk->gui);
+      GUIObject_Destroy( bk->gui);
       bk->gui = 0;
     }
 
@@ -2015,7 +2015,7 @@ int main (void)
       HELLO_MSG * msg = new HELLO_MSG;
       msg->book = 0;
       snwprintf(msg->name,NAME_LEN - 1,L"%ls",LELFNAME);
-      UI_Event_toBookIDwData(ELF_HELLO_MSG_EVENT,BOOK_GetBookID(bk),msg,(void(*)(void*))mfree_adr());
+      UI_Event_toBookIDwData(ELF_HELLO_MSG_EVENT,BookObj_GetBookID(bk),msg,(void(*)(void*))mfree_adr());
     }
     else
     {

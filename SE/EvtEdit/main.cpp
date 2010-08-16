@@ -31,7 +31,7 @@ void destroy_innative_lng();
 int InitializeEvents(BOOK *myBook, wchar_t *fpath, wchar_t *fname);
 int DestroyEvents(MyBOOK*,bool save);
 void Escape(MyBOOK *mbk, bool dontsave);
-void OnBackGui(BOOK * bk, void *);
+void OnBackGui(BOOK * bk, GUI *);
 
 MyBOOK * myBook;
 wchar_t *defPath=0;
@@ -119,33 +119,33 @@ int onLBMessage(GUI_MESSAGE * msg)
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     if (item<events->FirstFree)
     {
-      EVENT* evt=(EVENT *)ListElement_GetByIndex(events,item);
+      EVENT* evt=(EVENT *)List_Get(events,item);
       if (evt->txt)
       {
-        SetMenuItemText0(msg,Str2ID(evt->txt,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(evt->txt,0,SID_ANY_LEN));
       }
       else
       {
-        SetMenuItemText0(msg,Str2ID(items[evt->type],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(items[evt->type],0,SID_ANY_LEN));
       }
       if (evt->param)
       {
-        SetMenuItemText1(msg,Str2ID(evt->param,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(evt->param,0,SID_ANY_LEN));
       }
-      SetListObjectItemIcon(msg,0,GetIconID(L"CALE_CALENDAR_MENU_ICN"));
+      GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"CALE_CALENDAR_MENU_ICN"));
     }
     /*
     else if (item==events->FirstFree)
     {
       GUIonMessage_SetLineSeparator(msg,1);
-      //SetMenuItemText0(msg,Str2ID(lng[LNG_CREATE],0,SID_ANY_LEN));
-      //SetListObjectItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
+      //GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_CREATE],0,SID_ANY_LEN));
+      //GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
     }
     */
     else if (item==events->FirstFree)
     {
-      SetMenuItemText0(msg,Str2ID(lng[LNG_CREATE],0,SID_ANY_LEN));
-      SetListObjectItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_CREATE],0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
     }
     break;
   }
@@ -163,26 +163,26 @@ int onLBMessage2(GUI_MESSAGE * msg)
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     EVENT* evt=mbk->selev;
-    SetMenuItemText0(msg,Str2ID(lng[item],0,SID_ANY_LEN));
-    SetMenuItemText2(msg,Str2ID(lng[MENU+item],0,SID_ANY_LEN));
-    SetListObjectItemIcon(msg,0,GetIconID(iticons[item]));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(lng[item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemInfoText(msg,Str2ID(lng[MENU+item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(iticons[item]));
     if (item==0)
     {
       wchar_t time[50];
       snwprintf(time, 50,L"%02d:%02d:%02d", evt->time.hour, evt->time.min, evt->time.sec);
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==1)
     {
       wchar_t time[50];
       snwprintf(time, 50,L"%02d:%02d:%02d", evt->time2.hour, evt->time2.min, evt->time2.sec);
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==2)
     {
       if (evt->param)
       {
-        SetMenuItemText1(msg,Str2ID(evt->param,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(evt->param,0,SID_ANY_LEN));
       }
     }
     else if (item==3)
@@ -199,25 +199,25 @@ int onLBMessage2(GUI_MESSAGE * msg)
         else
           wstrcat(time,L"°");
       }
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==4)
     {
       wchar_t time[50];
       snwprintf(time, 50,L"%02d.%02d.%02d", evt->date.day, evt->date.mon, evt->date.year);
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==5)
     {
       wchar_t time[50];
       snwprintf(time, 50,L"%02d.%02d.%02d", evt->date2.day, evt->date2.mon, evt->date2.year);
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==6)
     {
       if (evt->txt)
       {
-        SetMenuItemText1(msg,Str2ID(evt->txt,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(evt->txt,0,SID_ANY_LEN));
       }
     }
     else if (item==7)
@@ -228,7 +228,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
       if (evt->isMinusInBefore)before=-before;
       if (evt->isMinusInAfter)after=-after;
       snwprintf(time, 50,L"%d/%d", before, after);
-      SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
     }
     else if (item==8)
     {
@@ -236,11 +236,11 @@ int onLBMessage2(GUI_MESSAGE * msg)
       {
         wchar_t time[50];
         snwprintf(time, 50,L"%s", evt->gps);
-        SetMenuItemText1(msg,Str2ID(time,0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(time,0,SID_ANY_LEN));
       }
       else
       {
-        SetMenuItemText1(msg,GetStrID(L"MSG_UI_EMPTY_MESSAGE_TXT"));
+        GUIonMessage_SetMenuItemSecondLineText(msg,GetStrID(L"MSG_UI_EMPTY_MESSAGE_TXT"));
       }
     }
     if (item==7 && mbk->selev->isGps)
@@ -324,9 +324,9 @@ void Escape(MyBOOK *mbk, bool dontsave)
                                             VAR_BOOK(&mbk->book),
                                             VAR_YESNO_QUESTION(mbk->save_before_exit),
                                             0);
-      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_YES,OnYesExitGui);
-      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_NO,OnNoExitGui);
-      GUIObject_Softkey_SetAction(mbk->yesno,ACTION_BACK,OnBackExitGui);
+      GUIObject_SoftKeys_SetAction(mbk->yesno,ACTION_YES,OnYesExitGui);
+      GUIObject_SoftKeys_SetAction(mbk->yesno,ACTION_NO,OnNoExitGui);
+      GUIObject_SoftKeys_SetAction(mbk->yesno,ACTION_BACK,OnBackExitGui);
     }
     else
     {
@@ -373,7 +373,7 @@ void OnDelGui(BOOK *bk, GUI* )
   {
     if (item>=0 && item<(events->FirstFree))
     {
-      EVENT *ev=(EVENT*)ListElement_Remove(events,item);
+      EVENT *ev=(EVENT*)List_RemoveAt(events,item);
       EvRem(ev);
       FREE_GUI(mbk->lst);
       if (mbk->events->FirstFree)
@@ -409,11 +409,11 @@ void OnSelect1Gui(BOOK *bk, GUI* )
       {
         EVENT *ev = new EVENT;
         memset(ev,0,sizeof(EVENT));
-        ListElement_Add(events, ev);
+        List_InsertLast(events, ev);
         ev->days[0]=1;ev->days[1]=1;ev->days[2]=1;ev->days[3]=1;ev->days[4]=1;ev->days[5]=1;ev->days[6]=1;
         ev->rem=0x55555555;
       }
-      mbk->selev=(EVENT*)ListElement_GetByIndex(events,item);
+      mbk->selev=(EVENT*)List_Get(events,item);
       FREE_GUI(mbk->lst);
       create_ed(bk);
     }
@@ -543,72 +543,72 @@ void onIndication(BOOK *bk, GUI* )
 GUI_LIST * CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
     MyBOOK *bk=(MyBOOK*)FindBook(isEvtEditBook);
     if (!bk->selev)
     {
-      GUIObject_Softkey_SetAction(lo,0, OnAuthor);
-      GUIObject_Softkey_SetText(lo,0, GetStrID(L"JAVA_APP_NR_ABOUT"));
-      GuiObject_SetTitleText(lo,Str2ID(L"EventControl v2.0",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,0, OnAuthor);
+      GUIObject_SoftKeys_SetText(lo,0, GetStrID(L"JAVA_APP_NR_ABOUT"));
+      GUIObject_SetTitleText(lo,Str2ID(L"EventControl v2.0",0,SID_ANY_LEN));
       if (events->FirstFree)
       {
-        SetNumOfMenuItem(lo,events->FirstFree+1);
-        SetCursorToItem(lo,bk->main_lastindex);
-        ListMenu_SetOnMessages(lo,onLBMessage);
+        ListMenu_SetItemCount(lo,events->FirstFree+1);
+        ListMenu_SetCursorToItem(lo,bk->main_lastindex);
+        ListMenu_SetOnMessage(lo,onLBMessage);
       }
       else
       {
         ListMenu_SetNoItemText(lo,GetStrID(L"MP_AUDIO_NO_ITEMS_TXT"));
-        SetNumOfMenuItem(lo,1);
-        SetCursorToItem(lo,0);
-        ListMenu_SetOnMessages(lo,onLBMessage);
+        ListMenu_SetItemCount(lo,1);
+        ListMenu_SetCursorToItem(lo,0);
+        ListMenu_SetOnMessage(lo,onLBMessage);
       }
     }
     else
     {
-      GuiObject_SetTitleText(lo,Str2ID(items[bk->selev->type],0,SID_ANY_LEN));
-      SetNumOfMenuItem(lo,9);
-      SetCursorToItem(lo,bk->opt_lastindex);
-      ListMenu_SetOnMessages(lo,onLBMessage2);
+      GUIObject_SetTitleText(lo,Str2ID(items[bk->selev->type],0,SID_ANY_LEN));
+      ListMenu_SetItemCount(lo,9);
+      ListMenu_SetCursorToItem(lo,bk->opt_lastindex);
+      ListMenu_SetOnMessage(lo,onLBMessage2);
     }
-    SetMenuItemStyle(lo,3);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, OnBackGui);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,OnSelect1Gui);
+    ListMenu_SetItemStyle(lo,3);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, OnBackGui);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,OnSelect1Gui);
     if (!bk->selev)
     {
-      GUIObject_Softkey_SetAction(lo,ACTION_DELETE, OnDelGui);
-      GUIObject_Softkey_SetAction(lo, 2, onIndication);
-      GUIObject_Softkey_SetText(lo,2, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,ACTION_DELETE, OnDelGui);
+      GUIObject_SoftKeys_SetAction(lo, 2, onIndication);
+      GUIObject_SoftKeys_SetText(lo,2, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
     }
     else
     {
       if (!bk->selev->isGps)
       {
-        GUIObject_Softkey_SetAction(lo, 0, onDummy);
-        GUIObject_Softkey_SetText(lo, 0, Str2ID(lng[REMIND_TYPE],0,SID_ANY_LEN));
-        GUIObject_Softkey_SetAction(lo,1,onDType0Press);
-        GUIObject_Softkey_SetText(lo,1,Str2ID(lng[REMIND_DAYS],0,SID_ANY_LEN));
+        GUIObject_SoftKeys_SetAction(lo, 0, onDummy);
+        GUIObject_SoftKeys_SetText(lo, 0, Str2ID(lng[REMIND_TYPE],0,SID_ANY_LEN));
+        GUIObject_SoftKeys_SetAction(lo,1,onDType0Press);
+        GUIObject_SoftKeys_SetText(lo,1,Str2ID(lng[REMIND_DAYS],0,SID_ANY_LEN));
         
-        GUIObject_Softkey_SetAction(lo,2,onDType1Press);
-        GUIObject_Softkey_SetText(lo,2,Str2ID(lng[REMIND_DATE],0,SID_ANY_LEN));
-        SoftKey_SetItemAsSubItem(lo, 0, 1);
-        SoftKey_SetItemAsSubItem(lo, 0, 2);
+        GUIObject_SoftKeys_SetAction(lo,2,onDType1Press);
+        GUIObject_SoftKeys_SetText(lo,2,Str2ID(lng[REMIND_DATE],0,SID_ANY_LEN));
+        GUIObject_SoftKeys_SetItemAsSubItem(lo, 0, 1);
+        GUIObject_SoftKeys_SetItemAsSubItem(lo, 0, 2);
       }
-      GUIObject_Softkey_SetAction(lo, 3, onDummy);
-      GUIObject_Softkey_SetText(lo, 3, Str2ID(lng[REMIND_TTYPE],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo, 3, onDummy);
+      GUIObject_SoftKeys_SetText(lo, 3, Str2ID(lng[REMIND_TTYPE],0,SID_ANY_LEN));
       
-      GUIObject_Softkey_SetAction(lo,4,onTType0Press);
-      GUIObject_Softkey_SetText(lo,4,Str2ID(lng[REMIND_TIME],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,4,onTType0Press);
+      GUIObject_SoftKeys_SetText(lo,4,Str2ID(lng[REMIND_TIME],0,SID_ANY_LEN));
       
-      GUIObject_Softkey_SetAction(lo,5,onTType1Press);
-      GUIObject_Softkey_SetText(lo,5,Str2ID(lng[REMIND_INTERVAL],0,SID_ANY_LEN));
-      SoftKey_SetItemAsSubItem(lo, 3, 4);
-      SoftKey_SetItemAsSubItem(lo, 3, 5);
-      GUIObject_Softkey_SetAction(lo,6,onEventClone);
-      GUIObject_Softkey_SetText(lo,6,Str2ID(lng[CLONE],0,SID_ANY_LEN));
-      GUIObject_Softkey_SetAction(lo, 7, onIndication);
-      GUIObject_Softkey_SetText(lo,7, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,5,onTType1Press);
+      GUIObject_SoftKeys_SetText(lo,5,Str2ID(lng[REMIND_INTERVAL],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetItemAsSubItem(lo, 3, 4);
+      GUIObject_SoftKeys_SetItemAsSubItem(lo, 3, 5);
+      GUIObject_SoftKeys_SetAction(lo,6,onEventClone);
+      GUIObject_SoftKeys_SetText(lo,6,Str2ID(lng[CLONE],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo, 7, onIndication);
+      GUIObject_SoftKeys_SetText(lo,7, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
     }
   }
   return(lo);
@@ -618,7 +618,7 @@ GUI_LIST *create_ed(BOOK *book)
 {
   MyBOOK *mbk=(MyBOOK *)book;
   mbk->lst=CreateGuiList(book);
-  ShowWindow(mbk->lst);
+  GUIObject_Show(mbk->lst);
   return(mbk->lst);
 };
 

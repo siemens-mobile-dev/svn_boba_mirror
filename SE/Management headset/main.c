@@ -34,8 +34,8 @@ int isMTCallBook(BOOK *bk)
 
 int OnAccChangedEvent(void* r0,BOOK* b)
 {
-  AP = FindBook(isAudioPlayerBook());
-  FM = FindBook(isFmRadioBook());
+  AP = FindBook(get_IsAudioPlayerBook());
+  FM = FindBook(get_IsFmRadioBook());
   
  //if (PHF_GetState ())
   //{
@@ -56,8 +56,8 @@ int OnAccChangedEvent(void* r0,BOOK* b)
 
 int OffAccChangedEvent(void* r0,BOOK* b)
 {
-  AP = FindBook(isAudioPlayerBook());
-  FM = FindBook(isFmRadioBook());
+  AP = FindBook(get_IsAudioPlayerBook());
+  FM = FindBook(get_IsFmRadioBook());
   
   if(AP && FM && turn_off==1)
   {
@@ -358,8 +358,8 @@ void onTimer(u16 timerID, LPARAM lparam)
 
 int NewKey(int key, int r1 , int mode)
 {
-  AP = FindBook(isAudioPlayerBook());
-  FM = FindBook(isFmRadioBook());
+  AP = FindBook(get_IsAudioPlayerBook());
+  FM = FindBook(get_IsFmRadioBook());
   if (key==KeyControl)
   {
     if (mode==KBD_SHORT_RELEASE)

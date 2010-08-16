@@ -58,8 +58,8 @@ void redraw_init()
   DISP_OBJ *si=*StatusRow_p();
   if (si)
   {
-    DREDRAW=DISP_OBJ_GetOnRedraw(si);
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(si), DispDraw);
+    DREDRAW=DispObject_GetOnRedraw(si);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(si), DispDraw);
     //---------------------------------------------------------
   }
 };

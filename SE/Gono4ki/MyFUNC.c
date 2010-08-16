@@ -50,7 +50,7 @@ BOOK*isBookX(char const*isbook, int x)
   j=root_list_get_session_count();
   if(x)
   {
-    bk=(BOOK*)ListElement_GetByIndex(root_list_get_session(j-1)->listbook,root_list_get_session(j-1)->listbook->FirstFree-1);
+    bk=(BOOK*)List_Get(root_list_get_session(j-1)->listbook,root_list_get_session(j-1)->listbook->FirstFree-1);
     if(!strcmp(bk->xbook->name,isbook)) return bk;
   }
   else
@@ -59,7 +59,7 @@ BOOK*isBookX(char const*isbook, int x)
     {
       for(k=0;k<root_list_get_session(i)->listbook->FirstFree;k++)
       {
-        bk=(BOOK*)ListElement_GetByIndex(root_list_get_session(i)->listbook,k);
+        bk=(BOOK*)List_Get(root_list_get_session(i)->listbook,k);
         if(!strcmp(bk->xbook->name,isbook)) return bk;
       }
     }
@@ -160,7 +160,7 @@ int FindFile(wchar_t*path, wchar_t const*name)
 
 int CheckMusic(int x)
 {
-  int result=!FindFile(GetConfigPath(),MyBK()->nast->sound->names[x])*MyBK()->nast->sound->sound*MyBK()->nast->sound->status[x]*!FindBook(isFmRadioBook())*!FindBook(isAudioPlayerBook());
+  int result=!FindFile(GetConfigPath(),MyBK()->nast->sound->names[x])*MyBK()->nast->sound->sound*MyBK()->nast->sound->status[x]*!FindBook(get_IsFmRadioBook())*!FindBook(get_IsAudioPlayerBook());
   return result;
 }
 

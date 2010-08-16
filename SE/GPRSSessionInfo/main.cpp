@@ -85,7 +85,7 @@ wchar_t *get_gprstxt(int stat)
 void Feedback_OnClose(BOOK *bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->mbox)GUI_Free(mbk->mbox);
+  if (mbk->mbox)GUIObject_Destroy(mbk->mbox);
   mbk->mbox=0;
   if (!mbk->ShouldClose)
   {
@@ -141,12 +141,12 @@ void mbox_Create(BOOK *bk, int type)
   }
   mbk->mbox=TextFeedbackWindow(&mbk->book,0);
   Feedback_SetTextExtended(mbk->mbox,Str2ID(str,0,SID_ANY_LEN),0);
-  GUI_SetStyle(mbk->mbox,1);
-  GUIObject_Softkey_SetAction(mbk->mbox,ACTION_SELECT1,Feedback_OnOK);
-  GUIObject_Softkey_SetAction(mbk->mbox,ACTION_BACK,Feedback_OnOK);
+  GUIObject_SetStyle(mbk->mbox,1);
+  GUIObject_SoftKeys_SetAction(mbk->mbox,ACTION_SELECT1,Feedback_OnOK);
+  GUIObject_SoftKeys_SetAction(mbk->mbox,ACTION_BACK,Feedback_OnOK);
   Feedback_SetOnClose(mbk->mbox,Feedback_OnClose);
   Feedback_SetTimeout(mbk->mbox,cfgTimeout * 1000);
-  ShowWindow(mbk->mbox);
+  GUIObject_Show(mbk->mbox);
   BookObj_SetFocus(bk,0);
   mbk->stat=0;
 }

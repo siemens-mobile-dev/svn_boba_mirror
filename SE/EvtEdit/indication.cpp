@@ -38,21 +38,21 @@ int Indic_onLBMessage(GUI_MESSAGE * msg)
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    wchar_t* str=(wchar_t *)ListElement_GetByIndex(mbk->switch_lst,item);
-    SetMenuItemText0(msg,Str2ID(str,0,SID_ANY_LEN));
+    wchar_t* str=(wchar_t *)List_Get(mbk->switch_lst,item);
+    GUIonMessage_SetMenuItemText(msg,Str2ID(str,0,SID_ANY_LEN));
     if (item==0)
     {
       if (mbk->selev)
-        SetMenuItemText1(msg,mbk->selev->rem==0x55555555 ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,mbk->selev->rem==0x55555555 ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
       else
-        SetMenuItemText1(msg,mbk->rem_types==0x55555555 ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,mbk->rem_types==0x55555555 ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
     }
     else
     {
       if (mbk->selev)
-        SetMenuItemText1(msg,((mbk->selev->rem>>(4*(item-1)))&0xF) ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,((mbk->selev->rem>>(4*(item-1)))&0xF) ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
       else
-        SetMenuItemText1(msg,((mbk->rem_types>>(4*(item-1)))&0xF) ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,((mbk->rem_types>>(4*(item-1)))&0xF) ? Str2ID(lng[ON],0,SID_ANY_LEN) : Str2ID(lng[OFF],0,SID_ANY_LEN));
     }
     if (item==0 && !mbk->selev)
       GUIonMessage_SetItemDisabled (msg,1);
@@ -136,21 +136,21 @@ void Switch_curstat(BOOK *bk, GUI* )
 GUI_LIST * CreateIndicList(BOOK * book, int cnt)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    SetNumOfMenuItem(lo, cnt);
-    SetCursorToItem(lo, indic_last);
-    ListMenu_SetOnMessages(lo,Indic_onLBMessage);
-    SetMenuItemStyle(lo,3);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, Switch_OnBack);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,Indic_OnSelect);
+    ListMenu_SetItemCount(lo, cnt);
+    ListMenu_SetCursorToItem(lo, indic_last);
+    ListMenu_SetOnMessage(lo,Indic_onLBMessage);
+    ListMenu_SetItemStyle(lo,3);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Switch_OnBack);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Indic_OnSelect);
     MyBOOK *mbk=(MyBOOK*)book;
     if (!mbk->selev)
     {
-      GUIObject_Softkey_SetAction(lo,1,Switch_SetIndfile);
-      GUIObject_Softkey_SetText(lo,1,Str2ID(lng[MUSICFILE],0,SID_ANY_LEN));
-      GUIObject_Softkey_SetAction(lo,2,Switch_curstat);
-      GUIObject_Softkey_SetText(lo,2,Str2ID(lng[CURSTATUS],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,1,Switch_SetIndfile);
+      GUIObject_SoftKeys_SetText(lo,1,Str2ID(lng[MUSICFILE],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetAction(lo,2,Switch_curstat);
+      GUIObject_SoftKeys_SetText(lo,2,Str2ID(lng[CURSTATUS],0,SID_ANY_LEN));
     }
   }
   return(lo);
@@ -160,7 +160,7 @@ static int IndicPage_OnEnter(void *,BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   if (!mbk->switch_lst)
-    mbk->switch_lst=List_New();
+    mbk->switch_lst=List_Create();
   wchar_t *n=new wchar_t[30];
   wstrcpy(n,lng[STANDART]);
   wchar_t *n1=new wchar_t[30];
@@ -173,15 +173,15 @@ static int IndicPage_OnEnter(void *,BOOK * bk)
   wstrcpy(n4, lng[VIBRA]);
   wchar_t *n5=new wchar_t[30];
   wstrcpy(n5, lng[SOUND]);
-  ListElement_Add(mbk->switch_lst,n);
-  ListElement_Add(mbk->switch_lst,n1);
-  ListElement_Add(mbk->switch_lst,n2);
-  ListElement_Add(mbk->switch_lst,n3);
-  ListElement_Add(mbk->switch_lst,n4);
-  ListElement_Add(mbk->switch_lst,n5);
+  List_InsertLast(mbk->switch_lst,n);
+  List_InsertLast(mbk->switch_lst,n1);
+  List_InsertLast(mbk->switch_lst,n2);
+  List_InsertLast(mbk->switch_lst,n3);
+  List_InsertLast(mbk->switch_lst,n4);
+  List_InsertLast(mbk->switch_lst,n5);
   mbk->ind=CreateIndicList(bk, mbk->switch_lst->FirstFree);
-  GuiObject_SetTitleText(mbk->ind, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
-  ShowWindow(mbk->ind);
+  GUIObject_SetTitleText(mbk->ind, Str2ID(lng[INDICATION],0,SID_ANY_LEN));
+  GUIObject_Show(mbk->ind);
   return 1;
 };
 

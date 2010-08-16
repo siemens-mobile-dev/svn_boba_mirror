@@ -41,7 +41,7 @@ static int OnReconfig(void *mess ,BOOK *book)
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
     InitConfig();
-    InvalidateRect(*StatusRow_p(),0);
+    DispObject_InvalidateRect(*StatusRow_p(),0);
     return 1;
   }
   return 0;
@@ -65,7 +65,7 @@ int onElfKilled(void *mess ,BOOK* book)
     memcpy(ms,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) DREDRAW=sbm->SK_OldOnRedraw;
 
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(*StatusRow_p()),DispDraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(*StatusRow_p()),DispDraw);
 
     ms->SI_OldOnRedraw=EMPTY_REDRAW_METHOD;
     ms->SI_NewOnRedraw=DispDraw;
@@ -82,7 +82,7 @@ void MyBook_OnClose(BOOK * book)
   {
     Timer_Kill(&timer);
     DISP_OBJ *si=*StatusRow_p();
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(si), DREDRAW);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(si), DREDRAW);
     SUBPROC(elf_exit);
   }
 };

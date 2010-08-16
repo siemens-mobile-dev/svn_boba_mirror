@@ -47,7 +47,7 @@ void c2anim(char *line)
   anel->Font=getint(line, &pos, ':');
   anel->CT=getint(line, &pos, ':');
   anel->DrawWithNext=getint(line, &pos, ';');
-  ListElement_Add(anlst.lst,anel);
+  List_InsertLast(anlst.lst,anel);
 };
 
 int h2i(char * h)

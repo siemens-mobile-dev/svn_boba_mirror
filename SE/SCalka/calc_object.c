@@ -750,8 +750,8 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
   scr_h=db->y2-db->y1;
   scr_w=db->x2-db->x1;
 
-  gc_xx=get_GC_xx(gc);
-  set_GC_xx(gc,2);
+  gc_xx=GC_GetXX(gc);
+  GC_SetXX(gc,2);
   DrawRect(db->x1,db->y1,db->x2,db->y2,clWhite,COLOR(0xC0,0xC0,0xC0,0xFF));
   
   if (req_recalc)
@@ -900,7 +900,7 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
     }
   }
   SetFont(font);
-  set_GC_xx(gc,gc_xx);
+  GC_SetXX(gc,gc_xx);
 }
 
 
@@ -978,7 +978,7 @@ void CalcGuiOnKey(DISP_OBJ_CALC *db,int key,int a,int b,int type)
     }
   }
   if (reset_pos) db->curx_pos=-1;
-  InvalidateRect(&db->dsp_obj,0);
+  DispObject_InvalidateRect(&db->dsp_obj,0);
 }
 
 void CalcGui_constr(DISP_DESC *desc)
@@ -1013,15 +1013,15 @@ enum TITLE_TYPE {
 GUI_CALC *CreateCalkGUI(BOOK *bk)
 {
   GUI_CALC *gui_calc=new GUI_CALC;
-  if (!CreateObject(gui_calc,CalcGui_destr,CalcGui_constr, bk,0,0,0))
+  if (!GUIObject_Create(gui_calc,CalcGui_destr,CalcGui_constr, bk,0,0,0))
   {
     delete gui_calc;
     return 0;    
   }
-  if (bk) addGui2book(bk,gui_calc);
-  GUI_SetStyle(gui_calc,4);
-  GuiObject_SetTitleType(gui_calc, 1);
-  GUIObject_HideSoftkeys(gui_calc);
+  if (bk) BookObj_AddGUIObject(bk,gui_calc);
+  GUIObject_SetStyle(gui_calc,4);
+  GUIObject_SetTitleType(gui_calc, 1);
+  GUIObject_SoftKeys_Hide(gui_calc);
   return gui_calc;
 }
 

@@ -274,8 +274,10 @@ __swi __arm void ListMenu_SetItemStyle( GUI_LIST*, int style );
 #pragma swi_number=0x140
 __swi __arm void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 
+#pragma swi_number=0x141
+__swi __arm int IsScreenSaverBook( BOOK *bk );
 #pragma swi_number=0x8141
-__swi __arm IS_NEEDED_BOOK isScreenSaverBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsScreenSaverBook( void );
 
 #pragma swi_number=0x142
 __swi __arm void StatusIndication_SetItemText( GUI* , int item, STRID );
@@ -560,8 +562,10 @@ __swi __arm int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
 #pragma swi_number=0x1B7
 __swi __arm int isKeylocked( void );
 
+#pragma swi_number=0x1B8
+__swi __arm int IsMediaPlayerVideoBook( BOOK *bk );
 #pragma swi_number=0x81B8
-__swi __arm IS_NEEDED_BOOK isMediaPlayerVideoBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsMediaPlayerVideoBook( void );
 
 #pragma swi_number=0x1BC
 __swi __arm int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
@@ -596,10 +600,14 @@ __swi __arm int REQUEST_SYSTEM_RESTART( void );
 __swi __arm void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 
 #pragma swi_number=0x1C8
-__swi __arm int isRightNowBook( BOOK* book );
-#pragma swi_number=0x1C9
-__swi __arm int isVolumeControllerBook( BOOK* book );
+__swi __arm int IsRightNowBook( BOOK* book );
+#pragma swi_number=0x81C8
+__swi __arm IS_NEEDED_BOOK get_IsRightNowBook( void );
 
+#pragma swi_number=0x1C9
+__swi __arm int IsVolumeControllerBook( BOOK* book );
+#pragma swi_number=0x81C9
+__swi __arm IS_NEEDED_BOOK get_IsVolumeControllerBook( void );
 
 #pragma swi_number=0x1CA
 __swi __arm GUI_TABMENUBAR* CreateTabMenuBar( BOOK* book );
@@ -1017,10 +1025,16 @@ __swi __arm int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
 #pragma swi_number=0x288
 __swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 
+#pragma swi_number=0x28A
+__swi __arm int IsFmRadioBook( BOOK *bk );
 #pragma swi_number=0x828A
-__swi __arm IS_NEEDED_BOOK isFmRadioBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsFmRadioBook( void );
+
+#pragma swi_number=0x28B
+__swi __arm int IsAudioPlayerBook( BOOK *bk);
 #pragma swi_number=0x828B
-__swi __arm IS_NEEDED_BOOK isAudioPlayerBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsAudioPlayerBook( void );
+
 #pragma swi_number=0x28C
 __swi __arm void PlayerControl( BOOK* AudioPlayerBook, int );
 #pragma swi_number=0x28D
@@ -1229,7 +1243,9 @@ __swi __arm void DispObject_SetRefreshTimer( DISP_OBJ*, int time );
 __swi __arm void DispObject_KillRefreshTimer( DISP_OBJ* );
 
 #pragma swi_number=0x2DF
-__swi __arm int isDataBrowserBook( BOOK* book );
+__swi __arm int IsDataBrowserBook( BOOK* book );
+#pragma swi_number=0x82DF
+__swi __arm IS_NEEDED_BOOK get_IsDataBrowserBook( void );
 
 #pragma swi_number=0x2E0
 __swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
@@ -1428,10 +1444,16 @@ __swi __arm int ConnectionManager_Connection_GetState( void );
 #pragma swi_number=0x332
 __swi __arm int GetSignalQuality( char* rssi, char* ber );
 
+#pragma swi_number=0x333
+__swi __arm int IsCameraBook( BOOK *bk );
 #pragma swi_number=0x8333
-__swi __arm IS_NEEDED_BOOK isCameraBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsCameraBook( void );
+
+#pragma swi_number=0x334
+__swi __arm int IsSoundRecorderBook( BOOK *bk );
 #pragma swi_number=0x8334
-__swi __arm IS_NEEDED_BOOK isSoundRecorderBook( void );
+__swi __arm IS_NEEDED_BOOK get_IsSoundRecorderBook( void );
+
 #pragma swi_number=0x335
 __swi __arm void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 

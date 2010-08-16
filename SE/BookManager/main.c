@@ -278,7 +278,7 @@ void CreateBookLst( MyBOOK* myBook )
       {
         if( (fgui = book->xguilist->guilist->FirstFree) || ( ((int)book->onClose)&0xF8000000 ) != mask )
         {
-          if ( !isBookManager( book ) && !isVolumeControllerBook( book ) && !isRightNowBook( book ) && !isRSSTickerBook( book ))
+          if ( !isBookManager( book ) && !IsVolumeControllerBook( book ) && !IsRightNowBook( book ) && !isRSSTickerBook( book ))
           {
             char s[50];
             elem = new BOOK_LIST_ITEM;

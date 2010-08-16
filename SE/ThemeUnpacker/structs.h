@@ -9,6 +9,6 @@
     wchar_t *name;
   } MyBOOK;
 
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
   
 #endif

@@ -49,11 +49,11 @@ void addline(char *line)
     KEY *key=new KEY;
     key->oldkey=getint(line,&x,'-'); 
     key->newkey=getint(line,&x,':');
-    if (!it->keys)it->keys=List_New();
-    ListElement_Add(it->keys, key);
+    if (!it->keys)it->keys=List_Create();
+    List_InsertLast(it->keys, key);
   }
   //--------------------
-  ListElement_Add(csofts, it);
+  List_InsertLast(csofts, it);
 };
 
 int csofts_fill(wchar_t *path, wchar_t *name)
@@ -64,7 +64,7 @@ int csofts_fill(wchar_t *path, wchar_t *name)
   {
     char *param=0;
     int x=0;
-    if (!csofts)csofts=List_New();
+    if (!csofts)csofts=List_Create();
     while (1)
     {
       char pattern[128];
@@ -93,7 +93,7 @@ void csofts_destroy()
   {
     while (csofts->FirstFree)
     {
-      ITEM *it=(ITEM*)ListElement_Remove(csofts,0);
+      ITEM *it=(ITEM*)List_RemoveAt(csofts,0);
       DELETE(it->name);
       if (it->strids[0]!=SID_NULL)TextFree(it->strids[0]);
       if (it->strids[1]!=SID_NULL)TextFree(it->strids[1]);
@@ -102,15 +102,15 @@ void csofts_destroy()
       {
         while (it->keys->FirstFree)
         {
-          KEY *k=(KEY*)ListElement_Remove(it->keys,0);
+          KEY *k=(KEY*)List_RemoveAt(it->keys,0);
           DELETE(k);
         }
-        List_Free(it->keys);
+        List_Destroy(it->keys);
         it->keys=0;
       }
       DELETE(it);
     }
-    List_Free(csofts);
+    List_Destroy(csofts);
     csofts=0;
   }
 };

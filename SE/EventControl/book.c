@@ -133,15 +133,15 @@ void ECBook_OnClose(BOOK * book)
     if (mbk->indname)
       delete(mbk->indname);
     if (mbk->g_mbox)
-      GUI_Free(mbk->g_mbox);
+      GUIObject_Destroy(mbk->g_mbox);
     if (mbk->name)
       delete(mbk->name);
     if (mbk->path)
       delete(mbk->path);
     if (mbk->g_test)
-      GUI_Free(mbk->g_test);
+      GUIObject_Destroy(mbk->g_test);
     if (mbk->remind)
-      GUI_Free(mbk->remind);
+      GUIObject_Destroy(mbk->remind);
     kill_rems(mbk->remlst, mbk, 0);
     DestroyEvents((MyBOOK*)book);
     destroy_innative_lng();

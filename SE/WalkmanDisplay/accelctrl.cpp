@@ -19,7 +19,7 @@ void onAccTimer(u16 timerID, void *CAccCtrl)
       int x;
       for (x=0;x<acc_lst->FirstFree;x++)
       {
-        void (*proc)(CAccelCtrl*,int,int)=(void (*)(CAccelCtrl*,int,int))(ListElement_GetByIndex(acc_lst,x));
+        void (*proc)(CAccelCtrl*,int,int)=(void (*)(CAccelCtrl*,int,int))(List_Get(acc_lst,x));
         char x,y;
         cac->GetCoords(&x,&y);
         if (x>100 && y>100)
@@ -32,7 +32,7 @@ void onAccTimer(u16 timerID, void *CAccCtrl)
 
 CAccelCtrl::CAccelCtrl()
 {
-  hooks=List_New();
+  hooks=List_Create();
   if (identify_phone())
   {
     timer=Timer_Set(1000, onAccTimer, (void*)this);
@@ -54,9 +54,9 @@ CAccelCtrl::~CAccelCtrl(void)
   {
     while (hooks->FirstFree)
     {
-      ListElement_Remove(hooks,0);
+      List_RemoveAt(hooks,0);
     }
-    List_Free(hooks);
+    List_Destroy(hooks);
   }
   timer=0;
   hooks=0;
@@ -112,14 +112,14 @@ void CAccelCtrl::AddHook(void (*proc)(void*, int, int), char on)
   {
     if (i==LIST_ERROR)
     {
-      ListElement_Add(hooks, (void*)proc);
+      List_InsertLast(hooks, (void*)proc);
     }
   }
   else
   {
     if (i!=LIST_ERROR)
     {
-      ListElement_Remove(hooks, i);
+      List_RemoveAt(hooks, i);
     }
   }
 };

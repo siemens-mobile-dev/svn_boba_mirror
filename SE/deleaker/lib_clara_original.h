@@ -235,8 +235,10 @@ __swi __arm void  __original_ListMenu_SetItemStyle( GUI_LIST*, int style );
 #pragma swi_number=0x140
 __swi __arm void  __original_GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 
+#pragma swi_number=0x141
+__swi __arm int  __original_IsScreenSaverBook( BOOK *bk );
 #pragma swi_number=0x8141
-__swi __arm IS_NEEDED_BOOK  __original_isScreenSaverBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsScreenSaverBook( void );
 
 #pragma swi_number=0x142
 __swi __arm void  __original_StatusIndication_SetItemText( GUI* , int item, STRID );
@@ -510,8 +512,10 @@ __swi __arm int  __original_Profile_SetActive( int NUMprof, int set_in_gdfs_flag
 #pragma swi_number=0x1B7
 __swi __arm int  __original_isKeylocked( void );
 
+#pragma swi_number=0x1B8
+__swi __arm int  __original_IsMediaPlayerVideoBook( BOOK *bk );
 #pragma swi_number=0x81B8
-__swi __arm IS_NEEDED_BOOK  __original_isMediaPlayerVideoBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsMediaPlayerVideoBook( void );
 
 #pragma swi_number=0x1BC
 __swi __arm int  __original_REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
@@ -544,10 +548,14 @@ __swi __arm int  __original_REQUEST_SYSTEM_RESTART( void );
 __swi __arm void  __original_GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 
 #pragma swi_number=0x1C8
-__swi __arm int  __original_isRightNowBook( BOOK* book );
-#pragma swi_number=0x1C9
-__swi __arm int  __original_isVolumeControllerBook( BOOK* book );
+__swi __arm int  __original_IsRightNowBook( BOOK* book );
+#pragma swi_number=0x81C8
+__swi __arm IS_NEEDED_BOOK  __original_get_IsRightNowBook( void );
 
+#pragma swi_number=0x1C9
+__swi __arm int  __original_IsVolumeControllerBook( BOOK* book );
+#pragma swi_number=0x81C9
+__swi __arm IS_NEEDED_BOOK  __original_get_IsVolumeControllerBook( void );
 
 #pragma swi_number=0x1CA
 __swi __arm GUI_TABMENUBAR*  __original_CreateTabMenuBar( BOOK* book );
@@ -959,10 +967,16 @@ __swi __arm int  __original_textidname2id( const wchar_t* idname, int maxnamelen
 #pragma swi_number=0x288
 __swi __arm void  __original_ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 
+#pragma swi_number=0x28A
+__swi __arm int  __original_IsFmRadioBook( BOOK *bk );
 #pragma swi_number=0x828A
-__swi __arm IS_NEEDED_BOOK  __original_isFmRadioBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsFmRadioBook( void );
+
+#pragma swi_number=0x28B
+__swi __arm int  __original_IsAudioPlayerBook( BOOK *bk);
 #pragma swi_number=0x828B
-__swi __arm IS_NEEDED_BOOK  __original_isAudioPlayerBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsAudioPlayerBook( void );
+
 #pragma swi_number=0x28C
 __swi __arm void  __original_PlayerControl( BOOK* AudioPlayerBook, int );
 #pragma swi_number=0x28D
@@ -1169,7 +1183,9 @@ __swi __arm void  __original_DispObject_SetRefreshTimer( DISP_OBJ*, int time );
 __swi __arm void  __original_DispObject_KillRefreshTimer( DISP_OBJ* );
 
 #pragma swi_number=0x2DF
-__swi __arm int  __original_isDataBrowserBook( BOOK* book );
+__swi __arm int  __original_IsDataBrowserBook( BOOK* book );
+#pragma swi_number=0x82DF
+__swi __arm IS_NEEDED_BOOK  __original_get_IsDataBrowserBook( void );
 
 #pragma swi_number=0x2E0
 __swi __arm SUB_EXECUTE*  __original_BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
@@ -1368,10 +1384,16 @@ __swi __arm int  __original_ConnectionManager_Connection_GetState( void );
 #pragma swi_number=0x332
 __swi __arm int  __original_GetSignalQuality( char* rssi, char* ber );
 
+#pragma swi_number=0x333
+__swi __arm int  __original_IsCameraBook( BOOK *bk );
 #pragma swi_number=0x8333
-__swi __arm IS_NEEDED_BOOK  __original_isCameraBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsCameraBook( void );
+
+#pragma swi_number=0x334
+__swi __arm int  __original_IsSoundRecorderBook( BOOK *bk );
 #pragma swi_number=0x8334
-__swi __arm IS_NEEDED_BOOK  __original_isSoundRecorderBook( void );
+__swi __arm IS_NEEDED_BOOK  __original_get_IsSoundRecorderBook( void );
+
 #pragma swi_number=0x335
 __swi __arm void  __original_StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 

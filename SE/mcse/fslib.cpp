@@ -196,16 +196,16 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
 {
   unsigned int ccFiles   = 0;
   unsigned int ccSubDirs = 0;
-  LIST *lst=List_New();
+  LIST *lst=List_Create();
   W_FIND local, *t;
   if (lst)
   {
     local.is_first=1;
     local.name=dname;
-    ListElement_AddtoTop(lst, &local);
+    List_InsertFirst(lst, &local);
     for (int i=0; i<lst->FirstFree; i++)
     {
-      W_FIND *cur=(W_FIND *)ListElement_GetByIndex(lst,i);
+      W_FIND *cur=(W_FIND *)List_Get(lst,i);
       if (cur->is_first || ((cur->fs.attr & FA_DIRECTORY) && recursive))
       {
         wchar_t *dir=cur->name;
@@ -232,7 +232,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
               t->name=new wchar_t[len+1];
               snwprintf(t->name, len,_ls_ls, dir, next);
               memcpy(&t->fs,&fs,sizeof(W_FSTAT));
-              ListElement_Add(lst, t);
+              List_InsertLast(lst, t);
             }
           }
           w_dirclose(handle);
@@ -242,7 +242,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
     int ex=0;
     while(lst->FirstFree)
     {
-      t=(W_FIND *)ListElement_Remove(lst,lst->FirstFree-1);
+      t=(W_FIND *)List_RemoveAt(lst,lst->FirstFree-1);
       if (!t->is_first)  // первую не обрабатываем
       {
         if (!ex)
@@ -265,7 +265,7 @@ int EnumFilesInDir(wchar_t* dname, ENUM_FILES_PROC enumproc, unsigned int param,
       }
     }
   }
-  List_Free(lst);
+  List_Destroy(lst);
   if (ccSubDirs > 0xffff) ccSubDirs = 0xffff;
   if (ccFiles > 0xffff)   ccFiles = 0xffff;
   return (ccSubDirs << 16 | ccFiles);

@@ -137,11 +137,11 @@ void RecalkPos(DISP_OBJ_MAP *db)
   {
     cidlac[0]=GetCid_ByCh(i);
     cidlac[1]=GetLac_ByCh(i);
-    int index=ListElement_Find(db->ini.cur_town->bs_dat,&cidlac,FindBSByCiLac);
+    int index=List_Find(db->ini.cur_town->bs_dat,&cidlac,FindBSByCiLac);
     if (index!=LIST_ERROR)
     {
       int rx=GetRxLev_ByCh(i);
-      BS_POINT *bs=(BS_POINT *)ListElement_GetByIndex(db->ini.cur_town->bs_dat,index);
+      BS_POINT *bs=(BS_POINT *)List_Get(db->ini.cur_town->bs_dat,index);
       Kn=powf(10,(rx+30)/5);
       Xres+=bs->point_x*Kn;
       Yres+=bs->point_y*Kn;
@@ -180,11 +180,11 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
   }
   for (int i=0; i<db->png_cache->FirstFree; i++)
   {
-    PNG_LIST *png_lst=(PNG_LIST *)ListElement_GetByIndex(db->png_cache,db->png_cache->FirstFree-1);
+    PNG_LIST *png_lst=(PNG_LIST *)List_Get(db->png_cache,db->png_cache->FirstFree-1);
     if ((png_lst->index_x<block_x1 || png_lst->index_x>block_x2 ||
         png_lst->index_y<block_y1 || png_lst->index_y>block_y2) && db->png_cache->FirstFree>10)
     {
-      png_lst=(PNG_LIST *)ListElement_Remove(db->png_cache,db->png_cache->FirstFree-1);
+      png_lst=(PNG_LIST *)List_RemoveAt(db->png_cache,db->png_cache->FirstFree-1);
       RemovePngListElement(png_lst);
     }
   }
@@ -196,7 +196,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
       int xy[2];
       xy[0]=x;
       xy[1]=y;
-      if (ListElement_Find(db->png_cache,&xy,PngCmpProc)==LIST_ERROR) ReadPngFile(db->png_cache,db->ini.cur_town->name,x,y);
+      if (List_Find(db->png_cache,&xy,PngCmpProc)==LIST_ERROR) ReadPngFile(db->png_cache,db->ini.cur_town->name,x,y);
     }
   }
   
@@ -212,10 +212,10 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
           int xy[2];
           xy[0]=x;
           xy[1]=y;
-          index=ListElement_Find(db->png_cache,&xy,PngCmpProc);
+          index=List_Find(db->png_cache,&xy,PngCmpProc);
           if (index!=LIST_ERROR)
           {
-            PNG_LIST *png_lst=(PNG_LIST *)ListElement_GetByIndex(db->png_cache,index);
+            PNG_LIST *png_lst=(PNG_LIST *)List_Get(db->png_cache,index);
             int img_x_offs=x_offs-cur_x_offs;
             int img_y_offs=y_offs-cur_y_offs;
             for (int y1=0; y1<height; y1++)
@@ -257,10 +257,10 @@ int MapGuiOnCreate(DISP_OBJ_MAP *db)
   db->x1=db->y1=db->x2=db->y2=0;
   MainIniInit(&db->ini);
   town=FindTownByCiLac(&db->ini,GetCid_ByCh(0),GetLac_ByCh(0));
-  if (!town) town=(TOWN *)ListElement_GetByIndex(db->ini.towns,0);
+  if (!town) town=(TOWN *)List_Get(db->ini.towns,0);
   db->ini.cur_town=town;  
   InitDirPng(town);
-  db->png_cache=List_New();
+  db->png_cache=List_Create();
   return (1);
 }
 
@@ -270,10 +270,10 @@ void MapGuiOnClose(DISP_OBJ_MAP *db)
   DeInitDirPng(db->ini.cur_town);
   while(db->png_cache->FirstFree)
   {
-    PNG_LIST *png=(PNG_LIST *)ListElement_Remove(db->png_cache,0);
+    PNG_LIST *png=(PNG_LIST *)List_RemoveAt(db->png_cache,0);
     RemovePngListElement(png);    
   }
-  List_Free(db->png_cache);
+  List_Destroy(db->png_cache);
   MainIniDeInit(&db->ini);
 }
 
@@ -283,7 +283,7 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
   RECT rc_old;
   int font, gc_xx;
   GC *gc=get_DisplayGC();
-  get_GC_RECT(gc, &rc_old);
+  GC_GetRect(gc, &rc_old);
   if (db->x1!=rc_old.x1 || db->x2!=rc_old.x2 || db->y1!=rc_old.y1 || db->y2!=rc_old.y2)
   {
     db->x1=rc_old.x1;
@@ -292,13 +292,13 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
     db->y2=rc_old.y2;
     FillScreenBuffer(db);
   }
-  gc_xx=get_GC_xx(gc);
-  set_GC_xx(gc,1);
+  gc_xx=GC_GetXX(gc);
+  GC_SetXX(gc,1);
   DrawRect(db->x1,db->y1,db->x2,db->y2,clWhite,clWhite);
   
   if (db->scr_buf)
   {
-    GC_DrawBitmap(gc,db->x1,db->y1,db->x2,db->y2,db->scr_buf);
+    GC_WritePixels(gc,db->x1,db->y1,db->x2,db->y2,db->scr_buf);
   }
   SetFont(FONT_E_20R);
   wchar_t buf[64];
@@ -306,7 +306,7 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
   if (str_id!=EMPTY_SID) TextFree(str_id);
   str_id=Str2ID(buf,0,SID_ANY_LEN);
   DrawString(str_id, 2, db->x1+2,db->y1+2,db->x2-2,db->y1+2+80,20,0,clBlack,0x00000000);
-  set_GC_xx(gc,gc_xx);
+  GC_SetXX(gc,gc_xx);
 }
 
 void MapGuiOnKey(DISP_OBJ_MAP *db,int key,int,int repeat,int type)
@@ -346,7 +346,7 @@ void MapGuiOnKey(DISP_OBJ_MAP *db,int key,int,int repeat,int type)
       FillScreenBuffer(db);
     }
   }
-  InvalidateRect(&db->dsp_obj,0);
+  DispObject_InvalidateRect(&db->dsp_obj,0);
 }
 
 
@@ -367,13 +367,13 @@ void MapGui_destr( GUI* )
 GUI_MAP *CreateMapGUI(BOOK *bk)
 {
   GUI_MAP *gui_map=new GUI_MAP;
-  if (!CreateObject( gui_map,MapGui_destr,MapGui_constr, bk,0,0,0))
+  if (!GUIObject_Create( gui_map,MapGui_destr,MapGui_constr, bk,0,0,0))
   {
     delete gui_map;
     return 0;    
   }
-  if (bk) addGui2book(bk, gui_map);
-  GUI_SetStyle( gui_map,3);
+  if (bk) BookObj_AddGUIObject(bk, gui_map);
+  GUIObject_SetStyle( gui_map,3);
   return gui_map;
 }
 

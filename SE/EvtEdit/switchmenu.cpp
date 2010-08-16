@@ -17,10 +17,10 @@ void kill_switchlst(MyBOOK *mbk)
   {
     while (mbk->switch_lst->FirstFree)
     {
-      wchar_t* str=(wchar_t*)ListElement_Remove(mbk->switch_lst,0);
+      wchar_t* str=(wchar_t*)List_RemoveAt(mbk->switch_lst,0);
       DELETE(str);
     }
-    List_Free(mbk->switch_lst);
+    List_Destroy(mbk->switch_lst);
     mbk->switch_lst=0;
   }
 };
@@ -32,8 +32,8 @@ int Switch_onLBMessage(GUI_MESSAGE * msg)
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    wchar_t* str=(wchar_t *)ListElement_GetByIndex(mbk->switch_lst,item);
-    SetMenuItemText0(msg,Str2ID(str,0,SID_ANY_LEN));
+    wchar_t* str=(wchar_t *)List_Get(mbk->switch_lst,item);
+    GUIonMessage_SetMenuItemText(msg,Str2ID(str,0,SID_ANY_LEN));
     break;
   }
   return(1);
@@ -57,14 +57,14 @@ void Switch_OnBack(BOOK * bk, GUI* )
 GUI_LIST * CreateSwitchList(BOOK * book, int cnt)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    SetNumOfMenuItem(lo, cnt);
-    SetCursorToItem(lo,0);
-    ListMenu_SetOnMessages(lo,Switch_onLBMessage);
-    SetMenuItemStyle(lo,3);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, Switch_OnBack);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,Switch_OnSelect);
+    ListMenu_SetItemCount(lo, cnt);
+    ListMenu_SetCursorToItem(lo,0);
+    ListMenu_SetOnMessage(lo,Switch_onLBMessage);
+    ListMenu_SetItemStyle(lo,3);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Switch_OnBack);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Switch_OnSelect);
   }
   return(lo);
 };
@@ -73,8 +73,8 @@ static int SwitchPage_OnEnter(void *,BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->switch_gui=CreateSwitchList(bk, mbk->switch_lst->FirstFree);
-  GuiObject_SetTitleText(mbk->switch_gui, Str2ID(lng[CHOOSE],0,SID_ANY_LEN));
-  ShowWindow(mbk->switch_gui);
+  GUIObject_SetTitleText(mbk->switch_gui, Str2ID(lng[CHOOSE],0,SID_ANY_LEN));
+  GUIObject_Show(mbk->switch_gui);
   return 1;
 };
 

@@ -35,7 +35,7 @@ void MakeHidden(char *line)
 void Anim_Init()
 {
   //Создадим список анимационных экшнов
-  anlst.lst=List_New();
+  anlst.lst=List_Create();
   int Count=0;
   anlst.index=-1;
   if (AllowAnim==true)
@@ -97,11 +97,11 @@ void Anim_Free()
   ANIM_ELEM *anel;
   while (anlst.lst->FirstFree)
   {
-    anel=(ANIM_ELEM*)ListElement_Remove(anlst.lst,0);
+    anel=(ANIM_ELEM*)List_RemoveAt(anlst.lst,0);
     delete(anel);
   }
   anlst.index=0;
-  List_Free(anlst.lst);
+  List_Destroy(anlst.lst);
   int x;
   for (x=0;x<10;x++)
   {
@@ -117,12 +117,12 @@ int Anim_NextFrame()
   if (anlst.index==(anlst.lst->FirstFree))
   {
     anlst.index=0;
-    anel=(ANIM_ELEM*)ListElement_GetByIndex(anlst.lst, 0);
+    anel=(ANIM_ELEM*)List_Get(anlst.lst, 0);
   }
   else
   {
     anlst.index++;
-    anel=(ANIM_ELEM*)ListElement_GetByIndex(anlst.lst, anlst.index);
+    anel=(ANIM_ELEM*)List_Get(anlst.lst, anlst.index);
   }
   if (anel)
   {

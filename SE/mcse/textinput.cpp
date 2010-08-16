@@ -20,7 +20,7 @@ void OkTextInput(BOOK *,wchar_t * string,int len)
     MsgBoxError(muitxt(ind_err_badname));
     CorFileName(wsbuf);
     STRID txt=Str2ID(wsbuf,0,SID_ANY_LEN);
-    StringInput_DispObject_SetText(GUIObj_GetDISPObj(MCBook->textinp),txt);
+    StringInput_DispObject_SetText(GUIObject_GetDispObject(MCBook->textinp),txt);
   }
 }
 
@@ -32,7 +32,7 @@ void TextInput(wchar_t *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_
   str=Str2ID(wsname,0,SID_ANY_LEN);
   MCBook->tstname=TestFileName;
   MCBook->retproc=retproc;
-  MCBook->textinp=CreateStringInput(0,
+  MCBook->textinp=CreateStringInputVA(0,
                                     VAR_PREV_ACTION_PROC(KillTextInput),
                                     VAR_LONG_BACK_PROC(KillTextInput),
                                     VAR_BOOK(MCBook),

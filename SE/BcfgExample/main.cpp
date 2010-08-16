@@ -44,7 +44,7 @@ void onTimer(u16 r0, void * r1)
   if (SIDheap!=EMPTY_SID){TextFree(SIDheap);SIDheap=EMPTY_SID;}
   SIDheap=int2strID(GetFreeBytesOnHeap());
   Timer_ReSet(&timer,REFRESH_TIME,onTimer,0);
-  InvalidateRect(StatusRow,0);
+  DispObject_InvalidateRect(StatusRow,0);
 }
 
 
@@ -83,7 +83,7 @@ static int ReconfigElf(void *mess ,BOOK *book)
 
 static void onMyBookClose(BOOK * book)
 {
-  DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusRow),SIonRedraw);
+  DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusRow),SIonRedraw);
   Timer_Kill(&timer);
   SUBPROC(elf_exit);
 }
@@ -111,8 +111,8 @@ int main()
   }
   InitConfig();
   StatusRow=*StatusRow_p();
-  SIonRedraw=DISP_OBJ_GetOnRedraw(StatusRow);
-  DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusRow),Draw);
+  SIonRedraw=DispObject_GetOnRedraw(StatusRow);
+  DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusRow),Draw);
   MMIPROC((void (*)(void))onTimer);
   return 0;
 }

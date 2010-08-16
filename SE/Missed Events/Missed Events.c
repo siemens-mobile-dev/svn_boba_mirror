@@ -334,10 +334,10 @@ void onTimer(u16 timerID, LPARAM lparam)
             }
             if((cfg_screen==1) && (!screen_disabled_by_time))
             {
-                BOOK * ScreenSaverBook = FindBook(isScreenSaverBook());
+                BOOK * ScreenSaverBook = FindBook(get_IsScreenSaverBook());
                 if (ScreenSaverBook)
                 {
-                  UI_Event_toBookID(UI_SCREENSAVER_DEACTIVATE_EVENT,BOOK_GetBookID(ScreenSaverBook));
+                  UI_Event_toBookID(UI_SCREENSAVER_DEACTIVATE_EVENT,BookObj_GetBookID(ScreenSaverBook));
                 }
                 timerScreen=Timer_Set(cfg_screen_blink_speed,onTimerScreen,0);
                 offtimerScreen=Timer_Set(cfg_screen_time*1000,offTimerScreen,0);

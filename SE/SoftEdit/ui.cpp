@@ -170,7 +170,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       db->cur=get_fontindex(db, sk[db->curkey].hfont);
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_VOL_UP)
   {
@@ -190,7 +190,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       db->cur=get_fontindex(db, sk[db->curkey].hfont);
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_UP)
   {
@@ -202,7 +202,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hy=sk[db->curkey].hy-db->step;
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_DOWN)
   {
@@ -214,7 +214,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hy=sk[db->curkey].hy+db->step;;
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_LEFT)
   {
@@ -226,7 +226,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hx=sk[db->curkey].hx-db->step;
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_RIGHT)
   {
@@ -238,7 +238,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hx=sk[db->curkey].hx+db->step;
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key==KEY_DEL)
   {
@@ -264,7 +264,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
         sk[db->curkey].hct++;
       }
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key-KEY_DIGITAL_0==1)
   {
@@ -284,7 +284,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hfont=db->fonts[db->cur];
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else if (key-KEY_DIGITAL_0==3)
   {
@@ -304,7 +304,7 @@ void SkinGui_OnKey(DISP_OBJ_SKIN *db,int key,int,int repeat,int type)
     {
       sk[db->curkey].hfont=db->fonts[db->cur];
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   SKBOOK *sb=(SKBOOK*)FindBook(isSBook);
   if (sb)
@@ -343,12 +343,12 @@ void SkinGui_OnBack(BOOK * bk, void *)
 GUI_SKIN *CreateSkinGUI(MyBOOK *mbk)
 {
   GUI_SKIN *gui_skin=new GUI_SKIN;
-  if (!CreateObject( gui_skin,SkinGui_destr, SkinGui_constr,&mbk->book,0,0,0))
+  if (!GUIObject_Create( gui_skin,SkinGui_destr, SkinGui_constr,&mbk->book,0,0,0))
   {
     delete gui_skin;
     return 0;    
   }
-  if (mbk) addGui2book(&mbk->book, gui_skin);
+  if (mbk) BookObj_AddGUIObject(&mbk->book, gui_skin);
   mbk->skin = gui_skin;
   return gui_skin;
 };
@@ -362,17 +362,17 @@ void SkinGUI_OnBack( BOOK* bk, GUI* )
 void SkinGUI_Test( BOOK* bk, GUI* )
 {
   MyBOOK *mbk=(MyBOOK*)bk;
-  DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObj_GetDISPObj(mbk->skin);
+  DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObject_GetDispObject(mbk->skin);
   if (BookObj_GetDisplayOrientation(bk)==0)
   {
     BookObj_SetDisplayOrientation(bk,1);
-    GUIObject_Softkey_SetText(mbk->skin,0,Str2ID(L"Normal",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(mbk->skin,0,Str2ID(L"Normal",0,SID_ANY_LEN));
     db->cur=get_fontindex(db, sk[db->curkey].hfont);
   }
   else
   {
     BookObj_SetDisplayOrientation(bk,0);
-    GUIObject_Softkey_SetText(mbk->skin,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(mbk->skin,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
     db->cur=get_fontindex(db, sk[db->curkey].font);
   }
   BookObj_Hide(bk,0);
@@ -393,30 +393,30 @@ int Skin_OnEnter(void *, BOOK * bk)
   {
   case CHIPID_DB2000:
   case CHIPID_DB2010:
-    GUI_SetStyle(skin_gui,3);
+    GUIObject_SetStyle(skin_gui,3);
     pl=0;
     break;
   case CHIPID_DB2020:
-    GUI_SetStyle(skin_gui,4);
+    GUIObject_SetStyle(skin_gui,4);
     pl=1;
     break;
   }
-  GuiObject_SetTitleType(skin_gui, 1);
-  GUIObject_Softkey_SetAction(skin_gui,ACTION_BACK, SkinGUI_OnBack);
-  GUIObject_Softkey_SetAction(skin_gui,0,SkinGUI_Test);
+  GUIObject_SetTitleType(skin_gui, 1);
+  GUIObject_SoftKeys_SetAction(skin_gui,ACTION_BACK, SkinGUI_OnBack);
+  GUIObject_SoftKeys_SetAction(skin_gui,0,SkinGUI_Test);
   if (BookObj_GetDisplayOrientation(bk)==0)
   {
-    GUIObject_Softkey_SetText(skin_gui,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(skin_gui,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
   }
   else
   {
-    GUIObject_Softkey_SetText(skin_gui,0,Str2ID(L"Normal",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(skin_gui,0,Str2ID(L"Normal",0,SID_ANY_LEN));
   }
-  GUIObject_SoftKey_SetEnable(skin_gui,0,pl);
-  GUIObject_Softkey_SetAction(skin_gui,1,SkinGUI_Dummy);
-  GUIObject_Softkey_SetText(skin_gui,1,Str2ID(L"-test-",0,SID_ANY_LEN));
+  GUIObject_SoftKeys_SetEnable(skin_gui,0,pl);
+  GUIObject_SoftKeys_SetAction(skin_gui,1,SkinGUI_Dummy);
+  GUIObject_SoftKeys_SetText(skin_gui,1,Str2ID(L"-test-",0,SID_ANY_LEN));
   
-  DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObj_GetDISPObj(skin_gui);
+  DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObject_GetDispObject(skin_gui);
   db->curkey=0;
   db->setting=0;
   db->total_fonts=*GetFontCount();
@@ -427,7 +427,7 @@ int Skin_OnEnter(void *, BOOK * bk)
   }
   db->cur=0;
   db->step=1;
-  ShowWindow(skin_gui);
+  GUIObject_Show(skin_gui);
   BookObj_Hide(bk,0);
   BookObj_Show(bk,0);
   return (1);
@@ -436,7 +436,7 @@ int Skin_OnEnter(void *, BOOK * bk)
 int Skin_OnExit(void *, BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK *)bk;
-  if (mbk->skin)GUI_Free( mbk->skin);
+  if (mbk->skin)GUIObject_Destroy( mbk->skin);
   mbk->skin=0;
   return (1);
 };

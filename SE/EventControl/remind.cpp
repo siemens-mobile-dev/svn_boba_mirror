@@ -34,7 +34,7 @@ int GUI_REMIND_OnCreate(DISP_OBJ_REMIND *db)
 {
   db->num=0;
   if (!ECBook->remlst)
-    db->rems=List_New();
+    db->rems=List_Create();
   else
     db->rems=ECBook->remlst;
   return 1;
@@ -59,14 +59,14 @@ void kill_rems(LIST *lst, MyBOOK *mbk, bool check)
     while (1)
     {
       if (x>=lst->FirstFree || x<0)break;
-      REMIND* rem=(REMIND*)ListElement_GetByIndex(lst,x);
+      REMIND* rem=(REMIND*)List_Get(lst,x);
       if (rem && (rem->checked || check==false))
       {
         if (rem->text)delete(rem->text);
         if (rem->utext)delete(rem->utext);
         if (rem->time)delete(rem->time);
         delete(rem);
-        ListElement_Remove(lst, x);
+        List_RemoveAt(lst, x);
       }
       else
       {
@@ -76,7 +76,7 @@ void kill_rems(LIST *lst, MyBOOK *mbk, bool check)
     wchar_t icon=GetIconID(L"CALE_RN_TASK_STATUS_ICN");
     if (lst->FirstFree==0)
     {
-      List_Free(lst);
+      List_Destroy(lst);
       mbk->remlst=0;
       SetTrayIcon(icon, 0);
     }
@@ -173,7 +173,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
   {
     int width=Display_GetWidth(0);
     int height=Display_GetHeight(0);
-    REMIND *rem=(REMIND*)ListElement_GetByIndex(db->rems,db->num);
+    REMIND *rem=(REMIND*)List_Get(db->rems,db->num);
     int cl=0xFFAA0000;
     if (rem->checked)cl=0xFF00AA00;
     SetFont(FONT_E_16R);
@@ -186,7 +186,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
     int icon_id=NOIMAGE;
     iconidname2id(L"CALE_RN_APPOINTMENT_STATUS_ICN",-1,&icon_id);
     GC *gc=get_DisplayGC();
-    putchar(gc,0,0,0,0,icon_id);
+    GC_PutChar(gc,0,0,0,0,icon_id);
     SetFont(FONT_E_20I);
     DrawLine(Str2ID(rem->text,0,SID_ANY_LEN),2,0,height/2-10,width,height,20,clWhite);
     SetFont(FONT_E_16R);
@@ -234,7 +234,7 @@ void Reminder_onOK(BOOK *bk, void *)
   int res=GuiRemind_NextRemind(mbk->remind);
   if (res==0)
   {
-    GUI_Free(mbk->remind);
+    GUIObject_Destroy(mbk->remind);
     mbk->remind=0;
     BookObj_Hide(bk, 0);
   }
@@ -275,12 +275,12 @@ void GUI_REMIND_OnKey(DISP_OBJ_REMIND *db,int key,int,int repeat,int type)
     if (key==KEY_LEFT)
     {
       if (db->num)db->num--;
-      InvalidateRect((DISP_OBJ*)db,0);
+      DispObject_InvalidateRect((DISP_OBJ*)db,0);
     }
     if (key==KEY_RIGHT)
     {
       if (db->num!=db->rems->FirstFree-1)db->num++;
-      InvalidateRect((DISP_OBJ*)db,0);
+      DispObject_InvalidateRect((DISP_OBJ*)db,0);
     }
   }
 };
@@ -294,7 +294,7 @@ void GUI_REMIND_OnKey(DISP_OBJ_REMIND *db,int key,int,int repeat,int type)
 void GUI_REMIND_OnRefresh(DISP_OBJ_REMIND *DO)
 {
   DispObject_SetRefreshTimer((DISP_OBJ*)DO, 1000);
-  InvalidateRect((DISP_OBJ*)DO, 0);
+  DispObject_InvalidateRect((DISP_OBJ*)DO, 0);
 };
 
 /*
@@ -310,7 +310,7 @@ void GUI_REMIND_constr(DISP_DESC *desc)
   DISP_DESC_SetOnClose(desc,(DISP_OBJ_ONCLOSE_METHOD)GUI_REMIND_OnClose);
   DISP_DESC_SetOnRedraw(desc,(DISP_OBJ_ONREDRAW_METHOD)GUI_REMIND_OnRedraw);
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)GUI_REMIND_OnKey);
-  DISP_DESC_SetonRefresh(desc,(DISP_OBJ_METHOD)GUI_REMIND_OnRefresh);
+  DISP_DESC_SetOnRefresh(desc,(DISP_OBJ_METHOD)GUI_REMIND_OnRefresh);
 };
 
 /*
@@ -331,15 +331,15 @@ void GUI_REMIND_destr( GUI* )
 GUI_REMIND *GUI_REMIND_Create(BOOK *bk)
 {
   GUI_REMIND *gui_read=new GUI_REMIND;
-  if (!CreateObject( gui_read,GUI_REMIND_destr, GUI_REMIND_constr,bk,0,0,0))
+  if (!GUIObject_Create( gui_read,GUI_REMIND_destr, GUI_REMIND_constr,bk,0,0,0))
   {
     delete gui_read;
     return 0;    
   }
-  DispObject_SetLayerColor( GUIObj_GetDISPObj( gui_read), BG_COLOR);
-  if (bk) addGui2book(bk, gui_read);
-  DispObject_SetLayerColor( GUIObj_GetDISPObj( gui_read), BG_COLOR);
-  DispObject_SetRefreshTimer( GUIObj_GetDISPObj( gui_read), 1000);
+  DispObject_SetLayerColor( GUIObject_GetDispObject( gui_read), BG_COLOR);
+  if (bk) BookObj_AddGUIObject(bk, gui_read);
+  DispObject_SetLayerColor( GUIObject_GetDispObject( gui_read), BG_COLOR);
+  DispObject_SetRefreshTimer( GUIObject_GetDispObject( gui_read), 1000);
   return gui_read;
 };
 
@@ -352,18 +352,18 @@ void GuiRemind_AddNote(GUI_REMIND *g, REMIND *rem)
 {
   if (!g)return;
   if (!rem)return;
-  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*) GUIObj_GetDISPObj(g);
+  DISP_OBJ_REMIND *DO=(DISP_OBJ_REMIND*) GUIObject_GetDispObject(g);
   if (!DO)return;
-  ListElement_Add(DO->rems,rem);
+  List_InsertLast(DO->rems,rem);
 };
 
 void GuiRemind_CheckSelected(GUI_REMIND *g)
 {
   GUI *gb = g;
-  DISP_OBJ_REMIND *db= (DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
+  DISP_OBJ_REMIND *db= (DISP_OBJ_REMIND*)GUIObject_GetDispObject(gb);
   if (db->rems && db->num<db->rems->FirstFree)
   {
-    REMIND *rem=(REMIND*)ListElement_GetByIndex(db->rems,db->num);
+    REMIND *rem=(REMIND*)List_Get(db->rems,db->num);
     if (rem->checked)
       rem->checked=false;
     else
@@ -371,21 +371,21 @@ void GuiRemind_CheckSelected(GUI_REMIND *g)
       rem->checked=true;
       GuiRemind_NextRemind(g);
     }
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
 };
 
 int GuiRemind_NextRemind(GUI_REMIND *g)
 {
   GUI *gb = g;
-  DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)GUIObj_GetDISPObj(gb);
+  DISP_OBJ_REMIND *db=(DISP_OBJ_REMIND*)GUIObject_GetDispObject(gb);
   if (db->rems)
   {
     if (db->num!=db->rems->FirstFree-1)
       db->num++;
     else
       return 0;
-    InvalidateRect((DISP_OBJ*)db,0);
+    DispObject_InvalidateRect((DISP_OBJ*)db,0);
   }
   else
     return 0;

@@ -134,6 +134,15 @@ DEPRECATE(int,GUIonMessage_GetCurrentItemIndex,GUIonMessage_SubItem_GetSelectedP
 DEPRECATE(int,GUIonMessage_SetSubitemText,GUIonMessage_SubItem_SetText)
 DEPRECATE(int,GUIonMessage_SetItemAsSubitem,GUIonMessage_SetNumberOfSubItems)
 DEPRECATE(void,DispObject_SetTitleImage,DispObject_SetTitleBackgroundImage)
+DEPRECATE(IS_NEEDED_BOOK,isScreenSaverBook,get_IsScreenSaverBook)
+DEPRECATE(IS_NEEDED_BOOK,isMediaPlayerVideoBook,get_IsMediaPlayerVideoBook)
+DEPRECATE(int,isRightNowBook,IsRightNowBook)
+DEPRECATE(int,isVolumeControllerBook,IsVolumeControllerBook)
+DEPRECATE(IS_NEEDED_BOOK,isFmRadioBook,get_IsFmRadioBook)
+DEPRECATE(IS_NEEDED_BOOK,isAudioPlayerBook,get_IsAudioPlayerBook)
+DEPRECATE(int,isDataBrowserBook,IsDataBrowserBook)
+DEPRECATE(IS_NEEDED_BOOK,isCameraBook,get_IsCameraBook)
+DEPRECATE(IS_NEEDED_BOOK,isSoundRecorderBook,get_IsSoundRecorderBook)
 
 #else
 
@@ -267,6 +276,15 @@ DEPRECATE(void,DispObject_SetTitleImage,DispObject_SetTitleBackgroundImage)
 #define GUIonMessage_SetSubitemText GUIonMessage_SubItem_SetText
 #define GUIonMessage_SetItemAsSubitem GUIonMessage_SetNumberOfSubItems
 #define DispObject_SetTitleImage DispObject_SetTitleBackgroundImage
+#define isScreenSaverBook get_IsScreenSaverBook
+#define isMediaPlayerVideoBook get_IsMediaPlayerVideoBook
+#define isRightNowBook IsRightNowBook
+#define isVolumeControllerBook IsVolumeControllerBook
+#define isFmRadioBook get_IsFmRadioBook
+#define isAudioPlayerBook get_IsAudioPlayerBook
+#define isDataBrowserBook IsDataBrowserBook
+#define isCameraBook get_IsCameraBook
+#define isSoundRecorderBook get_IsSoundRecorderBook
 
 #endif
 

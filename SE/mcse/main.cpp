@@ -117,7 +117,7 @@ void FreeData()
   FreeDrvInfo();
   DestroyPathBuf();
   DestroySendList(MCBook->lst_send);
-  List_Free(MCBook->lst_send);
+  List_Destroy(MCBook->lst_send);
 }
 
 wchar_t *SA_ICONS[]=
@@ -227,7 +227,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
   if (CONFIG_LOAD_MUI)
     LoadMUI(NULL);
   WriteLog("Create lst_send");
-  MCBook->lst_send=List_New();
+  MCBook->lst_send=List_Create();
   DispObject_SetRefreshTimer(&db->dsp_obj,100);
   if (in_open_path[0]=='/')
   {
@@ -274,12 +274,12 @@ void MainGuiOnRedraw(DISP_OBJ_MAIN *db,int ,RECT *cur_rc,int)
   int font_old, gc_xx;
   int font=CONFIG_FONT_ATTR;
   GC *gc=get_DisplayGC();
-  gc_xx=get_GC_xx(gc);
-  set_GC_xx(gc,1);
+  gc_xx=GC_GetXX(gc);
+  GC_SetXX(gc,1);
   font_old=SetFont(font);
   ShowFiles(gc, cur_rc);
   SetFont(font_old);
-  set_GC_xx(gc,gc_xx);
+  GC_SetXX(gc,gc_xx);
 }
 
 static void CBStop(BOOK * bk, void *)
@@ -331,7 +331,7 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
   if (!ignore)
   {
     DoKey(isLongPress, key);
-    InvalidateRect(&db->dsp_obj,0);
+    DispObject_InvalidateRect(&db->dsp_obj,0);
   }
   lastKey = key;
   lastIsLongPress = isLongPress;
@@ -340,7 +340,7 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
 void MainGuiOnRefresh(DISP_OBJ_MAIN *db)
 {
   if (RedrawGUI){
-    InvalidateRect(&db->dsp_obj,0);
+    DispObject_InvalidateRect(&db->dsp_obj,0);
     RedrawGUI=0;
   }
   DispObject_SetRefreshTimer(&db->dsp_obj,150);
@@ -356,7 +356,7 @@ void MainGui_constr(DISP_DESC *desc)
   DISP_DESC_SetOnClose(desc,(DISP_OBJ_ONCLOSE_METHOD)MainGuiOnClose);
   DISP_DESC_SetOnRedraw(desc,(DISP_OBJ_ONREDRAW_METHOD)MainGuiOnRedraw);
   DISP_DESC_SetOnKey(desc,(DISP_OBJ_ONKEY_METHOD)MainGuiOnKey);
-  DISP_DESC_SetonRefresh(desc,(DISP_OBJ_METHOD)MainGuiOnRefresh);
+  DISP_DESC_SetOnRefresh(desc,(DISP_OBJ_METHOD)MainGuiOnRefresh);
 }
 
 void MainGui_destr( GUI* ){}
@@ -364,18 +364,18 @@ void MainGui_destr( GUI* ){}
 static GUI *CreateMainGui(MyBOOK *mbk)
 {
   MAIN_GUI *main_gui=new MAIN_GUI;
-  if (!CreateObject( main_gui,MainGui_destr,MainGui_constr, &mbk->book,0,0,0))
+  if (!GUIObject_Create( main_gui,MainGui_destr,MainGui_constr, &mbk->book,0,0,0))
   {
     delete main_gui;
     return 0;    
   }
   GUI *gui = main_gui;
-  if (mbk) addGui2book(&mbk->book,gui);
-  GUI_SetStyle(gui,4);
-  GuiObject_SetTitleType(gui, 1);
-  GUIObject_HideSoftkeys(gui);
-  //GUIObject_Softkey_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
-  ShowWindow(gui);
+  if (mbk) BookObj_AddGUIObject(&mbk->book,gui);
+  GUIObject_SetStyle(gui,4);
+  GUIObject_SetTitleType(gui, 1);
+  GUIObject_SoftKeys_Hide(gui);
+  //GUIObject_SoftKeys_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
+  GUIObject_Show(gui);
   return gui;
 }
 

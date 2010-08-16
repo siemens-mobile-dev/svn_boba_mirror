@@ -555,14 +555,14 @@ void  __deleaker_VCALL_SetNameIcon(void* vc, wchar_t icon, char* __file__,  int 
 }
 
 #ifdef __cplusplus
-int  __deleaker_ModifyKeyHook(KEYHOOKPROC proc, int mode, LPARAM lparam = NULL, char* __file__,  int __line__)
+int  __deleaker_ModifyKeyHook(KEYHOOKPROC proc, int mode, LPARAM lparam, char* __file__,  int __line__)
 {
   int  ret = __original_ModifyKeyHook(proc, mode, NULL);
   if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
   if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
   return ret;
 }
-int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL, char* __file__,  int __line__)
+int  __deleaker_ModifyKeyHook(int (*proc)( int, int, int ), int mode, LPARAM lparam, char* __file__,  int __line__)
 {
   int  ret = __original_ModifyKeyHook(proc, mode, NULL);
   if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
@@ -753,6 +753,15 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
 //__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
+//__swi __arm int IsAudioPlayerBook( BOOK *bk);
+//__swi __arm int IsCameraBook( BOOK *bk );
+//__swi __arm int IsDataBrowserBook( BOOK* book );
+//__swi __arm int IsFmRadioBook( BOOK *bk );
+//__swi __arm int IsMediaPlayerVideoBook( BOOK *bk );
+//__swi __arm int IsRightNowBook( BOOK* book );
+//__swi __arm int IsScreenSaverBook( BOOK *bk );
+//__swi __arm int IsSoundRecorderBook( BOOK *bk );
+//__swi __arm int IsVolumeControllerBook( BOOK* book );
 //__swi __arm int JavaAppDesc_Get( int unk1, void** JavaDesc );
 //__swi __arm int JavaAppDesc_GetFirstApp( void* JavaDesc );
 //__swi __arm int JavaAppDesc_GetJavaAppFullpath( void* JavaDesc, JavaAppFullpath* );
@@ -828,6 +837,15 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm PROCESS current_process( void );
 //__swi __arm void free_buf( union SIGNAL** sig );
 //__swi __arm int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+//__swi __arm IS_NEEDED_BOOK get_IsAudioPlayerBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsCameraBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsDataBrowserBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsFmRadioBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsMediaPlayerVideoBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsRightNowBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsScreenSaverBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsSoundRecorderBook( void );
+//__swi __arm IS_NEEDED_BOOK get_IsVolumeControllerBook( void );
 //__swi __arm int inflate( z_streamp strm, int flush );
 //__swi __arm int inflateEnd( z_streamp strm );
 //__swi __arm int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );

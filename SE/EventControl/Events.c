@@ -334,10 +334,10 @@ void AddEvent(char *line)
   }
   if (!events)
   {
-    events=List_New();
+    events=List_Create();
     ECBook->lst=events;
   }
-  ListElement_Add(events, ev);
+  List_InsertLast(events, ev);
 };
 
 /*
@@ -432,7 +432,7 @@ int readConfig(MyBOOK *mbk, wchar_t *myFolder, wchar_t *fname)
 */
 int InitializeEvents(MyBOOK *myBook)
 {
-  events=List_New();
+  events=List_Create();
   myBook->lst=events;
   if (readConfig(myBook, extFolder, L"Events.evt")<0)
   {
@@ -458,7 +458,7 @@ void DestroyEvents(MyBOOK *myBook)
   }
   while (events->FirstFree)
   {
-    EVENT* event=(EVENT*)ListElement_Remove(events,0);
+    EVENT* event=(EVENT*)List_RemoveAt(events,0);
     if (event)
     {
       if (event->param)delete(event->param);
@@ -467,7 +467,7 @@ void DestroyEvents(MyBOOK *myBook)
       delete(event);
     }
   }
-  List_Free(events);
+  List_Destroy(events);
   events=0;
   myBook->lst=0;
 };

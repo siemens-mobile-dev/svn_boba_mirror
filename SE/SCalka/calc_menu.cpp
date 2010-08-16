@@ -82,7 +82,7 @@ int IV_On_Msg(GUI_MESSAGE * msg)
     if (d<(VAR_Z-VAR_A+1))
     {
       str=0x78000000|('a'+d);
-      SetMenuItemText0(msg,str);
+      GUIonMessage_SetMenuItemText(msg,str);
     }
   }
   return(1);
@@ -92,16 +92,16 @@ void InsertVar_CreateMenu(MyBOOK *mbk)
 {
   GUI_LIST *lo;
   STRID sid;
-  mbk->calc_insvar=lo=CreateListObject(&mbk->book,0);
+  mbk->calc_insvar=lo=CreateListMenu(&mbk->book,0);
   sid=Str2ID(L"Settings",0,SID_ANY_LEN);
-  GuiObject_SetTitleText(lo,sid);
-  SetNumOfMenuItem(lo,VAR_Z-VAR_A+1);
-  SetCursorToItem(lo,0);
-  //SetMenuItemStyle(lo,3);
-  ListMenu_SetOnMessages(lo,IV_On_Msg);
-  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,IV_onEnterPressed); 
-  GUIObject_Softkey_SetAction(lo,ACTION_BACK,IV_OnBack);
-  ShowWindow(lo);
+  GUIObject_SetTitleText(lo,sid);
+  ListMenu_SetItemCount(lo,VAR_Z-VAR_A+1);
+  ListMenu_SetCursorToItem(lo,0);
+  //ListMenu_SetItemStyle(lo,3);
+  ListMenu_SetOnMessage(lo,IV_On_Msg);
+  GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,IV_onEnterPressed); 
+  GUIObject_SoftKeys_SetAction(lo,ACTION_BACK,IV_OnBack);
+  GUIObject_Show(lo);
 }
 //==============================================================================
 
@@ -131,13 +131,13 @@ void AngleSelect_CreateCBoxGui(MyBOOK *mbk)
   STRID strid[3];
   GUI_ONEOFMANY *om;
   mbk->angle_sel_list=om=CreateOneOfMany(&mbk->book);
-  GuiObject_SetTitleText(om,Str2ID(L"Angle setup",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(om,Str2ID(L"Angle setup",0,SID_ANY_LEN));
   for (int i=0; i<3; i++) strid[i]=Str2ID(angle_names[i],0,SID_ANY_LEN);
   OneOfMany_SetTexts(om,strid,3);
   OneOfMany_SetChecked(om,calc_set.drg);
-  GUIObject_Softkey_SetAction(om,ACTION_BACK,AngleSelect_OnCloseCBoxGui);
-  GUIObject_Softkey_SetAction(om,ACTION_SELECT1,AngleSelect_OnSelectCBoxGui);
-  ShowWindow(om);
+  GUIObject_SoftKeys_SetAction(om,ACTION_BACK,AngleSelect_OnCloseCBoxGui);
+  GUIObject_SoftKeys_SetAction(om,ACTION_SELECT1,AngleSelect_OnSelectCBoxGui);
+  GUIObject_Show(om);
 }
 //------------------------------------------------------------------------------
 void OnBackEditFmtGui(BOOK * bk, u16 *string, int len)
@@ -160,7 +160,7 @@ void CreateEditFmtStr(MyBOOK *myBook)
   win12512unicode(ustr,calc_set.fmt,sizeof(calc_set.fmt)-1);
   text=Str2ID(ustr,0,SID_ANY_LEN);
   header_name=Str2ID("Edit format str",6,SID_ANY_LEN);
-  myBook->edit_fmtstr = CreateStringInput(0,
+  myBook->edit_fmtstr = CreateStringInputVA(0,
                                                VAR_HEADER_TEXT(header_name),
                                                VAR_STRINP_MIN_LEN(1),
                                                VAR_STRINP_MAX_LEN(sizeof(calc_set.fmt)-1),
@@ -197,13 +197,13 @@ void AutocalcSelect_CreateCBoxGui(MyBOOK *mbk)
   STRID strid[2];
   GUI_ONEOFMANY *om;
   mbk->autocalc_sel_list=om=CreateOneOfMany(&mbk->book);
-  GuiObject_SetTitleText(om,Str2ID(L"Realtime calc",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(om,Str2ID(L"Realtime calc",0,SID_ANY_LEN));
   for (int i=0; i<2; i++) strid[i]=Str2ID(dis_ena[i],0,SID_ANY_LEN);
   OneOfMany_SetTexts(om,strid,2);
   OneOfMany_SetChecked(om,calc_set.auto_recalc);
-  GUIObject_Softkey_SetAction(om,ACTION_BACK,AutocalcSelect_OnCloseCBoxGui);
-  GUIObject_Softkey_SetAction(om,ACTION_SELECT1,AutocalcSelect_OnSelectCBoxGui);
-  ShowWindow(om);
+  GUIObject_SoftKeys_SetAction(om,ACTION_BACK,AutocalcSelect_OnCloseCBoxGui);
+  GUIObject_SoftKeys_SetAction(om,ACTION_SELECT1,AutocalcSelect_OnSelectCBoxGui);
+  GUIObject_Show(om);
 }
 
 //------------------------------------------------------------------------------
@@ -252,7 +252,7 @@ int CS_On_Msg(GUI_MESSAGE * msg)
     {
       STRID tx=LGP_NULL;
       str=Str2ID(names[d],0,SID_ANY_LEN);
-      SetMenuItemText0(msg,str);
+      GUIonMessage_SetMenuItemText(msg,str);
       switch(d)
       {
       case 0:
@@ -265,7 +265,7 @@ int CS_On_Msg(GUI_MESSAGE * msg)
         tx=Str2ID(dis_ena[calc_set.auto_recalc],0,SID_ANY_LEN);
         break;
       }
-      SetMenuItemText1(msg,tx);
+      GUIonMessage_SetMenuItemSecondLineText(msg,tx);
     }
   }
   return(1);
@@ -275,16 +275,16 @@ void CreateCalcSettings(MyBOOK *mbk)
 {
   GUI_LIST *lo;
   STRID sid;
-  mbk->calc_settings=lo=CreateListObject(&mbk->book,0);
+  mbk->calc_settings=lo=CreateListMenu(&mbk->book,0);
   sid=Str2ID(L"Settings",0,SID_ANY_LEN);
-  GuiObject_SetTitleText(lo,sid);
-  SetNumOfMenuItem(lo,3);
-  SetCursorToItem(lo,0);
-  SetMenuItemStyle(lo,3);
-  ListMenu_SetOnMessages(lo,CS_On_Msg);
-  GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,CS_onEnterPressed); 
-  GUIObject_Softkey_SetAction(lo,ACTION_BACK,CS_OnBack);
-  ShowWindow(lo);
+  GUIObject_SetTitleText(lo,sid);
+  ListMenu_SetItemCount(lo,3);
+  ListMenu_SetCursorToItem(lo,0);
+  ListMenu_SetItemStyle(lo,3);
+  ListMenu_SetOnMessage(lo,CS_On_Msg);
+  GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,CS_onEnterPressed); 
+  GUIObject_SoftKeys_SetAction(lo,ACTION_BACK,CS_OnBack);
+  GUIObject_Show(lo);
 }
 
 //==============================================================================
@@ -339,7 +339,7 @@ void CreateCalcMenu(void)
   if (bk)
   {
     MyBOOK *mbk=(MyBOOK *)bk;
-    mbk->calc_menu=lo=CreateListObject(&mbk->book,0);
+    mbk->calc_menu=lo=CreateListMenu(&mbk->book,0);
     sid=Str2ID(L"Menu",0,SID_ANY_LEN);
     texts[0]=Str2ID(L"Set formula",0,SID_ANY_LEN);
     texts[1]=Str2ID(L"Insert var",0,SID_ANY_LEN);
@@ -349,11 +349,11 @@ void CreateCalcMenu(void)
     texts[5]=Str2ID(L"Ans To Y",0,SID_ANY_LEN);
     texts[6]=Str2ID(L"Settings",0,SID_ANY_LEN);
     OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,7);
-    GuiObject_SetTitleText(lo,sid);
-    SetNumOfMenuItem(lo,7);
-    SetCursorToItem(lo,0);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,CM_onEnterPressed); 
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK,CM_OnBack);
-    ShowWindow(lo);
+    GUIObject_SetTitleText(lo,sid);
+    ListMenu_SetItemCount(lo,7);
+    ListMenu_SetCursorToItem(lo,0);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,CM_onEnterPressed); 
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK,CM_OnBack);
+    GUIObject_Show(lo);
   }
 }

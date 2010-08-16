@@ -13,7 +13,7 @@ void destroy_all_images();
 void Init();
 extern LIST *customsofts;
 #define SID_NULL 0x6FFFFFFF
-#define FREE_GUI(a) if (a) a=GUI_Free(a)
+#define FREE_GUI(a) if (a) a=GUIObject_Destroy(a)
 #define DELETE(a) if (a) {delete(a);a=0;}
 #define IDN_SAVE_BEFORE_EXIT L"HPB_SAVE_BEFORE_EXITQ_TXT"
 #define IDN_CHANGES_HAVE_BEEN_MADE L"HPB_SAVE_BEFORE_EXITD_TXT"

@@ -112,15 +112,15 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
          {
             if (CustomImage_Draw==0)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==1 && isInStandby==true)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==2 && isInStandby==false)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
           }
         }
@@ -130,15 +130,15 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
           {
             if (COVER_DRAW==0)
             {
-              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              GC_PutChar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
             else if (COVER_DRAW==1 && isInStandby==true)
             {
-              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              GC_PutChar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
             else if (COVER_DRAW==2 && isInStandby==false)
             {
-              putchar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
+              GC_PutChar(gc,locCover_X,locCover_Y+PlusY,locCover_MaxX,locCover_MaxY,nowmusic.meta.ImageID);
             }
           }
         }
@@ -148,15 +148,15 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
           {
             if (CustomImage_Draw==0)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==1 && isInStandby==true)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
             else if (CustomImage_Draw==2 && isInStandby==false)
             {
-              putchar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
+              GC_PutChar(gc,img.x,img.y+PlusY,img.mx,img.my,img.ImageID);
             }
           }
         }
@@ -209,7 +209,7 @@ int GetUpdateTime()
 
 void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
 {
-  if (PlayerRunned && FindBook(isAudioPlayerBook()))
+  if (PlayerRunned && FindBook(get_IsAudioPlayerBook()))
   {
     isAPBookFound=true;
     if (isInStandby==true)
@@ -227,14 +227,14 @@ void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
           }
         }
       }
-      InvalidateRect(Standby_DO,0);
+      DispObject_InvalidateRect(Standby_DO,0);
       if (AffectSoft==true)
       {
-        InvalidateRect(Softkey_DO,0);
+        DispObject_InvalidateRect(Softkey_DO,0);
       }
       if (AffectStatus==true)
       {
-        InvalidateRect(StatusIndication_DO,0);
+        DispObject_InvalidateRect(StatusIndication_DO,0);
       }
     }
     else if (isInStandby==false)
@@ -242,11 +242,11 @@ void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
       NextScrollFrame(isInStandby);
       if (DrawSoft2!=false && AffectSoft==true)
       {
-        InvalidateRect(Softkey_DO,0);
+        DispObject_InvalidateRect(Softkey_DO,0);
       }
       if (DrawStatus2!=false && AffectStatus==true)
       {
-        InvalidateRect(StatusIndication_DO,0);
+        DispObject_InvalidateRect(StatusIndication_DO,0);
       }
     }
   }
@@ -258,25 +258,25 @@ void Standby_OnRedrawTimer(u16 timer,LPARAM lparam)
     {
       if (isInStandby==true)
       {
-        InvalidateRect(Standby_DO,0);
+        DispObject_InvalidateRect(Standby_DO,0);
         if (AffectSoft==true)
         {
-          InvalidateRect(Softkey_DO,0);
+          DispObject_InvalidateRect(Softkey_DO,0);
         }
         if (AffectStatus==true)
         {
-          InvalidateRect(StatusIndication_DO,0);
+          DispObject_InvalidateRect(StatusIndication_DO,0);
         }
       }
       else if (isInStandby==false)
       {
         if (DrawSoft2!=false && AffectSoft==true)
         {
-          InvalidateRect(Softkey_DO,0);
+          DispObject_InvalidateRect(Softkey_DO,0);
         }
         if (DrawStatus2!=false && AffectStatus==true)
         {
-          InvalidateRect(StatusIndication_DO,0);
+          DispObject_InvalidateRect(StatusIndication_DO,0);
         }
       }
     }
@@ -290,9 +290,9 @@ void Standby_SetOnRedraw()
   //Система тройной прорисовки для целостности ГЭ.
   wstrcpy(lastmusic,L"no");
   
-  Standby_DO= GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
-  Standby_DefaultRedraw=DISP_OBJ_GetOnRedraw(Standby_DO);
-  Standby_DD=DISP_OBJ_GetDESC (Standby_DO);
+  Standby_DO= GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
+  Standby_DefaultRedraw=DispObject_GetOnRedraw(Standby_DO);
+  Standby_DD=DispObject_GetDESC (Standby_DO);
   DISP_DESC_SetOnRedraw(Standby_DD,Standby_CARedraw); 
   Standby_RedrawTimer=Timer_Set(GetUpdateTime(),Standby_OnRedrawTimer,0);
   //Нужны ли нам софты/статус?
@@ -313,8 +313,8 @@ void Softkey_SetOnRedraw()
   //Врубаем софты
   SoftUsed=true;
   Softkey_DO=DispObject_SoftKeys_Get();
-  Softkey_DefaultRedraw=DISP_OBJ_GetOnRedraw(Softkey_DO);
-  Softkey_DD=DISP_OBJ_GetDESC(Softkey_DO);
+  Softkey_DefaultRedraw=DispObject_GetOnRedraw(Softkey_DO);
+  Softkey_DD=DispObject_GetDESC(Softkey_DO);
   DISP_DESC_SetOnRedraw(Softkey_DD,Softkey_CARedraw);
 };
 
@@ -323,8 +323,8 @@ void StatusIndication_SetOnRedraw()
   //Врубаем статус 
   StatusUsed=true;
   StatusIndication_DO=*StatusRow_p();
-  StatusIndication_DefaultRedraw=DISP_OBJ_GetOnRedraw(StatusIndication_DO);
-  StatusIndication_DD=DISP_OBJ_GetDESC(StatusIndication_DO);
+  StatusIndication_DefaultRedraw=DispObject_GetOnRedraw(StatusIndication_DO);
+  StatusIndication_DD=DispObject_GetDESC(StatusIndication_DO);
   DISP_DESC_SetOnRedraw(StatusIndication_DD,StatusIndication_CARedraw);
 };
 

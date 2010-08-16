@@ -94,7 +94,7 @@ void sub_launcher(int need_to_watch, void *)
     int x=0;
     for (x=0;x<events->FirstFree;x++)
     {
-      if (EVENT *ev=(EVENT*)ListElement_GetByIndex(events,x))
+      if (EVENT *ev=(EVENT*)List_Get(events,x))
       {
         if (ev->dtype==2 && need_to_watch && ev->days[DayOfTheWeek])
         {

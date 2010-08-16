@@ -66,7 +66,7 @@ int SoundRecorderDesc_SetStyle(SOUND_RECORDER_DESC * desc,int style)
 int Record_FM(FM_RADIO_BOOK * fm_book)
 {
   SOUND_RECORDER_DESC * desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
-  SoundRecorderDesc_SetBookID(desc,BOOK_GetBookID(myBook));
+  SoundRecorderDesc_SetBookID(desc,BookObj_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+FmRadioRecorderType);
   if(wstrlen(_FmTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_FmTitle,0,40));
   if(LimitRadioType)
@@ -90,7 +90,7 @@ int Record_FM(FM_RADIO_BOOK * fm_book)
 int Record_User(BOOK * bk)
 {
   SOUND_RECORDER_DESC* desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
-  SoundRecorderDesc_SetBookID(desc,BOOK_GetBookID(myBook));
+  SoundRecorderDesc_SetBookID(desc,BookObj_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+UserSoundRecorderType);
   if(wstrlen(_UserTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_UserTitle,0,40));
   if(LimitSoundType)
@@ -137,19 +137,19 @@ void RecFM(BOOK * fm,GUI*)
 static int SetHook(void *mess,BOOK *book)
 {
   if(!Hook) return 0;
-  FM_RADIO_BOOK * fm_bk = (FM_RADIO_BOOK*)FindBook(isFmRadioBook());
-  GUIObject_Softkey_SetAction(fm_bk->FmGui,0x11,RecFM);
-  GUIObject_Softkey_SetText(fm_bk->FmGui,0x11,Str2ID(_ItemText,0,40));
+  FM_RADIO_BOOK * fm_bk = (FM_RADIO_BOOK*)FindBook(get_IsFmRadioBook());
+  GUIObject_SoftKeys_SetAction(fm_bk->FmGui,0x11,RecFM);
+  GUIObject_SoftKeys_SetText(fm_bk->FmGui,0x11,Str2ID(_ItemText,0,40));
   return 1;
 }
 
 static int UnsetHook()
 {
-  if(FindBook(isFmRadioBook()))
+  if(FindBook(get_IsFmRadioBook()))
   {
-    FM_RADIO_BOOK * fm = (FM_RADIO_BOOK*)FindBook(isFmRadioBook());
-    GUIObject_Softkey_SetAction(fm->FmGui,0x11,0);
-    GUIObject_Softkey_SetText(fm->FmGui,0x11,0);
+    FM_RADIO_BOOK * fm = (FM_RADIO_BOOK*)FindBook(get_IsFmRadioBook());
+    GUIObject_SoftKeys_SetAction(fm->FmGui,0x11,0);
+    GUIObject_SoftKeys_SetText(fm->FmGui,0x11,0);
     return 1;
   }
   return 0;
@@ -162,7 +162,7 @@ static int ReconfigElf(void *mess ,BOOK *book)
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
     InitConfig();
-    if(FindBook(isFmRadioBook()))
+    if(FindBook(get_IsFmRadioBook()))
     {
       if(Hook){
         SetHook(0,0);
@@ -185,9 +185,9 @@ int NewKey(int key,int r1,int mode)
 {
   if(!isKeylocked())
   {
-    if(key==KEY1 && mode==KEYMODE1 && FindBook(isFmRadioBook())!=0)
+    if(key==KEY1 && mode==KEYMODE1 && FindBook(get_IsFmRadioBook())!=0)
     {
-      Record_FM((FM_RADIO_BOOK*)FindBook(isFmRadioBook()));
+      Record_FM((FM_RADIO_BOOK*)FindBook(get_IsFmRadioBook()));
     }
     if(key==KEY2 && mode==KEYMODE2)
     {

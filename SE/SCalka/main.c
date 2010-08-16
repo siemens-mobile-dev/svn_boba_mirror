@@ -83,7 +83,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   MyBOOK *mbk=(MyBOOK *)bk;
   ReadCalcSettings();
   GUI * si=CreateCalkGUI(bk);
-  ShowWindow(si);
+  GUIObject_Show(si);
   mbk->si=si;
   return (1);
 }

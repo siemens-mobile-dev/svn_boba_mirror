@@ -69,12 +69,12 @@ static int DI_OnEnter(void *, BOOK * bk)
                                 VAR_DATEINP_DATE(&d),
                                 VAR_BOOK(&mbk->book),
                                 0);
-  GUIObject_Softkey_SetAction(mbk->dinput,ACTION_ACCEPT, AcceptDIinput);
-  GUIObject_Softkey_SetText(mbk->dinput,ACTION_ACCEPT,STR("OK"));
-  GUIObject_SoftKey_SetVisible(mbk->dinput,ACTION_ACCEPT,1);
-  GUIObject_Softkey_SetAction(mbk->dinput,ACTION_BACK, CloseDIinput);
+  GUIObject_SoftKeys_SetAction(mbk->dinput,ACTION_ACCEPT, AcceptDIinput);
+  GUIObject_SoftKeys_SetText(mbk->dinput,ACTION_ACCEPT,STR("OK"));
+  GUIObject_SoftKeys_SetVisible(mbk->dinput,ACTION_ACCEPT,1);
+  GUIObject_SoftKeys_SetAction(mbk->dinput,ACTION_BACK, CloseDIinput);
   if (iconidname2id(IDN_DATE_INPUT_ICON,-1,&icon_id))
-    InputFeedback_SetIcon(mbk->dinput,icon_id);
+    GUIInput_SetIcon(mbk->dinput,icon_id);
   return (1);
 };
 

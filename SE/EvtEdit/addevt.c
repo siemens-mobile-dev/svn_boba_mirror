@@ -167,61 +167,61 @@ void SelectEvent_OnEnter(BOOK *bk, GUI* )
   {
     extern const PAGE_DESC bk_Switch;
     if (!mbk->switch_lst)
-      mbk->switch_lst=List_New();
+      mbk->switch_lst=List_Create();
     wchar_t *n1=new wchar_t[30];
     wstrcpy(n1, lng[OFF]);
     wchar_t *n2=new wchar_t[30];
     wstrcpy(n2, lng[ON]);
     wchar_t *n3=new wchar_t[30];
     wstrcpy(n3, lng[ON_WOUT_SOUND]);
-    ListElement_Add(mbk->switch_lst,n1);
-    ListElement_Add(mbk->switch_lst,n2);
-    ListElement_Add(mbk->switch_lst,n3);
+    List_InsertLast(mbk->switch_lst,n1);
+    List_InsertLast(mbk->switch_lst,n2);
+    List_InsertLast(mbk->switch_lst,n3);
     BookObj_CallPage(bk,&bk_Switch);
   }
   else if (ittypes[item]==AT_CHOOSE_MENU_1)
   {
     extern const PAGE_DESC bk_Switch;
     if (!mbk->switch_lst)
-      mbk->switch_lst=List_New();
+      mbk->switch_lst=List_Create();
     wchar_t *n1=new wchar_t[30];
     wstrcpy(n1, lng[TYPICAL]);
     wchar_t *n2=new wchar_t[30];
     wstrcpy(n2, lng[ANY_KEY]);
     wchar_t *n3=new wchar_t[30];
     wstrcpy(n3, lng[AUTO]);
-    ListElement_Add(mbk->switch_lst,n1);
-    ListElement_Add(mbk->switch_lst,n2);
-    ListElement_Add(mbk->switch_lst,n3);
+    List_InsertLast(mbk->switch_lst,n1);
+    List_InsertLast(mbk->switch_lst,n2);
+    List_InsertLast(mbk->switch_lst,n3);
     BookObj_CallPage(bk,&bk_Switch);
   }
   else if (ittypes[item]==AT_CHOOSE_MENU_2)
   {
     extern const PAGE_DESC bk_Switch;
     if (!mbk->switch_lst)
-      mbk->switch_lst=List_New();
+      mbk->switch_lst=List_Create();
     wchar_t *n1=new wchar_t[30];
     wstrcpy(n1, lng[OFF]);
     wchar_t *n2=new wchar_t[30];
     wstrcpy(n2, lng[ON]);
-    ListElement_Add(mbk->switch_lst,n1);
-    ListElement_Add(mbk->switch_lst,n2);
+    List_InsertLast(mbk->switch_lst,n1);
+    List_InsertLast(mbk->switch_lst,n2);
     BookObj_CallPage(bk,&bk_Switch);
   }
   else if (ittypes[item]==AT_CHOOSE_MENU_3)
   {
     extern const PAGE_DESC bk_Switch;
     if (!mbk->switch_lst)
-      mbk->switch_lst=List_New();
+      mbk->switch_lst=List_Create();
     wchar_t *n1=new wchar_t[30];
     wstrcpy(n1, lng[ALLOW_ALL]);
     wchar_t *n2=new wchar_t[30];
     wstrcpy(n2, lng[FROM_LIST]);
     wchar_t *n3=new wchar_t[30];
     wstrcpy(n3, lng[NO]);
-    ListElement_Add(mbk->switch_lst,n1);
-    ListElement_Add(mbk->switch_lst,n2);
-    ListElement_Add(mbk->switch_lst,n3);
+    List_InsertLast(mbk->switch_lst,n1);
+    List_InsertLast(mbk->switch_lst,n2);
+    List_InsertLast(mbk->switch_lst,n3);
     BookObj_CallPage(bk,&bk_Switch);
   }
   else
@@ -270,7 +270,7 @@ int SelectEvent_onLBMessage(GUI_MESSAGE * msg)
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    SetMenuItemText0(msg,Str2ID(items[item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,Str2ID(items[item],0,SID_ANY_LEN));
     break;
   }
   return(1);
@@ -279,16 +279,16 @@ int SelectEvent_onLBMessage(GUI_MESSAGE * msg)
 GUI_LIST * SelectEvent_CreateGui(MyBOOK * mbk)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(&mbk->book,0))
+  if (lo=CreateListMenu(&mbk->book,0))
   {
-    GuiObject_SetTitleText(lo,Str2ID(lng[ACTIONS],0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,Str2ID(lng[ACTIONS],0,SID_ANY_LEN));
     int num=GetNumOfActions();
-    SetNumOfMenuItem(lo,num);
-    ListMenu_SetOnMessages(lo,SelectEvent_onLBMessage);
-    SetMenuItemStyle(lo,3);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, SelectEvent_OnBack);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,SelectEvent_OnEnter);
-    SetCursorToItem(lo,0);
+    ListMenu_SetItemCount(lo,num);
+    ListMenu_SetOnMessage(lo,SelectEvent_onLBMessage);
+    ListMenu_SetItemStyle(lo,3);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, SelectEvent_OnBack);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,SelectEvent_OnEnter);
+    ListMenu_SetCursorToItem(lo,0);
   }
   return(lo);
 };
@@ -299,7 +299,7 @@ GUI_LIST *SelectEvent_CreateList(BOOK *book)
   temp_act=mbk->selev->type;
   old=mbk->selev->param;
   mbk->addgui=SelectEvent_CreateGui(mbk);
-  ShowWindow(mbk->addgui);
+  GUIObject_Show(mbk->addgui);
   return(mbk->addgui);
 };
 

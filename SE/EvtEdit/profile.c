@@ -30,10 +30,10 @@ int Profiles_onLBMessage(GUI_MESSAGE * msg)
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     int id=EMPTY_SID;
     textidname2id(profiles[item],0xFFFFFFFF,&id);
-    SetMenuItemText0(msg,id);
+    GUIonMessage_SetMenuItemText(msg,id);
     int ic=NOIMAGE;
     iconidname2id(picns[item],0xFFFFFFFF,&ic);
-    SetListObjectItemIcon (msg,0, ic);
+    GUIonMessage_SetMenuItemIcon (msg,0, ic);
     if (item==0 && mbk->prof_type==1)
     {
       GUIonMessage_SetItemDisabled(msg, 1);
@@ -50,15 +50,15 @@ void Profiles_OnBack(BOOK *bk, GUI* )
 GUI_LIST * Profiles_CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
-  if (lo=CreateListObject(book,0))
+  if (lo=CreateListMenu(book,0))
   {
-    GuiObject_SetTitleText(lo,Str2ID(lng[CHOOSE_PROF],0,SID_ANY_LEN));
-    SetNumOfMenuItem(lo,8);
-    SetCursorToItem(lo,0);
-    ListMenu_SetOnMessages(lo,Profiles_onLBMessage);
-    SetMenuItemStyle(lo,0);
-    GUIObject_Softkey_SetAction(lo,ACTION_BACK, Profiles_OnBack);
-    GUIObject_Softkey_SetAction(lo,ACTION_SELECT1,Profiles_OnSelect);
+    GUIObject_SetTitleText(lo,Str2ID(lng[CHOOSE_PROF],0,SID_ANY_LEN));
+    ListMenu_SetItemCount(lo,8);
+    ListMenu_SetCursorToItem(lo,0);
+    ListMenu_SetOnMessage(lo,Profiles_onLBMessage);
+    ListMenu_SetItemStyle(lo,0);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Profiles_OnBack);
+    GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Profiles_OnSelect);
   }
   return(lo);
 };
@@ -67,7 +67,7 @@ GUI_LIST *create_profiles(BOOK *book)
 {
   MyBOOK *mbk=(MyBOOK *)book;
   mbk->profiles=Profiles_CreateGuiList(book);
-  ShowWindow(mbk->profiles);
+  GUIObject_Show(mbk->profiles);
   return(mbk->profiles);
 };
 

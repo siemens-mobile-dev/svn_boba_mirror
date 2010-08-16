@@ -40,7 +40,7 @@ void CreateReminder(REMINDER_STRUCT * rem_str)
     if (rem_str->replace)
     {
       kill_rems(mbk->remlst, mbk, 0);
-      GUI_Free(mbk->remind);
+      GUIObject_Destroy(mbk->remind);
       mbk->remind=GUI_REMIND_Create(rem_str->bk);
       created=true;
     }
@@ -63,12 +63,12 @@ void CreateReminder(REMINDER_STRUCT * rem_str)
     wstrcpy(rem->time,rem_str->time);
     GuiRemind_AddNote(mbk->remind, rem);
   }
-  GUI_SetStyle(gRemind, 4);
-  GuiObject_SetTitleType(gRemind, 1);
-  GUIObject_HideSoftkeys(gRemind);
+  GUIObject_SetStyle(gRemind, 4);
+  GUIObject_SetTitleType(gRemind, 1);
+  GUIObject_SoftKeys_Hide(gRemind);
   if (created)
   {
-    ShowWindow(gRemind);
+    GUIObject_Show(gRemind);
     BookObj_Show(rem_str->bk, 0);
     BookObj_SetFocus(rem_str->bk, 0);
   }

@@ -621,7 +621,7 @@ static int EF_OnEnter(void *, BOOK * bk)
   MyBOOK *mbk=(MyBOOK *)bk;
   if (mbk->subr)
     DataBrowser_ExecuteSubroutine(mbk->subr,DB_CMD_DESTROY_SUBROUTINE,0);
-  mbk->subr=DataBrowser_CreateSubExecute(BOOK_GetBookID(&mbk->book), mbk->fitem);
+  mbk->subr=DataBrowser_CreateSubExecute(BookObj_GetBookID(&mbk->book), mbk->fitem);
   DataBrowser_ExecuteSubroutine(mbk->subr,DB_CMD_RUN,0);
   FILEITEM_Destroy(mbk->fitem);
   mbk->fitem=NULL;
@@ -1260,7 +1260,7 @@ void DestroySendList(LIST *lst)
   WriteLog("DestroySendList");
   while(lst->FirstFree)
   {
-    void *f=ListElement_Remove(lst,0);
+    void *f=List_RemoveAt(lst,0);
     delete (f);
   }
 }
@@ -1302,13 +1302,13 @@ void SendBT_page()
               BT_FILE_2020 *f=new BT_FILE_2020;
               GetFileDir(itm->full, f->fpath,0);
               wstrcpy(f->fname,fname+1);
-              ListElement_AddtoTop(MCBook->lst_send, f);
+              List_InsertFirst(MCBook->lst_send, f);
             }
             else {
               BT_FILE_2010 *f=new BT_FILE_2010;
               GetFileDir(itm->full, f->fpath,0);
               wstrcpy(f->fname,fname+1);
-              ListElement_AddtoTop(MCBook->lst_send, f);
+              List_InsertFirst(MCBook->lst_send, f);
             }
           }
         }
@@ -1322,7 +1322,7 @@ void SendBT_page()
     }else if(buffer.count==1){
       send->is_multiple=0;
     }
-    send->Book_ID=BOOK_GetBookID(&MCBook->book);
+    send->Book_ID=BookObj_GetBookID(&MCBook->book);
     send->send=Str2ID(L"Первая строка",0,SID_ANY_LEN);
     send->sent=Str2ID(L"Вторая строка",0,SID_ANY_LEN);
     send->obex_flag=2;

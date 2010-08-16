@@ -13,7 +13,7 @@
 
 #define BATHE_THRESHOLD 3
 
-#define FREE_GUI(a) if (a) {GUI_Free(a); a = 0;}
+#define FREE_GUI(a) if (a) {GUIObject_Destroy(a); a = 0;}
 
 #define EMPTY_IMG 0xFFFF
 #define SOUND_NAME_COUNT   22

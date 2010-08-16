@@ -83,7 +83,7 @@ void elf_exit(void)
 
 void onTimer (u16 tmr , void *)
 {
-  InvalidateRect(StatusIndication,0);
+  DispObject_InvalidateRect(StatusIndication,0);
   Timer_ReSet(&timer,1000,onTimer,0);
 };
 
@@ -224,9 +224,9 @@ int main (void)
   Height=Display_GetHeight(0);
   Width=Display_GetWidth(0);;
   CreateEvtDeskBook();
-  StatusIndication= GUIObj_GetDISPObj( SBY_GetStatusIndication(Find_StandbyBook()) );
-  SIonRedraw=DISP_OBJ_GetOnRedraw(StatusIndication);
-  DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(StatusIndication),Draw);
+  StatusIndication= GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
+  SIonRedraw=DispObject_GetOnRedraw(StatusIndication);
+  DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),Draw);
   timer=Timer_Set(1000,onTimer,0);
   return(0);
 };

@@ -136,7 +136,7 @@ int CreateDB(void *data, BOOK * book)
   folder_list[1]=GetDir(mbk->dir2);
   folder_list[2]=0;
   DataBrowserDesc_SetHeaderText(DB_Desc,GetStrID(L"DB_BYNAME_TXT"));
-  DataBrowserDesc_SetBookID(DB_Desc,BOOK_GetBookID(FindBook(isEvtEditBook)));
+  DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID(FindBook(isEvtEditBook)));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetItemFilter(DB_Desc,DB_Filter);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,2);

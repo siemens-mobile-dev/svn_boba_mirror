@@ -29,30 +29,30 @@ int onLBMessage(GUI_MESSAGE * msg)
     {
       if (item<customsofts->FirstFree && item>=0)
       {
-        ITEM *it=(ITEM *)ListElement_GetByIndex(customsofts,item);
+        ITEM *it=(ITEM *)List_Get(customsofts,item);
         if (it)
         {
           if (it->name)
           {
-            SetMenuItemText0(msg,Str2ID(it->name,0,SID_ANY_LEN));
+            GUIonMessage_SetMenuItemText(msg,Str2ID(it->name,0,SID_ANY_LEN));
           }
           else
           {
-            SetMenuItemText0(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
+            GUIonMessage_SetMenuItemText(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
           }
-          SetListObjectItemIcon(msg,0,GetIconID(L"HPB_PHONEBOOK_MENU_ICN"));
+          GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"HPB_PHONEBOOK_MENU_ICN"));
         }
       }
       else
       {
-        SetMenuItemText0(msg,Str2ID(L"Create",0,SID_ANY_LEN));
-        SetListObjectItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Create",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
       }
     }
     else
     {
-      SetMenuItemText0(msg,Str2ID(L"Create",0,SID_ANY_LEN));
-      SetListObjectItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Create",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemIcon(msg,0,GetIconID(L"RN_SHORTCUT_LIST_SETTINGS_ICN"));
     }
     break;
   }
@@ -74,12 +74,12 @@ int onLBMessage2(GUI_MESSAGE * msg)
     }
     if (item>=0 && item<5)
     {
-      SetMenuItemText0(msg,Str2ID(names[item],0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,Str2ID(names[item],0,SID_ANY_LEN));
       if (item==0)
       {
         if (myBook->curit->name)
         {
-          SetMenuItemText1(msg,Str2ID(myBook->curit->name,0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(myBook->curit->name,0,SID_ANY_LEN));
           if (wstrcmp(myBook->curit->name,L"DEFAULT")==0 ||  wstrcmp(myBook->curit->name,L"StandbyBook")==0)
           {
             GUIonMessage_SetItemDisabled (msg,1);
@@ -87,7 +87,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
         }
         else
         {
-          SetMenuItemText1(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
         }
       }
       else if (item==4)
@@ -116,7 +116,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
           id[1] = Str2ID(L"standart",0,SID_ANY_LEN);
           ids = Str2ID(&id[0],5,2);
         }
-        SetMenuItemText1(msg,ids);
+        GUIonMessage_SetMenuItemSecondLineText(msg,ids);
       }
       else
       {
@@ -135,11 +135,11 @@ int onLBMessage2(GUI_MESSAGE * msg)
         }
         if (text)
         {
-          SetMenuItemText1(msg,Str2ID(text,0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(text,0,SID_ANY_LEN));
         }
         else
         {
-          SetMenuItemText1(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(L"-empty-",0,SID_ANY_LEN));
         }
       }
       if (myBook->curit->style==2 && (item==1 || item==2 || item==3))
@@ -154,7 +154,7 @@ int onLBMessage2(GUI_MESSAGE * msg)
         if (item<myBook->curit->keys->FirstFree+5)
         {
           int ind=item-5;
-          KEY *key=(KEY *)ListElement_GetByIndex(myBook->curit->keys,ind);
+          KEY *key=(KEY *)List_Get(myBook->curit->keys,ind);
           int sid[3];
           if (key->oldkey!=0)
           {
@@ -173,16 +173,16 @@ int onLBMessage2(GUI_MESSAGE * msg)
           {
             sid[2]=Str2ID(L"empty",0,SID_ANY_LEN);
           }
-          SetMenuItemText0(msg,Str2ID(sid,5,3));
+          GUIonMessage_SetMenuItemText(msg,Str2ID(sid,5,3));
         }
         else
         {
-          SetMenuItemText0(msg,Str2ID(L"Create",0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemText(msg,Str2ID(L"Create",0,SID_ANY_LEN));
         }
       }
       else
       {
-        SetMenuItemText0(msg,Str2ID(L"Create",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Create",0,SID_ANY_LEN));
       }
     }
 

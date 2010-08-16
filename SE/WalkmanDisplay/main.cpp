@@ -194,7 +194,7 @@ public:
 __EVENT( TerminateElf )
 {
   ELF_KILL_RECEIVED=true;
-  if (BOOK*bk=FindBook(isAudioPlayerBook()))
+  if (BOOK*bk=FindBook(get_IsAudioPlayerBook()))
   {
     BookObj_KillBook(bk);
   }
@@ -251,11 +251,11 @@ __EVENT( onPlayerOpened )
 {
   if (working)
   {
-    if (FindBook(isAudioPlayerBook()))
+    if (FindBook(get_IsAudioPlayerBook()))
     {
       DISP_OBJ *DO=(DISP_OBJ*)msg;
       g_DO=DO;
-      DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(DO), walkman_Redraw);
+      DISP_DESC_SetOnRedraw(DispObject_GetDESC(DO), walkman_Redraw);
     }
   }
   return 0;
@@ -274,20 +274,20 @@ __EVENT(onKeylock)
 {
   if (working)
   {
-    BOOK *bk=FindBook(isAudioPlayerBook());
-    if (bk==DISPLAY_GetTopBook(0) && curmode==HOR)
+    BOOK *bk=FindBook(get_IsAudioPlayerBook());
+    if (bk==Display_GetTopBook(0) && curmode==HOR)
     {
       if (DISPBASE_GetFocused(0)!=g_DO)
       {
         MediaPlayer_ShowNowPlaying(g_DO,1);
       }
       GUI *g=FindGuiInBook(bk,"MediaPlayer_Audio");
-      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
-      GUI_SetStyle(g,2);
+      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObject_GetDispObject(g);
+      GUIObject_SetStyle(g,2);
       d->imageID=v_MPA_ID;
-      GuiObject_SetTitleType(g, 0);
+      GUIObject_SetTitleType(g, 0);
       GUIObject_ShowSoftkeys(g);
-      InvalidateRect(GUIObj_GetDISPObj(g),0);
+      DispObject_InvalidateRect(GUIObject_GetDispObject(g),0);
       
       
       BookObj_Hide(bk,0);
@@ -303,9 +303,9 @@ __EVENT( onPlay )
 {
   if (working)
   {
-    if (FindBook(isAudioPlayerBook()))
+    if (FindBook(get_IsAudioPlayerBook()))
     {
-      TRACK_DESC *ntrack=TrackDesc_Get(FindBook(isAudioPlayerBook()));
+      TRACK_DESC *ntrack=TrackDesc_Get(FindBook(get_IsAudioPlayerBook()));
       if (TrackDesc_Compare(currenttrack,ntrack)==false)
       {
         TrackDesc_Free(currenttrack);
@@ -318,7 +318,7 @@ __EVENT( onPlay )
         TrackDesc_Free(ntrack);
       }
       if (g_DO)
-        InvalidateRect(g_DO,0);
+        DispObject_InvalidateRect(g_DO,0);
     }
   }
   return 0;
@@ -328,9 +328,9 @@ __EVENT( onUnlock )
 {
   if (working)
   {
-    if (FindBook(isAudioPlayerBook()))
+    if (FindBook(get_IsAudioPlayerBook()))
     {
-      if (BookObj_GetDisplayOrientation(FindBook(isAudioPlayerBook())))
+      if (BookObj_GetDisplayOrientation(FindBook(get_IsAudioPlayerBook())))
       {
         set_horizontal();
       }
@@ -371,7 +371,7 @@ __EVENT ( onStyleChanged )
 {
   if (working)
   {
-    WBOOK *wb=(WBOOK*)FindBook(isAudioPlayerBook());
+    WBOOK *wb=(WBOOK*)FindBook(get_IsAudioPlayerBook());
     if (wb)
     {
       wchar_t *str=new wchar_t[0x100];
@@ -387,14 +387,14 @@ __EVENT ( onStyleChanged )
         init_resources(skin_str);
         
         GUI *g=FindGuiInBook((BOOK*)wb,"MediaPlayer_Audio");
-        DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
+        DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObject_GetDispObject(g);
         
         if (d->imageID!=NOIMAGE)
           v_MPA_ID=d->imageID;
         
         if (BookObj_GetDisplayOrientation((BOOK*)wb))
           d->imageID=playview_h;
-        InvalidateRect((DISP_OBJ*)d, 0);
+        DispObject_InvalidateRect((DISP_OBJ*)d, 0);
         if (hMGC)
           GC_FreeGC(hMGC);
         hMGC=0;
@@ -432,7 +432,7 @@ int SB_ELF_Killed(void *mess ,BOOK* book)
       memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
     }
     if (sbm->SK_OldOnRedraw!=EMPTY_REDRAW_METHOD) Softkey_DefaultRedraw=sbm->SK_OldOnRedraw;
-    DISP_DESC_SetOnRedraw(DISP_OBJ_GetDESC(Softkey_DO),softredraw);
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(Softkey_DO),softredraw);
     res->SK_OldOnRedraw=EMPTY_REDRAW_METHOD;
     res->SK_NewOnRedraw=softredraw;
   }
@@ -451,7 +451,7 @@ __EVENT( onBcfgConfig )
     FILEITEM *fli=FILEITEM_Create();
     FILEITEM_SetPathAndContentType(fli,successed_skin_path);
     FILEITEM_SetFnameAndContentType(fli,successed_skin_name);
-    int bookid=BOOK_GetBookID(&MyBook->bk);
+    int bookid=BookObj_GetBookID(&MyBook->bk);
     SUB_EXECUTE*se=DataBrowser_CreateSubExecute(bookid, fli);
     DataBrowser_ExecuteSubroutine(se,1,0);
     DataBrowser_ExecuteSubroutine(se,0x2D,0);
@@ -468,12 +468,12 @@ __EVENT( onBcfgConfig )
 u16 timer;
 void onTimer(u16 timerID, LPARAM lparam)
 {
-  BOOK *bk=FindBook(isAudioPlayerBook());
+  BOOK *bk=FindBook(get_IsAudioPlayerBook());
   if (bk)
   {
     if (BookObj_GetDisplayOrientation(bk))
     {
-      InvalidateRect(g_DO,(RECT*)&volrect);
+      DispObject_InvalidateRect(g_DO,(RECT*)&volrect);
     }
   }
   Timer_Kill(&timer);
@@ -483,12 +483,12 @@ __EVENT( onVolumeChange )
 {
   if (working && g_DO)
   {
-    BOOK *bk=FindBook(isAudioPlayerBook());
+    BOOK *bk=FindBook(get_IsAudioPlayerBook());
     if (bk)
     {
       if (BookObj_GetDisplayOrientation(bk))
       {
-        InvalidateRect(g_DO,(RECT*)&volrect);
+        DispObject_InvalidateRect(g_DO,(RECT*)&volrect);
         if (timer==0)
           timer=Timer_Set(3000, onTimer, 0);
         else
@@ -524,8 +524,8 @@ GUI *FindGuiInBook(BOOK *bk, char *name)
   LIST *lst=bk->xguilist->guilist;
   for (int x=0;x<lst->FirstFree;x++)
   {
-    GUI * g=(GUI*)ListElement_GetByIndex(lst,x);
-    if (strcmp(DISP_OBJ_GetName(GUIObj_GetDISPObj(g)),name)==0)
+    GUI * g=(GUI*)List_Get(lst,x);
+    if (strcmp(DISP_OBJ_GetName(GUIObject_GetDispObject(g)),name)==0)
       return g;
   }
   return 0;
@@ -537,17 +537,17 @@ void set_horizontal()
   if (working)
   {
     debug_printf("\nWalkmanDisplay: horizontal mode setted\n");
-    BOOK *mybook=FindBook(isAudioPlayerBook());
-    if (DISPLAY_GetTopBook(0)==mybook)
+    BOOK *mybook=FindBook(get_IsAudioPlayerBook());
+    if (Display_GetTopBook(0)==mybook)
     {
       BookObj_SetDisplayOrientation(mybook, 1);
       
       GUI *g=FindGuiInBook(mybook,"MediaPlayer_Audio");
-      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
+      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObject_GetDispObject(g);
       d->imageID=playview_h;
-      GUI_SetStyle(g,4);
-      GuiObject_SetTitleType(g, 1);
-      InvalidateRect(GUIObj_GetDISPObj(g),0);
+      GUIObject_SetStyle(g,4);
+      GUIObject_SetTitleType(g, 1);
+      DispObject_InvalidateRect(GUIObject_GetDispObject(g),0);
       
       BookObj_Hide(mybook, 0);
       BookObj_Show(mybook, 0);
@@ -562,19 +562,19 @@ void set_vertical()
   if (working)
   {
     debug_printf("\nWalkmanDisplay: vertical mode setted\n");
-    BOOK *mybook=FindBook(isAudioPlayerBook());
-    if (DISPLAY_GetTopBook(0)==mybook)
+    BOOK *mybook=FindBook(get_IsAudioPlayerBook());
+    if (Display_GetTopBook(0)==mybook)
     {
       MediaPlayer_ShowNowPlaying(g_DO, 1);
       BookObj_SetDisplayOrientation(mybook, 0);
       
       GUI *g=FindGuiInBook(mybook,"MediaPlayer_Audio");
-      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
+      DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObject_GetDispObject(g);
       d->imageID=v_MPA_ID;
-      GUI_SetStyle(g,2);
-      GuiObject_SetTitleType(g, 1);
+      GUIObject_SetStyle(g,2);
+      GUIObject_SetTitleType(g, 1);
       
-      InvalidateRect(GUIObj_GetDISPObj(g),0);
+      DispObject_InvalidateRect(GUIObject_GetDispObject(g),0);
       BookObj_Hide(mybook, 0);
       BookObj_Show(mybook, 0);
       curmode=VERT;
@@ -589,7 +589,7 @@ void onAccel(void* cac, int x, int y)
   if(working && accel_wrk && isKeylocked()==0)
   {
     int mode=cac_->getorientation(x,y);
-    WALKMAN_BOOK *wb=(WALKMAN_BOOK*)FindBook(isAudioPlayerBook()); 
+    WALKMAN_BOOK *wb=(WALKMAN_BOOK*)FindBook(get_IsAudioPlayerBook()); 
     if (wb->status==MP_STATUS_FORWARD || wb->status==MP_STATUS_REWIND)
     {
       return;
@@ -732,7 +732,7 @@ void DrawProgress(int bColor, int cColor, int oColor, RECT rect, int progress, i
 
 int isVolCtrl(BOOK *bk)
 {
-  if (isVolumeControllerBook(bk))
+  if (IsVolumeControllerBook(bk))
     return 1;
   return 0;
 };
@@ -752,9 +752,9 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   BENCH_START
 #endif
 #define putchar_(a,b,c,d,e,f) if (f && f!=NOIMAGE) \
-                              putchar(a,b,c,d,e,f)
+                              GC_PutChar(a,b,c,d,e,f)
   
-    BOOK *audio=FindBook(isAudioPlayerBook());
+    BOOK *audio=FindBook(get_IsAudioPlayerBook());
   GC *GCanvas=(GC*)get_DisplayGC();
   int orient=BookObj_GetDisplayOrientation(audio);
   if (!currenttrack)
@@ -815,7 +815,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
       }
     }
     MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
-    UI_Event_toBookID(ELF_TERMINATE_EVENT,BOOK_GetBookID(&MyBook->bk));
+    UI_Event_toBookID(ELF_TERMINATE_EVENT,BookObj_GetBookID(&MyBook->bk));
     return;
   L_SkinManager_Detected:
     delete(str);
@@ -823,17 +823,17 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     //-------------------------------------------------------------------
     //Fixing gui options and setting correct imageID inside, if needed
     GUI *g=FindGuiInBook(audio,"MediaPlayer_Audio");
-    DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObj_GetDISPObj(g);
+    DISP_OBJ_WALKMAN *d=(DISP_OBJ_WALKMAN*)GUIObject_GetDispObject(g);
     if (orient==0)
     {
       if (d->imageID!=NOIMAGE)
         v_MPA_ID=d->imageID;
     }
-    GUI_SetStyle(g,2);
-    GuiObject_SetTitleType(g, 0);
+    GUIObject_SetStyle(g,2);
+    GUIObject_SetTitleType(g, 0);
     if (cfg_orient==1)
       set_horizontal();
-    InvalidateRect(GUIObj_GetDISPObj(g),0);
+    DispObject_InvalidateRect(GUIObject_GetDispObject(g),0);
     //-------------------------------------------------------------------
     working=true;
   }
@@ -853,7 +853,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     orient=0;
   //-------------------------------------------------------------------
   //If keylock is on top, need to draw vertical orientation
-  if (DISPLAY_GetTopBook(0)!=audio)
+  if (Display_GetTopBook(0)!=audio)
   {
     orient=1;
     if (standartwnd)
@@ -862,7 +862,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
       return;
     }
   }
-  if (orient==0)/*>0 && DISPLAY_GetTopBook(0)==audio)*/
+  if (orient==0)/*>0 && Display_GetTopBook(0)==audio)*/
   {
     if(imggc==0)
     {
@@ -881,7 +881,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   DISP_OBJ_ *do_=(DISP_OBJ_*)DO;
   
   RECT gc_rc,rc;
-  get_GC_RECT(GCanvas, &gc_rc);
+  GC_GetRect(GCanvas, &gc_rc);
   rc.y1 = gc_rc.y1;
   rc.y2 = gc_rc.y2;
   putchar_(GCanvas, 
@@ -1036,7 +1036,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     
     rc.x1 = orient ? ctime_rc.x1 : ctime_rc_h.x1;
     rc.x2 = orient ? ctime_rc.x2 : ctime_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? ctime_font : ctime_font_h, 
              buf, 
              orient ? ctime_ct : ctime_ct_h, 
@@ -1058,7 +1058,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     snwprintf(buf,49,orient ? ftime_mask : ftime_mask_h,MIN,SEC);
     rc.x1 = orient ? ftime_rc.x1 : ftime_rc_h.x1;
     rc.x2 = orient ? ftime_rc.x2 : ftime_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? ftime_font : ftime_font_h, 
              buf, 
              orient ? ftime_ct : ftime_ct_h, 
@@ -1081,7 +1081,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     snwprintf(buf,49,orient ? ltime_mask : ltime_mask_h,MIN,SEC);
     rc.x1 = orient ? ltime_rc.x1 : ltime_rc_h.x1;
     rc.x2 = orient ? ltime_rc.x2 : ltime_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? ltime_font : ltime_font_h, 
              buf, 
              orient ? ltime_ct : ltime_ct_h, 
@@ -1100,7 +1100,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   {
     rc.x1 = orient ? title_rc.x1 : title_rc_h.x1;
     rc.x2 = orient ? title_rc.x2 : title_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine2(orient ? title_font : title_font_h, 
               mm_info->title_str, 
               orient ? title_ct : title_ct_h, 
@@ -1121,7 +1121,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
   {
     rc.x1 = orient ? album_rc.x1 : album_rc_h.x1;
     rc.x2 = orient ? album_rc.x2 : album_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine2(orient ? album_font : album_font_h, 
               mm_info->album_str, 
               orient ? album_ct : album_ct_h, 
@@ -1141,7 +1141,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? artist_rc.x1 : artist_rc_h.x1;
     rc.x2 = orient ? artist_rc.x2 : artist_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine2(orient ? artist_font : artist_font_h, 
               mm_info->artist_str, 
               orient ? artist_ct : artist_ct_h, 
@@ -1160,7 +1160,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? genre_rc.x1 : genre_rc_h.x1;
     rc.x2 = orient ? genre_rc.x2 : genre_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? genre_font : genre_font_h, 
              nowmusic.meta.Genre, 
              orient ? genre_ct : genre_ct_h, 
@@ -1179,7 +1179,7 @@ L_SkipAlbum:
   {
     rc.x1 = orient ? year_rc.x1 : year_rc_h.x1;
     rc.x2 = orient ? year_rc.x2 : year_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? year_font : year_font_h, 
              nowmusic.meta.Year, 
              orient ? year_ct : year_ct_h, 
@@ -1200,7 +1200,7 @@ L_SkipAlbum:
     snwprintf(buf, 49, orient ? trackn_mask : trackn_mask_h, bkp->pos2+1);
     rc.x1 = orient ? trackn_rc.x1 : trackn_rc_h.x1;
     rc.x2 = orient ? trackn_rc.x2 : trackn_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? trackn_font : trackn_font_h, 
              buf, 
              orient ? trackn_ct : trackn_ct_h, 
@@ -1221,7 +1221,7 @@ L_SkipAlbum:
     snwprintf(buf,49, orient ? tracks_mask : tracks_mask_h, bkp->tracks_count);
     rc.x1 = orient ? tracks_rc.x1 : tracks_rc_h.x1;
     rc.x2 = orient ? tracks_rc.x2 : tracks_rc_h.x2;
-    GC_validate_RECT(GCanvas,&rc);
+    GC_ValidateRect(GCanvas,&rc);
     DrawLine(orient ? tracks_font : tracks_font_h, 
              buf, 
              orient ? tracks_ct : tracks_ct_h, 
@@ -1253,7 +1253,7 @@ L_SkipAlbum:
         snwprintf(buf,49, orient ? bitrate_mask : bitrate_mask_h, nowmusic.hdr.bitrate);
       rc.x1 = orient ? bitrate_rc.x1 : bitrate_rc_h.x1;
       rc.x2 = orient ? bitrate_rc.x2 : bitrate_rc_h.x2;
-      GC_validate_RECT(GCanvas,&rc);
+      GC_ValidateRect(GCanvas,&rc);
       DrawLine(orient ? bitrate_font : bitrate_font_h, 
                vbr ? (wchar_t*)vbr : buf, 
                orient ? bitrate_ct : bitrate_ct_h, 
@@ -1273,7 +1273,7 @@ L_SkipAlbum:
       snwprintf(buf,49, orient ? freq_mask : freq_mask_h,nowmusic.hdr.frequency);
       rc.x1 = orient ? freq_rc.x1 : freq_rc_h.x1;
       rc.x2 = orient ? freq_rc.x2 : freq_rc_h.x2;
-      GC_validate_RECT(GCanvas,&rc);
+      GC_ValidateRect(GCanvas,&rc);
       DrawLine(orient ? freq_font : freq_font_h, 
                buf, 
                orient ? freq_ct : freq_ct_h, 
@@ -1302,7 +1302,7 @@ L_SkipAlbum:
       }
       rc.x1 = orient ? ch_rc.x1 : ch_rc_h.x1;
       rc.x2 = orient ? ch_rc.x2 : ch_rc_h.x2;
-      GC_validate_RECT(GCanvas,&rc);
+      GC_ValidateRect(GCanvas,&rc);
       DrawLine(orient ? ch_font : ch_font_h, 
                ch, 
                orient ? ch_ct : ch_ct_h, 
@@ -1317,7 +1317,7 @@ L_SkipAlbum:
       
     }
   }
-  GC_validate_RECT(GCanvas, &gc_rc);
+  GC_ValidateRect(GCanvas, &gc_rc);
   //----------------------------------------------------------------------------
   //Navigation image
   if (orient ? navigimg_show : navigimg_show_h)
@@ -1422,7 +1422,7 @@ L_SkipAlbum:
 //#ifndef NDEBUG
   rc.x1 = 0;
   rc.x2 = orient ? 240 : 320;
-  GC_validate_RECT(GC,&rc);
+  GC_ValidateRect(GC,&rc);
   DrawLine2(FONT_E_20B, 
             int2strID(BENCH_GET), 
             2, 
@@ -1435,7 +1435,7 @@ L_SkipAlbum:
             true,
             0);
   
-    GC_validate_RECT(GC,&gc_rc);
+    GC_ValidateRect(GC,&gc_rc);
 //#endif*/
 };
 
@@ -1466,18 +1466,18 @@ void PageHook(void*, BOOK *book, int id)
 {
   if (working)
   {
-    BookObj_SetDisplayOrientation(FindBook(isAudioPlayerBook()),0);
+    BookObj_SetDisplayOrientation(FindBook(get_IsAudioPlayerBook()),0);
     BookObj_SetDisplayOrientation(book,0);
     if (id==4)
     {
-      BOOK *b=DISPLAY_GetTopBook(0);
+      BOOK *b=Display_GetTopBook(0);
       BookObj_SetDisplayOrientation(b,0);
     }
     if (BOOK *bk=FindBook(isBrowserItemBook))
     {
       BookObj_SetDisplayOrientation(bk,0);
     }
-    BookObj_SetDisplayOrientation(FindBook(isAudioPlayerBook()),0);
+    BookObj_SetDisplayOrientation(FindBook(get_IsAudioPlayerBook()),0);
     BookObj_SetDisplayOrientation(book,0);
     debug_printf("\nWalkmanDisplay: pagehook called from %s\n",book->xbook->name); 
     accel_wrk=false;
@@ -1562,8 +1562,8 @@ __ONKEY_METHOD( NewKey )
   BOOK *bk;
   if (key==key_rotation && mode==key_rotation_mode)
   {
-    bk=FindBook(isAudioPlayerBook());
-    if (bk && bk==DISPLAY_GetTopBook(0))
+    bk=FindBook(get_IsAudioPlayerBook());
+    if (bk && bk==Display_GetTopBook(0))
     {
       int mode=BookObj_GetDisplayOrientation(bk);
       if (mode!=0 && curmode==HOR)
@@ -1594,8 +1594,8 @@ void GetSize()
   int a=Display_GetHeight(0);
   ScreenHeight=a;
   ScreenWidth=Display_GetWidth(0);
-  StatusSize=DISP_OBJ_GetWindowHeight(*StatusRow_p());
-  SoftSize=DISP_OBJ_GetWindowHeight(DispObject_SoftKeys_Get());
+  StatusSize=DispObject_GetWindowHeight(*StatusRow_p());
+  SoftSize=DispObject_GetWindowHeight(DispObject_SoftKeys_Get());
 };
 
 int isWalkmanDisplayBook(BOOK *bk)
@@ -1637,8 +1637,8 @@ OS_PROCESS(worker_entrypoint)
 
 void softredraw(DISP_OBJ *DO, int a, int b, int c)
 {
-  BOOK *bk=FindBook(isAudioPlayerBook());
-  BOOK *top=DISPLAY_GetTopBook(0);
+  BOOK *bk=FindBook(get_IsAudioPlayerBook());
+  BOOK *top=Display_GetTopBook(0);
   if (bk && top && bk==top)
   {
     int orient=BookObj_GetDisplayOrientation(bk);
@@ -1656,8 +1656,8 @@ void Softkey_SetOnRedraw()
   {
     RedrawUsed=true;
     Softkey_DO=DispObject_SoftKeys_Get();
-    Softkey_DefaultRedraw=DISP_OBJ_GetOnRedraw(Softkey_DO);
-    Softkey_DD=DISP_OBJ_GetDESC(Softkey_DO);
+    Softkey_DefaultRedraw=DispObject_GetOnRedraw(Softkey_DO);
+    Softkey_DD=DispObject_GetDESC(Softkey_DO);
     DISP_DESC_SetOnRedraw(Softkey_DD,softredraw);
     debug_printf("\nWalkmanDisplay: own softkey redraw setted\n", oldredr);
   }
