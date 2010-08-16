@@ -539,7 +539,7 @@
 0C94: 00000000 155BF144 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 956CF144 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 A9311B44 ; 327: int GetRadioState( char* level, char* flag );
-0CA0: 00000000 D515EE44 ; 328: int Bluetooth_GetState( void ); ;
+0CA0: 00000000 D515EE44 ; 328: int Bluetooth_GetState( void );
 0CA4: 00000000 9D15EE44 ; 329: int Bluetooth_GetPhoneVisibility( void );
 0CA8: 00000000 5D16EE44 ; 32A: int Bluetooth_isBusy( void );
 0CAC: 00000000 05703245 ; 32B: int USB_isConnected( void );

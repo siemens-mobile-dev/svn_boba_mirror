@@ -313,7 +313,7 @@
 090C: 00000000 4D406011 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 11916511 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 0914: 00000000 89916511 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
-0918: 00000000 7D916511 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg ); ;
+0918: 00000000 7D916511 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 31314911 ; 247: void GoMusic( void );
 0920: 00000000 2D911B11 ; 248: void Vibra_Off ( int t1 );
 ;0924: xxxxxxxx yyyyyyyy ; 249:

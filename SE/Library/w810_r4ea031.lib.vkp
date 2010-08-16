@@ -125,7 +125,7 @@
 ;0620: xxxxxxxx yyyyyyyy ; 188:
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
-;062C: xxxxxxxx yyyyyyyy ; 18B: void stop( PROCESS pid );
+062C: FFFFFFFF 05DB1844 ; 18B: void stop( PROCESS pid );
 0630: FFFFFFFF 70D91844 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 0634: FFFFFFFF F79C1444 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: FFFFFFFF 0B9D1444 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
@@ -270,7 +270,7 @@
 0864: FFFFFFFF D17C5945 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: FFFFFFFF A4CC0B4C ;821A: PROCESS* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
-;0870: xxxxxxxx yyyyyyyy ; 21C: GUI* DispObject_GetGUI( DISP_OBJ* );
+0870: FFFFFFFF AD243045 ; 21C: GUI* DispObject_GetGUI( DISP_OBJ* );
 0874: FFFFFFFF D5233045 ; 21D: DISP_OBJ* Display_GetFocusedDispObject( int display );
 0878: FFFFFFFF F5283045 ; 21E: char DispObject_GetVisible( DISP_OBJ* );
 087C: FFFFFFFF 79E63145 ; 21F: DISP_DESC* DispObject_GetDESC( DISP_OBJ* ); // !!!!! не настоящий !!!!!!

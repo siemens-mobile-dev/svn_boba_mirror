@@ -684,7 +684,7 @@
 0EDC: 00000000 B59A6211 ; 3B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EE0: 00000000 F9946211 ; 3B8: void (*getNOfManyOnGuiDestroy())( GUI* );
 ;0EE4: xxxxxxxx yyyyyyyy ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
-;0EE8: xxxxxxxx yyyyyyyy ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EE8: 00000000 15956211 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 A17D6211 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
 0EF0: 00000000 6DCC6611 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
 0EF4: 00000000 45CC6611 ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
