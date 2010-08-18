@@ -535,7 +535,7 @@
 0C84: 00000000 41374545 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 AD224545 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 711E4545 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: 00000000 49174C45 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 E1B1EA44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 D1C4EA44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 BD241B44 ; 327: int GetRadioState( char* level, char* flag );
@@ -672,7 +672,7 @@
 0EA8: 00000000 A9B04245 ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
 0EAC: 00000000 1D6F4345 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
 0EB0: 00000000 A95D4345 ; 3AC: BOOK* GUIObject_GetBook( GUI* ); //см. GUIObject_Destroy
-;0EB4: xxxxxxxx yyyyyyyy ; 3AD: u16 SoftKeys_GetSelectedAction( void );
+0EB4: 00000000 7DF04445 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 09E13845 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 0EBC: 00000000 15F73E45 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* );
 0EC0: 00000000 81DF3D45 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
@@ -686,19 +686,19 @@
 0EE0: 00000000 89123F45 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );
 0EE4: 00000000 99353E45 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 A5123F45 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-;0EEC: xxxxxxxx yyyyyyyy ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
-;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
-;0EF4: xxxxxxxx yyyyyyyy ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
-;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
-;0EFC: xxxxxxxx yyyyyyyy ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
-;0F00: xxxxxxxx yyyyyyyy ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
-;0F04: xxxxxxxx yyyyyyyy ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
-;0F08: xxxxxxxx yyyyyyyy ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
-;0F0C: xxxxxxxx yyyyyyyy ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
-;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
-;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
-;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
-;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
+0EEC: 00000000 2DFD3E45 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
+0EF0: 00000000 F1D44245 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+0EF4: 00000000 CDD44245 ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+0EF8: 00000000 59F64445 ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+0EFC: 00000000 696A4445 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+0F00: 00000000 09614345 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
+0F04: 00000000 D9F93E45 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
+0F08: 00000000 8DFE3E45 ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+0F0C: 00000000 B5FE3E45 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+0F10: 00000000 4D053F45 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+0F14: 00000000 6D053F45 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
+0F18: 00000000 9D740B45 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F1C: 00000000 315E4545 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 C59A4745 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
 
 

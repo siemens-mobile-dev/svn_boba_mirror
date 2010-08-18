@@ -269,8 +269,25 @@ enum
 
 static int OnCallManager(void *mess ,BOOK *book)
 {FUNCTION
-  CALLMANAGER_EVENT_DATA_A2 *calldata=(CALLMANAGER_EVENT_DATA_A2 *)mess;
-  switch(calldata->CallState)
+  int callstate;
+  switch(GetChipID() & CHIPID_MASK)
+  {
+  case CHIPID_DB2000:
+  case CHIPID_DB2010:
+  case CHIPID_DB2020:
+	  callstate = ((CALLMANAGER_EVENT_DATA *)mess)->CallState;
+	  break;
+  case CHIPID_DB3150:	  
+  case CHIPID_DB3200:
+  case CHIPID_DB3210:	  
+  case CHIPID_DB3350:	  
+	  callstate = ((CALLMANAGER_EVENT_DATA_A2 *)mess)->CallState;	  
+	  break;
+  default:
+	  callstate = CALLMANAGER_IDLE;
+  }
+	
+  switch(callstate)
   {
   case CALLMANAGER_IDLE:  // Завершили вызов выходим
     if (state==3)  SendCashReq();

@@ -344,7 +344,7 @@ extern const int KEY_DIGITAL_0 ;
 extern const int KEY_OPERATOR ;
 extern const int KEY_GAME_A ;
 extern const int KEY_GAME_B ;
-extern const int KEY_MEDIAPLEER ;
+//extern const int KEY_MEDIAPLEER ;
 extern const int KEY_SLIDER_OPEN ;
 extern const int KEY_SLIDER_CLOSE ;
 extern const int KEY_JACKKNIFE_OPEN ;
