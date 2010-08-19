@@ -557,4 +557,5 @@ extern const int DB_CMD_SETSAVEDICON ;
 extern const int DB_CMD_SETTHUMBNAILICON ;
 extern const int DB_CMD_EDIT ;
 extern const int DB_CMD_SETITEMTEXT ;
+extern const int UI_CONNECTIONMANAGER_SESSION_CREATED_EVENT ;
 #endif
