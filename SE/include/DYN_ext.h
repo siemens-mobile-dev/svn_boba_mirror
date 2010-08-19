@@ -344,7 +344,7 @@ extern const int KEY_DIGITAL_0 ;
 extern const int KEY_OPERATOR ;
 extern const int KEY_GAME_A ;
 extern const int KEY_GAME_B ;
-//extern const int KEY_MEDIAPLEER ;
+extern const int DB_UPDATE_EVENT ;
 extern const int KEY_SLIDER_OPEN ;
 extern const int KEY_SLIDER_CLOSE ;
 extern const int KEY_JACKKNIFE_OPEN ;
@@ -557,5 +557,4 @@ extern const int DB_CMD_SETSAVEDICON ;
 extern const int DB_CMD_SETTHUMBNAILICON ;
 extern const int DB_CMD_EDIT ;
 extern const int DB_CMD_SETITEMTEXT ;
-extern const int DB_UPDATE_EVENT ;
 #endif

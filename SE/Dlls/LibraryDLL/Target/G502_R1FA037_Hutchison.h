@@ -23,3 +23,4 @@ int (*Request_SIM_IMSI_Read)(const int* sync,const int unk,char * imsi,char * er
 int (*get_imsi_const)()=(int(*)())0x107558E9;
 int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * error_cause)=(int(*)(const int* sync,char * level,char * flag,char * error_cause))0x2A202251;
 int (*GetChipID_int)()=(int(*)())0x10002965;
+int (*ConnectionManager_Connection_GetState_int)(char * buf)=(int(*)(char * buf))0x114479B1;

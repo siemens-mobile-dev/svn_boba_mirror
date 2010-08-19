@@ -548,7 +548,7 @@
 0CB8: 00000000 FC844F10 ; 32E: int w_dirclose( void* );
 0CBC: 00000000 95CB2D14 ; 32F: int w_rename( const wchar_t* dst, const wchar_t* src );
 0CC0: 00000000 49A12114 ; 330: int w_remove( const wchar_t* dir );
-0CC4: 00000000 89E94B14 ; 331: int ConnectionManager_Connection_GetState( void );
+0CC4: 00000000 D11BA5ED ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: 00000000 D11BA5ED ; 332: int GetSignalQuality( char* rssi, char* ber );
 0CCC: 00000000 2DB11814 ;8333: IS_NEEDED_BOOK isCameraBook( void );
 0CD0: 00000000 D138E014 ;8334: IS_NEEDED_BOOK isSoundRecorderBook( void );

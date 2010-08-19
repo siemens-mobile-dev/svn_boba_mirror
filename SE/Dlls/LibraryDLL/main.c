@@ -584,6 +584,19 @@ OSBOOLEAN dll_get_mem_0( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size )
 }
 #endif
 
+#ifdef A2
+#define USE_dll_ConnectionManager_Connection_GetState_0
+int dll_ConnectionManager_Connection_GetState_0()
+{
+  char buf=0;
+  if (ConnectionManager_Connection_GetState_int(&buf))
+  {
+    if (!buf) return(1);
+  }
+  return(0);
+}
+#endif
+
 
 const LIBRARY_DLL_FUNCTIONINFO functions[]=
 {
@@ -725,6 +738,10 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     
     #ifdef USE_dll_get_mem_0
     0x18C, (void*) dll_get_mem_0,
+    #endif
+    
+    #ifdef USE_dll_ConnectionManager_Connection_GetState_0
+    0x331, (void*) dll_ConnectionManager_Connection_GetState_0,
     #endif
     
     #ifdef USE_FONTS

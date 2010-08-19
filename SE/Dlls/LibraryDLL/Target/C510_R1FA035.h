@@ -28,3 +28,4 @@ int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * 
 int (*Network_INetworkConnection_GetConnectionInfo)(CONNECTION_INFO_DESC * desc)=(int(*)(CONNECTION_INFO_DESC * desc))0x141CA09D;
 int (*GetChipID_int)()=(int(*)())0x107AAE39;
 OSBOOLEAN (*get_mem_int)(int,int,void*)=(OSBOOLEAN(*)(int,int,void*))0x101D019C;
+int (*ConnectionManager_Connection_GetState_int)(char * buf)=(int(*)(char * buf))0x1440BBD1;
