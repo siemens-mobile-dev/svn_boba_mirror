@@ -397,7 +397,7 @@ void delayed_save_gprs_info(u16 unk,LPARAM term_ID)
       if (TimeDay<cur_time_base) cur_time_base=cur_time_base-TimeDay;
       else cur_time_base=cur_time_base-TimeDay+24;
       
-      if ((cur_time_base>=0)&&(cur_time_base<night_time_base)) GetTrafCost(traf,TrafCostDay,&cost_rub,&cost_kop1,&cost_kop2);
+      if (cur_time_base<night_time_base) GetTrafCost(traf,TrafCostDay,&cost_rub,&cost_kop1,&cost_kop2);
       else GetTrafCost(traf,TrafCostNight,&cost_rub,&cost_kop1,&cost_kop2);
     }
     if ((Hol1)||(Hol2))
