@@ -9,6 +9,7 @@
 #include "dll.h"
 #include "elfloader.h"
 
+#include "temp\target.h"
 
 typedef void (*USERDATACONSTRUCTOR)(void*, void*);
 
@@ -20,9 +21,9 @@ typedef struct
 
 void * malloc (int size)
 {
-#ifdef DB2020
+#if defined(DB2020)
 	return(memalloc(0,size,1,5,"SwiLib",0));
-#elif A2
+#elif defined(A2)
 	return(memalloc(0xFFFFFFFF,size,1,5,"SwiLib",0));
 #else
 	return(memalloc(size,1,5,"SwiLib",0));
@@ -31,9 +32,9 @@ void * malloc (int size)
 
 void mfree (void * mem)
 {
-#ifdef DB2020
+#if defined(DB2020)
 	if (mem) memfree(0, mem,"SwiLib",0);
-#elif A2
+#elif defined(A2)
 	if (mem) memfree(0, mem,"SwiLib",0);
 #else
 	memfree(mem,"SwiLib",0);
@@ -505,7 +506,7 @@ void Init()
 
 	_printf("     Load LibraryDLL....")  ;
 
-	elfpackdata->LibraryDLL = LoadDLL(L"LibraryDLL.dll");
+	elfpackdata->LibraryDLL = LoadDLL_int(L"LibraryDLL.dll");
 	if ((INVALID(elfpackdata->LibraryDLL)))
 	{
 		_printf("     Load LibraryDLL Error")  ;
@@ -556,9 +557,9 @@ void Init()
 
 			_printf("     ->...")  ;
 #ifdef DBG
-			_printf("     elfload Result=0x%X",elfload(filename,0,0,0));
+			_printf("     elfload Result=0x%X",elfload_int(filename,0,0,0));
 #else
-			elfload(filename,0,0,0);
+			elfload_int(filename,0,0,0);
 #endif
 			mfree(filename);
 		}

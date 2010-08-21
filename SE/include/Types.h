@@ -285,12 +285,7 @@ typedef struct
 typedef struct
 {
   int msg;
-#ifndef SWI_HOOK
   int (*proc)(void * ,BOOK*);
-#else
-  int (*proc);
-
-#endif
 }PAGE_MSG;
 
 typedef struct

@@ -1,6 +1,5 @@
 //W300_R4EA031
         RSEG   CODE
-#ifdef W300_R4EA031
         CODE32
 
 defadr  MACRO   a,b
@@ -125,5 +124,4 @@ DBEXT:
         CODE16
         BL       DBEXT
 
-#endif
         END

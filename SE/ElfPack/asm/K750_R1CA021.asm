@@ -1,6 +1,5 @@
 //K750_R1CA021
         RSEG   CODE
-#ifdef K750_R1CA021
         CODE32
 
 TABMENUBAR_NAME EQU 0x4469033C
@@ -139,7 +138,7 @@ TabMenuCheck:
         BNE     TabMenuCheck_false
         MOV     R0, #1
         POP     {PC}
-TabMenuCheck_false:                     
+TabMenuCheck_false:
         MOV     R0, #0
         POP     {PC}
 
@@ -149,5 +148,4 @@ TabMenuCheck_false:
         LDR     R3, =TabMenuCheck
         BX      R3
 
-#endif
         END

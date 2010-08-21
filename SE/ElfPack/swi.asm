@@ -115,10 +115,10 @@ pLIB_TOP:
         EXTERN  ModifyOSEHook
 //        EXTERN  ELF_RemoveFromList
         EXTERN  ModifyUIHook
-        EXTERN  elfload
+        EXTERN  elfload_int
 
-        EXTERN  LoadDLL
-        EXTERN  UnLoadDLL
+        EXTERN  LoadDLL_int
+        EXTERN  UnLoadDLL_int
 
         EXTERN  ModifyUIHook1
 
@@ -143,10 +143,10 @@ Library:
         DC32    0//ELF_RemoveFromList
 
         DC32    ModifyUIHook
-        DC32    elfload
+        DC32    elfload_int
 
-        DC32    LoadDLL
-        DC32    UnLoadDLL
+        DC32    LoadDLL_int
+        DC32    UnLoadDLL_int
 
         DC32    ModifyUIHook1
 

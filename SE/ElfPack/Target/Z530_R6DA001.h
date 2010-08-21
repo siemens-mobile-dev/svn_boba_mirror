@@ -1,6 +1,3 @@
-#ifndef Z530_R6DA001
-#error Z530_R6DA001 configuration needed for this header!
-#else
 #ifndef _Z530_R6DA001_
 #define _Z530_R6DA001_
 
@@ -40,5 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON14x14
+#define EP_EXTICON56x42
 #endif
+
 #endif

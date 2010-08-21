@@ -1,6 +1,5 @@
 //W710 R1JC002
         RSEG   CODE
-#ifdef W710_R1JC002
         CODE32
 
 EXT_TABLE EQU 0x4597994C
@@ -19,7 +18,7 @@ a       EQU     b
         defadr   DB_PATCH4_RET,PATCH_DB4_start+8
         defadr   MESS_HOOK_RET,PATCH_MMI_MESSAGE_HOOK_start+8
         defadr   PAGE_ACTION_RET,PATCH_PageAction_start+8
-        
+
         defadr  memalloc,0x44D2EA44+1
         defadr  memfree,0x44D2EA70+1
 
@@ -32,8 +31,8 @@ PATCH_STANDBY:
 
         STR     R0, [R5,#8]
         STR     R0, [R5,#0x10]
-        STR     R0, [R5,#0x14]  
-        STR     R0, [R5,#0]       
+        STR     R0, [R5,#0x14]
+        STR     R0, [R5,#0]
         BLX     CreateLists
         MOV     R0, #0
         LDR     R1,=STANDBY_RET
@@ -195,5 +194,4 @@ PATCH_DB4_start:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

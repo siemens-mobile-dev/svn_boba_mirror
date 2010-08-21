@@ -1,6 +1,5 @@
 //W600_R7CA017
         RSEG   CODE
-#ifdef W600_R7CA017
         CODE32
 
 defadr  MACRO   a,b
@@ -126,5 +125,4 @@ DBEXT:
         CODE16
         BL       DBEXT
 
-#endif
         END

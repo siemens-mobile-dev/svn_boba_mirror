@@ -1,6 +1,5 @@
 //W810_R4EA031
         RSEG   CODE
-#ifdef W810_R4EA031
         CODE32
 
 TABMENUBAR_NAME EQU 0x449600AF //getTabMenuBarOnDescCreate
@@ -138,7 +137,7 @@ TabMenuCheck:
         BNE     TabMenuCheck_false
         MOV     R0, #1
         POP     {PC}
-TabMenuCheck_false:                     
+TabMenuCheck_false:
         MOV     R0, #0
         POP     {PC}
 
@@ -148,5 +147,4 @@ TabMenuCheck_false:
         LDR     R3, =TabMenuCheck
         BX      R3
 
-#endif
         END

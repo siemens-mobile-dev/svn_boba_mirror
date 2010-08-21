@@ -1,6 +1,5 @@
 //J105_R1HA035
         RSEG   CODE
-#ifdef J105_R1HA035
         CODE32
 
 defadr  MACRO   a,b
@@ -174,5 +173,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

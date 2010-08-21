@@ -1,6 +1,5 @@
 //W550_R4CB020
         RSEG   CODE
-#ifdef W550_R4CB020
         CODE32
 
 defadr  MACRO   a,b
@@ -122,5 +121,4 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
-#endif
         END

@@ -1,6 +1,5 @@
 //W580 R6ca001 Orange
         RSEG   CODE
-#ifdef W580_R6CA001_Orange
         CODE32
 
 defadr  MACRO   a,b
@@ -183,5 +182,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

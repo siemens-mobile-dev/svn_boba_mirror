@@ -11,11 +11,9 @@
 #include "zlib.h"
 #endif
 
-#ifndef SWI_HOOK
 #include "..\\include\DYN_ext.h"
 #include "..\\include\DYN_tag.h"
 #include "..\\include\Colors.h"
-#endif
 
 #include "..\include\obsolete.h"
 
@@ -111,7 +109,6 @@ __swi __arm void MMIPROC( void (*PROC)( int, void* ), int p1, void* p2 );
 #pragma swi_number=0x10C
 __swi __arm int ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ), int mode );
 
-#ifndef SWI_HOOK
 #pragma swi_number=0x10D
 __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
 
@@ -123,7 +120,6 @@ __swi __arm int UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
 __swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
-#endif
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -584,10 +580,8 @@ __swi __arm GUI_LIST* CreateListMenu( BOOK*, int display );
 #pragma swi_number=0x1C1
 __swi __arm void ListMenu_SetItemCount( GUI_LIST*, int item_count );
 
-#ifndef SWI_HOOK
 #pragma swi_number=0x81C2
 __swi __arm LIST** ROOT_APP( void );
-#endif
 #pragma swi_number=0x1C3
 __swi __arm void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 #pragma swi_number=0x1C4

@@ -7,6 +7,6 @@ typedef char *FILENAME;
 typedef wchar_t* FILENAME;
 #endif
 
-long elfload(const FILENAME filename, void* param1, void* param2, void* param3);
+long elfload_int(const FILENAME filename, void* param1, void* param2, void* param3);
 
 #endif

@@ -1,6 +1,5 @@
 //W660_R8BB001_Orange
         RSEG   CODE
-#ifdef W660_R8BB001_Orange
         CODE32
 
 TABMENUBAR_NAME EQU 0x45C107C0 //getTabMenuBarOnDescCreate
@@ -49,8 +48,8 @@ PATCH_STANDBY:
         CODE16
 _PageAction:
         LDR     R0, [R0, #0]
-        MOV     R1, #0        
-        BLX     List_RemoveAt    
+        MOV     R1, #0
+        BLX     List_RemoveAt
         BL      PageAction_Hook
         MOV     R6, R0
         LDR     R1, =PAGE_ACTION_RET
@@ -197,7 +196,7 @@ TabMenuCheck:
         BNE     TabMenuCheck_false
         MOV     R0, #1
         POP     {PC}
-TabMenuCheck_false:                     
+TabMenuCheck_false:
         MOV     R0, #0
         POP     {PC}
 
@@ -206,5 +205,4 @@ TabMenuCheck_false:
         CODE16
         LDR     R3, =TabMenuCheck
         BX      R3
-#endif
         END

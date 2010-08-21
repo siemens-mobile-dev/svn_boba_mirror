@@ -2,17 +2,15 @@
 #define _CALLS_H_
 
 #include "..\include\Types.h"
+#include "temp\target.h"
 
 #define NULL    0
 
-#ifndef SWI_HOOK__
-
-
-#ifdef DB2020
+#if defined(DB2020)
 //DB2020
 extern void *memalloc(int zero, int size,int f1,int f2,const char *fname,int fline);
 extern void memfree(int zero, void * mem,const char * fname ,int fline);
-#elif A2
+#elif defined(A2)
 //A2
 extern void *memalloc(int minus_one, int size,int f1,int f2,const char *fname,int fline);
 extern void memfree(int zero, void * mem,const char * fname ,int fline);
@@ -44,7 +42,5 @@ extern OSBOOLEAN set_envp(PROCESS pid, char *name, OSADDRESS value);
 extern PROCESS get_bid(PROCESS pid);
 extern PROCESS current_process(void);
 extern ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
-
-#endif
 
 #endif

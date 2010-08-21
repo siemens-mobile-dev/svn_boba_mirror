@@ -1,6 +1,3 @@
-#ifndef W810_R4DB005
-#error W810_R4DB005 configuration needed for this header!
-#else
 #ifndef _W810_R4DB005_
 #define _W810_R4DB005_
 
@@ -40,5 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
+
 #endif

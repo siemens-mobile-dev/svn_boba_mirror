@@ -1,6 +1,3 @@
-#ifndef C901_R1GA028
-#error C901_R1GA028 configuration needed for this header!
-#else
 #ifndef _C901_R1GA028_
 #define _C901_R1GA028_
 
@@ -41,5 +38,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define A2
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

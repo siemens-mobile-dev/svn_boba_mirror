@@ -1,6 +1,5 @@
 //W880 R8BA024
         RSEG   CODE
-#ifdef W880_R8BA024
         CODE32
 
 defadr	MACRO	a,b
@@ -26,7 +25,7 @@ a	EQU	b
 
 	EXTERN	CreateLists
         RSEG  CODE
-	CODE16	
+	CODE16
 PATCH_STANDBY:
 
         STR     R0, [R5,#8]
@@ -113,7 +112,7 @@ PG_ACTION:
         ADD     R6, R1, #0
         LDR     R3,=SFE(PATCH_PageActionImpl)+1
         BX      R3
-        
+
 
 
         RSEG    PATCH_PageActionImpl
@@ -133,7 +132,7 @@ DB_PATCH:
         LDR     R3, =DB_PATCH_RET
         BX      R3
 
-	
+
 	RSEG   CODE
         CODE16
 
@@ -188,7 +187,7 @@ DB_PATCH4:
 PATCH_DB1_start:
         LDR    R3, =DB_PATCH
         BX     R3
-	
+
         RSEG   PATCH_DB2(2)
         CODE16
 PATCH_DB2_start:
@@ -207,5 +206,4 @@ PATCH_DB4_start:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

@@ -1,6 +1,3 @@
-#ifndef W200_R4HA014
-#error W200_R4HA014 configuration needed for this header!
-#else
 #ifndef _W200_R4HA014_
 #define _W200_R4HA014_
 
@@ -40,5 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON14x14
+#define EP_EXTICON56x42
 #endif
+
 #endif

@@ -1,6 +1,3 @@
-#ifndef W610_R6CA001_Orange
-#error W610_R6CA001_Orange configuration needed for this header!
-#else
 #ifndef _W610_R6CA001_Orange_
 #define _W610_R6CA001_Orange_
 
@@ -41,5 +38,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define DB2020
+
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
+
 #endif

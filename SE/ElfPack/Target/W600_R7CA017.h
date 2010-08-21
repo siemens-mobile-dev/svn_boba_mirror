@@ -1,6 +1,3 @@
-#ifndef W600_R7CA017
-#error W600_R7CA017 configuration needed for this header!
-#else
 #ifndef _W600_R7CA017_
 #define _W600_R7CA017_
 
@@ -40,6 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
-#endif
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
 
+#endif

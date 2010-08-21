@@ -1,6 +1,3 @@
-#ifndef W705_R1GA031
-#error W705_R1GA031 configuration needed for this header!
-#else
 #ifndef _W705_R1GA031_
 #define _W705_R1GA031_
 
@@ -42,5 +39,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define A2
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

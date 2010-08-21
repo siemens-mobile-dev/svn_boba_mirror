@@ -3,6 +3,8 @@
 #include "vars.h"
 #include "elfloader.h"
 
+#include "temp\target.h"
+
 #define IDN_ELF_SMALL_ICON _T("CALE_LUNAR_12ANIMALS_1ST_MOUSE_ICN")
 #define IDN_ELF_BIG_ICON _T("CALE_LUNAR_12ANIMALS_10TH_ROOSTER_ICN")
 
@@ -52,7 +54,7 @@ DB_EXT * OtherDbExt()
 DB_EXT * CreateDbExt()
 {
 	DB_EXT * other_db_ext = OtherDbExt();
-#if (DB2020 || A2)
+#if defined(DB2020) || defined(A2)
 	DB_EXT * db_ext = malloc(sizeof(DB_EXT));
 	db_ext->type_group = other_db_ext->type_group;
 #else
@@ -124,7 +126,7 @@ int Elf_Run_Page_PAGE_ENTER_EVENT(void * r0, BOOK * book)
 
 	_printf("Starting %ls",filename);
 
-	elfload(filename,0,0,0);
+	elfload_int(filename,0,0,0);
 
 	mfree(filename);
 	BookObj_ReturnPage(book,PREVIOUS_EVENT);
@@ -155,11 +157,11 @@ int Elf_Run_Page_PAGE_EXIT_EVENT(void * r0, BOOK * book)
 }
 
 const PAGE_MSG erp_msg[]={
-	PAGE_ENTER_EVENT,  (int*)Elf_Run_Page_PAGE_ENTER_EVENT,
-	PREVIOUS_EVENT,    (int*)Elf_Run_Page_PREVIOUS_EVENT,
-	ACCEPT_EVENT,      (int*)Elf_Run_Page_ACCEPT_EVENT,
-	CANCEL_EVENT,      (int*)Elf_Run_Page_CANCEL_EVENT,
-	PAGE_EXIT_EVENT,   (int*)Elf_Run_Page_PAGE_EXIT_EVENT,
+	PAGE_ENTER_EVENT,  Elf_Run_Page_PAGE_ENTER_EVENT,
+	PREVIOUS_EVENT,    Elf_Run_Page_PREVIOUS_EVENT,
+	ACCEPT_EVENT,      Elf_Run_Page_ACCEPT_EVENT,
+	CANCEL_EVENT,      Elf_Run_Page_CANCEL_EVENT,
+	PAGE_EXIT_EVENT,   Elf_Run_Page_PAGE_EXIT_EVENT,
 	0,0
 };
 

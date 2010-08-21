@@ -1,6 +1,5 @@
 //K660_R1FA037_Hutchison
         RSEG   CODE
-#ifdef K660_R1FA037_Hutchison
         CODE32
 
 defadr  MACRO   a,b
@@ -88,7 +87,7 @@ PG_ACTION:
         ADD     R6, R1, #0
         LDR     R3,=SFE(PATCH_PageActionImpl)+1
         BX      R3
-        
+
         RSEG    PATCH_PageActionImpl
         CODE16
         LDR     R3, =PG_ACTION
@@ -187,5 +186,4 @@ DB_PATCH6:
         LDR    R2, =DB_PATCH6
         BX     R2
 
-#endif
         END

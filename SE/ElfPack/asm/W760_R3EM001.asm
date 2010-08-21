@@ -1,6 +1,5 @@
 //W760_R3EM001
         RSEG   CODE
-#ifdef W760_R3EM001
         CODE32
 
 defadr  MACRO   a,b
@@ -210,5 +209,4 @@ DB_PATCH6:
         LDR    R2, =DB_PATCH6
         BX     R2
 
-#endif
         END

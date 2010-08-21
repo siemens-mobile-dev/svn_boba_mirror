@@ -1,6 +1,5 @@
 //G502_R1FA037
         RSEG   CODE
-#ifdef G502_R1FA037_Hutchison
         CODE32
 
 defadr  MACRO   a,b
@@ -206,5 +205,4 @@ DB_PATCH6:
         LDR    R2, =DB_PATCH6
         BX     R2
 
-#endif
         END

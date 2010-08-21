@@ -1,6 +1,5 @@
 //Z530_R6DA001
         RSEG   CODE
-#ifdef Z530_R6DA001
         CODE32
 
 defadr  MACRO   a,b
@@ -125,5 +124,4 @@ DBEXT:
         CODE16
         BL       DBEXT
 
-#endif
         END

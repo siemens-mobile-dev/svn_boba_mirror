@@ -1,6 +1,5 @@
 //W810_R4DB005
         RSEG   CODE
-#ifdef W810_R4DB005
         CODE32
 
 defadr  MACRO   a,b
@@ -121,5 +120,4 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
-#endif
         END

@@ -1,6 +1,5 @@
 //K850 R1FA035
         RSEG   CODE
-#ifdef K850_R1FA035
         CODE32
 
 defadr  MACRO   a,b
@@ -199,11 +198,10 @@ DB_PATCH6:
         CODE16
         LDR    R7, =DB_PATCH5
         BX     R7
-	
+
 	RSEG   PATCH_DB6(2)
         CODE16
         LDR    R3, =DB_PATCH6
         BX     R3
 
-#endif
         END

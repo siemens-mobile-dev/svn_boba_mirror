@@ -1,5 +1,9 @@
-#include "..\..\..\\include\Types.h"
-#include "..\classes.h"
+#include "..\..\include\Types.h"
+#include "classes.h"
+
+#define C510_R1FA035
+#define A2
+#define DB3210
 
 #define GetSignalQuality_Send_SignalID 0x12C00040
 #define GetSignalQuality_Receive_SignalID 0x12C007C0

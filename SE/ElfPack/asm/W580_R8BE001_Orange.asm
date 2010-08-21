@@ -1,6 +1,5 @@
 //W580 R8BE001_Orange
         RSEG   CODE
-#ifdef W580_R8BE001_Orange
         CODE32
 
 defadr  MACRO   a,b
@@ -109,7 +108,7 @@ DB_PATCH:
         LSL     R7, R1, #2
         BLX     GetExtTable
         LDR     R7, [R0,R7]
-        LDR     R1, =0x45AEAC44  
+        LDR     R1, =0x45AEAC44
         LDR     R3, =DB_PATCH_RET
         BX      R3
 
@@ -183,5 +182,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

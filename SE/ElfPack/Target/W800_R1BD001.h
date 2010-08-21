@@ -1,6 +1,3 @@
-#ifndef W800_R1BD001
-#error W800_R1BD001 configuration needed for this header!
-#else
 #ifndef _W800_R1BD001_
 #define _W800_R1BD001_
 
@@ -41,5 +38,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
+
 #endif

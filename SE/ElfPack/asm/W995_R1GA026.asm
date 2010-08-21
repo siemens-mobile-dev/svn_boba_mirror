@@ -1,6 +1,5 @@
 //W995 R1GA026
         RSEG   CODE
-#ifdef W995_R1GA026
         CODE32
 
 defadr  MACRO   a,b
@@ -177,6 +176,4 @@ DB_PATCH4:
         LDR    R6, =DB_PATCH4
         BX     R6
 
-
-#endif
         END

@@ -1,6 +1,5 @@
 //Z610 R6DA001
         RSEG   CODE
-#ifdef Z610_R6DA001
         CODE32
 
 EXT_TABLE EQU 0x45A4E168
@@ -204,7 +203,7 @@ TabMenuCheck:
         BNE     TabMenuCheck_false
         MOV     R0, #1
         POP     {PC}
-TabMenuCheck_false:                     
+TabMenuCheck_false:
         MOV     R0, #0
         POP     {PC}
 
@@ -213,5 +212,4 @@ TabMenuCheck_false:
         CODE16
         LDR     R3, =TabMenuCheck
         BX      R3
-#endif
         END

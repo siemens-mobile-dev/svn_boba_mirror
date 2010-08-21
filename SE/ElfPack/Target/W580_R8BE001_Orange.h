@@ -1,6 +1,3 @@
-#ifndef W580_R8BE001_Orange
-#error W580_R8BE001_Orange configuration needed for this header!
-#else
 #ifndef _W580_R8BE001_Orange_
 #define _W580_R8BE001_Orange_
 
@@ -41,5 +38,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define DB2020
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

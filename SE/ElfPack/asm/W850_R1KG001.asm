@@ -1,6 +1,5 @@
 //W850_R1KG001
         RSEG   CODE
-#ifdef W850_R1KG001
         CODE32
 
 defadr  MACRO   a,b
@@ -182,5 +181,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

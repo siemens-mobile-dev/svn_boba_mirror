@@ -1,6 +1,3 @@
-#ifndef T700_R3EG004
-#error T700_R3EG004 configuration needed for this header!
-#else
 #ifndef _T700_R3EG004_
 #define _T700_R3EG004_
 
@@ -42,5 +39,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define A2
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

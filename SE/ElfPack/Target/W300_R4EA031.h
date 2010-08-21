@@ -1,6 +1,3 @@
-#ifndef W300_R4EA031
-#error W300_R4EA031 configuration needed for this header!
-#else
 #ifndef _W300_R4EA031_
 #define _W300_R4EA031_
 
@@ -41,5 +38,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON14x14
+#define EP_EXTICON56x42
 #endif
+
 #endif

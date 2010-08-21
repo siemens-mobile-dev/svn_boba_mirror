@@ -1,6 +1,3 @@
-#ifndef W850_R1KG001
-#error W850_R1KG001 configuration needed for this header!
-#else
 #ifndef _W850_R1KG001_
 #define _W850_R1KG001_
 
@@ -42,5 +39,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define DB2020
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

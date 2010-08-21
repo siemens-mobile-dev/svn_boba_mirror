@@ -1,6 +1,5 @@
 //K810_R8BA024_Orange_Gen
         RSEG   CODE
-#ifdef K810_R8BA024_Orange_Gen
         CODE32
 
 defadr  MACRO   a,b
@@ -9,12 +8,12 @@ a       EQU     b
         ENDM
 
         RSEG  CODE
-        defadr   STANDBY_RET,0x45407C4C+1 
-        defadr   DB_PATCH_RET,0x44FFA910+1 
-        defadr   DB_EXT_RET,0x44FFA6FC+1 
-        defadr   DB_PATCH3_RET,0x44FFA59C+1 
-        defadr   DB_PATCH4_RET,0x44FFAF64+1 
-        defadr   MESS_HOOK_RET,0x449234E4+1 
+        defadr   STANDBY_RET,0x45407C4C+1
+        defadr   DB_PATCH_RET,0x44FFA910+1
+        defadr   DB_EXT_RET,0x44FFA6FC+1
+        defadr   DB_PATCH3_RET,0x44FFA59C+1
+        defadr   DB_PATCH4_RET,0x44FFAF64+1
+        defadr   MESS_HOOK_RET,0x449234E4+1
         defadr   PAGE_ACTION_RET,0x453F3824+1
 
         defadr  memalloc,0x44BD9A1C+1
@@ -183,5 +182,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

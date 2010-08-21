@@ -1,6 +1,5 @@
 //T700_R3EG004
         RSEG   CODE
-#ifdef T700_R3EG004
         CODE32
 
 defadr  MACRO   a,b
@@ -213,5 +212,4 @@ DB_PATCH6:
         LDR    R2, =DB_PATCH6
         BX     R2
 
-#endif
         END

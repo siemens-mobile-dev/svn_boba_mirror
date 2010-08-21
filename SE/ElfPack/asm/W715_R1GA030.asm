@@ -1,6 +1,5 @@
 //W715_R1GA030
         RSEG   CODE
-#ifdef W715_R1GA030
         CODE32
 
 defadr  MACRO   a,b
@@ -173,5 +172,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

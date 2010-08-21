@@ -1,6 +1,5 @@
 //W995_R1HA035
         RSEG   CODE
-#ifdef W995_R1HA035
         CODE32
 
 defadr  MACRO   a,b
@@ -9,16 +8,16 @@ a       EQU     b
         ENDM
 
         RSEG  CODE
-        defadr   STANDBY_RET,0x14E30C9A+1 
+        defadr   STANDBY_RET,0x14E30C9A+1
         defadr   DB_PATCH1_RET,0x142DBA9C+1
-        defadr   DB_PATCH2_RET,0x142DBE94+1 
-        defadr   DB_PATCH3_RET,0x14FC8038+1 
+        defadr   DB_PATCH2_RET,0x142DBE94+1
+        defadr   DB_PATCH3_RET,0x14FC8038+1
         defadr   DB_PATCH4_RET,0x14FF1144+1
-        defadr   MESS_HOOK_RET,0x10137528+1 
-        defadr   PAGE_ACTION_RET,0x141044E0+1 
+        defadr   MESS_HOOK_RET,0x10137528+1
+        defadr   PAGE_ACTION_RET,0x141044E0+1
 
-        defadr  memalloc,0x4BA33B64 
-        defadr  memfree,0x4BA33B8C 
+        defadr  memalloc,0x4BA33B64
+        defadr  memfree,0x4BA33B8C
 
 // --- CreateLists ---
 
@@ -47,7 +46,7 @@ PATCH_STANDBY:
         RSEG  CODE
         CODE16
 _PageAction:
-	LDR     R0, =0x4BA279A0 
+	LDR     R0, =0x4BA279A0
         LDR     R0, [R0, #0]
         MOV     R1, #0
         BLX     List_RemoveAt
@@ -124,7 +123,7 @@ DB_PATCH2:
         BLX     GetExtTable
 	LSL	R1, R7, #2
 	LDR	R0, [R0,R1]
-	LDR	R1, =0x15C81490 
+	LDR	R1, =0x15C81490
         LDR     R3, =DB_PATCH2_RET
         BX      R3
 
@@ -174,5 +173,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

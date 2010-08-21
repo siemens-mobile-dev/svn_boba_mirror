@@ -1,6 +1,8 @@
 #include "..\include\Lib_Clara.h"
 #include "vars.h"
 
+#include "temp\target.h"
+
 union SIGNAL
 {
 	SIGSELECT signo;

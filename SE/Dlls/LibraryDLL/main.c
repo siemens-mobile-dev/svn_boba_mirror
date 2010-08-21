@@ -5,6 +5,7 @@
 #include "..\..\include\dir.h"
 #include "vkp.h"
 
+#include "include.tmp"
 
 #define DLL_PRIVATE_AREA  // использовать “ќЋ№ ќ!! при компил€ции самой DLL
 

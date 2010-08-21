@@ -1,6 +1,5 @@
 //W580 R8BE001
         RSEG   CODE
-#ifdef W580_R8BE001
         CODE32
 
 TABMENUBAR_NAME EQU 0x45BBBF60 //getTabMenuBarOnDescCreate
@@ -94,7 +93,7 @@ PG_ACTION:
         ADD     R6, R1, #0
         LDR     R3,=SFE(PATCH_PageActionImpl)+1
         BX      R3
-        
+
 
 
         RSEG    PATCH_PageActionImpl
@@ -199,7 +198,7 @@ TabMenuCheck:
         BNE     TabMenuCheck_false
         MOV     R0, #1
         POP     {PC}
-TabMenuCheck_false:                     
+TabMenuCheck_false:
         MOV     R0, #0
         POP     {PC}
 
@@ -208,5 +207,4 @@ TabMenuCheck_false:
         CODE16
         LDR     R3, =TabMenuCheck
         BX      R3
-#endif
         END

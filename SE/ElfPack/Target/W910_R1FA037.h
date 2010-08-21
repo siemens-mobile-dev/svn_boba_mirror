@@ -1,6 +1,3 @@
-#ifndef W910_R1FA037
-#error W910_R1FA037 configuration needed for this header!
-#else
 #ifndef _W910_R1FA037_
 #define _W910_R1FA037_
 
@@ -42,5 +39,11 @@
 #define PREVIOUS_EVENT 0x3
 #define CANCEL_EVENT 0x4
 
+#define A2
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

@@ -1,6 +1,5 @@
 //K800 R8BF003
         RSEG   CODE
-#ifdef K800_R8BF003
         CODE32
 
 EXT_TABLE EQU 0x45B623A4	//45A4E168
@@ -190,5 +189,4 @@ PATCH_DB4_start:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

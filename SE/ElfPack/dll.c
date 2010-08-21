@@ -10,7 +10,7 @@ int CompareDllListElements(DLL_LIST_ELEMENT* listitem, wchar_t* itemtofind)
 }
 
 // возвращает новый this или errorcode
-void * LoadDLL(wchar_t * DllName)
+void * LoadDLL_int(wchar_t * DllName)
 {
 	DLL_LIST_ELEMENT * dll;
 	DLL_DATA * dll_public_data;
@@ -31,7 +31,7 @@ void * LoadDLL(wchar_t * DllName)
 		wstrcpy(name,DllName);
 		newdll->name=name;
 
-		newdll->EntryPoint = (int (*)(int,DLL_DATA*)) elfload(dllfullname,0,0,0);
+		newdll->EntryPoint = (int (*)(int,DLL_DATA*)) elfload_int(dllfullname,0,0,0);
 		mfree(dllfullname);
 
 		// если не получили EntryPoint
@@ -87,7 +87,7 @@ void * LoadDLL(wchar_t * DllName)
 }
 
 
-int UnLoadDLL(DLL_DATA * DllData)
+int UnLoadDLL_int(DLL_DATA * DllData)
 {
 	DLL_LIST_ELEMENT * dll;
 	int usage_count;

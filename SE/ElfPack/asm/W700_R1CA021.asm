@@ -1,6 +1,5 @@
 //W700_R1CA021
         RSEG   CODE
-#ifdef W700_R1CA021
         CODE32
 
 defadr  MACRO   a,b
@@ -123,5 +122,4 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
-#endif
         END

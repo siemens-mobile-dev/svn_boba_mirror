@@ -1,6 +1,5 @@
 //K810_R8BF003
         RSEG   CODE
-#ifdef K810_R8BF003
         CODE32
 
 defadr  MACRO   a,b
@@ -183,5 +182,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

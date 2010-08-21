@@ -1,6 +1,3 @@
-#ifndef J105_R1HA035
-#error J105_R1HA035 configuration needed for this header!
-#else
 #ifndef _J105_R1HA035_
 #define _J105_R1HA035_
 
@@ -42,5 +39,11 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define A2
+
+#ifndef NOICONS
+#define EP_EXTICON24x24
+#define EP_EXTICON42x32
 #endif
+
 #endif

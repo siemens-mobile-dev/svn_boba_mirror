@@ -1,6 +1,5 @@
 //C702_R3EF001
         RSEG   CODE
-#ifdef C702_R3EF001
         CODE32
 
 defadr  MACRO   a,b
@@ -194,18 +193,17 @@ DB_PATCH6:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-        
+
         RSEG   PATCH_DB5(2)
         CODE16
-_PATCH_DB5:        
+_PATCH_DB5:
         LDR    R2, =DB_PATCH5
         BX     R2
 
         RSEG   PATCH_DB6(2)
         CODE16
-_PATCH_DB6:        
+_PATCH_DB6:
         LDR    R2, =DB_PATCH6
         BX     R2
 
-#endif
         END

@@ -1,6 +1,5 @@
 //W580 R8BA024
         RSEG   CODE
-#ifdef W580_R8BA024
         CODE32
 
 defadr  MACRO   a,b
@@ -182,5 +181,4 @@ DB_PATCH4:
         LDR    R3, =DB_PATCH4
         BX     R3
 
-#endif
         END

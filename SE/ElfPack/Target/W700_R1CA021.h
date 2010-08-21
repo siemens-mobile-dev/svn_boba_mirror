@@ -1,6 +1,3 @@
-#ifndef W700_R1CA021
-#error W700_R1CA021 configuration needed for this header!
-#else
 #ifndef _W700_R1CA021_
 #define _W700_R1CA021_
 
@@ -40,5 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
+
 #endif

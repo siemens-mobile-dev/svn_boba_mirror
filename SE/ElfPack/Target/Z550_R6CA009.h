@@ -1,6 +1,3 @@
-#ifndef Z550_R6CA009
-#error Z550_R6CA009 configuration needed for this header!
-#else
 #ifndef _Z550_R6CA009_
 #define _Z550_R6CA009_
 
@@ -40,5 +37,9 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#ifndef NOICONS
+#define EP_EXTICON16x20
+#define EP_EXTICON48x36
 #endif
+
 #endif
