@@ -1027,4 +1027,32 @@ typedef struct
 #define CHIPID_DB3210 0xE800
 #define CHIPID_DB3350 0xF000
 
+typedef enum
+{
+  UI_OverlayStyle_NotDefined = 0,
+  UI_OverlayStyle_Default,                      // Use original frame settings
+  UI_OverlayStyle_FullScreen,                   // Fullscreen
+  UI_OverlayStyle_FullScreenNoStatus,           // Fullscreen with no statusRow
+  UI_OverlayStyle_TrueFullScreen,               // True fullscreen without softkeys and statusrow
+  UI_OverlayStyle_InternalFrameSmall,           // Fullscreen with small internal frame
+  UI_OverlayStyle_InternalFrameLarge,           // Fullscreen with large internal frame
+  UI_OverlayStyle_InternalFrameOutput,          // Informationtext style
+  UI_OverlayStyle_PopupFrame,                   // Popup with SW rendered frame
+  UI_OverlayStyle_PopupNoFrame,                 // Transparent popup window. Default popup style.
+  UI_OverlayStyle_FullScreenNoSoftkeys,         // Fullscreen without softkeys but with status row
+  UI_OverlayStyle_Last
+} UI_OverlayStyle_t;
+
+typedef enum
+{
+  UI_TitleMode_Uninitated = 0, // Uninitiated
+  UI_TitleMode_None,       // Show no title
+  UI_TitleMode_Normal,     // Normal title size
+  UI_TitleMode_Small,      // Small title
+  UI_TitleMode_Tab,        // Show tabs instead of title.
+  UI_TitleMode_Large,      // Large two row title (different fonts for 1:st and 2:nd line)
+  UI_TitleMode_Desktop,    // Only for desktop title. Will be removed after hb107.
+  UI_TitleMode_Last
+} UI_TitleMode_t;
+
 #endif

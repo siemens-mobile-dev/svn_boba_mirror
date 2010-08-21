@@ -533,7 +533,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -1356,7 +1356,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -2179,7 +2179,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -3002,7 +3002,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -3825,7 +3825,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -4648,7 +4648,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -5471,7 +5471,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -6294,7 +6294,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -7117,7 +7117,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -7940,7 +7940,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -8763,7 +8763,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -9586,7 +9586,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -10409,7 +10409,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -11232,7 +11232,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -12055,7 +12055,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -12878,7 +12878,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -13701,7 +13701,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -14524,7 +14524,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -15347,7 +15347,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -16170,7 +16170,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>
@@ -16993,7 +16993,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild>cmd /c prebuild.bat "$TARGET_DIR$"</prebuild>
+        <prebuild>cmd /c $PROJ_DIR$\prebuild.bat "$PROJ_DIR$" "$TARGET_DIR$"</prebuild>
         <postbuild></postbuild>
       </data>
     </settings>

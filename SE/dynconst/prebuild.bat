@@ -1,26 +1,23 @@
 @echo off
+if %1a==a (
+  echo use "$PROJ_DIR$" "$TARGET_DIR$" as arguments
+  goto :eof
+)
 
-if %1a==a goto error
+cd /d %1
 
-call :getprojname %1
+call :getprojname %2
 
 rmdir /q /s temp
 mkdir temp
-
 echo #include "target\%projectname%.h" >temp\temp.h
-
-for /f %%a in (..\include\DYN_syntax.cfg) do (
+for /F %%a in (..\include\DYN_syntax.cfg) do (
 echo #ifndef %%a^
 
   #define %%a UNDEFINED^
 
 #endif >>temp\temp.h
 )
-
-goto :eof
-
-:error
-echo use $TARGET_DIR$ as argument
 goto :eof
 
 :getprojname
