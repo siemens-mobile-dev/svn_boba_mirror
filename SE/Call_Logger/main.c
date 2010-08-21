@@ -102,7 +102,7 @@ int myList_Find(void *r0,void *r1)
 //Функция поиска элемента в листе жпрс
 int myList_gprs_Find(void *r0,void *r1)
 {
-  if (((myList_gprs_elem*)r0)->ID==((myList_gprs_elem*)r1)->ID) return(0);
+  if (((myList_gprs_elem*)r0)->ID==(int)r1) return(0);
   return(1);
 }
 
@@ -304,11 +304,14 @@ int onSessionEstablished(void * r0, BOOK *)
 {
   if (r0)
   {
-    myList_gprs_elem * elem_gprs=new(myList_gprs_elem);
-    elem_gprs->ID=((ses_est*)r0)->unkID;
-    elem_gprs->SesEst=new(DATETIME);
-    REQUEST_DATEANDTIME_GET(SYNC,elem_gprs->SesEst);
-    ListElement_AddtoTop(myList_gprs,elem_gprs);
+    if (ListElement_Find(myList_gprs,(void*)((ses_est*)r0)->unkID,myList_gprs_Find)==LIST_ERROR)
+    {
+      myList_gprs_elem * elem_gprs=new(myList_gprs_elem);
+      elem_gprs->ID=((ses_est*)r0)->unkID;
+      elem_gprs->SesEst=new(DATETIME);
+      REQUEST_DATEANDTIME_GET(SYNC,elem_gprs->SesEst);
+      ListElement_AddtoTop(myList_gprs,elem_gprs);
+    }
   }
   return(0);
 }
@@ -357,10 +360,7 @@ void delayed_save_gprs_info(u16 unk,LPARAM term_ID)
   memset(buffer_gprs,0,800);
   GPRS_SESSION_INFO * buf_ses=new(GPRS_SESSION_INFO);
   GPRS_GetLastSessionInfo(0,buf_ses);
-  
-  myList_gprs_elem * temp_elem_gprs=new(myList_gprs_elem);
-  temp_elem_gprs->ID=term_ID;
-  int pos=ListElement_Find(myList_gprs,temp_elem_gprs,myList_gprs_Find);
+  int pos=ListElement_Find(myList_gprs,(void*)term_ID,myList_gprs_Find);
   if (pos!=LIST_ERROR)
   {
     myList_gprs_elem * elem_gprs=(myList_gprs_elem*)ListElement_Remove(myList_gprs,pos);
@@ -491,7 +491,6 @@ void delayed_save_gprs_info(u16 unk,LPARAM term_ID)
     myList_gprs_elem_Free(elem_gprs);
   }
   delete(buf_ses);
-  delete(temp_elem_gprs);
 }
 
 //Ловим окончание содинения
