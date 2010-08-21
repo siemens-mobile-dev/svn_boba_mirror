@@ -4,12 +4,17 @@ if %1a==a goto error
 
 call :getprojname %1
 
-echo #include "target\%projectname%.h" >include.tmp
+rmdir /q /s temp
+mkdir temp
+
+echo #include "target\%projectname%.h" >temp\temp.h
 
 for /f %%a in (..\include\DYN_syntax.cfg) do (
-   echo #ifndef %%a >>include.tmp
-   echo   #define %%a UNDEFINED >>include.tmp
-   echo #endif >>include.tmp
+echo #ifndef %%a^
+
+  #define %%a UNDEFINED^
+
+#endif >>temp\temp.h
 )
 
 goto :eof

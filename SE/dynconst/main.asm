@@ -1,5 +1,5 @@
 #define UNDEFINED 0xFFFFFFFF
-#include "include.tmp"
+#include "temp\temp.h"
 DYNCONST MACRO   val,tag
         org tag*4
         DCD val
