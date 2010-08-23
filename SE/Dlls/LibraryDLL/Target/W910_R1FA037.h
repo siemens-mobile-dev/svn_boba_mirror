@@ -1,9 +1,9 @@
-#include "..\..\include\Types.h"
-#include "classes.h"
-
 #define W910_R1FA037
 #define A2
 #define DB3150
+
+#include "..\..\include\Types.h"
+#include "classes.h"
 
 #define GetSignalQuality_Send_SignalID 0x12C00080
 #define GetSignalQuality_Receive_SignalID 0x12C007C0

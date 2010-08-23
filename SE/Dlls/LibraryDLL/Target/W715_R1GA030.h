@@ -1,9 +1,9 @@
-#include "..\..\include\Types.h"
-#include "classes.h"
-
 #define W715_R1GA030
 #define A2
 #define DB3210
+
+#include "..\..\include\Types.h"
+#include "classes.h"
 
 #define OrangeLED_ID 2
 #define GetSignalQuality_Send_SignalID 0x12C00040
