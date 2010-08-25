@@ -535,7 +535,7 @@
 0C84: 00000000 0D273845 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 61123845 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 250E3845 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: 00000000 55233F45 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 FD6EDB44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 8181DB44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 C1441A44 ; 327: int GetRadioState( char* level, char* flag );
@@ -600,8 +600,8 @@
 0D88: 00000000 9D7BD444 ; 362: int Alarm_GetCurrentTypeAndAlarmID( char* type, wchar_t* AlarmID );
 0D8C: 00000000 F166D444 ; 363: int Alarm_GetState( char* state, int AlarmID );
 0D90: 00000000 3D75D444 ; 364: int Alarm_GetTIME( TIME* AlarmTime, int AlarmID );
-0D94: 00000000 3982D444 ; 365: int Alarm_GetWeekSettings( void* week, int AlarmID );
-0D98: 00000000 C1C72D45 ; 366: int IrDa_GetState( char* state );
+0D94: 00000000 6966D444 ; 365: int Alarm_GetWeekSettings( void* week, int AlarmID );
+0D98: 00000000 79072E45 ; 366: int IrDa_GetState( char* state );
 0D9C: 00000000 DD552E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int ProfileNum, char* state );
 0DA0: 00000000 BD6DDB44 ; 368: void* IncommingCall_Accept( BOOK* book );
 0DA4: 00000000 0D49F344 ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
@@ -693,12 +693,12 @@
 0EFC: 00000000 A95A3745 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: 00000000 0D503645 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
 0F04: 00000000 C9E53145 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
-;0F08: xxxxxxxx yyyyyyyy ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
-;0F0C: xxxxxxxx yyyyyyyy ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
-;0F10: xxxxxxxx yyyyyyyy ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
-;0F14: xxxxxxxx yyyyyyyy ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
-;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
-;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
+0F08: 00000000 A5EA3145 ; 3C2: void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+0F0C: 00000000 CDEA3145 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+0F10: 00000000 8DF13145 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
+0F14: 00000000 ADF13145 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
+0F18: 00000000 79DEFC44 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F1C: 00000000 D1533845 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 F1A43A45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
 
 
