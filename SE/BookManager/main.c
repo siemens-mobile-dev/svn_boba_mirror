@@ -731,8 +731,8 @@ void myOnKey1( DISP_OBJ* p, int keyID, int i2, int i3, int press_mode )
       char* param = manifest_GetParam( mbk->shortcuts_buf, key, 0 );
       if ( param )
       {
-        if( StartElf( GetDir( DIR_ELFS | MEM_INTERNAL ), param ) )
-          if ( StartElf( GetDir( DIR_ELFS | MEM_EXTERNAL ), param ) )
+        if( StartElf( GetDir( DIR_ELFS | MEM_INTERNAL ), param ) < 0 )
+          if ( StartElf( GetDir( DIR_ELFS | MEM_EXTERNAL ), param ) < 0 )
           {
             int ms[3];
             ms[0] = STR( "ZBin" );
@@ -783,12 +783,9 @@ void CreateGuiList( int tab_pos, BOOK* bk )
 {
   MyBOOK* mbk = (MyBOOK*) bk;
   int str_id;
-  int p[2];
   int list_pos;
   
   CreateBookLst( mbk );
-  p[0] = Str2ID ( L"Heap : ", 0, 7 );
-  p[1] = int2strID ( GetFreeBytesOnHeap() );
   
   if ( !mbk->gui )
   {
@@ -800,9 +797,6 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     
     TabMenuBar_SetTabIcon( mbk->gui, 1, mbk->tabs_image[2].ImageID, 0 );
     TabMenuBar_SetTabIcon( mbk->gui, 1, mbk->tabs_image[3].ImageID, 1 );
-    
-    TabMenuBar_SetTabTitle( mbk->gui, 0, Str2ID( p, 5, 2 ) );
-    TabMenuBar_SetTabTitle( mbk->gui, 1, STR( "Elfs" ) );
   }
   
   if ( mbk->blist )
@@ -845,6 +839,9 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     DISP_DESC_SetOnKey( DispObject_GetDESC ( GUIObject_GetDispObject( mbk->blist ) ), myOnKey );
     
     TabMenuBar_SetTabGui( mbk->gui, 0, mbk->blist );
+
+    STRID p[2] = { Str2ID ( L"Heap : ", 0, 7 ), int2strID ( GetFreeBytesOnHeap() ) };
+    TabMenuBar_SetTabTitle( mbk->gui, 0, Str2ID( p, 5, 2 ) );	
   }
   //---------------
   
@@ -890,6 +887,7 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     RefreshElfSoftkeys( mbk, ListMenu_GetSelectedItem(mbk->elist) );
     
     TabMenuBar_SetTabGui( mbk->gui, 1, mbk->elist );
+    TabMenuBar_SetTabTitle( mbk->gui, 1, STR( "Elfs" ) );
   }
   
   TabMenuBar_SetFocusedTab( mbk->gui, tab_pos );
