@@ -51,7 +51,7 @@
 04F8: FFFFFFFF C16A1645 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: FFFFFFFF 256B1645 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 0500: FFFFFFFF F5871845 ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
-0504: FFFFFFFF 59F51445 ;8141: IS_NEEDED_BOOK isScreenSaverBook( void );
+0504: FFFFFFFF 59F51445 ; 141: int IsScreenSaverBook( BOOK *bk );
 0508: FFFFFFFF 31961445 ; 142: void StatusIndication_SetItemText( GUI* , int item, STRID );
 050C: FFFFFFFF 15482A45 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: FFFFFFFF 19BE1545 ; 144: GUI* CreateStringInputVA( int, ... );
@@ -170,7 +170,7 @@
 06D4: FFFFFFFF 0D892A45 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
 06D8: FFFFFFFF 9DE42A45 ; 1B6: void SetBrightnessOfScreen(int br);
 06DC: FFFFFFFF 31D71445 ; 1B7: int isKeylocked( void );
-06E0: FFFFFFFF 79AF4345 ;81B8: IS_NEEDED_BOOK isMediaPlayerVideoBook( void );
+06E0: FFFFFFFF 79AF4345 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
 06E4: FFFFFFFF E5C44345 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
 06E8: FFFFFFFF 35EF1445 ; 1BA: void ShuttingDown(void);
 06EC: FFFFFFFF A52E4545 ; 1BB: void Vibra(int t1, int t2, int t3);
@@ -186,8 +186,8 @@
 0714: FFFFFFFF 4D806345 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
 0718: FFFFFFFF 5D806345 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 ;071C: xxxxxxxx yyyyyyyy ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
-0720: FFFFFFFF 49296345 ; 1C8: int isRightNowBook( BOOK* book );
-0724: FFFFFFFF 5D7D6345 ; 1C9: int isVolumeControllerBook( BOOK* book );
+0720: FFFFFFFF 49296345 ; 1C8: int IsRightNowBook( BOOK* book );
+0724: FFFFFFFF 5D7D6345 ; 1C9: int IsVolumeControllerBook( BOOK* book );
 0728: FFFFFFFF C58B1445 ; 1CA: GUI_TABMENUBAR* CreateTabMenuBar( BOOK* book );
 072C: FFFFFFFF D58C1445 ; 1CB: void TabMenuBar_SetTabCount( GUI_TABMENUBAR*, int count );
 0730: FFFFFFFF B98D1445 ; 1CC: void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
@@ -380,8 +380,8 @@
 0A1C: FFFFFFFF D1E91D45 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A20: FFFFFFFF 996C1645 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
-0A28: FFFFFFFF CD465F45 ;828A: IS_NEEDED_BOOK isFmRadioBook( void );
-0A2C: FFFFFFFF 295E4245 ;828B: IS_NEEDED_BOOK isAudioPlayerBook( void );
+0A28: FFFFFFFF CD465F45 ; 28A: int IsFmRadioBook( BOOK *bk );
+0A2C: FFFFFFFF 295E4245 ; 28B: int IsAudioPlayerBook( BOOK *bk);
 0A30: FFFFFFFF 49AB4245 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: FFFFFFFF A92A5F45 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
 0A38: FFFFFFFF E10A5345 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
@@ -465,7 +465,7 @@
 0B70: FFFFFFFF 1967DE44 ; 2DC: void OrangeLED_Control( int _free_val, int or_LED_ID, int level, int fade_time );
 0B74: FFFFFFFF 91882F45 ; 2DD: void DispObject_SetRefreshTimer( DISP_OBJ*, int time );
 0B78: FFFFFFFF 25892F45 ; 2DE: void DispObject_KillRefreshTimer( DISP_OBJ* );
-0B7C: FFFFFFFF 4D032445 ; 2DF: int isDataBrowserBook( BOOK* book );
+0B7C: FFFFFFFF 4D032445 ; 2DF: int IsDataBrowserBook( BOOK* book );
 0B80: FFFFFFFF 9DA35B45 ; 2E0: SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 0B84: FFFFFFFF B5516345 ; 2E1: int Shortcut_Get_MenuItemName( void* );
 0B88: FFFFFFFF 610A5345 ; 2E2: int Shortcut_Get_MenuItemIconID( void* );
@@ -549,8 +549,8 @@
 0CC0: FFFFFFFF FDFD0F45 ; 330: int w_remove( const wchar_t* dir );
 0CC4: FFFFFFFF 91601045 ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: FFFFFFFF 9576CF44 ; 332: int GetSignalQuality( char* rssi, char* ber );
-0CCC: FFFFFFFF 615D4545 ;8333: IS_NEEDED_BOOK isCameraBook( void );
-0CD0: FFFFFFFF 9F074345 ;8334: IS_NEEDED_BOOK isSoundRecorderBook( void );
+0CCC: FFFFFFFF 615D4545 ; 333: int IsCameraBook( BOOK *bk );
+0CD0: FFFFFFFF 9F074345 ; 334: int IsSoundRecorderBook( BOOK *bk );
 0CD4: FFFFFFFF 09C81545 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 0CD8: FFFFFFFF B5C74345 ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
 0CDC: FFFFFFFF F1C14345 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
