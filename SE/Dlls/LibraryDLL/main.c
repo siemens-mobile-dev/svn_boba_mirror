@@ -178,12 +178,12 @@ int dll_GetImageWidth_0( wchar_t imageID )
 {
   IUIImage * pUIImage=0;
   IImageManager * pImageManager=0;
-  long image_width;
-  long image_height;
+  long image_width=0;
+  long image_height=0;
   
   CoCreateInstance(&CID_CImageManager, &IID_IImageManager, &pImageManager);
-  pImageManager->CreateFromIcon(imageID,&pUIImage);
-  pUIImage->GetDimensions(&image_width,0,&image_height,0);
+  if (pImageManager->CreateFromIcon(imageID,&pUIImage)>=0)
+      pUIImage->GetDimensions(&image_width,0,&image_height,0);
   
   if (pImageManager) pImageManager->Release();
   if (pUIImage) pUIImage->Release();
@@ -197,8 +197,8 @@ int dll_GetImageHeight_0( wchar_t imageID )
 {
   IUIImage * pUIImage=0;
   IImageManager * pImageManager=0;
-  long image_width;
-  long image_height;
+  long image_width=0;
+  long image_height=0;
   
   if (imageID<100)
   {
@@ -211,8 +211,8 @@ int dll_GetImageHeight_0( wchar_t imageID )
   else
   {
     CoCreateInstance(&CID_CImageManager, &IID_IImageManager, &pImageManager);
-    pImageManager->CreateFromIcon(imageID,&pUIImage);
-    pUIImage->GetDimensions(&image_width,0,&image_height,0);
+    if (pImageManager->CreateFromIcon(imageID,&pUIImage)>=0)
+      pUIImage->GetDimensions(&image_width,0,&image_height,0);
   }
   
   if (pImageManager) pImageManager->Release();

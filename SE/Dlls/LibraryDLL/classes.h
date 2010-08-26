@@ -233,40 +233,40 @@ public:
 class IRichTextLayout: public IUnknown
 {
 public:
-  virtual void SetControl(void * pIUIRichTextLayoutControl);
-  virtual void GetControl(void ** pIUIRichTextLayoutControl);
-  virtual void SetOptions(void * pIUIRichTextLayoutOptions);
-  virtual void GetOptions(void * pIUIRichTextLayoutOptions);
-  virtual void Subscribe(void * pICBUIRichTextLayout,u16 msgBase,int clientData,unsigned long * pSubscriptionHandle);
-  virtual void Unsubscribe(unsigned long SubscriptionHandle);
-  virtual void SetText(IRichText * pTextObject);
-  virtual void GetText(IRichText ** pTextObject);
-  virtual void Compose(int lineWidth);
-  virtual void ComposeLine(int lineWidth,int ascenderLimit,int descenderLimit,int lineNumber,long * pStartIndex,long * pEndIndex,long * pCharsLeftToCompose);
-  virtual void ComposeLineInit(long x,long y,long lineNumber);
-  virtual void PositionLine(long x,long y,long lineNumber);
-  virtual void ComposeContainers(TUIRectangle * pComposeRect);
-  virtual void GetWidthOfLongestRemainingLineBreakSequence(int * pWidth,long * pStartIndex,long * pEndIndex);
-  virtual void GetLineInfo(long lineNumber,TUILineInfo *pInfo);
-  virtual void MapCharIndex(long index,long * pLineNumber);
-  virtual void GetGlyphInfo(long lineNumber,long glyphIndex,bool needBoundingBox,TUIGlyphInfo *pInfo);
-  virtual void GetNumberOfLines(long *pNumberOfLines);
-  virtual void GetLayoutInfo(TUILayoutInfo *pLayoutInfo);
-  virtual void GetContainerInfo(long containerIndex,TUIContainerInfo *pContainerInfo);
-  virtual void Display(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
-  virtual void DisplayContainers(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
-  virtual void DisplayLine(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
-  virtual void AddTextContainer(IUnknown *pIUITextContainer,long containerID,TUIPoint *pContainerOrigin);
-  virtual void RemoveTextContainer(long containerID);
+  virtual int SetControl(void * pIUIRichTextLayoutControl);
+  virtual int GetControl(void ** pIUIRichTextLayoutControl);
+  virtual int SetOptions(void * pIUIRichTextLayoutOptions);
+  virtual int GetOptions(void * pIUIRichTextLayoutOptions);
+  virtual int Subscribe(void * pICBUIRichTextLayout,u16 msgBase,int clientData,unsigned long * pSubscriptionHandle);
+  virtual int Unsubscribe(unsigned long SubscriptionHandle);
+  virtual int SetText(IRichText * pTextObject);
+  virtual int GetText(IRichText ** pTextObject);
+  virtual int Compose(int lineWidth);
+  virtual int ComposeLine(int lineWidth,int ascenderLimit,int descenderLimit,int lineNumber,long * pStartIndex,long * pEndIndex,long * pCharsLeftToCompose);
+  virtual int ComposeLineInit(long x,long y,long lineNumber);
+  virtual int PositionLine(long x,long y,long lineNumber);
+  virtual int ComposeContainers(TUIRectangle * pComposeRect);
+  virtual int GetWidthOfLongestRemainingLineBreakSequence(int * pWidth,long * pStartIndex,long * pEndIndex);
+  virtual int GetLineInfo(long lineNumber,TUILineInfo *pInfo);
+  virtual int MapCharIndex(long index,long * pLineNumber);
+  virtual int GetGlyphInfo(long lineNumber,long glyphIndex,bool needBoundingBox,TUIGlyphInfo *pInfo);
+  virtual int GetNumberOfLines(long *pNumberOfLines);
+  virtual int GetLayoutInfo(TUILayoutInfo *pLayoutInfo);
+  virtual int GetContainerInfo(long containerIndex,TUIContainerInfo *pContainerInfo);
+  virtual int Display(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
+  virtual int DisplayContainers(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
+  virtual int DisplayLine(IUnknown * pGC,long x,long y,TUIRectangle *pInvalidateRect);
+  virtual int AddTextContainer(IUnknown *pIUITextContainer,long containerID,TUIPoint *pContainerOrigin);
+  virtual int RemoveTextContainer(long containerID);
 };
 
 
 class ITheme: public IUnknown
 {
 public:
-  virtual void method1();
-  virtual void GetFont(char * DispName,char * FontName,IUnknown ** pFont);
-  virtual void method3();
+  virtual int method1();
+  virtual int GetFont(char * DispName,char * FontName,IUnknown ** pFont);
+  virtual int method3();
 };
 
 
@@ -289,12 +289,12 @@ public:
 class IFontFactory: public IUnknown
 {
 public:
-  virtual void GetFont(TUIFontFace Face,TUIFontSize Size,TUIFontStyle Style,IFont ** pFont);
-  virtual void GetDefaultFont(IFont ** pFont);
-  virtual void GetDefaultFontSettings(TUIFontSize Size,TUIFontData * pFontData);
-  virtual void CreateDefaultFont(TUIFontData * pfontData,IFont ** pFont);
-  virtual void CreateFontFromFamilyName(IUnknown * pIFamilyName,TUIFontData * pfontData,IFont ** pFont);
-  virtual void CreateFontFromFile(IUnknown * pIFullPath,TUIFontData * pfontData,IFont ** pFont);
+  virtual int GetFont(TUIFontFace Face,TUIFontSize Size,TUIFontStyle Style,IFont ** pFont);
+  virtual int GetDefaultFont(IFont ** pFont);
+  virtual int GetDefaultFontSettings(TUIFontSize Size,TUIFontData * pFontData);
+  virtual int CreateDefaultFont(TUIFontData * pfontData,IFont ** pFont);
+  virtual int CreateFontFromFamilyName(IUnknown * pIFamilyName,TUIFontData * pfontData,IFont ** pFont);
+  virtual int CreateFontFromFile(IUnknown * pIFullPath,TUIFontData * pfontData,IFont ** pFont);
 };
 
 
@@ -363,128 +363,128 @@ typedef struct
 class IRichText: public IUnknown
 {
 public:
-  virtual void SetString(void* pIString); 										//Set a string (UTF16)
-  virtual void GetString(void** ppIString); 										//Get a string (UTF16)
-  virtual void InsertText(void * text,FSint32 text_len,TUIEncoding encoding,FSint32 insertIndex); 			//Inserts a text run by copy to a IUIRichText object.
-  virtual void InsertTextUTF16(u16 *text,TUnsigned length_text,FSint32 insertIndex); 					//Inserts a text run by copy to a IUIRichText object. 
-  virtual void RemoveText(FSint32 startIndex,FSint32 endIndex); 							//Deletes text from a text object that has copied text.
-  virtual void InsertRun(void *text,FSint32 text_len,TUIEncoding encoding,void *pInsertHere); 				//Insert a text run by reference.
-  virtual void ChangeRun(void *new_text,FSint32 length_text,TUIEncoding encoding,void *old_text,FSint32  hints); 	//Change a referenced text run.
-  virtual void RemoveRun(void *text); 											//Removes a referenced text run from a IUIRichText object.
-  virtual void GetRunRange(void *text,FSint32 *startIndex,FSint32 *endIndex); 						//Gets the index range of a run in a IUIRichText.
-  virtual void GetParagraphRange(FSint32 paragraph,FSint32 *pStartIndex,FSint32 *pEndIndex); 				//Gets the index range of a paragraph in a TsText.
-  virtual void GetParagraphCount(FSint32 *pParagraphCount); 								//Gets the number of paragraphs in a TsText.
-  virtual void GetParagraph(FSint32 char_index,FSint32 *pParagraphNumber); 						//Gets the paragraph number for a given index in TsText.
-  virtual void GetLength(FSint32 *pLength); 										//Returns the text length in characters.
-  virtual void GetChar(FSint32 index,FUint32 *pChar); 									//Returns the character at a given index as a UTF32 value.
-  virtual void SetAlignment(TUITextAlignment value,FSint32 startIndex,FSint32 endIndex); 				//Sets the paragraph alignment attribute.
-  virtual void SetBackgroundColor(int color,FSint32 startIndex,FSint32 endIndex);					//Sets background color attribute.
-  virtual void SetBiDiOverride(TUITextDirection textdir,FSint32 startIndex,FSint32 endIndex);				//Sets the bidirectional override attribute.
-  virtual void SetCharSpacing(float value,FSint32 startIndex,FSint32 endIndex); 					//Sets additional spacing between characters.
-  virtual void SetEdgeColor(int color,FSint32 startIndex,FSint32 endIndex); 						//Sets edge color attribute.
-  virtual void SetFontStyle(void *pIUIFontStyle,FSint32 startIndex,FSint32 endIndex);					//Sets the font style attribute.
-  virtual void SetIndent(TUITextAlignment align,FSint32 startIndex,FSint32 endIndex);					//Sets the amount the first line of each paragraph is indented.
-  virtual void SetInlineObjectID(wchar_t imageID,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetInlineObjectMetrics(wchar_t imageID,TUIInlineObjectMetrics *pValue);
-  virtual void SetJustification(TBool value,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetLanguage(int language,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetLeftIndent(float value,FSint32 startIndex,FSint32 endIndex);						//Sets the amount the left side of each paragraph in the range is indented.
-  virtual void SetLinePaddingAfter(float value,FSint32 startIndex,FSint32 endIndex);					//Sets an amount of extra space to pad after each line.
-  virtual void SetLinePaddingBefore(float value,FSint32 startIndex,FSint32 endIndex);					//Sets an amount of extra space to pad before each line.
-  virtual void SetLineSpacing(TUILineSpacing value,FSint32 startIndex,FSint32 endIndex);				//Sets line spacing attribute.
-  virtual void SetLineSpacingAmount(float value,FSint32 startIndex,FSint32 endIndex);					//Sets line spacing amount attribute.
-  virtual void SetLineSpacingAttributeMode(TBool isParaAttrib);
-  virtual void SetOverline(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);					//Sets text overline attribute.
-  virtual void SetOverlineColor(int color,FSint32 startIndex,FSint32 endIndex);						//Sets overline color attribute.
-  virtual void SetRightIndent(float value,FSint32 startIndex,FSint32 endIndex);						//Sets the amount the right side of each paragraph in the range is indented.
-  virtual void SetSpaceAfter(float value,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetSpaceBefore(float value,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetStrikeout(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetStrikeoutColor(int color,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetTextColor(int color,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetTextDirection(TUITextDirection value,FSint32 startIndex,FSint32 endIndex);				//Sets the paragraph base text direction attribute.
-  virtual void SetUnderline(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetUnderlineColor(int color,FSint32 startIndex,FSint32 endIndex);
-  virtual void SetWordSpacing(float value,FSint32 startIndex,FSint32 endIndex);						//Sets additional spacing between words.
-  virtual void GetAlignment(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextAlignment *pAlignment);
-  virtual void GetBackgroundColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pBackgroundColor);
-  virtual void GetBiDiOverride(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextDirection *pValue);
-  virtual void GetCharSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pSpacing);
-  virtual void GetEdgeColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pEdgeColor);
-  virtual void GetFontStyle(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,void **ppIFontStyle);
-  virtual void GetIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pIndent);
-  virtual void GetInlineObjectID(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,wchar_t *id);
-  virtual void GetInlineObjectMetrics(wchar_t id,TUIInlineObjectMetrics *pValue);
-  virtual void GetJustification(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,bool *justification_value);
-  virtual void GetLanguage(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,void *pLanguage);
-  virtual void GetLeftIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *indent_value);
-  virtual void GetLinePaddingAfter(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *line_padding_value);
-  virtual void GetLinePaddingBefore(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *line_padding_value);
-  virtual void GetLineSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineSpacing *pLineSpacing);
-  virtual void GetLineSpacingAmount(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pLineSpacingAmount);
+  virtual int SetString(void* pIString); 										//Set a string (UTF16)
+  virtual int GetString(void** ppIString); 										//Get a string (UTF16)
+  virtual int InsertText(void * text,FSint32 text_len,TUIEncoding encoding,FSint32 insertIndex); 			//Inserts a text run by copy to a IUIRichText object.
+  virtual int InsertTextUTF16(u16 *text,TUnsigned length_text,FSint32 insertIndex); 					//Inserts a text run by copy to a IUIRichText object. 
+  virtual int RemoveText(FSint32 startIndex,FSint32 endIndex); 							//Deletes text from a text object that has copied text.
+  virtual int InsertRun(void *text,FSint32 text_len,TUIEncoding encoding,void *pInsertHere); 				//Insert a text run by reference.
+  virtual int ChangeRun(void *new_text,FSint32 length_text,TUIEncoding encoding,void *old_text,FSint32  hints); 	//Change a referenced text run.
+  virtual int RemoveRun(void *text); 											//Removes a referenced text run from a IUIRichText object.
+  virtual int GetRunRange(void *text,FSint32 *startIndex,FSint32 *endIndex); 						//Gets the index range of a run in a IUIRichText.
+  virtual int GetParagraphRange(FSint32 paragraph,FSint32 *pStartIndex,FSint32 *pEndIndex); 				//Gets the index range of a paragraph in a TsText.
+  virtual int GetParagraphCount(FSint32 *pParagraphCount); 								//Gets the number of paragraphs in a TsText.
+  virtual int GetParagraph(FSint32 char_index,FSint32 *pParagraphNumber); 						//Gets the paragraph number for a given index in TsText.
+  virtual int GetLength(FSint32 *pLength); 										//Returns the text length in characters.
+  virtual int GetChar(FSint32 index,FUint32 *pChar); 									//Returns the character at a given index as a UTF32 value.
+  virtual int SetAlignment(TUITextAlignment value,FSint32 startIndex,FSint32 endIndex); 				//Sets the paragraph alignment attribute.
+  virtual int SetBackgroundColor(int color,FSint32 startIndex,FSint32 endIndex);					//Sets background color attribute.
+  virtual int SetBiDiOverride(TUITextDirection textdir,FSint32 startIndex,FSint32 endIndex);				//Sets the bidirectional override attribute.
+  virtual int SetCharSpacing(float value,FSint32 startIndex,FSint32 endIndex); 					//Sets additional spacing between characters.
+  virtual int SetEdgeColor(int color,FSint32 startIndex,FSint32 endIndex); 						//Sets edge color attribute.
+  virtual int SetFontStyle(void *pIUIFontStyle,FSint32 startIndex,FSint32 endIndex);					//Sets the font style attribute.
+  virtual int SetIndent(TUITextAlignment align,FSint32 startIndex,FSint32 endIndex);					//Sets the amount the first line of each paragraph is indented.
+  virtual int SetInlineObjectID(wchar_t imageID,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetInlineObjectMetrics(wchar_t imageID,TUIInlineObjectMetrics *pValue);
+  virtual int SetJustification(TBool value,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetLanguage(int language,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetLeftIndent(float value,FSint32 startIndex,FSint32 endIndex);						//Sets the amount the left side of each paragraph in the range is indented.
+  virtual int SetLinePaddingAfter(float value,FSint32 startIndex,FSint32 endIndex);					//Sets an amount of extra space to pad after each line.
+  virtual int SetLinePaddingBefore(float value,FSint32 startIndex,FSint32 endIndex);					//Sets an amount of extra space to pad before each line.
+  virtual int SetLineSpacing(TUILineSpacing value,FSint32 startIndex,FSint32 endIndex);				//Sets line spacing attribute.
+  virtual int SetLineSpacingAmount(float value,FSint32 startIndex,FSint32 endIndex);					//Sets line spacing amount attribute.
+  virtual int SetLineSpacingAttributeMode(TBool isParaAttrib);
+  virtual int SetOverline(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);					//Sets text overline attribute.
+  virtual int SetOverlineColor(int color,FSint32 startIndex,FSint32 endIndex);						//Sets overline color attribute.
+  virtual int SetRightIndent(float value,FSint32 startIndex,FSint32 endIndex);						//Sets the amount the right side of each paragraph in the range is indented.
+  virtual int SetSpaceAfter(float value,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetSpaceBefore(float value,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetStrikeout(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetStrikeoutColor(int color,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetTextColor(int color,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetTextDirection(TUITextDirection value,FSint32 startIndex,FSint32 endIndex);				//Sets the paragraph base text direction attribute.
+  virtual int SetUnderline(TUILineStyle value,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetUnderlineColor(int color,FSint32 startIndex,FSint32 endIndex);
+  virtual int SetWordSpacing(float value,FSint32 startIndex,FSint32 endIndex);						//Sets additional spacing between words.
+  virtual int GetAlignment(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextAlignment *pAlignment);
+  virtual int GetBackgroundColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pBackgroundColor);
+  virtual int GetBiDiOverride(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextDirection *pValue);
+  virtual int GetCharSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pSpacing);
+  virtual int GetEdgeColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pEdgeColor);
+  virtual int GetFontStyle(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,void **ppIFontStyle);
+  virtual int GetIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pIndent);
+  virtual int GetInlineObjectID(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,wchar_t *id);
+  virtual int GetInlineObjectMetrics(wchar_t id,TUIInlineObjectMetrics *pValue);
+  virtual int GetJustification(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,bool *justification_value);
+  virtual int GetLanguage(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,void *pLanguage);
+  virtual int GetLeftIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *indent_value);
+  virtual int GetLinePaddingAfter(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *line_padding_value);
+  virtual int GetLinePaddingBefore(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *line_padding_value);
+  virtual int GetLineSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineSpacing *pLineSpacing);
+  virtual int GetLineSpacingAmount(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *pLineSpacingAmount);
   virtual bool GetLineSpacingAttributeMode();
-  virtual void GetOverline(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *pValue);
-  virtual void GetOverlineColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
-  virtual void GetRightIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *indent_value);
-  virtual void GetSpaceAfter(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *space);
-  virtual void GetSpaceBefore(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *space);
-  virtual void GetStrikeout(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *strikeout_style);
-  virtual void GetStrikeoutColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
-  virtual void GetTextColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
-  virtual void GetTextDirection(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextDirection *pTextDirection);
-  virtual void GetUnderline(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *pUnderline);
-  virtual void GetUnderlineColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pUnderlineColor);
-  virtual void GetWordSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *word_spacing);
+  virtual int GetOverline(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *pValue);
+  virtual int GetOverlineColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
+  virtual int GetRightIndent(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *indent_value);
+  virtual int GetSpaceAfter(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *space);
+  virtual int GetSpaceBefore(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *space);
+  virtual int GetStrikeout(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *strikeout_style);
+  virtual int GetStrikeoutColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
+  virtual int GetTextColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *color);
+  virtual int GetTextDirection(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUITextDirection *pTextDirection);
+  virtual int GetUnderline(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,TUILineStyle *pUnderline);
+  virtual int GetUnderlineColor(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,int *pUnderlineColor);
+  virtual int GetWordSpacing(FSint32 index,FSint32 *startIndex,FSint32 *endIndex,float *word_spacing);
 };
 
 
 class ITextRenderingFactory: public IUnknown
 {
 public:
-  virtual void CreateFontResourceManager(IUnknown * pIUIFontResourceManager);
-  virtual void CreateFontStyleManager(IUnknown * pIUIFontStyleManager);
-  virtual void CreateRichText(IRichText ** pRichText);
-  virtual void CreateTextContainer(IUnknown * pIUITextContainer);
-  virtual void CreateRichTextLayout(IRichText * pRichText,IUnknown * pIUIRichTextLayoutControl,IUnknown * pIUIRichTextLayoutOptions,IRichTextLayout ** pRichTextLayout);
-  virtual void CreateSingleLineLayout(IUnknown * pIUIRichTextLayoutControl,IUnknown * pIUIRichTextLayoutOptions,IUnknown ** pIUISingleLineLayout);
-  virtual void CreateRichTextLayoutControl(IUnknown ** pIUIRichTextLayoutControl);
-  virtual void CreateRichTextLayoutOptions(IUnknown ** pIUIRichTextLayoutOptions);
-  virtual void CreatePolygon(IUnknown **pIUIPolygon);
-  virtual void CreateBasicTextHandler(IUnknown ** pIUIBasicTextHandling);
+  virtual int CreateFontResourceManager(IUnknown * pIUIFontResourceManager);
+  virtual int CreateFontStyleManager(IUnknown * pIUIFontStyleManager);
+  virtual int CreateRichText(IRichText ** pRichText);
+  virtual int CreateTextContainer(IUnknown * pIUITextContainer);
+  virtual int CreateRichTextLayout(IRichText * pRichText,IUnknown * pIUIRichTextLayoutControl,IUnknown * pIUIRichTextLayoutOptions,IRichTextLayout ** pRichTextLayout);
+  virtual int CreateSingleLineLayout(IUnknown * pIUIRichTextLayoutControl,IUnknown * pIUIRichTextLayoutOptions,IUnknown ** pIUISingleLineLayout);
+  virtual int CreateRichTextLayoutControl(IUnknown ** pIUIRichTextLayoutControl);
+  virtual int CreateRichTextLayoutOptions(IUnknown ** pIUIRichTextLayoutOptions);
+  virtual int CreatePolygon(IUnknown **pIUIPolygon);
+  virtual int CreateBasicTextHandler(IUnknown ** pIUIBasicTextHandling);
 };
 
 
 class ITextRenderingManager: public IUnknown
 {
 public:
-  virtual void GetTextRenderingFactory(ITextRenderingFactory ** pTextRenderingFactory);
-  virtual void GetFontConfigFilePath(IUnknown ** pIString);
-  virtual void GetFontEngineConfigFilePath(IUnknown ** pIString);
+  virtual int GetTextRenderingFactory(ITextRenderingFactory ** pTextRenderingFactory);
+  virtual int GetFontConfigFilePath(IUnknown ** pIString);
+  virtual int GetFontEngineConfigFilePath(IUnknown ** pIString);
 };
 
 
 class IImageManager: public IUnknown
 {
 public:
-  virtual void CreateFromPath(wchar_t * fpath,wchar_t * fname,char * pMime,long mimeLength,IUIImage ** pUIImage);
-  virtual void CreateFromCanvas(IUnknown * pGC,IUIImage ** pUIImage);
-  virtual void CreateFromIcon(long imageID,IUIImage ** pUIImage);
+  virtual int CreateFromPath(wchar_t * fpath,wchar_t * fname,char * pMime,long mimeLength,IUIImage ** pUIImage);
+  virtual int CreateFromCanvas(IUnknown * pGC,IUIImage ** pUIImage);
+  virtual int CreateFromIcon(long imageID,IUIImage ** pUIImage);
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-  virtual void CreateFromIconWithIconSet(long imageID,IUnknown * pIconSet,IUIImage ** pUIImage);
+  virtual int CreateFromIconWithIconSet(long imageID,IUnknown * pIconSet,IUIImage ** pUIImage);
 #endif
-  virtual void CreateFromMemory(char * buf_image,long bufferSize,wchar_t * extension,long extensionLength,char * pMime,long mimeLength,IUIImage ** pUIImage);
-  virtual void CreateFromSimpleLockableBuffer(IUnknown * pISimpleLockableBuffer,long imageDataSize,wchar_t * extension,long extensionLength,char * pMime,long mimeLength,IUIImage ** pUIImage);
-  virtual void Draw(IUIImage * pUIImage,IUnknown * pGC,TUIRectangle rect);
+  virtual int CreateFromMemory(char * buf_image,long bufferSize,wchar_t * extension,long extensionLength,char * pMime,long mimeLength,IUIImage ** pUIImage);
+  virtual int CreateFromSimpleLockableBuffer(IUnknown * pISimpleLockableBuffer,long imageDataSize,wchar_t * extension,long extensionLength,char * pMime,long mimeLength,IUIImage ** pUIImage);
+  virtual int Draw(IUIImage * pUIImage,IUnknown * pGC,TUIRectangle rect);
 };
 
 
 class IUIImage: public IUnknown
 {
 public:
-  virtual void GetDimensions(long * pWidth,void * pWidthUnit,long * pHeight,void * pHeightUnit);
-  virtual void CreateRenderer(IUnknown * pIUIImageRenderer);
-  virtual void IsAnimation(bool * IsAnimation);
-  virtual void IsScalable(bool * IsScalable);
+  virtual int GetDimensions(long * pWidth,void * pWidthUnit,long * pHeight,void * pHeightUnit);
+  virtual int CreateRenderer(IUnknown * pIUIImageRenderer);
+  virtual int IsAnimation(bool * IsAnimation);
+  virtual int IsScalable(bool * IsScalable);
 };
 
 class IMetaData: public IUnknown
