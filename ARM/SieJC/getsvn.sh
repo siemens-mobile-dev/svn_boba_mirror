@@ -1,4 +1,4 @@
 #!/bin/sh
 rm revision.h
 svn up revision.h
-echo "#define __SVN_REVISION__ `svnversion .`" > revision.h
+echo -n "#define __SVN_REVISION__ `svnversion .``printf '\r\n'`" > revision.h
