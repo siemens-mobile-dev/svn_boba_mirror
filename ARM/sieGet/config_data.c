@@ -36,7 +36,7 @@ __root const CFG_HDR cfghdr1_3 = {CFG_LEVEL, "", 0, 0};
 __root const CFG_HDR cfghdr2 = {CFG_LEVEL, "Logs setup", 1, 0};
 
 __root const CFG_HDR cfghdr2_1 = {CFG_CHECKBOX, "Save logs to files", 0, 3};
-__root const int CFG_LOG_TO_FILE = 1;
+__root const int CFG_LOG_TO_FILE = 0;
 
 __root const CFG_HDR cfghdr2_2 = {CFG_CHECKBOX, "Log date/time", 0, 3};
 __root const int CFG_LOG_DATE_TIME = 1;
@@ -69,7 +69,5 @@ __root const CFG_HDR cfghdr3_6 = {CFG_LEVEL, "", 0, 0};
 __root const CFG_HDR cfghdr4 = {CFG_CHECKBOX, "Close GUI after add", 0, 3};
 __root const int CFG_CLOSE_GUI = 1;
 
-
-
-
-
+__root const CFG_HDR cfghdr5 = {CFG_CHECKBOX, "Realtime write", 0, 3};
+__root const int CFG_FFLUSH = 0;

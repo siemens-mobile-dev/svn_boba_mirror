@@ -336,7 +336,7 @@ int Download::onHTTPHeaders()
     {
       file_loaded_size = NULL; // Размер файла = 0
       unlink(full_file_name, &io_error); // Удаляем файл, если он есть
-      log->Print(LangPack::Active->data[LGP_RangesNotSupportFileDelete], CLR_Yellow);
+      if(file_loaded_size) log->Print(LangPack::Active->data[LGP_RangesNotSupportFileDelete], CLR_Yellow);
     }
     int free_space = GetFreeFlexSpace(full_file_name[0]-'0', &io_error);
     if (file_size >= free_space)
@@ -367,6 +367,7 @@ void Download::onHTTPData(char * data, int size) // Запись данных в файл
     hFile = fopen(full_file_name, A_WriteOnly + A_Create + A_Append + A_BIN, P_WRITE, &io_error); // Только запись с созданием и добавлением в конец
 
   fwrite(hFile, data, size, &io_error); // Записываем принятые данные в файл
+  if(CFG_FFLUSH) fflush(hFile, &io_error); // Точно записываем в файл)
   file_loaded_size += size; // Обновляем размер загруженного куска
 }
 
@@ -519,6 +520,12 @@ void Download::StartDownload()
       HTTPRequest->Referer = new char[strlen(url) + 1];
       strcpy(HTTPRequest->Referer, url);  // Иначе копируем туда URL как раньше
     }
+    // Cookies
+    if(cookies) 
+    {
+      HTTPRequest->Cookies = new char[strlen(cookies) + 1];
+      strcpy(HTTPRequest->Cookies, cookies);
+    }
     URL_unescape(url); // Конвертируем URL из Web формата в обычный вид
     delete tmp_url;
   }
@@ -531,7 +538,7 @@ void Download::StartDownload()
   _safe_delete(req_buf); //Удаляем старый буфер запроса. Мало ли что там ;)
   req_buf = new Buffer; // Создаем новый буфер
   int req_len = 0; // Длина одной строки запроса
-  char * req_str = new char[512]; // Строка запроса
+  char * req_str = new char[2048]; // Строка запроса
   
   req_len=snprintf(req_str, 511, "GET /%s HTTP/1.1\r\n", HTTPRequest->Path); // Формируем строку
   req_buf->Write(req_str, req_len); // Пишем строку в буфер
@@ -555,6 +562,13 @@ void Download::StartDownload()
   req_len=snprintf(req_str, 511, "Referer: %s\r\n", HTTPRequest->Referer);
   req_buf->Write(req_str, req_len);
   log->Print(req_str, CLR_Blue);
+  // Cookies
+  if(HTTPRequest->Cookies)
+  {
+    req_len=snprintf(req_str, 1023, "Cookie: %s\r\n", HTTPRequest->Cookies);
+    req_buf->Write(req_str, req_len);
+    log->Print(req_str, CLR_Blue);
+  }
   // User-Agent
   req_len=snprintf(req_str, 511, "User-Agent: %s\r\n", HTTPRequest->User_Agent);
   req_buf->Write(req_str, req_len);
@@ -567,7 +581,7 @@ void Download::StartDownload()
   req_len=snprintf(req_str, 511, "\r\n");
   req_buf->Write(req_str, req_len);
   
-  if((HTTPRequest->IP = str2ip(HTTPRequest->Host)) != 0xFFFFFFFF) Start(HTTPRequest->IP, HTTPRequest->Port);
+  if(ip || (ip = str2ip(HTTPRequest->Host)) != 0xFFFFFFFF) Start(ip, HTTPRequest->Port);
   else Start(HTTPRequest->Host, HTTPRequest->Port);
   
   SUBPROC((void *)_save_queue, DownloadHandler::Top);
@@ -591,6 +605,7 @@ Download::Download()
   file_size = NULL;
   file_loaded_size = NULL;
   referer = NULL;
+  cookies = NULL;
   
   hFile = -1;
   if (DownloadHandler::Top)
@@ -610,6 +625,7 @@ Download::~Download()
   _safe_delete(full_file_name);
   _safe_delete(file_path);
   _safe_delete(referer);
+  _safe_delete(cookies);
 
   if (DownloadHandler::Top)
     DownloadHandler::Top->DeleteDownload(this);

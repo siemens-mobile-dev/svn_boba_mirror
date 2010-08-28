@@ -3,12 +3,6 @@
 #include "log.h"
 #include "langpack.h"
 
-DNRHandler * DNRHandler::Top = NULL;
-
-#ifdef DNR_SEND_TIMER
-  DNR * DNR::Top = NULL;
-#endif
-  
 //Проверить процесс (работа с DNR только в хелпере)
 inline int CheckCepId()
 {
@@ -18,9 +12,7 @@ inline int CheckCepId()
 
 DNR::DNR()
 {
-  if(DNRHandler::Top)
-    DNRHandler::Top->RegisterDNR(this);
-  
+  dnr_tmr.dnr=this;
   DNR_ID = 0;
   host = NULL;
   log = NULL;
@@ -31,10 +23,8 @@ DNR::~DNR()
 {
   _safe_delete(host);
 #ifdef DNR_SEND_TIMER
-  GBS_DelTimer(&send_tmr);
+  GBS_DelTimer((GBSTMR*)&dnr_tmr);
 #endif
-  if(DNRHandler::Top)
-    DNRHandler::Top->DeleteDNR(this);
 }
 
 void DNR::Start(const char *_host, int _tries)
@@ -53,9 +43,9 @@ void _send_req(DNR *obj)
 }
 
 #ifdef DNR_SEND_TIMER
-static void dnr_resend(void)
+void dnr_resend(DNR_TMR* tmr)
 {
-  SUBPROC((void *)_send_req, DNR::Top);
+  SUBPROC((void *)_send_req, tmr->dnr);
 }
 #endif
 
@@ -87,8 +77,7 @@ void DNR::SendReq()
         }
         if (log)
           log->Print(LangPack::Active->data[LGP_WaitDNR], CLR_Green);
-        Top = this;
-        GBS_StartTimerProc(&send_tmr, _tmr_second(5), dnr_resend); // Пробуем резолвиться по таймеру
+        GBS_StartTimerProc(&dnr_tmr, _tmr_second(5), (void(*)())&dnr_resend); // Пробуем резолвиться по таймеру
         #endif
         return; // Ждем готовности DNR
       }
@@ -105,7 +94,7 @@ void DNR::SendReq()
     if (res[3])
     {
       #ifdef DNR_SEND_TIMER
-      if(IsTimerProc(&send_tmr)) GBS_StopTimer(&send_tmr);
+      if(IsTimerProc((GBSTMR*)&dnr_tmr)) GBS_StopTimer((GBSTMR*)&dnr_tmr);
       #endif
       onResolve(DNR_RESULT_OK, res[3][0][0]); // Получили адрес
       DNR_ID = 0;
@@ -178,7 +167,6 @@ void DNRHandler::DeleteDNR(DNR *dnr)
 DNRHandler::DNRHandler()
 {
   queue = NULL;
-  Top = this;
 }
 
 DNRHandler::~DNRHandler()

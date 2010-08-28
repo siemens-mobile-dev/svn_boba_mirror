@@ -155,6 +155,13 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
       referer = new char[ec.maxlen];
       ws_2str(ec.pWS, referer, ec.maxlen);
     }
+    char * cookies = NULL;
+    ExtractEditControl(gui, cookies_pos, &ec);
+    if(ec.pWS->wsbody[0])
+    {
+      cookies = new char[ec.maxlen];
+      ws_2str(ec.pWS, cookies, ec.maxlen);
+    }
     Download * new_dl = new Download;
     new_dl->url = url;
     if (fname)
@@ -163,6 +170,7 @@ int  URLInput::onKey(GUI *gui, GUI_MSG *msg)
       new_dl->file_name = fname;
     }
     new_dl->referer = referer;
+    new_dl->cookies = cookies;
     new_dl->file_path = path;
     new_dl->StartDownload();
     if(CFG_CLOSE_GUI) SieGetDialog::Active->Close();
@@ -256,6 +264,16 @@ void URLInput::Show(char * url_str, char * ref_str)
   PrepareEditControl(&ec);
   ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 256);
   referer_pos = AddEditControlToEditQend(eq, &ec, ma);
+  
+  ascii2ws(ws, "Cookies:");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_HEADER, ECF_APPEND_EOL, ws, ws->wsbody[0]);
+  AddEditControlToEditQend(eq, &ec, ma);
+  
+  ascii2ws(ws, "");
+  PrepareEditControl(&ec);
+  ConstructEditControl(&ec, ECT_NORMAL_TEXT, ECF_APPEND_EOL, ws, 1024);
+  cookies_pos = AddEditControlToEditQend(eq, &ec, ma);
 
   FreeWS(ws);
   

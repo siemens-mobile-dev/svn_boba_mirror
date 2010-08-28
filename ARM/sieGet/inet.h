@@ -86,9 +86,12 @@ public:
   HTTP_STATE http_state; // Состояние HTTP
   DOWNLOAD_STATE download_state; // Состояние закачки
   Buffer * req_buf; // Буфер запроса
+  int file_size;          // Полный размер файла
+  int file_loaded_size;   // Размер закачанной части
+  int ranges_support;     // Поддержка сервером докачки. 0 - не держит, 1 - держит
+  int ip; // IP
   
 private:
-  int ip; // IP
   short port; // Порт
   Buffer * recv_buf; // Буфер ответа
   HttpDNR * Resolver; // Резолвер
@@ -102,6 +105,7 @@ class Download: public HttpAbstract
   virtual void onHTTPRedirect(); // Переадресация
   virtual void onHTTPStopped(); // Остановка закачки
   virtual void onHTTPFinish(); // ФИниш закачки
+
 public:
   Download();
   ~Download();
@@ -109,16 +113,13 @@ public:
   void StartDownload();
   void StopDownload();
   
-  int ranges_support;     // Поддержка сервером докачки. 0 - не держит, 1 - держит
-  
   char * url;             // URL
   char * file_name;       // Имя файла
   int is_const_file_name; // Флаг, указывающий, что имя файла указано юзером и его не следует менять
   char * full_file_name;  // Полное имя файла
   char * file_path;       // Папка сохранения
   char * referer;         // Referer
-  int file_size;          // Полный размер файла
-  int file_loaded_size;   // Размер закачанной части
+  char * cookies;         // Cookies
   
 private:
   int hFile; // Хендлер файла

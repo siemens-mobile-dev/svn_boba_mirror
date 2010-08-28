@@ -31,9 +31,9 @@ public:
   char * Proxy_Authorization;
   char * Range;
   char * Referer;
+  char * Cookies;
   char * TE;
   char * User_Agent;
-  unsigned int IP;
 };
 
 class HTTP_Response

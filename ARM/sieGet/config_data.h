@@ -19,4 +19,6 @@ extern const unsigned int TRAY_ICON_ON;
 
 extern const int CFG_CLOSE_GUI;
 
+extern const int CFG_FFLUSH;
+
 #endif

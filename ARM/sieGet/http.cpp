@@ -26,6 +26,7 @@ HTTP_Request::HTTP_Request()
   Proxy_Authorization = NULL;
   Range = NULL;
   Referer = NULL;
+  Cookies = NULL;
   TE = NULL;
   User_Agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
 }
@@ -50,6 +51,7 @@ HTTP_Request::~HTTP_Request()
   _safe_delete(Proxy_Authorization);
   _safe_delete(Range);
   _safe_delete(Referer);
+  _safe_delete(Cookies);
   _safe_delete(TE);
   //if (User_Agent) delete User_Agent;
 }
@@ -108,7 +110,7 @@ int HTTP_Response::Parse(char * buf, int maxlen)
     strncpy(l_buf, buf, l_len); // Копируем строку в буфер
     l_buf[l_len] = 0;
     
-    while(buf[l_len]=='\n' || buf[l_len]=='\r') // Пропускаем CR и LF
+    while(buf[l_len]=='\n' || buf[l_len]=='\r' && n_CR < 2 && n_LF < 2) // Пропускаем CR и LF
     {
       if (buf[l_len]=='\r') n_CR++; // Считаем все CR в конце строки
       if (buf[l_len]=='\n') n_LF++; // Считаем все LF в конце строки
@@ -117,10 +119,14 @@ int HTTP_Response::Parse(char * buf, int maxlen)
     
     if (!headers->Add(l_buf)) return 0;
     
+    if(n_CR > 2) l_len -= n_CR - 2; // А вдруг файл начинается с переноса?
+    if(n_LF > 2) l_len -= n_LF - 2;
+    
     buf += l_len; // Переходим к следующей строке
     maxlen -= l_len;
     hlen += l_len;
-    if (n_CR == 2 || n_LF == 2) break; // Конец заголовка. в основном кончается на \r\n\r\n, но бывают и исключения ;)
+    
+    if (n_CR > 1 || n_LF > 1) break; // Конец заголовка. в основном кончается на \r\n\r\n, но бывают и исключения ;)
   } while (maxlen);
   return hlen;
 }

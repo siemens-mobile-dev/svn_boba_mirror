@@ -13,6 +13,14 @@ enum DNR_RESULT_MSG
   DNR_RESULT_OUT_OF_TRIES
 };
 
+typedef struct{
+  int param0;
+  int param1;
+  int param2;
+  int param3;
+  void* dnr;
+}DNR_TMR;
+
 class DNR
 {
 public:
@@ -22,7 +30,7 @@ public:
   void SendReq();
 
 #ifdef DNR_SEND_TIMER
-  static DNR * Top;
+  DNR_TMR dnr_tmr;
 #endif
   virtual void onResolve(DNR_RESULT_MSG result_msg, int value) = 0; //Â HELPER
   
@@ -31,9 +39,6 @@ public:
 private:
   int DNR_TRIES;
   char * host;
-#ifdef DNR_SEND_TIMER
-  GBSTMR send_tmr;
-#endif
 };
 
 class DNRHandler
@@ -42,8 +47,6 @@ public:
   void RegisterDNR(DNR *dnr);
   void DeleteDNR(DNR *dnr);
   DNR * GetDNR(int DNR_ID);
-  
-  static DNRHandler * Top;
   
   DNRHandler();
   ~DNRHandler();

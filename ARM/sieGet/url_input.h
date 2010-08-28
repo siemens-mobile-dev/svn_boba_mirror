@@ -14,6 +14,7 @@ private:
   int path_pos;
   int fname_pos;
   int referer_pos;
+  int cookies_pos;
 };
 
 void input_options_select_bookmark(USR_MENU_ITEM *item);
