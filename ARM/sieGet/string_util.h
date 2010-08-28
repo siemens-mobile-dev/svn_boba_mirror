@@ -38,7 +38,7 @@ char* Correct_UTF8_String(char* utf8_jid);
 char* ANSI2UTF8(char* ansi_str, unsigned int maxlen);
 
 // Получить значение по параметру (см. описание в теле файла)
-char * Get_Param_Value(char * str, char * req, int cut_quotes);
+char * Get_Param_Value(char * str, char * req, int cut_quotes, int separator);
 
 // Аналог strstr, но без чувствительности к регистру
 char *stristr(const char *s, const char *find);

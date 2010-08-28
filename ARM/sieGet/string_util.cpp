@@ -9,9 +9,10 @@
 IN: str - строка
     req - имя требуемого параметра
     cut_quotes - обрезать ли кавычки, если параметр в кавычках
+    separator - разделитель параметров. Бывает "," и ";"
 OUT: Искомое значение; нужно освободить память!
 */
-char * Get_Param_Value(char * str, char * req, int cut_quotes)
+char * Get_Param_Value(char * str, char * req, int cut_quotes, int separator)
 {
   // char str[] = "nonce=\"2444323444\",qop=\"auth\",charset=utf-8,algorithm=md5-sess";
   // char req[] = "qop";
@@ -20,20 +21,20 @@ char * Get_Param_Value(char * str, char * req, int cut_quotes)
   char * value = req_displace + strlen(req); // начало строки со значением параметра
   if (!(value[0] == '=')) return NULL;
   value += 1;
-  char * zpt = strchr(req_displace, ','); // конец строки
-  if (!zpt) zpt = str + strlen(str);
+  char * end_ptr = strchr(req_displace, separator); // конец строки
+  if (!end_ptr) end_ptr = str + strlen(str);
   int len = NULL;
   char * result = NULL;
   if(cut_quotes && value[0] == '\"') // Обрезаем кавычки, если параметр в кавычках
   {
-    len = zpt - value - 2;
+    len = end_ptr - value - 2;
     result = new char[len + 1];
     for(int i = 0; i < len; i++)
       result[i] = *(value + i + 1);
   }
   else
   {
-    len = zpt - value;
+    len = end_ptr - value;
     result = new char[len + 1];
     for(int i = 0; i < len; i++)
       result[i] = *(value + i);

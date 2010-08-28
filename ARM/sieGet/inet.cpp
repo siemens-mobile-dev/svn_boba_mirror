@@ -310,7 +310,7 @@ int Download::onHTTPHeaders()
     if (!is_const_file_name) // Если имя не указано юзером
     {
       _safe_delete(file_name);
-      char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1); // Получаем имя из заголовка
+      char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1, ';'); // Получаем имя из заголовка
       remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы, хотя наверное сервер таких имен не держит :)
       file_name = utf82filename(new_fname); // utf8 в имя файла
       delete new_fname;
