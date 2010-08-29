@@ -30,5 +30,6 @@
 #define VAR_DATEINP_DATEFORMAT(__param__) &VAR_ARG_DATEINP_DATE_FORMAT,__param__
 #define VAR_DATEINP_DATE(__param__) &VAR_ARG_DATEINP_DATE,__param__
 
+#define VAR_TIMEINP_TIMEFORMAT_SEC(__param__) &VAR_ARG_TIMEINP_TIME_FORMAT_SEC,__param__
 #define VAR_TIMEINP_TIMEFORMAT(__param__) &VAR_ARG_TIMEINP_TIME_FORMAT,__param__
 #define VAR_TIMEINP_TIME(__param__) &VAR_ARG_TIMEINP_TIME,__param__

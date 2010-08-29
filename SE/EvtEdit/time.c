@@ -30,11 +30,8 @@ void AcceptTIinput(BOOK *bk, GUI* data )
   TIME *time=mbk->curtime;
   time->hour=TI_GET_HOUR(i);
   time->min=TI_GET_MIN(i);
-  mbk->TextInputType=6;
-  mbk->inputType=IT_UNSIGNED_DIGIT;
-  mbk->minint=0;
-  mbk->maxint=59;
-  BookObj_CallPage(bk, &bk_StringInput);
+  time->sec=TI_GET_SEC(i);
+  BookObj_CallPage(bk,&bk_main);
 };
 
 void CloseTIinput(BOOK * bk, GUI* )
@@ -58,6 +55,7 @@ static int TI_OnEnter(void *,BOOK * bk)
   if (!REQUEST_TIMEFORMAT_GET(SYNC,&time_f)) time_format=time_f;
   mbk->tinput=CreateTimeInputVA(0,
                                 VAR_HEADER_TEXT(Str2ID(lng[LNG_TIME],0,SID_ANY_LEN)),
+                                VAR_TIMEINP_TIMEFORMAT_SEC(time_format),
                                 VAR_TIMEINP_TIMEFORMAT(time_format),
                                 VAR_TIMEINP_TIME(&t),
                                 VAR_BOOK(&mbk->book),

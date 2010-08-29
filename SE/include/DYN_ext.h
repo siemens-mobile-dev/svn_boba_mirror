@@ -558,4 +558,5 @@ extern const int DB_CMD_SETTHUMBNAILICON ;
 extern const int DB_CMD_EDIT ;
 extern const int DB_CMD_SETITEMTEXT ;
 extern const int UI_CONNECTIONMANAGER_SESSION_CREATED_EVENT ;
+extern const int VAR_ARG_TIMEINP_TIME_FORMAT_SEC ;
 #endif
