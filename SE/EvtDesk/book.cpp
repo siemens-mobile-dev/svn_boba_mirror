@@ -8,19 +8,27 @@ typedef struct
 {
   BOOK * book;
 }MSG;
-extern DISP_OBJ *StatusIndication;
-extern void (*SIonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
-extern void Draw(DISP_OBJ * db,int r1, int r2,int r3);
+
+extern DISP_OBJ_ONREDRAW_METHOD Display_oldReDraw;
+extern DISP_OBJ * GUI_display;
+extern DISP_DESC * Display_desc;
+
+extern void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3);
+
+extern u16 timer;
+
+void elf_exit(void);
+
 void Send_REDRAW_RELEASE()
 {
-  // ???????? ????  ??????? ?? ?????? ? ????? ???????? Redraw
-  REDRAW_RELEASE_MESSAGE * sbm= new REDRAW_RELEASE_MESSAGE;
-  memset(sbm,0,sizeof(REDRAW_RELEASE_MESSAGE));
-  sbm->SB_OldOnRedraw=SIonRedraw;
-  sbm->SB_NewOnRedraw=Draw;
-  UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,sbm,(void (*)(void*))mfree_adr());
-};
-void elf_exit(void);
+  REDRAW_RELEASE_MESSAGE *sbm = new REDRAW_RELEASE_MESSAGE;
+
+  sbm->SB_OldOnRedraw = Display_oldReDraw;
+  sbm->SB_NewOnRedraw = Display_ReDraw;
+
+  UI_Event_wData(SBY_REDRAW_RELEASE_EVENT, sbm, (void (*)(void*))mfree_adr());
+}
+
 int TerminateSBDraw(void * ,BOOK* book)
 {
   Send_REDRAW_RELEASE();
@@ -36,32 +44,34 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
 };
 
 
-int SB_ELF_Killed(void *mess ,BOOK* book)
+int SB_ELF_Killed(void *mess, BOOK *book)
 {
-  // ???? ??? ???? ???? ???????? ?? ?? ??? ?????? ????? ???????????? ??????
-  REDRAW_RELEASE_MESSAGE * sbm=(REDRAW_RELEASE_MESSAGE*)mess;
-  // ??? ?? ????? ?? ?????????? ? ???????? oldRedraw?
-  if (sbm->SB_NewOnRedraw==SIonRedraw)
+  REDRAW_RELEASE_MESSAGE * sbm =(REDRAW_RELEASE_MESSAGE*)mess;
+  REDRAW_RELEASE_MESSAGE * ms = 0;
+
+  if (sbm->SB_NewOnRedraw == Display_oldReDraw)
   {
-    REDRAW_RELEASE_MESSAGE *res=new REDRAW_RELEASE_MESSAGE;
-    
-    // ????????? ???????????? ?????? ? ???? ???????
-    memcpy(res,sbm,sizeof(REDRAW_RELEASE_MESSAGE));
-    
-    // ???? ?? ??? ????, ?? ???????? ???? oldRedraw ?? ???..
-    if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) SIonRedraw=sbm->SB_OldOnRedraw;
+    if(!ms)
+    {
+      ms = new REDRAW_RELEASE_MESSAGE;
+      memcpy(ms, sbm, sizeof(REDRAW_RELEASE_MESSAGE));
+    }
 
-    // ?????? ???? ????? ??????
-    DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),Draw);
+    if (sbm->SB_OldOnRedraw!=EMPTY_REDRAW_METHOD) Display_oldReDraw = sbm->SB_OldOnRedraw;
 
-    // ? ???? ??????? ?????, ???? ????????? ????? ??????? ???? ?????
-    res->SB_OldOnRedraw=EMPTY_REDRAW_METHOD;
-    res->SB_NewOnRedraw=Draw;
-    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,res,(void (*)(void*))mfree_adr());
-    return BLOCK_EVENT_GLOBALLY;
+    DISP_DESC_SetOnRedraw(DispObject_GetDESC(GUI_display), Display_ReDraw);
+
+    ms->SB_OldOnRedraw = EMPTY_REDRAW_METHOD;
+    ms->SB_NewOnRedraw = Display_ReDraw;
   }
-  return 0;
-};
+  if(ms)
+  {
+    UI_Event_wData(SBY_REDRAW_RELEASE_EVENT ,ms,(void (*)(void*))mfree_adr());
+    return(BLOCK_EVENT_GLOBALLY);
+  }
+  return(0);
+}
+
 static int OnReconfig(void *mess ,BOOK *book)
 {
   RECONFIG_EVENT_DATA *reconf=(RECONFIG_EVENT_DATA *)mess;
@@ -73,6 +83,7 @@ static int OnReconfig(void *mess ,BOOK *book)
   }
   return(result);
 };
+
 const PAGE_MSG SBDraw_PageEvents[]@ "DYN_PAGE" ={
   SBY_REDRAW_RELEASE_EVENT  , SB_ELF_Killed,
   ELF_TERMINATE_EVENT       , TerminateSBDraw,
@@ -83,13 +94,13 @@ const PAGE_MSG SBDraw_PageEvents[]@ "DYN_PAGE" ={
 };
 
 PAGE_DESC base_page ={"SBDraw_BasePage",0,SBDraw_PageEvents};
-extern u16 timer;
+
 void onCloseMyBook(BOOK * book)
 {
   if (book)
   {
     Timer_Kill(&timer);
-    DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),SIonRedraw);
+    if(Display_desc) DISP_DESC_SetOnRedraw(Display_desc, Display_oldReDraw);
     SUBPROC(elf_exit);
   }
 };

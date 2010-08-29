@@ -4,15 +4,15 @@
 
 typedef struct
 {
-  BOOK bk;
-  void * update;
-  wchar_t *path;
-  wchar_t *name;
-  GUI *remind;
-  LIST *lst;
-  LIST *remlst;
-  GUI_LIST *g_test;
-  GUI_FEEDBACK *g_mbox;
+    BOOK bk;
+    void * update;
+    wchar_t *path;
+    wchar_t *name;
+    GUI *remind;
+    LIST *lst;
+    LIST *remlst;
+    GUI_LIST *g_test;
+    GUI_FEEDBACK *g_mbox;
 }EVTBOOK;
 
   typedef struct
@@ -50,18 +50,20 @@ typedef struct
     int day_1;
     int day_2;
     int rem;
-  }EVENT;
-  typedef struct
-  {
+}EVENT;
+  
+typedef struct
+{
     wchar_t *text;
     wchar_t *utext;
     wchar_t *time;
     bool checked;
-  }REMIND;
-  
-void (*SIonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
-void Draw(DISP_OBJ * db,int r1, int r2,int r3);
-DISP_OBJ * StatusIndication;
+}REMIND;
+
+DISP_OBJ_ONREDRAW_METHOD Display_oldReDraw = 0;
+DISP_OBJ * GUI_display = 0;
+DISP_DESC * Display_desc = 0;
+
 int Height,Width;
 u16 timer;
 BOOK * CreateEvtDeskBook();
@@ -83,7 +85,7 @@ void elf_exit(void)
 
 void onTimer (u16 tmr , void *)
 {
-  DispObject_InvalidateRect(StatusIndication,0);
+  DispObject_InvalidateRect(GUI_display,0);
   Timer_ReSet(&timer,1000,onTimer,0);
 };
 
@@ -151,9 +153,8 @@ int isEvtBook(BOOK *bk)
   }
 };
 
-void Draw(DISP_OBJ * db,int r1, int r2,int r3)
+void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3)
 {
-  SIonRedraw(db,r1,r2,r3);
   DATETIME dt;
   REQUEST_DATEANDTIME_GET(0,&dt);
   int now=(dt.time.hour*3600) + (dt.time.min*60) + dt.time.sec;
@@ -216,17 +217,31 @@ void Draw(DISP_OBJ * db,int r1, int r2,int r3)
     DrawGradientVert(rc2.x1, pos, rc2.x2, pos+rc2.y2, low_color, low_color);
     DrawLine(Str2ID(str_noevents,0,SID_ANY_LEN), 2, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, clWhite);
   }
+   if(Display_oldReDraw) Display_oldReDraw(db,r1,r2,r3);
 };
+
+void InitVar()
+{
+  Height=Display_GetHeight(0);
+  Width=Display_GetWidth(0);
+  
+  if(!GUI_display)
+    {
+      GUI_display = GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
+      Display_oldReDraw = DispObject_GetOnRedraw(GUI_display);
+      Display_desc = DispObject_GetDESC (GUI_display);
+      DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
+    }
+}
+
 #include "conf_loader.h"
 int main (void)
 {
+  InitVar();
   InitConfig();
-  Height=Display_GetHeight(0);
-  Width=Display_GetWidth(0);;
+  
   CreateEvtDeskBook();
-  StatusIndication= GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
-  SIonRedraw=DispObject_GetOnRedraw(StatusIndication);
-  DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),Draw);
+  
   timer=Timer_Set(1000,onTimer,0);
   return(0);
 };
