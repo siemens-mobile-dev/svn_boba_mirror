@@ -674,11 +674,11 @@
 0EB0: 00000000 CDEE1914 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 31623514 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 0DD08115 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 D5B01814 ;83AF: void (*getListMenuOnDestroy())( DISP_DESC* ); //nullsub(void)
-0EC0: 00000000 79C43014 ;83B0: void (*getListMenuOnCreate())( DISP_DESC* );
+0EBC: 00000000 D5B01814 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
+0EC0: 00000000 79C43014 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 61D41214 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 69C04414 ;83B2: void (*getTabMenuBarOnDestroy())( DISP_DESC* ); //nullsub(void)
-0ECC: 00000000 2DCA3014 ;83B3: void (*getTabMenuBarOnCreate())( DISP_DESC* );
+0EC8: 00000000 69C04414 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 2DCA3014 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 39DD3B14 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0ED4: 00000000 D5B01814 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
 0ED8: 00000000 95564214 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );

@@ -673,16 +673,16 @@
 0EB0: 00000000 755F6711 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 91BB6811 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 019E5D11 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 01A06211 ; 3AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
-0EC0: 00000000 CD796111 ; 3B0: void (*getListMenuOnDescCreate())( DISP_DESC* )
-0EC4: 00000000 05A06211 ; 3B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* )
-0EC8: 00000000 BD306811 ; 3B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
-0ECC: 00000000 D19B6711 ; 3B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* )
-0ED0: 00000000 0D306811 ; 3B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0ED4: 00000000 999A6211 ; 3B5: void (*getOneOfManyOnGuiDestroy())( GUI* );
-0ED8: 00000000 69DC6111 ; 3B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
-0EDC: 00000000 B59A6211 ; 3B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EE0: 00000000 F9946211 ; 3B8: void (*getNOfManyOnGuiDestroy())( GUI* );
+0EBC: 00000000 01A06211 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
+0EC0: 00000000 CD796111 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
+0EC4: 00000000 05A06211 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EC8: 00000000 BD306811 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 D19B6711 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
+0ED0: 00000000 0D306811 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0ED4: 00000000 999A6211 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );
+0ED8: 00000000 69DC6111 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
+0EDC: 00000000 B59A6211 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EE0: 00000000 F9946211 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );
 0EE4: 00000000 75CF6111 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 15956211 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 A17D6211 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );

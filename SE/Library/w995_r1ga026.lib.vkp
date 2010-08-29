@@ -264,7 +264,7 @@
 0848: 00000000 09C43615 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 084C: 00000000 95C33615 ; 213: STRID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
 0850: 00000000 29E80014 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
-0854: 00000000 9FFB2414 ; 215: int GetABRecNum( AB_GET_STRUCT* );
+0854: 00000000 9FFB2414 ; 215: int GetABRecNum( AB_GET_STRUCT* ); //nullsub(void)
 0858: 00000000 1914A415 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( );
 085C: 00000000 F3B33F14 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 0860: 00000000 EFB33F14 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
@@ -550,8 +550,8 @@
 0CC0: 00000000 C93E1B14 ; 330: int w_remove( const wchar_t* dir );
 0CC4: 00000000 D11BA5ED ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: 00000000 D11BA5ED ; 332: int GetSignalQuality( char* rssi, char* ber );
-0CCC: 00000000 95331614 ;8333: IS_NEEDED_BOOK isCameraBook( void );
-0CD0: 00000000 B9B05415 ;8334: IS_NEEDED_BOOK isSoundRecorderBook( void );
+0CCC: 00000000 95331614 ; 333: int IsCameraBook( BOOK *bk );
+0CD0: 00000000 B9B05415 ; 334: int IsSoundRecorderBook( BOOK *bk );
 0CD4: 00000000 7144FD14 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 ;0CD8: xxxxxxxx yyyyyyyy ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
 ;0CDC: xxxxxxxx yyyyyyyy ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
@@ -625,7 +625,7 @@
 0DEC: 00000000 59B83114 ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
 0DF0: 00000000 74E90A10 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
 0DF4: 00000000 59E60A10 ; 37D: void GVI_BitBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3 );
-0DF8: 00000000 E5C95210; 37E: void GVI_StretchBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3 );
+0DF8: 00000000 E5C95210 ; 37E: void GVI_StretchBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int _204, int _0, int _0_2, int _0_3 );
 0DFC: 00000000 E58C1210 ; 37F: void GVI_TransformBlt( GVI_GC destgc, int destx, int desty, GVI_GC srcgc, int srcx, int srcy, int srcxsize, int srcysize, int orientation, int _0 );
 0E00: 00000000 65C21610 ; 380: GVI_PEN GVI_CreatePen( char thikness, int color );
 0E04: 00000000 8DF62B10 ; 381: GVI_PEN GVI_CreateDashedPen( char thikness, int color, int bitmask, int step, int offset );
@@ -640,7 +640,7 @@
 0E28: 00000000 E9CF5210 ; 38A: void GVI_DrawSolidLines( GVI_GC gc, POINT* points, int count, int color, int width );
 0E2C: 00000000 EDD15210 ; 38B: void GVI_DrawSolidPolyLine( GVI_GC gc, POINT* points, int count, int is_closed, int color, int width );
 0E30: 00000000 E5691810 ; 38C: void GVI_DrawSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color, int width );
-0E34: 00000000 ADC85210; 38D: void GVI_FillEllipse( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
+0E34: 00000000 ADC85210 ; 38D: void GVI_FillEllipse( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E38: 00000000 81460A10 ; 38E: void GVI_FillPolygon( GVI_GC gc, POINT* pp, int count, GVI_BRUSH brush );
 0E3C: 00000000 39240A10 ; 38F: void GVI_FillRectangle( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E40: 00000000 39D55210 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
@@ -674,16 +674,16 @@
 0EB0: 00000000 BD521014 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 E5A14714 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 A5EF9515 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
-0EBC: 00000000 592CE314 ;83AF: void (*getListMenuOnDestroy())( DISP_DESC* );  //nullsub(void)
-0EC0: 00000000 F99C5014 ;83B0: void (*getListMenuOnCreate())( DISP_DESC* );
+0EBC: 00000000 592CE314 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
+0EC0: 00000000 F99C5014 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
 0EC4: 00000000 E1112F14 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EC8: 00000000 F9041C15 ;83B2: void (*getTabMenuBarOnDestroy())( DISP_DESC* );  //nullsub(void)
-0ECC: 00000000 59A15014 ;83B3: void (*getTabMenuBarOnCreate())( DISP_DESC* );
+0EC8: 00000000 F9041C15 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
+0ECC: 00000000 59A15014 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 CD315114 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0ED4: 00000000 15D30014 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* );  //nullsub(void)
+0ED4: 00000000 15D30014 ;83B5: void (*getOneOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
 0ED8: 00000000 F5061F15 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
 0EDC: 00000000 9D781614 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
-0EE0: 00000000 15D30014 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* );  //nullsub(void)
+0EE0: 00000000 15D30014 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
 0EE4: 00000000 29760315 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 5D790114 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 D93B3C14 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );

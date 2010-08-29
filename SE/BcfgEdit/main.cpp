@@ -641,6 +641,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 			}
 			break;
 		case CFG_FONT:
+			{
                         int platform=GetChipID()&CHIPID_MASK;
                         if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
                         {
@@ -663,6 +664,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
                           str_id = Str2ID(sp,0x5,n);
                         }
                         else str_id = Str2ID( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), 0, SID_ANY_LEN );
+			}
 			break;
 		case CFG_KEYCODE:
 			{

@@ -163,6 +163,23 @@ void KeyCodeSelect_OnBack( BOOK* bk, GUI* )
         BookObj_ReturnPage( bk, ACCEPT_EVENT );
 }
 
+void KeyCodeSelect_OnDelete( BOOK* bk, GUI* )
+{
+	MyBOOK* mbk = (MyBOOK*) bk;
+
+	switch ( ListMenu_GetSelectedItem( mbk->key_sel_list ) )
+	{
+	case 0:
+		mbk->cur_hp.key->keycode = 0;
+		ListMenu_SetSecondLineText( mbk->key_sel_list, 0, KeyCode2Name( 0 ) );
+		break;
+	case 1:
+		mbk->cur_hp.key->keymode = 0;
+		ListMenu_SetSecondLineText( mbk->key_sel_list, 1, Str2ID( modes[ 0 ], 0, SID_ANY_LEN ) );
+		break;
+	}
+}
+
 int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 {
 	MyBOOK* mbk = (MyBOOK*) bk;
@@ -189,6 +206,7 @@ int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 	ListMenu_SetItemStyle( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, KeyCodeSelect_onEnterPressed );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, KeyCodeSelect_OnBack );
+	GUIObject_SoftKeys_SetAction( lo, ACTION_DELETE, KeyCodeSelect_OnDelete );
 	GUIObject_Show( lo );
 	return 1;
 }
