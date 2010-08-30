@@ -14,8 +14,8 @@ typedef struct
 
 #define IDN_SAVE_BEFORE_EXIT L"HPB_SAVE_BEFORE_EXITQ_TXT"
 #define IDN_CHANGES_HAVE_BEEN_MADE L"HPB_SAVE_BEFORE_EXITD_TXT"
-#define IDN_CHECKBOX_UNCHECKED_ICON L"CHECKBOX_ICN"
-#define IDN_CHECKBOX_CHECKED_ICON L"CHECKMARK_IN_BOX_ICN"
+#define IDN_CHECKBOX_UNCHECKED_ICON L"OFF_TXT"
+#define IDN_CHECKBOX_CHECKED_ICON L"ON_TXT"
 #define SID_NULL 0x6FFFFFFF
 #define BUILD "public version"
 
@@ -693,11 +693,11 @@ int main(wchar_t *elfpath, wchar_t *path, wchar_t *fname)
     SUBPROC(elf_exit);
     return (0);
   }
-  int icon_id;
-  iconidname2id(IDN_CHECKBOX_UNCHECKED_ICON,-1,&icon_id);
-  myBook->check_box_unchecked=icon_id;
-  iconidname2id(IDN_CHECKBOX_CHECKED_ICON,-1,&icon_id);
-  myBook->check_box_checked=icon_id;
+  int text_id;
+  textidname2id(IDN_CHECKBOX_UNCHECKED_ICON,-1,&text_id);
+  myBook->check_box_unchecked=text_id;
+  textidname2id(IDN_CHECKBOX_CHECKED_ICON,-1,&text_id);
+  myBook->check_box_checked=text_id;
   textidname2id(IDN_CHANGES_HAVE_BEEN_MADE,-1,&myBook->changes_have_been_made);
   textidname2id(IDN_SAVE_BEFORE_EXIT,-1,&myBook->save_before_exit);
   InitializeEvents(&myBook->book, path, fname);

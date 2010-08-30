@@ -78,11 +78,11 @@ void Days_OnSelect(BOOK *bk, GUI* )
   int strid;
   if (b==true)
   {
-    strid=mbk->check_box_checked+0x78000000;
+    strid=mbk->check_box_checked;
   }
   else
   {
-    strid=mbk->check_box_unchecked+0x78000000;
+    strid=mbk->check_box_unchecked;
   }
   ListMenu_SetSecondLineText((GUI_LIST *)mbk->days,item,strid);
 };
@@ -98,11 +98,11 @@ int Days_onLBMessage(GUI_MESSAGE * msg)
     GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_WEEK+item],0,SID_ANY_LEN));
     if (mbk->curdays[item])
     {
-       strid=mbk->check_box_checked+0x78000000;
+       strid=mbk->check_box_checked;
     }
     else
     {
-       strid=mbk->check_box_unchecked+0x78000000;
+       strid=mbk->check_box_unchecked;
     }
     GUIonMessage_SetMenuItemSecondLineText(msg,strid);
   }
@@ -177,6 +177,7 @@ void Days_OnWorkdays(BOOK *bk, GUI* )
     mbk->selev->days[3]=1;
     mbk->selev->days[4]=1;
   }
+  BookObj_GotoPage(bk, &bk_days);
 };
 
 void Days_OnWeekend(BOOK *bk, GUI* )
@@ -194,6 +195,7 @@ void Days_OnWeekend(BOOK *bk, GUI* )
     mbk->selev->days[5]=1;
     mbk->selev->days[6]=1;
   }
+  BookObj_GotoPage(bk, &bk_days);
 };
 
 void Days_OnEveryday(BOOK *bk, GUI* )
@@ -221,7 +223,9 @@ void Days_OnEveryday(BOOK *bk, GUI* )
     mbk->selev->days[5]=1;
     mbk->selev->days[6]=1;
   }
+  BookObj_GotoPage(bk, &bk_days);
 };
+
 GUI_LIST * Days_CreateGuiList(BOOK * book)
 {
   GUI_LIST * lo=0;
