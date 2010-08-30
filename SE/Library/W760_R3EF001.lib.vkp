@@ -568,8 +568,8 @@
 ;0D04: xxxxxxxx yyyyyyyy ; 341: void Video_Play( BOOK* VideoPlayerBook, void* );
 ;0D08: xxxxxxxx yyyyyyyy ; 342: void Video_Pause( BOOK* VideoPlayerBook, void* );
 ;0D0C: xxxxxxxx yyyyyyyy ; 343: void Video_Stop( BOOK* VideoPlayerBook, void* );
-;0D10: xxxxxxxx yyyyyyyy ; 344: void Audio_Pause( BOOK* );
-;0D14: xxxxxxxx yyyyyyyy ; 345: void Audio_Play( BOOK* );
+0D10: 00000000 913BD210 ; 344: void Audio_Pause( BOOK* );
+0D14: 00000000 353BD210 ; 345: void Audio_Play( BOOK* );
 0D18: 00000000 AD338211 ; 346: GUI* CreatePercentInputVA( int zero, ... );
 0D1C: 00000000 39358211 ; 347: int PercentInput_GetPercent( GUI* PercentInput );
 0D20: 00000000 E159B211 ; 348: void GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
@@ -605,10 +605,10 @@
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState( char* state );
 0D9C: 00000000 891BB411 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int ProfileNum, char* state );
 0DA0: 00000000 715AEA10 ; 368: void* IncommingCall_Accept( BOOK* book );
-;0DA4: xxxxxxxx yyyyyyyy ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
-;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
-;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
-;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
+0DA4: 00000000 A5E5B810 ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
+0DA8: 00000000 5DE5B810 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
+0DAC: 00000000 05E6B810 ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
+0DB0: 00000000 35E6B810 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 0DB8: 00000000 793AA610 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 0DBC: 00000000 256A7112 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
