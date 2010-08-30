@@ -153,7 +153,7 @@ int Days_onLBMessage2(GUI_MESSAGE * msg)
 void Days_OnBack(BOOK *bk, GUI* )
 {
   LastIndex=0;
-  BookObj_ReturnPage(bk, PREVIOUS_EVENT);
+  BookObj_GotoPage(bk, &bk_main);
 };
 
 void Days_OnWorkdays(BOOK *bk, GUI* )

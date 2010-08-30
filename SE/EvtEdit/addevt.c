@@ -285,7 +285,7 @@ GUI_LIST * SelectEvent_CreateGui(MyBOOK * mbk)
     int num=GetNumOfActions();
     ListMenu_SetItemCount(lo,num);
     ListMenu_SetOnMessage(lo,SelectEvent_onLBMessage);
-    ListMenu_SetItemStyle(lo,3);
+    ListMenu_SetItemStyle(lo,0);
     GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, SelectEvent_OnBack);
     GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,SelectEvent_OnEnter);
     ListMenu_SetCursorToItem(lo,0);
