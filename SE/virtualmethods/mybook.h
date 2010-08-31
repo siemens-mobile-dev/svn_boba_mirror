@@ -9,7 +9,7 @@ class CMyBook:public CBook
 {
 	CGuiT<CMyDisp>* gui;
 	
-	static const PAGE_DESC base_page;
+	DECLARE_PAGE_DESC_MEMBER(base_page)
 protected:
 	~CMyBook();
 public:
@@ -17,6 +17,8 @@ public:
 	
 	//  static int Accept(void *msg, CMyBook* book);
 	//  static int Cancel(void *msg, CMyBook* book);
+	static int TerminateElf(CBook** pbookmanbook, CMyBook* book);
+	static int ShowAuthorInfo(CBook** pbookmanbook, CMyBook* book);
 	
 	static void OnBack(CBookBase* book,CGuiBase *);
 };

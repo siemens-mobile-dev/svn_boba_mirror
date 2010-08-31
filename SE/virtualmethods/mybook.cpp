@@ -13,15 +13,15 @@ typedef struct
 
 
 
-int TerminateElf(BOOKMANMSG *msg, CBook* book)
+int CMyBook::TerminateElf(CBook** pbookmanbook, CMyBook* book)
 {
 	book->Free();
 	return 1;
 }
 
-int ShowAuthorInfo(BOOKMANMSG *msg, CBook* book)
+int CMyBook::ShowAuthorInfo(CBook** pbookmanbook, CMyBook* book)
 {
-	MessageBox(EMPTY_SID,STR("Hello Wordl!\n\nExample elf.."),NOIMAGE, 1 ,5000, msg->bookmanbook);
+	MessageBox(EMPTY_SID,STR("Hello Wordl!\n\nExample elf.."),NOIMAGE, 1 ,5000, *pbookmanbook);
 	return 1;
 }
 
@@ -40,8 +40,8 @@ return 1;
 */
 
 DECLARE_PAGE_DESC_BEGIN(CMyBook::base_page, "HW_BasePage")
-DECLARE_PAGE_DESC_MSG( ELF_TERMINATE_EVENT, TerminateElf )
-DECLARE_PAGE_DESC_MSG( ELF_SHOW_INFO_EVENT, ShowAuthorInfo )
+DECLARE_PAGE_DESC_MSG( ELF_TERMINATE_EVENT, CMyBook::TerminateElf )
+DECLARE_PAGE_DESC_MSG( ELF_SHOW_INFO_EVENT, CMyBook::ShowAuthorInfo )
 //  DECLARE_PAGE_DESC_MSG( CANCEL_EVENT_TAG, CMyBook::Cancel )
 //  DECLARE_PAGE_DESC_MSG( ACCEPT_EVENT_TAG, CMyBook::Accept )
 DECLARE_PAGE_DESC_END

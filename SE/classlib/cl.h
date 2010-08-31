@@ -456,14 +456,11 @@ public:
 
 /////////////////////////////////////////////////////////////////////////
 
-#define __UNIQUENAME2(x,y) x##y
-#define __UNIQUENAME1(x,y) __UNIQUENAME2(x,y)
-#define __UNIQUENAME __UNIQUENAME1(__uniquename,__LINE__)
+#define DECLARE_PAGE_DESC_MEMBER(name) static const PAGE_DESC name; static const PAGE_MSG name##__PAGE_MSG__[];
 
 #define DECLARE_PAGE_DESC_BEGIN(objname, name)         \
-	extern const PAGE_MSG __UNIQUENAME[];                \
-		const PAGE_DESC objname = {name, 0,  __UNIQUENAME};  \
-			static const PAGE_MSG __UNIQUENAME[]@ "DYN_PAGE" ={
+    const PAGE_DESC objname = {name, 0,  objname##__PAGE_MSG__};  \
+    const PAGE_MSG objname##__PAGE_MSG__[]@ "DYN_PAGE" ={
 
 #define DECLARE_PAGE_DESC_END NIL_EVENT_TAG,0 };
 
