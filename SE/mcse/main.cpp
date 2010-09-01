@@ -22,7 +22,7 @@ DISP_OBJ *main_obj=NULL;
 volatile int Busy = 0;
 volatile int Terminate = 0; // флаг необходимости завершени€ работы
 volatile int RedrawGUI = 0; // флаг необходимости перерисовки гу€
-int is_db2020=0;
+int is_db2010=0;
 
 wchar_t STD_ICONS[TOTAL_ICONS];
 
@@ -191,7 +191,7 @@ int MainGuiOnCreate(DISP_OBJ_MAIN *db)
     else
       STD_ICONS[i]=NOIMAGE;
   }
-  is_db2020=(GetChipID()&CHIPID_MASK)==CHIPID_DB2020;
+  is_db2010=(GetChipID()&CHIPID_MASK)==CHIPID_DB2010;
   InitDrvInfo();
   WriteLog("LoadKeys");
   LoadKeys();

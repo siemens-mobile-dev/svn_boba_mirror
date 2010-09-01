@@ -1289,23 +1289,23 @@ void SendBT_page()
         {
           if (buffer.count==1)
           {
-            if (is_db2020) {
-              GetFileDir(itm->full, send->btf2020.fpath,0);
-              wstrcpy(send->btf2020.fname,fname+1);
-            }
-            else {
+            if (is_db2010) {
               GetFileDir(itm->full, send->btf2010.fpath,0);
               wstrcpy(send->btf2010.fname,fname+1);
             }
+            else {
+              GetFileDir(itm->full, send->btf2020.fpath,0);
+              wstrcpy(send->btf2020.fname,fname+1);
+            }
           }else{
-            if (is_db2020) {
-              BT_FILE_2020 *f=new BT_FILE_2020;
+            if (is_db2010) {
+              BT_FILE_2010 *f=new BT_FILE_2010;
               GetFileDir(itm->full, f->fpath,0);
               wstrcpy(f->fname,fname+1);
               List_InsertFirst(MCBook->lst_send, f);
             }
             else {
-              BT_FILE_2010 *f=new BT_FILE_2010;
+              BT_FILE_2020 *f=new BT_FILE_2020;
               GetFileDir(itm->full, f->fpath,0);
               wstrcpy(f->fname,fname+1);
               List_InsertFirst(MCBook->lst_send, f);

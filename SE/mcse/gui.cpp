@@ -58,7 +58,7 @@ void DrwCurTab(GC *gc, RECT *rc)
   rt.y2=TOP_Y+TOP_H-1;
   GC_SetPenColor(gc, Colors[clSlTabBD]);
   GC_SetBrushColor(gc, Colors[clSlTabBG]);
-  is_db2020?GC_DrawRoundRect(gc ,&rt,4,4,1,1):DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
+  is_db2010?DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc)):GC_DrawRoundRect(gc ,&rt,4,4,1,1);
   
   SetFont(CONFIG_FONT_HEADER);
   str=curtab+'1'+0x78000000;
@@ -76,7 +76,7 @@ void DrwDrvBg(int ind, GC *gc, RECT *rc)
   rt.y2=TOP_Y+TOP_H-1;
   GC_SetPenColor(gc, Colors[clUSTabBD]);
   GC_SetBrushColor(gc, Colors[clUSTabBG]);
-  is_db2020?GC_DrawRoundRect(gc ,&rt,4,4,1,1):DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
+  is_db2010?DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc)):GC_DrawRoundRect(gc ,&rt,4,4,1,1);
 }
 
 const char stn[]={'n','e','s','d','?'};
@@ -153,7 +153,7 @@ void DrwDrvAc(int ind, GC *gc, RECT *rc)
   rt.y2=TOP_Y+TOP_H-1;
   GC_SetPenColor(gc, Colors[clSlTabBD]);
   GC_SetBrushColor(gc, Colors[clSlTabBG]);
-  is_db2020?GC_DrawRoundRect(gc ,&rt,4,4,1,1):DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
+  is_db2010?DrawRect(rt.x1,rt.y1,rt.x2,rt.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc)):GC_DrawRoundRect(gc ,&rt,4,4,1,1);
   
   DrawString(str,2,x+1,TOP_Y+TOP_B,x+DRV_W-2,TOP_Y+TOP_B+TOP_H-1,0,0,
              Colors[clTabTxt],0);
@@ -207,7 +207,7 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
     rect.y2=y+ITM_FH+ATTR_FH-1;
     GC_SetPenColor(gc, Colors[clSelItemBD]);
     GC_SetBrushColor(gc, Colors[clSelItemBG]);
-    is_db2020?GC_DrawRoundRect(gc ,&rect,4,4,1,1):DrawRect(rect.x1,rect.y1,rect.x2,rect.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc));
+    is_db2010?DrawRect(rect.x1,rect.y1,rect.x2,rect.y2,GC_GetPenColor(gc),GC_GetBrushColor(gc)):GC_DrawRoundRect(gc ,&rect,4,4,1,1);
     
     
     SetFont(CONFIG_FONT_ATTR);  
