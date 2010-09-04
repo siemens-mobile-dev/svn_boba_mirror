@@ -530,13 +530,14 @@ void act_proc(EVENT *ev)
   }
   else if (t==30)
   {
-    wchar_t time[50];
-    snwprintf(time, 49, L"%02d:%02d:%02d", h, m, s);
     REMINDER_STRUCT * rem_str = new REMINDER_STRUCT;
     rem_str->bk=&ECBook->bk;
     rem_str->text=ev->param;
     rem_str->utext=L" ";
-    rem_str->time=time;
+    
+    rem_str->time=new wchar_t[50];
+    snwprintf(rem_str->time, 49, L"%02d:%02d:%02d", h, m, s);
+    
     rem_str->vibra=true;
     rem_str->replace=false;
     rem_str->need_to_destroy=true;
