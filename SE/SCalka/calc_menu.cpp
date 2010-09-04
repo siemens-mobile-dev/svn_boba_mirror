@@ -6,6 +6,8 @@
 
 #include "calc_menu.h"
 
+void CreateCalcSettings(MyBOOK *mbk);
+
 CALC_SETTINGS calc_set;
 
 const wchar_t setting_file[]=L"SCalka.cfg";
@@ -117,6 +119,8 @@ void AngleSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
   int item=OneOfMany_GetSelected(mbk->angle_sel_list);
   calc_set.drg=item;
   FREE_GUI(mbk->angle_sel_list); 
+  FREE_GUI(mbk->calc_settings);
+  CreateCalcSettings(mbk);
 }
 
 const wchar_t *angle_names[]={
@@ -151,6 +155,8 @@ void OnOkEditFmtGui(BOOK * bk, wchar_t *string, int len)
   MyBOOK * mbk=(MyBOOK *)bk;
   unicode2win1251(calc_set.fmt,string,sizeof(calc_set.fmt)-1);
   FREE_GUI(mbk->edit_fmtstr);
+  FREE_GUI(mbk->calc_settings);
+  CreateCalcSettings(mbk);
 }
 
 void CreateEditFmtStr(MyBOOK *myBook)
@@ -184,6 +190,8 @@ void AutocalcSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
   int item=OneOfMany_GetSelected(mbk->autocalc_sel_list);
   calc_set.auto_recalc=item;
   FREE_GUI(mbk->autocalc_sel_list); 
+  FREE_GUI(mbk->calc_settings);
+  CreateCalcSettings(mbk);
 }
 
 const wchar_t *dis_ena[]={
