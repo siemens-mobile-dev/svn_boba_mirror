@@ -287,13 +287,13 @@
 08A4: 00000000 1D863C14 ; 229: DISP_OBJ_ONREDRAW_METHOD DispObject_GetOnRedraw( DISP_OBJ* );
 08A8: 00000000 19A05014 ; 22A: void DISP_DESC_SetOnKey( DISP_DESC*, DISP_OBJ_ONKEY_METHOD );
 08AC: 00000000 4D1C1314 ; 22B: DISP_OBJ_ONKEY_METHOD DispObject_GetOnKey( DISP_OBJ* );
-08B0: 00000000 298F1D14 ; 22C: void DISP_DESC_SetOnRefresh( DISP_DESC*, DISP_OBJ_METHOD );
+08B0: 00000000 15A05014 ; 22C: void DISP_DESC_SetOnRefresh( DISP_DESC*, DISP_OBJ_METHOD );
 08B4: 00000000 954B0214 ; 22D: DISP_OBJ_METHOD DispObject_GetonRefresh( DISP_OBJ* );
 ;08B8: xxxxxxxx yyyyyyyy ; 22E: void DISP_DESC_SetMethod04( DISP_DESC*, void (*)( void* ) );
 ;08BC: xxxxxxxx yyyyyyyy ; 22F: DISP_OBJ_METHOD DispObject_GetMethod04( DISP_OBJ* );
 ;08C0: xxxxxxxx yyyyyyyy ; 230: void DISP_DESC_SetMethod05( DISP_DESC*, void (*)( void* ) );
 ;08C4: xxxxxxxx yyyyyyyy ; 231: DISP_OBJ_METHOD DispObject_GetMethod05( DISP_OBJ* );
-08C8: 00000000 81DD0A14 ; 232: void DISP_DESC_SetMethod06( DISP_DESC*, DISP_OBJ_METHOD );
+08C8: 00000000 799E5014 ; 232: void DISP_DESC_SetMethod06( DISP_DESC*, DISP_OBJ_METHOD );
 08CC: 00000000 097F1114 ; 233: DISP_OBJ_METHOD DispObject_GetMethod06( DISP_OBJ* );
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07( DISP_DESC*, void (*)( void* ) );
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DispObject_GetMethod07( DISP_OBJ* );
@@ -303,9 +303,9 @@
 08E4: 00000000 2D672514 ; 239: DISP_OBJ_METHOD DispObject_GetOnConfig( DISP_OBJ* );
 08E8: 00000000 ED9E5014 ; 23A: void DISP_DESC_SetMethod0A( DISP_DESC*, void (*)( void* ) );
 08EC: 00000000 A1A31A14 ; 23B: DISP_OBJ_METHOD DispObject_GetMethod0A( DISP_OBJ* );
-;08F0: xxxxxxxx yyyyyyyy ; 23C: void DISP_DESC_SetMethod0B( DISP_DESC*, void (*)( void* ) );
-;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
-;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
+08F0: 00000000 19A45014 ; 23C: void DISP_DESC_SetMethod0B( DISP_DESC*, void (*)( void* ) );
+08F4: 00000000 C54C2715 ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
+08F8: 00000000 DDA05014 ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 9DFB2414 ; 240: void JavaSession_Manager( int cmd ); //nullsub(ret 0)
 0904: 00000000 9DFB2414 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
@@ -513,10 +513,10 @@
 0C2C: 00000000 81044015 ; 30B: void REQUEST_UI_OAF_START_APPLICATION( const int* sync, int appID, char* flag );
 0C30: 00000000 191FEF14 ; 30C: int JavaApp_LogoImageID_Get( wchar_t* fullpath, wchar_t* imageID );
 0C34: 00000000 E9D23D14 ; 30D: GUI* CreateProgressBar( BOOK* book, int display );
-0C38: 00000000 314A9715 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
+0C38: 00000000 C9562314 ; 30E: void ProgressBar_SetText( GUI*, STRID text );
 0C3C: 00000000 C18DFD14 ; 30F: void ProgressBar_SetIcon( GUI*, u16 icon_id );
 0C40: 00000000 29542314 ; 310: void ProgressBar_SetPercentValue( GUI*, int value );
-0C44: 00000000 394A9715 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
+0C44: 00000000 39922A14 ; 311: void ProgressBar_SetBarDisabled( GUI*, BOOL );
 0C48: 00000000 45E82214 ; 312: void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
 0C4C: 00000000 D11BA5ED ; 313: void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
 0C50: 00000000 3D88FE14 ; 314: void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
@@ -554,7 +554,7 @@
 0CD0: 00000000 B9B05415 ; 334: int IsSoundRecorderBook( BOOK *bk );
 0CD4: 00000000 7144FD14 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 ;0CD8: xxxxxxxx yyyyyyyy ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
-;0CDC: xxxxxxxx yyyyyyyy ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
+0CDC: 00000000 35AD5215 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
 0CE0: 00000000 B9B25215 ; 338: void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
 0CE4: 00000000 F9AC5215 ; 339: void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
 0CE8: 00000000 71254914 ; 33A: void RightNow_SetActive( int flag );
@@ -614,7 +614,7 @@
 0DC0: 00000000 9155DC14 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
 0DC4: 00000000 CD7A5610 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 4DAC0C15 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
-0DCC: 00000000 15859E15 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
+0DCC: 00000000 159E8515 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 150F2F14 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
 0DD4: 00000000 2D0E2F14 ; 375: BOOK* GUIonMessage_GetBook( GUI_MESSAGE* msg );
 0DD8: 00000000 690A2F14 ; 376: GUI* GUIonMessage_GetGui( GUI_MESSAGE* msg );
@@ -700,7 +700,8 @@
 0F18: 00000000 F1ED9115 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 7D50E814 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 AD194614 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
-
+0F24: 00000000 C9644D14 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+0F28: 00000000 81E21314 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 
