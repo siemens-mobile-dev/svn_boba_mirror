@@ -643,7 +643,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 		case CFG_FONT:
 			{
                         int platform=GetChipID()&CHIPID_MASK;
-                        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+                        if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
                         {
                           int n=1;
                           int sp[5];

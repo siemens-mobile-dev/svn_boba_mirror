@@ -648,7 +648,7 @@ int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 	db->test_str_id = Str2ID( ustr, 0, SID_ANY_LEN );
 
         int platform=GetChipID()&CHIPID_MASK;
-        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+        if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
           db->platform_flag=1;
         else
           db->platform_flag=0;

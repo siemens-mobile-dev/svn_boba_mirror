@@ -1802,4 +1802,9 @@ __swi __arm int Theme_DestroyMenuIcons( void );
 #pragma swi_number=0x3C8
 __swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
 
+#pragma swi_number=0x3C9
+__swi __arm void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+#pragma swi_number=0x3CA
+__swi __arm int ListMenu_GetItemCount( GUI_LIST* );
+
 #endif

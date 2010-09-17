@@ -535,7 +535,7 @@
 0C84: 00000000 D5136C11 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 F9FD6B11 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 09FA6B11 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: 00000000 858F7511 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 E5C4F210 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 21D8F210 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 D11BA5ED ; 327: int GetRadioState( char* level, char* flag );
@@ -676,7 +676,7 @@
 0EB8: 00000000 8DAC6011 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
 0EBC: 00000000 99AC6511 ;83AF: void (*getListMenuOnGuiDestroy())( GUI* ); //nullsub(void)
 0EC0: 00000000 5D866411 ;83B0: void (*getListMenuOnDescCreate())( DISP_DESC* );
-0EC4: 00000000 9DAC6511 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
+0EC4: 00000000 ED836511 ;83B1: void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EC8: 00000000 1D3C6B11 ;83B2: void (*getTabMenuBarOnGuiDestroy())( GUI* ); //nullsub(void)
 0ECC: 00000000 31A76A11 ;83B3: void (*getTabMenuBarOnDescCreate())( DISP_DESC* );
 0ED0: 00000000 6D3B6B11 ;83B4: void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
@@ -700,6 +700,8 @@
 0F18: 00000000 D9711B11 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 5D516C11 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 BD657011 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 
