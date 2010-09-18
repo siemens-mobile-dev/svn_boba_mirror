@@ -685,7 +685,7 @@
 0ED8: FFFFFFFF B1BDEE44 ;83B6: void (*getOneOfManyOnDescCreate())( DISP_DESC* );
 0EDC: FFFFFFFF ED9BD644 ;83B7: void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EE0: FFFFFFFF 6199D644 ;83B8: void (*getNOfManyOnGuiDestroy())( GUI* ); //nullsub(void)
-0EE4: FFFFFFFF 25BFEE44 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
+0EE4: FFFFFFFF 6DB0EE44 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: FFFFFFFF 6599D644 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: FFFFFFFF 498BD644 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
 0EF0: FFFFFFFF 6928E944 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
@@ -701,6 +701,8 @@
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 ;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: FFFFFFFF 8D4AD744 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 

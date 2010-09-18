@@ -335,6 +335,8 @@ static int FindCash(const char *s)
   const char *pval;
   int c;
   int cc;
+  const char *s0=s;
+
   while(n<CASH_SIZE)
   {
     //if (!patterns[n]) break; //Больше паттернов нет
@@ -365,7 +367,10 @@ static int FindCash(const char *s)
 	p++;
       }
     }
-    if (c) break; //Не дошли до конца паттерна
+    if (c) { //Не дошли до конца паттерна
+     s=s0; n++;
+     continue;
+    }
     if (!pval) break; //Не нашли число
     s=p; //Поиск будем продолжать отсюда
     i=strtol(pval,&ep,10)*100;

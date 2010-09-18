@@ -375,7 +375,7 @@
 0A04: 00000000 45434645 ; 281: void GUIObject_SetTitleType( GUI* , int type );
 0A08: 00000000 81E64145 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 0A0C: 00000000 F1DEF444 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
-0A10: 00000000 A1DFF444 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
+0A10: 00000000 A1DFF444 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
 0A14: 00000000 A06C2E20 ;8285: SURFACE** get_Surfaces( void );
 0A18: 00000000 9539D444 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A1C: 00000000 21E2E444 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
@@ -399,16 +399,16 @@
 0A64: 00000000 9D4F4B45 ; 299: int GPRS_GetLastSessionInfo( int, GPRS_SESSION_INFO* );
 0A68: 00000000 455DF544 ; 29A: int wstrcmpni( const wchar_t* wstr1, const wchar_t* wstr2, int len );
 0A6C: 00000000 51AF3A45 ; 29B: int wtoi( const wchar_t* wstr, int len, int* dest );
-0A70: 00000000 D1FD1045 ; 29C: __thumb void DATE_GetWeekDay( DATE*, char* dest );
-0A74: 00000000 C518E844 ; 29D: __thumb void Cale_GetSettings( int setID, void* );
-0A78: 00000000 A9B06744 ; 29E: __thumb wchar_t* wstrwstr( const wchar_t* wstr1, const wchar_t* wstr2 );
-0A7C: 00000000 895DF544 ; 29F: __thumb int wstrcmpi( const wchar_t* ws1, const wchar_t* ws2 );
-0A80: 00000000 29AF6744 ; 2A0: __thumb wchar_t* wstrchr( const wchar_t* source, wchar_t chr );
+0A70: 00000000 D1FD1045 ; 29C: void DATE_GetWeekDay( DATE*, char* dest );
+0A74: 00000000 C518E844 ; 29D: void Cale_GetSettings( int setID, void* );
+0A78: 00000000 A9B06744 ; 29E: wchar_t* wstrwstr( const wchar_t* wstr1, const wchar_t* wstr2 );
+0A7C: 00000000 895DF544 ; 29F: int wstrcmpi( const wchar_t* ws1, const wchar_t* ws2 );
+0A80: 00000000 29AF6744 ; 2A0: wchar_t* wstrchr( const wchar_t* source, wchar_t chr );
 0A84: 00000000 650A4845 ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
 0A88: 00000000 710A4845 ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 0A8C: 00000000 21D84745 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
-0A90: 00000000 0D2E4545 ; 2A4: __thumb int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
-0A94: 00000000 F1474745 ; 2A5: __thumb GUI* CreateYesNoQuestionVA( int zero, ... );
+0A90: 00000000 0D2E4545 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+0A94: 00000000 F1474745 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 CDDE4145 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 55BEFB44 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
 0AA0: 00000000 D971F944 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
@@ -424,22 +424,22 @@
 0AC8: 00000000 09C6FD44 ; 2B2: void FSX_RemoveIllegalSymbolsName( FILEITEM* );
 0ACC: 00000000 71BEFD44 ; 2B3: FILEITEM* FILEITEM_Create( void );
 0AD0: 00000000 61BFFD44 ; 2B4: void FILEITEM_Destroy( FILEITEM* );
-0AD4: 00000000 212C4745 ; 2B5: __thumb GUI* CreateDateInputVA( int zero, ... );
-0AD8: 00000000 11444745 ; 2B6: __thumb GUI* CreateTimeInputVA( int zero, ... );
-0ADC: 00000000 85653F45 ; 2B7: __thumb void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
-0AE0: 00000000 51E63A45 ; 2B8: __thumb void BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
-0AE4: 00000000 252E4745 ; 2B9: __thumb unsigned int DateInput_GetDateInt( GUI* );
-0AE8: 00000000 59464745 ; 2BA: __thumb unsigned int TimeInput_GetTimeInt( GUI* );
+0AD4: 00000000 212C4745 ; 2B5: GUI* CreateDateInputVA( int zero, ... );
+0AD8: 00000000 11444745 ; 2B6: GUI* CreateTimeInputVA( int zero, ... );
+0ADC: 00000000 85653F45 ; 2B7: void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
+0AE0: 00000000 51E63A45 ; 2B8: void BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
+0AE4: 00000000 252E4745 ; 2B9: unsigned int DateInput_GetDateInt( GUI* );
+0AE8: 00000000 59464745 ; 2BA: unsigned int TimeInput_GetTimeInt( GUI* );
 0AEC: 00000000 ACFB1620 ;82BB: FONT_DESC* GetFontDesc( void );
 0AF0: 00000000 40FE1620 ;82BC: int* GetFontCount( );
-0AF4: 00000000 25214645 ; 2BD: __thumb int GC_GetBrushColor( GC* gc );
-0AF8: 00000000 E5204645 ; 2BE: __thumb void GC_SetBrushColor( GC* gc, int brush_color );
-0AFC: 00000000 95294645 ; 2BF: __thumb void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
+0AF4: 00000000 25214645 ; 2BD: int GC_GetBrushColor( GC* gc );
+0AF8: 00000000 E5204645 ; 2BE: void GC_SetBrushColor( GC* gc, int brush_color );
+0AFC: 00000000 95294645 ; 2BF: void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
 0B00: 00000000 19524845 ; 2C0: BOOK* MenuBook_Desktop( int mode, int BookID );
-0B04: 00000000 A9534845 ; 2C1: __thumb wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
-0B08: 00000000 CDB84745 ; 2C2: __thumb void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, GUI* ) );
-0B0C: 00000000 05B94745 ; 2C3: __thumb void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
-0B10: 00000000 61CE3A45 ; 2C4: __thumb BOOK* FindBookByID( int BookID );
+0B04: 00000000 A9534845 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
+0B08: 00000000 CDB84745 ; 2C2: void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, GUI* ) );
+0B0C: 00000000 05B94745 ; 2C3: void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
+0B10: 00000000 61CE3A45 ; 2C4: BOOK* FindBookByID( int BookID );
 0B14: 00000000 913C4745 ; 2C5: GUI_FEEDBACK* TextFeedbackWindow( BOOK* book, int zero );
 0B18: 00000000 C9404745 ; 2C6: void Feedback_SetKeyHook( GUI_FEEDBACK*, void (*hook)( BOOK* book, int key, int unk, int unk2 ) );
 0B1C: 00000000 69404745 ; 2C7: void Feedback_SetOnClose( GUI_FEEDBACK*, void (*OnClose)( BOOK* book ) );
@@ -700,6 +700,8 @@
 0F18: 00000000 3D830D45 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 9D3D4845 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 7D834A45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F24: 00000000 7D434645 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+0F28: 00000000 2DDB4145 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 

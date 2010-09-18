@@ -424,7 +424,7 @@
 0ACC: FFFFFFFF 25665C45 ; 2B3: FILEITEM* FILEITEM_Create( void );
 0AD0: FFFFFFFF 89675C45 ; 2B4: void FILEITEM_Destroy( FILEITEM* );
 0AD4: FFFFFFFF 29521945 ; 2B5: GUI* CreateDateInputVA( int zero, ... );
-0AD8: FFFFFFFF 5D681945 ; 2B6: __thumb GUI* CreateTimeInputVA( int zero, ... );
+0AD8: FFFFFFFF 5D681945 ; 2B6: GUI* CreateTimeInputVA( int zero, ... );
 0ADC: FFFFFFFF D5641645 ; 2B7: void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
 0AE0: FFFFFFFF DDF52945 ; 2B8: void BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
 0AE4: FFFFFFFF 11541945 ; 2B9: unsigned int DateInput_GetDateInt( GUI* );
@@ -534,7 +534,7 @@
 0C84: FFFFFFFF 25512B45 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: FFFFFFFF 09533145 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: FFFFFFFF BD4E3145 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: FFFFFFFF E9D85445 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: FFFFFFFF 916B2045 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: FFFFFFFF 117E2045 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: FFFFFFFF CD0CC244 ; 327: int GetRadioState( char* level, char* flag );
@@ -696,9 +696,11 @@
 0F0C: FFFFFFFF C10E1745 ; 3C3: void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
 0F10: FFFFFFFF D1151745 ; 3C4: wchar_t* GUIonMessage_GetSearchString( GUI_MESSAGE* msg );
 0F14: FFFFFFFF F1151745 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
-;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
-;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
+0F18: FFFFFFFF 59D54545 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
+0F1C: FFFFFFFF 4D9A2F45 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: FFFFFFFF 5D0D1A45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 
