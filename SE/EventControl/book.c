@@ -103,7 +103,7 @@ int ECBook_ShowAuthorInfo(void *mess ,BOOK* book)
   char CSReg;
   if (get_CellData(&plmn_lac,&rat_ci,&CSReg))
   {
-    snwprintf(text,511,L"%ls \nCurrent LAC-CID: %04X-%04X", text, plmn_lac.LAC, rat_ci.CI);
+    snwprintf(text,511,L"%ls \nCurrent LAC-CID: %04X-%04X", text, plmn_lac.LAC[0]<<8|plmn_lac.LAC[1], rat_ci.CI);
   }
   mbox_Create(book, text, 0, false);
   return 1;

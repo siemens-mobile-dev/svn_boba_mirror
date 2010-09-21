@@ -123,7 +123,7 @@
 0618: 00000000 0CD90E10 ; 186: OSBOOLEAN hunt( const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig );
 061C: 00000000 38D90E10 ; 187: void kill_proc( PROCESS pid );
 ;0620: xxxxxxxx yyyyyyyy ; 188:
-0624: 00000000 71D70E10 ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
+0624: 00000000 70D70E10 ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 20DA0E10 ; 18B: void stop( PROCESS pid );
 0630: 00000000 8CD80E10 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
@@ -367,7 +367,7 @@
 09E8: 00000000 9DF1B110 ; 27A: int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
 09EC: 00000000 45F3B110 ; 27B: int inflate( z_streamp strm, int flush );
 09F0: 00000000 3D06B210 ; 27C: int inflateEnd( z_streamp strm );
-09F4: 00000000 B808BC29 ; 27D: int memcmp( const void* m1, const void* m2, int n );
+09F4: 00000000 AC160010 ; 27D: int memcmp( const void* m1, const void* m2, int n );
 09F8: 00000000 F5045110 ; 27E: int strncmp( const char* s1, const char* s2, int len );
 09FC: 00000000 29055110 ; 27F: char* strncpy( char* dest, const char* source, int maxlen );
 0A00: 00000000 25045110 ; 280: char* strcat( char* dest, const char* src );

@@ -129,7 +129,7 @@ void onEventTimer(u16 timerID, LPARAM lparam)
   char CSReg;
   if (get_CellData(&plmn_lac,&rat_ci,&CSReg))
   {
-    snwprintf(ccell,9,L"%04X-%04X", plmn_lac.LAC, rat_ci.CI);
+    snwprintf(ccell,9,L"%04X-%04X", plmn_lac.LAC[0]<<8|plmn_lac.LAC[1], rat_ci.CI);
     if (wstrcmp(oldcell,ccell))
     {
       need_to_watch=true;

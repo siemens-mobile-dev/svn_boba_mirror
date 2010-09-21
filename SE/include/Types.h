@@ -1007,7 +1007,9 @@ typedef struct
   char MCC[3];
   char MNC[2];
   char PLMN_x;
-  int LAC;
+  char unk1[2];
+  char LAC[2];
+  char unk2[2];
 }PLMN_LAC_DESC;
 
 

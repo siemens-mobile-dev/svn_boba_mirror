@@ -724,7 +724,7 @@ void onTimer(u16 timerID, LPARAM lparam)
   RAT_CI_DESC rat_ci;
   char CSReg;
   get_CellData(&plmn_lac,&rat_ci,&CSReg);
-  currentLAC = plmn_lac.LAC;
+  currentLAC = plmn_lac.LAC[0]<<8|plmn_lac.LAC[1];
   currentCID  = rat_ci.CI;
   if((currentLAC != prevLAC) || (currentCID != prevCID)) CheckCellName();
   if (visible && (cfg_location < 9)) {

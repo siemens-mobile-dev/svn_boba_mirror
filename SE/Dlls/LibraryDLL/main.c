@@ -545,7 +545,8 @@ int dll_get_CellData_0( PLMN_LAC_DESC * plmn_lac, RAT_CI_DESC * rat_ci, char * C
   plmn_lac->MNC[0]=con_info.MNC[0];
   plmn_lac->MNC[1]=con_info.MNC[1];
   plmn_lac->PLMN_x=con_info.PLMN_x;
-  plmn_lac->LAC=con_info.LAC;
+  plmn_lac->LAC[0]=con_info.LAC[0];
+  plmn_lac->LAC[1]=con_info.LAC[1];
   rat_ci->RAT=con_info.RAT;
   rat_ci->CI=con_info.CI;
   CSReg[0]=con_info.CSReg;
