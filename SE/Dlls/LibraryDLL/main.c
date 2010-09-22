@@ -315,19 +315,19 @@ int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int
 }
 #endif
 
-#ifdef A2
+#ifdef RedLED_ID
 #define USE_dll_RedLED_On_0
 void dll_RedLED_On_0( int __NULL )
 {
-  Illumination_LedID_SetLevel(5,100);
+  Illumination_LedID_SetLevel(RedLED_ID,100);
 }
 #endif
 
-#ifdef A2
+#ifdef RedLED_ID
 #define USE_dll_RedLED_Off_0
 void dll_RedLED_Off_0( int __NULL )
 {
-  Illumination_LedID_Off(5);
+  Illumination_LedID_Off(RedLED_ID);
 }
 #endif
 
