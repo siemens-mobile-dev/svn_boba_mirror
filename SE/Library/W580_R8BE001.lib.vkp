@@ -700,8 +700,8 @@
 0F18: 00000000 79DEFC44 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 D1533845 ; 3C7: int Theme_DestroyMenuIcons( void );
 0F20: 00000000 F1A43A45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
-0F24: 00000000 3D533645 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
-0F28: 00000000 87C80A45 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+0F24: 00000000 E5533645 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+0F28: 00000000 85E43145 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 
 
 
