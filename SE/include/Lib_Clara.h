@@ -1,6 +1,12 @@
 #ifndef _LIB_CLARA_H
 #define _LIB_CLARA_H
 
+extern void *ELF_BEGIN;
+
+#ifdef LIBCLARANS
+namespace libclara{
+#endif
+
 #include "..\\include\Types.h"
 
 #ifdef USEPNG
@@ -19,7 +25,6 @@
 
 extern int *SYNC;
 extern int *ASYNC;
-extern void *ELF_BEGIN;
 
 #ifdef __cplusplus
 extern "C" void kill_data( void* p, void (*func_p)( void* ) );
@@ -1800,11 +1805,21 @@ __swi __arm int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 __swi __arm int Theme_DestroyMenuIcons( void );
 
 #pragma swi_number=0x3C8
-__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 
 #pragma swi_number=0x3C9
 __swi __arm void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 #pragma swi_number=0x3CA
 __swi __arm int ListMenu_GetItemCount( GUI_LIST* );
+
+#pragma swi_number=0x3CB
+__swi __arm void OSE_GetShell( void** pInterface );
+
+#pragma swi_number=0x3CC
+__swi __arm int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+
+#ifdef LIBCLARANS
+}
+#endif
 
 #endif

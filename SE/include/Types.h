@@ -21,6 +21,18 @@
 
 #define EMPTY_REDRAW_METHOD (void (*)(DISP_OBJ *,int ,int ,int))-1
 
+//#define IID_PPV_ARG(Type, Expr) &IID_##Type, reinterpret_cast<void**>(static_cast<Type **>(Expr))
+
+#ifdef __cplusplus
+template<typename T> void** PPINTERFACE(T** pp)
+{
+  //static_cast<IUnknown*>(*pp);
+  return reinterpret_cast<void**>(pp);
+}
+#else
+#define PPINTERFACE(v) (void**)v
+#endif
+
 
 typedef unsigned short u16;
 

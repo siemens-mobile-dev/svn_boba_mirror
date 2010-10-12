@@ -688,9 +688,9 @@
 0EE4: 00000000 518FB111 ;83B9: void (*getNOfManyOnDescCreate())( DISP_DESC* );
 0EE8: 00000000 9D6BB211 ;83BA: void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
 0EEC: 00000000 C151B211 ; 3BB: void ListMenu_DestroyItems( GUI_LIST* );
-;0EF0: xxxxxxxx yyyyyyyy ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
-;0EF4: xxxxxxxx yyyyyyyy ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
-;0EF8: xxxxxxxx yyyyyyyy ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
+0EF0: 00000000 4D54A610 ; 3BC: void DispObject_SetScrollBarBackgroundColor( DISP_OBJ*, int color );
+0EF4: 00000000 2554A610 ; 3BD: void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
+0EF8: 00000000 91848A10 ; 3BE: void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 0EFC: 00000000 294E8211 ; 3BF: void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
 0F00: 00000000 C9D6A610 ; 3C0: void GUIObject_SetBacklightTimeout( GUI*, int time );
 0F04: 00000000 A54EB211 ; 3C1: void ListMenu_SetHotkeyMode( GUI_LIST*, LISTMENU_HOTKEY_MODE );
@@ -700,9 +700,11 @@
 0F14: 00000000 195BB211 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 0D41A811 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 015DE710 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 71977B10 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 71977B10 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 0F24: 00000000 A5D7A610 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 0F28: 00000000 7D4DB211 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+0F2C: 00000000 75AAEA10 ; 3CB: void OSE_GetShell( void** pInterface );
+0F30: 00000000 89627910 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 
 
 

@@ -4,7 +4,7 @@
         RTMODEL "StackAlign4", "USED"
         RTMODEL "__cpu_mode", "__pcs__interwork"
         RTMODEL "__data_model", "absolute"
-        RTMODEL "__dlib_file_descriptor", "0"
+        RTMODEL "__dlib_file_descriptor", "1"
         RTMODEL "__endian", "little"
         RTMODEL "__rt_version", "6"
 

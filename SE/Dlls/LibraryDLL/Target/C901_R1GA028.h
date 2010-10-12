@@ -5,6 +5,8 @@
 #include "..\..\include\Types.h"
 #include "classes.h"
 
+#define OrangeLED_ID 2
+#define RedLED_ID 6
 #define GetSignalQuality_Send_SignalID 0x12C00040
 #define GetSignalQuality_Receive_SignalID 0x12C007C0
 #define MainInput_data 0x4BA2663C

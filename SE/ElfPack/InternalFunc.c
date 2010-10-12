@@ -70,7 +70,7 @@ void* GetUserData (int size, USERDATACONSTRUCTOR constr, void* param)
 			constr(ud->data,param);
 
 			_printf("New UserData  @0x%X",ud->data);
-			_printf("Total Used Bloks  0x%%X",epd->UserDataList->FirstFree);
+			_printf("Total Used Bloks  0x%%X",elfpackdata->UserDataList->FirstFree);
 		}
 		else
 		{
@@ -452,7 +452,7 @@ void CreateLists(void)
 	elfpackdata = malloc(sizeof(EP_DATA));
 	memset(elfpackdata,0,sizeof(EP_DATA));
 
-	_printf("EP_DATA @%x",epd)  ;
+	_printf("EP_DATA @%x",elfpackdata)  ;
 
 	elfpackdata->UserDataList=List_Create();
 	elfpackdata->gKbdHookList=List_Create();
@@ -500,7 +500,7 @@ void Init()
 
 	StartHelper();
 
-	_printf("     StartHelper OK. PID=%x",epd->HPID)  ;
+	_printf("     StartHelper OK. PID=%x",elfpackdata->HPID)  ;
 
 	// инитим DLL библиотеку
 

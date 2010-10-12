@@ -699,9 +699,11 @@
 0F14: 00000000 F9F64345 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 D1F40E45 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 D5564A45 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 4D944C45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 4D944C45 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 0F24: 00000000 B9574845 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 0F28: 00000000 C9E94345 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+0F2C: 00000000 61631245 ; 3CB: void OSE_GetShell( void** pInterface );
+0F30: 00000000 B5676744 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 
 
 

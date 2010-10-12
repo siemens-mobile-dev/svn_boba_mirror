@@ -184,8 +184,8 @@
 0708: 00000000 746EA24B ;81C2: LIST** ROOT_APP( void );
 070C: 00000000 059A1214 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 0710: 00000000 050C1A14 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-0714: 00000000 21458D15 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
-0718: 00000000 A1DAC314 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
+0714: 00000000 21444810 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
+0718: 00000000 41444810 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 071C: 00000000 156B0714 ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 0720: 00000000 D5480014 ; 1C8: int IsRightNowBook( BOOK* book );
 0724: 00000000 15D31914 ; 1C9: int IsVolumeControllerBook( BOOK* book );
@@ -699,9 +699,11 @@
 0F14: 00000000 651F2A14 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 7D8B8915 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 F9EDED14 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 99140114 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 99140114 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 0F24: 00000000 C9674414 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 0F28: 00000000 FD720214 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+0F2C: 00000000 35211614 ; 3CB: void OSE_GetShell( void** pInterface );
+0F30: 00000000 A91B0C14 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 
 
 

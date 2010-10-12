@@ -710,7 +710,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 //__swi __arm void* CallID_GetCallStatusDesc( int CallID );
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
-//__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+//__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
 //__swi __arm int CreateSMSCont( int, void* );
 //__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
@@ -745,6 +745,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm int GPRS_GetLastSessionInfo( int, GPRS_SESSION_INFO* );
 //__swi __arm void GUIObject_SetBackgroundImage( GUI*, wchar_t imageID );
 //__swi __arm void GUIObject_SetCursorImage( GUI*, wchar_t imageID );
+//__swi __arm void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 //__swi __arm void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
 //__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
@@ -761,6 +762,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm int JavaSession_GetName( void );
 //__swi __arm void JavaSession_Manager( int cmd );
 //__swi __arm void ListMenu_DestroyItems( GUI_LIST* );
+//__swi __arm int ListMenu_GetItemCount( GUI_LIST* );
 //__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
 //__swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 //__swi __arm void* LoadDLL( wchar_t* DllName );
@@ -776,6 +778,7 @@ GUI_FEEDBACK*  __deleaker_CreateMonitorFeedback(STRID __unknwnargname1, BOOK* __
 //__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 //__swi __arm int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
 //__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
+//__swi __arm void OSE_GetShell( void** pInterface );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
 //__swi __arm int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );

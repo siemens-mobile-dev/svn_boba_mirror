@@ -1734,5 +1734,13 @@ __swi __arm int  __original_EqualizerGain_Get( int AudioSessionID, int Band, int
 __swi __arm int  __original_Theme_DestroyMenuIcons( void );
 
 #pragma swi_number=0x3C8
-__swi __arm void  __original_CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+__swi __arm void  __original_CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
+
+#pragma swi_number=0x3C9
+__swi __arm void  __original_GUIObject_SetSecondRowTitleText( GUI*, STRID );
+#pragma swi_number=0x3CA
+__swi __arm int  __original_ListMenu_GetItemCount( GUI_LIST* );
+
+#pragma swi_number=0x3CB
+__swi __arm void  __original_OSE_GetShell( void** pInterface );
 
