@@ -184,8 +184,8 @@
 0708: 00000000 2068A24B ;81C2: LIST** ROOT_APP( void ); //Application session list
 070C: 00000000 75670A14 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 0710: 00000000 FD471014 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-0714: 00000000 91268415 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
-0718: 00000000 E192C814 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
+0714: 00000000 3D9A4610 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
+0718: 00000000 5D9A4610 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 071C: 00000000 AD670A14 ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 0720: 00000000 95F50014 ; 1C8: int IsRightNowBook( BOOK* book );
 0724: 00000000 69651A14 ; 1C9: int IsVolumeControllerBook( BOOK* book );

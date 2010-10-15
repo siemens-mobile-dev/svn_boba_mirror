@@ -10,6 +10,8 @@
 
 
 
+
+
 #pragma swi_number=0x100
 __swi __arm void  __original_IMB ( void );
 
@@ -1743,4 +1745,11 @@ __swi __arm int  __original_ListMenu_GetItemCount( GUI_LIST* );
 
 #pragma swi_number=0x3CB
 __swi __arm void  __original_OSE_GetShell( void** pInterface );
+
+#pragma swi_number=0x3CC
+__swi __arm int  __original_swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+
+#pragma swi_number=0x3CD
+__swi __arm int  __original_sscanf( const char* buffer, const char* format, ... );
+
 

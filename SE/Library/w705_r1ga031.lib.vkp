@@ -704,6 +704,7 @@
 0F28: 00000000 FD720214 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 0F2C: 00000000 35211614 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 A91B0C14 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+0F34: 00000000 992C1D10 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 

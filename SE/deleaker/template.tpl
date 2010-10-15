@@ -36,6 +36,7 @@ skip CANVAS_Get_GviGC
 skip chmod
 skip ConnectionManager_Connection_GetState
 skip CreateBook
+skip current_process
 skip DataBrowserDesc_Menu_AddFSFunctions
 skip DataBrowserDesc_Menu_AddMarkFiles
 skip DataBrowserDesc_Menu_AddNewFolder
@@ -114,6 +115,7 @@ skip Disp_GetStrIdWidth
 skip DrawRect
 skip DrawString
 skip elfload
+skip EqualizerGain_Get
 skip EqualizerGain_Set
 skip Feedback_SetOnClose
 skip Feedback_SetTimeout
@@ -358,6 +360,7 @@ skip snwprintf
 skip SoftKeys_GetSelectedAction
 skip SoftKeys_Update
 skip sprintf
+skip sscanf
 skip StandbyBackground_SetImage
 skip start
 skip StartAPP
@@ -377,6 +380,7 @@ skip strncpy
 skip strstr
 skip SUBPROC
 skip SwitchRadioStationFromList
+skip swscanf
 skip TabMenuBar_GetFocusedTab
 skip TabMenuBar_SetFocusedTab
 skip TabMenuBar_SetOnTabSwitch

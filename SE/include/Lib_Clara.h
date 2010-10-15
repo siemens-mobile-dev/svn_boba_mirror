@@ -1818,6 +1818,9 @@ __swi __arm void OSE_GetShell( void** pInterface );
 #pragma swi_number=0x3CC
 __swi __arm int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 
+#pragma swi_number=0x3CD
+__swi __arm int sscanf( const char* buffer, const char* format, ... );
+
 #ifdef LIBCLARANS
 }
 #endif
