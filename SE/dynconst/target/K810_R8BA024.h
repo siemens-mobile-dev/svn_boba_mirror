@@ -164,8 +164,8 @@
 #define FONT_E_12B 0xD
 #define FONT_E_12R 0xC
 #define FONT_E_14B 0x12
-#define FONT_E_14BI 0x1B
-#define FONT_E_14I 0x1A
+#define FONT_E_14BI 0x14
+#define FONT_E_14I 0x13
 #define FONT_E_14R 0x11
 #define FONT_E_16B 0x19
 #define FONT_E_16BI 0x1B

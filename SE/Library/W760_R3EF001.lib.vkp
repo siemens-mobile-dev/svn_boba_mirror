@@ -96,7 +96,7 @@
 05A4: 00000000 1DB3B611 ; 169: LIST* List_Create( void );
 05A8: 00000000 45B3B611 ; 16A: void List_Destroy( LIST* lst );
 05AC: 00000000 91B4B611 ; 16B: int List_InsertFirst( LIST* lst, void* item );
-;05B0: xxxxxxxx yyyyyyyy ; 16C: int Gif2ID( u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, wchar_t* ID );
+05B0: 00000000 290E8410 ; 16C: int Gif2ID( u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, wchar_t* ID );
 05B4: 00000000 59108410 ; 16D: int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* IMAGEHANDLE, char* unk );
 05B8: 00000000 3DB08410 ; 16E: void REQUEST_DATEANDTIME_GET( const int* sync, DATETIME* dt );
 05BC: 00000000 312CF010 ; 16F: void IndicationDevice_Backlight_FadeToLevel( int unk_zero, int bl_level );
@@ -185,8 +185,8 @@
 0708: 00000000 C8A8BA4B ;81C2: LIST** ROOT_APP( void );
 070C: 00000000 F9BE8A10 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 0710: 00000000 31C08A10 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-0714: 00000000 E92DB011 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
-0718: 00000000 F92DB011 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
+0714: 00000000 059E5911 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
+0718: 00000000 259E5911 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 071C: 00000000 65BF8A10 ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 0720: 00000000 85DBBC10 ; 1C8: int IsRightNowBook( BOOK* book );
 0724: 00000000 59E8B511 ; 1C9: int IsVolumeControllerBook( BOOK* book );
@@ -555,18 +555,18 @@
 0CD0: 00000000 416FEE10 ; 334: int IsSoundRecorderBook( BOOK *bk );
 0CD4: 00000000 D9249310 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 ;0CD8: xxxxxxxx yyyyyyyy ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
-;0CDC: xxxxxxxx yyyyyyyy ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
-;0CE0: xxxxxxxx yyyyyyyy ; 338: void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
-;0CE4: xxxxxxxx yyyyyyyy ; 339: void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
-;0CE8: xxxxxxxx yyyyyyyy ; 33A: void RightNow_SetActive( int flag );
+0CDC: 00000000 EDE7EA10 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
+0CE0: 00000000 F5F0EA10 ; 338: void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
+0CE4: 00000000 BDE7EA10 ; 339: void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
+0CE8: 00000000 B9E1BC10 ; 33A: void RightNow_SetActive( int flag );
 ;0CEC: xxxxxxxx yyyyyyyy ; 33B: void VideoResize_AutomateMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
 ;0CF0: xxxxxxxx yyyyyyyy ; 33C: void VideoResize_AllScreenMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
 ;0CF4: xxxxxxxx yyyyyyyy ; 33D: int Video_GetCurrentSkinID( BOOK* VideoPlayerBook );
 ;0CF8: xxxxxxxx yyyyyyyy ; 33E: void Video_SetSkin( GUI* VideoPlayerGUI, int skinID );
 ;0CFC: xxxxxxxx yyyyyyyy ; 33F: int Video_SetPermit( BOOK* VideoPlayerBook, u16 NewWidth, u16 NewHeight );
 ;0D00: xxxxxxxx yyyyyyyy ; 340: int Video_Refresh( BOOK* VideoPlayerBook, GUI* VideoPlayerGUI );
-;0D04: xxxxxxxx yyyyyyyy ; 341: void Video_Play( BOOK* VideoPlayerBook, void* );
-;0D08: xxxxxxxx yyyyyyyy ; 342: void Video_Pause( BOOK* VideoPlayerBook, void* );
+0D04: 00000000 F5E6EA10 ; 341: void Video_Play( BOOK* VideoPlayerBook, void* );
+0D08: 00000000 05E7EA10 ; 342: void Video_Pause( BOOK* VideoPlayerBook, void* );
 ;0D0C: xxxxxxxx yyyyyyyy ; 343: void Video_Stop( BOOK* VideoPlayerBook, void* );
 0D10: 00000000 913BD210 ; 344: void Audio_Pause( BOOK* );
 0D14: 00000000 353BD210 ; 345: void Audio_Play( BOOK* );
@@ -705,6 +705,7 @@
 0F28: 00000000 7D4DB211 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 0F2C: 00000000 75AAEA10 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 89627910 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+0F34: 00000000 7D3C0010 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 
