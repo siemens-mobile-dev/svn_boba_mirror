@@ -131,7 +131,7 @@ skip FindBookEx
 skip Find_StandbyBook
 skip fread
 skip fstat
-skip FSX_isNameInvalid
+skip FSX_GetInvalidChar
 skip FSX_RemoveIllegalSymbolsName
 skip fwrite
 skip GC_DrawFRect
@@ -189,6 +189,7 @@ skip get_Surfaces
 skip get_system_langID
 skip get_VBUFFER
 skip GoMusic
+skip GPRS_GetLastSessionInfo
 skip GUIObject_Create
 skip GUIObject_GetBook
 skip GUIObject_GetDispObject
@@ -290,6 +291,7 @@ skip MainInput_getVisible
 skip MainInput_Hide
 skip MainInput_isPlus
 skip MainInput_strlen
+skip MakeVoiceCall
 skip MediaPlayer_ShowNowPlaying
 skip MediaPlayer_SoftKeys_SetAction
 skip MediaPlayer_SoftKeys_SetItemAsSubItem
@@ -388,6 +390,7 @@ skip TabMenuBar_SetTabCount
 skip TextGetLength
 skip TextID2wstr
 skip textidname2id
+skip Theme_DestroyMenuIcons
 skip UIEventName
 skip UI_CONTROLLED_SHUTDOWN_RESPONSE
 skip UI_Event
@@ -397,6 +400,11 @@ skip UI_Event_toSID
 skip UI_Event_wData
 skip unixtime2datetime
 skip USB_isConnected
+skip VCALL_Init
+skip VCALL_SetHZ1
+skip VCALL_SetHZ2
+skip VCALL_SetName
+skip VCALL_SetNumber
 skip VideoPlayerControl
 skip VideoResize_AllScreenMode
 skip VideoResize_AutomateMode
@@ -984,4 +992,71 @@ __make CreateMonitorFeedback
   __R ret = __O__;
   if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
   return ret;
+}
+
+__make LoadDLL
+{
+  __R ret = __O__;
+  if(ret)trace_alloc(trace_dll, (void*)ret, __file__, __line__);
+  return ret;
+}
+
+__make UnLoadDLL
+{
+  trace_free(trace_dll, DllData, __file__, __line__);
+  return __O__;
+}
+
+__make GUIObject_SetSecondRowTitleText
+{
+  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+  return __O__;
+}
+
+__make ListMenu_SetNoItemText
+{
+  if(isallocatedstrid(str))trace_free(trace_strid, (void*)str, __file__, __line__ );
+  return __O__;
+}
+
+__make TabMenuBar_SetTabTitle
+{
+  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+  return __O__;
+}
+
+__make DispObject_SetBackgroundImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
+}
+
+__make DispObject_SetCursorImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
+}
+
+__make DispObject_SetTitleBackgroundImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
+}
+
+__make GUIObject_SetBackgroundImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
+}
+
+__make GUIObject_SetCursorImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
+}
+
+__make GUIObject_SetTitleBackgroundImage
+{
+  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+  __O__;
 }

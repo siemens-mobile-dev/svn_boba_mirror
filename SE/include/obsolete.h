@@ -143,6 +143,7 @@ DEPRECATE(IS_NEEDED_BOOK,isAudioPlayerBook,get_IsAudioPlayerBook)
 DEPRECATE(int,isDataBrowserBook,IsDataBrowserBook)
 DEPRECATE(IS_NEEDED_BOOK,isCameraBook,get_IsCameraBook)
 DEPRECATE(IS_NEEDED_BOOK,isSoundRecorderBook,get_IsSoundRecorderBook)
+DEPRECATE(wchar_t*,FSX_isNameInvalid,FSX_GetInvalidChar)
 
 #else
 
@@ -285,6 +286,7 @@ DEPRECATE(IS_NEEDED_BOOK,isSoundRecorderBook,get_IsSoundRecorderBook)
 #define isDataBrowserBook IsDataBrowserBook
 #define isCameraBook get_IsCameraBook
 #define isSoundRecorderBook get_IsSoundRecorderBook
+#define FSX_isNameInvalid FSX_GetInvalidChar
 
 #endif
 

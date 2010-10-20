@@ -63,7 +63,7 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("CreateTXTFile, v.1.1\r\n\r\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_SID,STR("CreateTXTFile, v.1.2\r\n\r\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -223,8 +223,9 @@ void CreateList(void)
 {
   GUI_LIST * list_menu=CreateListMenu((BOOK*)CreateFileBook,0);
   CreateFileBook->list=list_menu;
-  int str_id;
+  int str_id=EMPTY_SID;
   textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",SID_ANY_LEN,&str_id);
+  if (str_id==EMPTY_SID) str_id=Str2ID("Select folder",0x6,SID_ANY_LEN);
   GUIObject_SetTitleText(list_menu,str_id);
   ListMenu_SetItemCount(list_menu,2);
   OneOfMany_SetOnMessage(list_menu,list_callback);
@@ -262,8 +263,9 @@ void CreateOOMList(void)
 {
   GUI_ONEOFMANY * oom_menu=CreateOneOfMany((BOOK*)CreateFileBook);
   CreateFileBook->oom_list=oom_menu;
-  int str_id;
+  int str_id=EMPTY_SID;
   textidname2id(L"ES_TEXT_FORMAT_TXT",SID_ANY_LEN,&str_id);
+  if (str_id==EMPTY_SID) str_id=Str2ID("Text format",0x6,SID_ANY_LEN);
   GUIObject_SetTitleText(oom_menu,str_id);
   OneOfMany_SetItemCount(oom_menu,2);
   OneOfMany_SetOnMessage(oom_menu,oom_callback);
@@ -289,24 +291,23 @@ PAGE_DESC base_page ={"CreateFile_BasePage",0,CreateFile_PageEvents};
 
 void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
 {
-  if (FSX_isNameInvalid(string))
+  if (FSX_GetInvalidChar(string))
   {
     int str_id;
     textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
-    MessageBox(EMPTY_SID,str_id, NOIMAGE, 1, 5000,0);
+    MessageBox(EMPTY_SID,str_id, NOIMAGE, 0, 2000,0);
     FILEITEM * item_desc=FILEITEM_Create();
-    wchar_t* fname = new wchar_t[40];
-    fname[0]=0;
-    fname[1]=0;
-    FILEITEM_SetFname(item_desc, fname);
+    wchar_t fname[40];
+    memset(fname,0,sizeof(fname));
     wchar_t * extpos = wstrrchr(string,L'.');
     wstrncpy(fname, string, extpos-string);
+    FILEITEM_SetFname(item_desc, fname);
     FSX_RemoveIllegalSymbolsName(item_desc);
     wchar_t sp[50];
     sp[0]=0;
-    wstrcat(sp, fname);
+    wstrcpy(sp, FILEITEM_GetFname(item_desc));
     wstrcat(sp, extpos);
-    CreateNameInput(Str2ID(sp,0,SID_ANY_LEN),0,1);
+    StringInput_DispObject_SetText(GUIObject_GetDispObject(CreateFileBook->NameInput),Str2ID(sp,0,SID_ANY_LEN));
     FILEITEM_Destroy(item_desc);
   }
   else
@@ -331,7 +332,7 @@ void CreateNameInput(int editable_strID,u16 cursor_pos,char hz)
                                                          VAR_STRINP_FIXED_TEXT(str_id),
                                                          VAR_STRINP_TEXT(editable_strID),
                                                          VAR_STRINP_MIN_LEN(1),
-                                                         VAR_STRINP_MAX_LEN(40),
+                                                         VAR_STRINP_MAX_LEN(39),
                                                          0);
   StringInput_SetCursorPosition(CreateFileBook->NameInput,cursor_pos,hz);
 }

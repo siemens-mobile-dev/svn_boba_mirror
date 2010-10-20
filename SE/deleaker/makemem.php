@@ -18,8 +18,9 @@
   }
 
 
-  function doargument(&$s,&$types,&$names,&$count,&$unkarg)
+  function doargument(&$s,&$types,&$names,&$count,&$unkarg,&$defvalue)
   {
+        unset($defvalue);
         while(preg_match("/^(.*)\/\*.*\*\/(.*)$/",$s,$m))
         {
           $s=$m[1].$m[2];
@@ -39,9 +40,11 @@
               $names[$count++]="__unknwnargname".$unkarg;
             }else
 
-            if(preg_match("/^(.*?)([^\*\s]+)$/",$s,$as2))
+            if(preg_match("/^(.*?)([^\*\s]+)(\s*=.*)?$/",$s,$as2))
             {
-              $types[$count]=$s;
+              if(isset($as2[3]))
+                $defvalue[$count]=$as2[3];
+              $types[$count]=$as2[1].$as2[2];
               $names[$count++]=$as2[2];
             }else
 
@@ -163,7 +166,7 @@
           {
             if(preg_match("/^([^\(]+?)\s*,\s*(.*)$/",$as,$m3))
             {
-              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg);
+              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg,$def);
               $as=$m3[2];
               $unkarg++;
             }else
@@ -182,12 +185,12 @@
               }
               $m3[2]=trim($m3[2]);
               if($m3[2]!="" && $m3[2][0]==',')$m3[2]=trim(substr($m3[2],1));
-              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg);
+              doargument($m3[1],$arglisttype,$arglistname,$arglistsize,$unkarg,$def);
               $as=$m3[2];
               $unkarg++;
             }else
             {
-              doargument($as,$arglisttype,$arglistname,$arglistsize,$unkarg);
+              doargument($as,$arglisttype,$arglistname,$arglistsize,$unkarg,$def);
               $as="";
             }
           }
@@ -203,23 +206,25 @@
               fprintf($fh,"%s",$arglistname[$j]);
               if($j<$arglistsize-1)fprintf($fh,", ");
             }
-            fprintf($fh,") __deleaker_%s(",$name);
+            fprintf($fh,") __deleaker_%s( __FILE__,  __LINE__",$name);
             for($j=0;$j<$arglistsize;$j++)
             {
-              fprintf($fh,"%s, ",$arglistname[$j]);
+              fprintf($fh,", %s",$arglistname[$j]);
             }
-            fprintf($fh,"__FILE__,  __LINE__)\r\n");
+            fprintf($fh," )\r\n");
           }
 
-          fprintf($fcpp,"%s __deleaker_%s(",$rettype,$name);
-          fprintf($fh,"%s __deleaker_%s(",$rettype,$name);
+          fprintf($fcpp,"%s __deleaker_%s( char* __file__, int __line__",$rettype,$name);
+          fprintf($fh,"%s __deleaker_%s( char* __file__, int __line__",$rettype,$name);
           for($j=0;$j<$arglistsize;$j++)
           {
-            fprintf($fcpp,"%s, ",$arglisttype[$j]);
-            fprintf($fh,"%s, ",$arglisttype[$j]);
+            fprintf($fcpp,", %s",$arglisttype[$j]);
+            fprintf($fh,", %s",$arglisttype[$j]);
+            if(isset($def[$j]))
+              fprintf($fh,"%s",$def[$j]);
           }
-          fprintf($fcpp,"char* __file__,  int __line__)\r\n");
-          fprintf($fh,"char* __file__,  int __line__);\r\n");
+          fprintf($fcpp," )\r\n");
+          fprintf($fh," );\r\n");
 
           unset($globalfn[$curfname]);
           for($l=$i+1;$l<sizeof($f);$l++)

@@ -21,6 +21,7 @@ enum trace_types
   trace_timer,
   trace_file,
   trace_hook,
+  trace_dll,
 
   trace_unallocated,
 
@@ -34,6 +35,7 @@ static char* leaktypes[]={
   "timer",
   "file",
   "hook",
+  "dll",
 
   "unallocated"
 };
