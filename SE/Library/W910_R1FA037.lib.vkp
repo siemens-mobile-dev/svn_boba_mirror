@@ -410,7 +410,7 @@
 0A94: 00000000 9D506811 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 C57C6211 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 312EFE10 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
-0AA0: 00000000 8963FB10 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: 00000000 8963FB10 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 11A7FF10 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: 00000000 E5A6FF10 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: 00000000 8DA6FF10 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -698,9 +698,12 @@
 0F14: 00000000 F5856211 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 55E71811 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 F9456911 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 ED606D11 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 ED606D11 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 ;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 ;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+;0F2C: xxxxxxxx yyyyyyyy ; 3CB: void OSE_GetShell( void** pInterface );
+0F30: 00000000 BD065110 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+0F34: 00000000 65110A10 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 
