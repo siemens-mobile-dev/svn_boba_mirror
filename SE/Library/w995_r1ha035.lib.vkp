@@ -183,8 +183,8 @@
 0708: 00000000 7079A24B ;81C2: LIST** ROOT_APP( void );
 070C: 00000000 39750A14 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 0710: 00000000 6D541014 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-0714: 00000000 358D9615 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
-0718: 00000000 0944D414 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
+0714: 00000000 A9CC4C10 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
+0718: 00000000 C9CC4C10 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 071C: 00000000 71750A14 ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
 0720: 00000000 55F60014 ; 1C8: int IsRightNowBook( BOOK* book );
 0724: 00000000 357A1A14 ; 1C9: int IsVolumeControllerBook( BOOK* book );
@@ -410,7 +410,7 @@
 0A94: 00000000 9DE7FD14 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 A5A52D14 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 05D9DC14 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
-0AA0: 00000000 DD190E14 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: 00000000 DD190E14 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 99BE2614 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: 00000000 85BE2614 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: 00000000 EDBC2614 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -698,9 +698,12 @@
 0F14: 00000000 15419715 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 0F18: 00000000 99759215 ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 7D73E814 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 411E4614 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 411E4614 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 0F24: 00000000 05684D14 ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 0F28: 00000000 41E81314 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+0F2C: 00000000 B1A11614 ; 3CB: void OSE_GetShell( void** pInterface );
+0F30: 00000000 B5923914 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+0F34: 00000000 259D1E10 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 

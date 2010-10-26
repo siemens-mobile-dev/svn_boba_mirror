@@ -411,7 +411,7 @@
 0A94: 00000000 5D7FD414 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 D9D32A14 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 913E0614 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
-0AA0: 00000000 A54A0A14 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: 00000000 A54A0A14 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 E1CD1F14 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: 00000000 516C3914 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: 00000000 F1DB2914 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -612,7 +612,7 @@
 0DB8: 00000000 CDBA0C14 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 0DBC: 00000000 FD077E10 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 25801315 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
-0DC4: 00000000 99255110 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC4: 00000000 F12B5110 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
 0DC8: 00000000 519B2314 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 0DCC: 00000000 715D7C15 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: 00000000 6DA22C14 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
