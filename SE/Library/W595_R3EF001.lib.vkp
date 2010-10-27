@@ -107,7 +107,7 @@
 05D0: 00000000 69DFA711 ; 174: void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
 05D4: 00000000 BD58B010 ; 175: char* manifest_GetParam( const char* buf, const char* param_name, int unk );
 05D8: 00000000 85989510 ; 176: int lseek( int file, int offset, int mode );
-05DC: 00000000 157F0010 ;8177: int get_VBUFFER( void ); //nullsub(ret 0)
+05DC: 00000000 00000000 ;8177: int get_VBUFFER( void );
 05E0: 00000000 2B590010 ; 178: void SetLampLevel( int level ); //nullsub(ret 0)
 05E4: 00000000 2D46AC11 ; 179: void* List_RemoveAt( LIST* lst, int index );
 05E8: 00000000 595E0010 ; 17A: PROCESS GetCurrentPID( void );
@@ -308,8 +308,8 @@
 08F4: 00000000 B5559C10 ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
 08F8: 00000000 4D549C10 ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
-0900: 00000000 2B590010 ; 240: void JavaSession_Manager( int cmd ); //nullsub(ret 0)
-0904: 00000000 2B590010 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
+;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager( int cmd );
+;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
 0908: 00000000 D11BA5ED ; 242: STRID TextCopyId( STRID );
 090C: 00000000 F90DDF10 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 C5EAA711 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
@@ -412,7 +412,7 @@
 0A94: 00000000 A9D47711 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 0DE2A711 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 5DB3B210 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
-0AA0: 00000000 F5AC9510 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: 00000000 F5AC9510 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 952F7F11 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: 00000000 492F7F11 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: 00000000 112F7F11 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -700,9 +700,12 @@
 0F14: 00000000 21ECA711 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 0F1C: 00000000 3DA8DD10 ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: 00000000 B1BB7110 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: 00000000 B1BB7110 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 ;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 ;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+;0F2C: xxxxxxxx yyyyyyyy ; 3CB: void OSE_GetShell( void** pInterface );
+;0F30: xxxxxxxx yyyyyyyy ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+;0F34: xxxxxxxx yyyyyyyy ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 

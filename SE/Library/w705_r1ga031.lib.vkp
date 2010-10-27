@@ -106,7 +106,7 @@
 05D0: 00000000 E5733014 ; 174: void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
 05D4: 00000000 A9991F14 ; 175: char* manifest_GetParam( const char* buf, const char* param_name, int unk );
 05D8: 00000000 19B81714 ; 176: int lseek( int file, int offset, int mode );
-05DC: 00000000 21000014 ;8177: int get_VBUFFER( void ); //nullsub(ret 0)
+05DC: 00000000 00000000 ;8177: int get_VBUFFER( void );
 05E0: 00000000 7D6F3614 ; 178: void SetLampLevel( int level );
 05E4: 00000000 F51A3114 ; 179: void* List_RemoveAt( LIST* lst, int index );
 05E8: 00000000 2D5A1D10 ; 17A: PROCESS GetCurrentPID( void );
@@ -308,7 +308,7 @@
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 ;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager( int cmd );
-0904: 00000000 21000014 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
+;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
 0908: 00000000 D11BA5ED ; 242: STRID TextCopyId( STRID );
 090C: 00000000 799B4814 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 9DB90414 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );

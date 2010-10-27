@@ -106,7 +106,7 @@
 05D0: 00000000 F94C3145 ; 174: void ListMenu_SetOnMessage( GUI_LIST*, int (*proc)( GUI_MESSAGE* ) );
 05D4: 00000000 B5642745 ; 175: char* manifest_GetParam( const char* buf, const char* param_name, int unk );
 05D8: 00000000 510CE944 ; 176: int lseek( int file, int offset, int mode );
-05DC: 00000000 0B261444 ;8177: int get_VBUFFER( void ); //nullsub(void)
+05DC: 00000000 00000000 ;8177: int get_VBUFFER( void );
 05E0: 00000000 9D842D45 ; 178: void SetLampLevel( int level );
 05E4: 00000000 0DF31A45 ; 179: void* List_RemoveAt( LIST* lst, int index );
 05E8: 00000000 A1592C44 ; 17A: PROCESS GetCurrentPID( void );
@@ -307,8 +307,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
-0900: 00000000 FFEEDD44 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
-0904: 00000000 FDEEDD44 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
+;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager( int cmd );
+;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
 0908: 00000000 5DDC3345 ; 242: STRID TextCopyId( STRID );
 090C: 00000000 B5602A45 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 91573145 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
@@ -411,7 +411,7 @@
 0A94: 00000000 99BD3645 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 C14F3145 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 CD67EB44 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
-0AA0: 00000000 711CE944 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: 00000000 711CE944 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 DDCDEC44 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: 00000000 ADCDEC44 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: 00000000 1DCDEC44 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -705,6 +705,7 @@
 0F2C: 00000000 5DE3FF44 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 05BF5544 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 0F34: 00000000 55392C44 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
+
 
 
 
