@@ -154,7 +154,7 @@
 0690: FFFFFFFF C976C944 ; 1A4: int FreeMessage( void** Mess );
 0694: FFFFFFFF 0D93E344 ; 1A5: void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
 0698: FFFFFFFF BD101445 ; 1A6: char* UIEventName( int event );
-069C: FFFFFFFF 75AF284C ;81A7: __thumb char* MissedEvents( void );
+069C: FFFFFFFF 75AF284C ;81A7: char* MissedEvents( void );
 06A0: FFFFFFFF D5D40445 ; 1A8: void UI_Event( int event );
 06A4: FFFFFFFF E1D40445 ; 1A9: void UI_Event_wData( int event, void* message, void (*free_proc)( void* ) );
 06A8: FFFFFFFF 05D50445 ; 1AA: void UI_Event_toBookID( int event, int BookID );
@@ -373,9 +373,9 @@
 09FC: FFFFFFFF 1D87B344 ; 27F: char* strncpy( char* dest, const char* source, int maxlen );
 0A00: FFFFFFFF 0586B344 ; 280: char* strcat( char* dest, const char* src );
 0A04: FFFFFFFF 6DF6D244 ; 281: void GUIObject_SetTitleType( GUI* , int type );
-0A08: FFFFFFFF 15A5D544 ; 282: __thumb void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
-0A0C: FFFFFFFF 2D0A0D45 ; 283: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
-0A10: FFFFFFFF AD0B0D45 ; 284: __thumb int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
+0A08: FFFFFFFF 15A5D544 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
+0A0C: FFFFFFFF 2D0A0D45 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
+0A10: FFFFFFFF AD0B0D45 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
 ;0A14: xxxxxxxx yyyyyyyy ;8285: SURFACE** get_Surfaces( void );
 0A18: FFFFFFFF BD88EF44 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A1C: FFFFFFFF A9BBDB44 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
@@ -411,7 +411,7 @@
 0A94: FFFFFFFF 7146D344 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: FFFFFFFF D9A0D544 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: FFFFFFFF E58CB344 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero ); //nullsub(void)
-0AA0: FFFFFFFF F59A0D45 ; 2A8: int FSX_isNameInvalid( wchar_t* name );
+0AA0: FFFFFFFF F59A0D45 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: FFFFFFFF 89D5E144 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
 0AA8: FFFFFFFF F5D4E144 ; 2AA: void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 0AAC: FFFFFFFF 45D3E144 ; 2AB: void DataBrowserDesc_SetSelectAction( void* DataBrowserDesc, int state );
@@ -699,7 +699,12 @@
 0F14: FFFFFFFF BDA6D544 ; 3C5: int GUIonMessage_GetSearchStringLength( GUI_MESSAGE* msg );
 ;0F18: xxxxxxxx yyyyyyyy ; 3C6: int EqualizerGain_Get( int AudioSessionID, int Band, int* Level );
 ;0F1C: xxxxxxxx yyyyyyyy ; 3C7: int Theme_DestroyMenuIcons( void );
-0F20: FFFFFFFF F962D644 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void* pInterface );
+0F20: FFFFFFFF F962D644 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
+;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
+;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
+;0F2C: xxxxxxxx yyyyyyyy ; 3CB: void OSE_GetShell( void** pInterface );
+;0F30: xxxxxxxx yyyyyyyy ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
+;0F34: xxxxxxxx yyyyyyyy ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 

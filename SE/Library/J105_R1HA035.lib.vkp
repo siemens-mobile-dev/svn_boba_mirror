@@ -317,7 +317,7 @@
 091C: 00000000 7DB4EC14 ; 247: void GoMusic( void );
 0920: 00000000 11DE2814 ; 248: void Vibra_Off (int t1);
 ;0924: xxxxxxxx yyyyyyyy ; 249:
-0928: 00000000 9CCC7D15 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
+0928: 00000000 9DCC7D15 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 F99D0714 ; 24B: int GetSilent( void );
 0930: 00000000 01163414 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
 0934: 00000000 5D9F0714 ; 24D: int GetAudioSettings( int what, char* retvalue );
