@@ -17,8 +17,8 @@
 #define PATH_OTHER_INT        L"/usb/other"
 #define PATH_OTHER_EXT        L"/card/other"
 
-#define PATH_ELF_ROOT_INT     L"/usb/other"
-#define PATH_ELF_ROOT_EXT     L"/card/other"
+#define PATH_ELF_ROOT_INT     L"/usb/other/ZBin"
+#define PATH_ELF_ROOT_EXT     L"/card/other/ZBin"
 #define PATH_ELF_INT          L"/usb/other/ZBin"
 #define PATH_ELF_EXT          L"/card/other/ZBin"
 #define PATH_ELF_DAEMONS_INT  L"/usb/other/ZBin/Daemons"
