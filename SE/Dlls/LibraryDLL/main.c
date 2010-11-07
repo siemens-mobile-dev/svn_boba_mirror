@@ -307,7 +307,7 @@ int dll_MetaData_Desc_GetTrackNum_0( void* MetaData_Desc, int __NULL )
 int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset )
 {
   COVER_INFO_DESC cover_info;
-  ((METADATA_DESC*)MetaData_Desc)->pMetaData->GetCoverInfo(&cover_info);
+  if (((METADATA_DESC*)MetaData_Desc)->pMetaData->GetCoverInfo(&cover_info)<0) return(0);
   *cover_type = cover_info.cover_type;
   *size = cover_info.size;
   *cover_offset = cover_info.cover_offset;
