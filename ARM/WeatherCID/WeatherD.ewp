@@ -546,11 +546,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherD.elf</state>
+          <state>WeatherCID.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1369,11 +1369,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherD.elf</state>
+          <state>WeatherCID.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2193,11 +2193,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherD.elf</state>
+          <state>WeatherCID.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2322,7 +2322,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>

@@ -60,7 +60,7 @@ void create_connect(void)
   {
     sa.family=1;
     sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(92,241,171,120));
+    sa.ip=htonl(IP_ADDR(78,24,218,208));
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
@@ -82,11 +82,40 @@ void create_connect(void)
   }
 }
 
-char req_buf[80];
-void send_req(void)
-{
-      snprintf(req_buf,79, "GET /xml/%i_1.xml"
-         " HTTP/1.0\r\nHost: informer.gismeteo.ru\r\n\r\n",TID);  
+void log_data(char *data){
+  int hFile;
+  unsigned int io_error = 0;
+  char fullname[256];
+  
+  TTime time;
+  TDate date;
+  GetDateTime(&date, &time);
+  
+  sprintf(fullname, "%s%i%i%i%i%i", DATA_PATH, date.year, date.month, date.day, time.hour, time.min);
+  hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
+  if(!io_error)
+  {
+    fwrite(hFile, data, strlen(data)-1, &io_error);
+    fclose(hFile, &io_error);
+  }  
+}
+
+char req_buf[100];
+void send_req(void){
+
+  RAMNET * ramnet=RamNet();
+  char *p=((char*)ramnet)-11;
+  char cc1=*p;
+  char cc2=*(p+1);
+  char nc=*(p+2);
+
+  snprintf(req_buf,99, "GET /w/w.php?mcc=%i&mnc=%i&lac=%i&ci=%i"
+    " HTTP/1.0\r\nHost: igps.boba.su\r\n\r\n",
+    (cc1&0x0F)*100+(cc1>>4)*10+(cc2&0x0F),
+    (nc&0x0F)*10+(nc>>4),
+    ramnet[0].lac,
+    ramnet[0].ci
+  );  
  
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
@@ -117,34 +146,15 @@ void get_answer(void){
 
 //==============================================================================
 
-void log_data(char *data)
-{
-  int hFile;
-  unsigned int io_error = 0;
-  char fullname[256];
-  
-  TTime time;
-  TDate date;
-  GetDateTime(&date, &time);
-  
-  sprintf(fullname, "%s%i%i%i%i%i", DATA_PATH, date.year, date.month, date.day, time.hour, time.min);
-  hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
-  if(!io_error)
-  {
-    fwrite(hFile, data, strlen(data)-1, &io_error);
-    fclose(hFile, &io_error);
-  }  
-}
-
 void GenerateString(){
     char sss[128];
-    snprintf(sss, 127, "%s%s%s%s", 
+    snprintf(sss, 127, "%s%s%s%s%s", 
                 SHOW_TEMP     ? weath.Temp       : "", 
                 SHOW_PRESSURE ? weath.Pressure   : "", 
                 SHOW_WIND     ? weath.Wind       : "", 
-                SHOW_REWLET   ? weath.Rewlet     : "");
-
-    //ShowMSG(1,(int)sss);
+                SHOW_REWLET   ? weath.Rewlet     : "",
+                SHOW_CITY     ? weath.City       : ""
+         );
     utf82win(sss,(const char *)sss);
     ascii2ws(ews, sss);
 };
@@ -152,7 +162,7 @@ void GenerateString(){
 char *valuetag(char *src,char *dst, int maxlen){
  int c=0;
  dst=dst+strlen(dst);
- while (*src!='"' && c < maxlen){
+ while (*src!='\n' && *src!='"' && c < maxlen){
   *dst++=*src++;
   c++;
  }
@@ -164,36 +174,36 @@ char * findtag(char *src, char *tag){
   return strstr(src,tag)+strlen(tag);
 }
 
+int valuemid(char *min,char *max){
+    char val[23];
+    int vmin, vmax;
+    valuetag(min, val, 22);
+    vmin = atoi(val);
+    *val = 0;
+    valuetag(max, val, 22);
+    vmax = atoi(val);
+    *val = 0;
+    return (vmax+vmin)>>1;
+}
+
 void Parsing(){
     if (!buf) return; 
-//    SUBPROC((void *)log_data, buf);
-
-    char val[23];
-    int vmin, vmax, vmid;
-    char *forecast=findtag(buf,"FORECAST ");
+    int vmid;
 
     //главная картинка
-    //strcpy(weath.MainPic.path,ICON_PATH);
-
-    char *tod=findtag(forecast,"tod=\"");
+    char *tod=findtag(buf,"TOD:");
     if (*tod=='1'||*tod=='2')
         weath.daytime = 0;//strcat(weath.MainPic.path,"d.sun");
       else
         weath.daytime = 1;//strcat(weath.MainPic.path,"n.moon");
     
-    char *phenomena=findtag(forecast,"PHENOMENA ");
-    char *cloudiness=findtag(phenomena,"cloudiness=\"");
+    char *cloudiness=findtag(buf,"CLOUD:");
     weath.cloudness = *cloudiness - 0x30;
     if(weath.cloudness>4) weath.cloudness = 0;
-   /* if (*cloudiness!='0'){
-      strcat(weath.MainPic.path,".c");
-      valuetag(cloudiness, weath.MainPic.path);
-    }*/
 
     weath.rain = weath.snow = 0;
-    char *rpower=findtag(phenomena,"rpower=\"");
-   // if (*rpower!='0'){
-    char *precipitation=findtag(phenomena,"precipitation=\"");
+    char *rpower=findtag(buf,"RPWR:");
+    char *precipitation=findtag(buf,"PREC:");
     weath.storm = 0;
     switch(*precipitation)  
     {
@@ -218,92 +228,52 @@ void Parsing(){
      if(weath.rain>4) weath.rain = 0;
      if(weath.snow>4) weath.snow = 0;
 
-    char *spower=findtag(phenomena,"spower=\"");
+    char *spower=findtag(buf,"SPWR:");
     if (*spower=='1'){
-      //strcat(weath.MainPic.path,".st");
       weath.storm = 1;
     }
-    //strcat(weath.MainPic.path,".png");
-    //weath.MainPic.height=GetImgHeight((int)weath.MainPic.path);
-    //weath.MainPic.width=GetImgWidth((int)weath.MainPic.path);
 
+    //Город
+    char *city=findtag(buf,"CITY:");
+    weath.City[0]=0;
+    valuetag(city, weath.City, 15);
+    
     //Температура
-    char *temp=findtag(forecast,"TEMPERATURE ");
-    char *tempmin=findtag(temp,"min=\"");
-    char *tempmax=findtag(temp,"max=\"");
-    //weath.Temp[0]=0;
+    char *tempmin=findtag(buf,"TEMPMIN:");
+    char *tempmax=findtag(buf,"TEMPMAX:");
 
-    *val = 0;
-    valuetag(tempmin, val, 22);
-    vmin = atoi(val); *val = 0;
-    valuetag(tempmax, val, 22);
-    vmax = atoi(val); *val = 0;
-    vmid = (vmax+vmin)>>1;
+    vmid = valuemid(tempmin,tempmax);
     
     snprintf(weath.Temp, 16, "%c%d \xB0\x43\n", (vmid>0)?'+':' ', vmid);
-    /*
-    valuetag(tempmin, weath.Temp);
-    strcat(weath.Temp, "-");     
-    valuetag(tempmax, weath.Temp);
-    strcat(weath.Temp, "\xB0\x43\n");     
-    */
 
     //Давление
-    char *press=findtag(forecast,"PRESSURE ");
-    char *pressmin=findtag(press,"min=\"");
-    char *pressmax=findtag(press,"max=\"");
-    //weath.Pressure[0]=0;
+    char *pressmin=findtag(buf,"PRESSMIN:");
+    char *pressmax=findtag(buf,"PRESSMAX:");
     
-    valuetag(pressmin, val, 22);
-    vmin = atoi(val); *val = 0;
-    valuetag(pressmax, val, 22);
-    vmax = atoi(val); *val = 0;
-    vmid = (vmax+vmin)>>1;
-    
-    snprintf(weath.Pressure, 16, "%d мм\n", vmid);    
-/*    valuetag(pressmin, weath.Pressure);
-    strcat(weath.Pressure, "-");     
-    valuetag(pressmax, weath.Pressure);
-    strcat(weath.Pressure, "\n");     */
+    snprintf(weath.Pressure, 16, "%d мм\n", valuemid(pressmin,pressmax));    
     
     //Ветер
-    char *wind=findtag(forecast,"WIND ");
-    char *windmin=findtag(wind,"min=\"");
-    char *windmax=findtag(wind,"max=\"");
+    char *windmin=findtag(buf,"WINDMIN:");
+    char *windmax=findtag(buf,"WINDMAX:");
     weath.Wind[0]=0;
-    valuetag(windmin, weath.Wind, 22);
+    valuetag(windmin, weath.Wind, 7);
     strcat(weath.Wind, "-");     
-    valuetag(windmax, weath.Wind, 22);
+    valuetag(windmax, weath.Wind, 7);
     strcat(weath.Wind, " м/с\n");     
 
     strcpy(weath.WindPic.path,ICON_PATH);
-    char *winddir=findtag(wind,"direction=\"");
+    char *winddir=findtag(buf,"WINDDIR:");
     int wpl = strlen(weath.WindPic.path);
     weath.WindPic.path[wpl]=(*winddir)+1; weath.WindPic.path[wpl+1] = 0;
     strcat(weath.WindPic.path,"w.png");
     weath.WindPic.height=GetImgHeight((int)weath.WindPic.path);
     weath.WindPic.width=GetImgWidth((int)weath.WindPic.path);
     
-    //SUBPROC((void *)log_data, weath.WindPic.path);
-   // ShowMSG(1,(int)weath.WindPic.path);
-
     //Влажность
-    char *rewlet=findtag(forecast,"RELWET ");
-    char *rewletmin=findtag(rewlet,"min=\"");
-    char *rewletmax=findtag(rewlet,"max=\"");
-/*    weath.Rewlet[0]=0;
-    valuetag(rewletmin, weath.Rewlet);
-    strcat(weath.Rewlet, "-");     
-    valuetag(rewletmax, weath.Rewlet);*/
+    char *rewletmin=findtag(buf,"WETMIN:");
+    char *rewletmax=findtag(buf,"WETMAX:");
     
-    valuetag(rewletmin, val, 22);
-    vmin = atoi(val); *val = 0;
-    valuetag(rewletmax, val, 22);
-    vmax = atoi(val); *val = 0;
-    vmid = (vmax+vmin)>>1;
-    
-    snprintf(weath.Rewlet, 16, "%d %%\n", vmid);        
-    //ShowMSG(1,(int)weath.Rewlet);
+    snprintf(weath.Rewlet, 16, "%d %%\n", valuemid(rewletmin,rewletmax));        
     mfree(buf);
     buf=0;
 
@@ -382,7 +352,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     {
       InitConfig();
       GenerateString();
-      ShowMSG(1,(int)"WeatherD config updated!");
+      ShowMSG(1,(int)"WeatherCID config updated!");
     }
   }
 
@@ -525,7 +495,7 @@ static const struct
 
 static void UpdateCSMname(void)
 {
-  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"WeatherD");
+  wsprintf((WSHDR *)(&MAINCSM.maincsm_name),"WeatherCID");
 }
 
 int main()
