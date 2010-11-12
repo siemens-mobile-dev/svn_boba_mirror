@@ -177,12 +177,12 @@ char * findtag(char *src, char *tag){
 int valuemid(char *min,char *max){
     char val[23];
     int vmin, vmax;
+    *val = 0;
     valuetag(min, val, 22);
     vmin = atoi(val);
     *val = 0;
     valuetag(max, val, 22);
     vmax = atoi(val);
-    *val = 0;
     return (vmax+vmin)>>1;
 }
 
