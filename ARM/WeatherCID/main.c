@@ -3,7 +3,7 @@
 #include "string_works.h"
 #include "WeatherD.h"
 
-#define BUFFSIZE 0x500
+#define BUFFSIZE 0x200
 //=============================================================================
 
 WSHDR *ews;
@@ -135,11 +135,14 @@ void end_socket(void)
 }
 
 void get_answer(void){
-  int i=recv(sock,buf+pbuf,BUFFSIZE-pbuf,0);
+  int i=recv(sock,buf+pbuf,BUFFSIZE-1-pbuf,0);
   if (i>=0){
     pbuf+=i;
-    if (pbuf>=BUFFSIZE) end_socket();
+    if (pbuf>=BUFFSIZE-1)
+      buf[pbuf]=0;
+      end_socket();
   }else{
+    buf[pbuf]=0;
     end_socket();
   }
 }
@@ -160,9 +163,11 @@ void GenerateString(){
 };
 
 char *valuetag(char *src,char *dst, int maxlen){
+ if (!src) return 0;
+ if (!*src) return src;
  int c=0;
  dst=dst+strlen(dst);
- while (*src!='\n' && *src!='"' && c < maxlen){
+ while (*src!='\n' && *src!='"' && *src!=0 && c < maxlen){
   *dst++=*src++;
   c++;
  }
@@ -171,7 +176,10 @@ char *valuetag(char *src,char *dst, int maxlen){
 }
 
 char * findtag(char *src, char *tag){
-  return strstr(src,tag)+strlen(tag);
+ char *s=strstr(src,tag);
+ if (s)
+   return s+strlen(tag);
+ return 0;
 }
 
 int valuemid(char *min,char *max){
@@ -187,9 +195,10 @@ int valuemid(char *min,char *max){
 }
 
 void Parsing(){
-    if (!buf) return; 
+    if ((!buf)||(!pbuf)) return; 
+    if (!strstr(buf,"200 OK")) return;
+    
     int vmid;
-
     //главная картинка
     char *tod=findtag(buf,"TOD:");
     if (*tod=='1'||*tod=='2')
@@ -355,10 +364,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       ShowMSG(1,(int)"WeatherCID config updated!");
     }
   }
-
-//  if (weath.Temp[0]=='+' || weath.Temp[0]=='-')
-  {
-
     #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
     CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
     if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/) //Если IdleGui на самом верху
@@ -390,7 +395,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
       }
    }}    
-  }
   
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
