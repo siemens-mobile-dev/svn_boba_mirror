@@ -158,7 +158,7 @@ void GenerateString(){
                 SHOW_REWLET   ? weath.Rewlet     : "",
                 SHOW_CITY     ? weath.City       : ""
          );
-    utf82win(sss,(const char *)sss);
+//    utf82win(sss,(const char *)sss);
     ascii2ws(ews, sss);
 };
 
@@ -205,7 +205,6 @@ void Parsing(){
         weath.daytime = 0;//strcat(weath.MainPic.path,"d.sun");
       else
         weath.daytime = 1;//strcat(weath.MainPic.path,"n.moon");
-    
     char *cloudiness=findtag(buf,"CLOUD:");
     weath.cloudness = *cloudiness - 0x30;
     if(weath.cloudness>4) weath.cloudness = 0;
@@ -250,15 +249,12 @@ void Parsing(){
     //Температура
     char *tempmin=findtag(buf,"TEMPMIN:");
     char *tempmax=findtag(buf,"TEMPMAX:");
-
     vmid = valuemid(tempmin,tempmax);
-    
     snprintf(weath.Temp, 16, "%c%d \xB0\x43\n", (vmid>0)?'+':' ', vmid);
 
     //Давление
     char *pressmin=findtag(buf,"PRESSMIN:");
     char *pressmax=findtag(buf,"PRESSMAX:");
-    
     snprintf(weath.Pressure, 16, "%d мм\n", valuemid(pressmin,pressmax));    
     
     //Ветер
@@ -268,8 +264,7 @@ void Parsing(){
     valuetag(windmin, weath.Wind, 7);
     strcat(weath.Wind, "-");     
     valuetag(windmax, weath.Wind, 7);
-    strcat(weath.Wind, " м/с\n");     
-
+    strcat(weath.Wind, "м/с\n");     
     strcpy(weath.WindPic.path,ICON_PATH);
     char *winddir=findtag(buf,"WINDDIR:");
     int wpl = strlen(weath.WindPic.path);
@@ -281,8 +276,8 @@ void Parsing(){
     //Влажность
     char *rewletmin=findtag(buf,"WETMIN:");
     char *rewletmax=findtag(buf,"WETMAX:");
-    
     snprintf(weath.Rewlet, 16, "%d %%\n", valuemid(rewletmin,rewletmax));        
+
     mfree(buf);
     buf=0;
 

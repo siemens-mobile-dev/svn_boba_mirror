@@ -25,9 +25,7 @@ typedef struct{
 }TPic;
 
 typedef struct{
-  TPic dt, c, r, s, st;
-  TPic //MainPic,
-       WindPic;
+  TPic dt, c, r, s, st, WindPic;
   char City[16],
        Temp[16],
        Pressure[16],
