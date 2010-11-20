@@ -4,8 +4,8 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-#define ELFNAME "Management v.2.3"
-#define ABOUT L"Management\nv.2.3\n\n(c)Ploik & BigHercules\n\nRespect: Slawwan\nUltraShot"
+#define ELFNAME "Management"
+#define ABOUT L"Management\nv.3\n\n(c)Ploik & BigHercules"
 
 enum mode_t {
     SHORT_PRESS  = 0,
@@ -47,7 +47,7 @@ int OnAccChangedEvent(void* r0,BOOK* b)
     }
      else
     {
-        UI_Event(UI_FMRADIO_CONTROL_EVENT);
+       UI_Event(UI_FMRADIO_CONTROL_EVENT);
     }
    //}
  }
@@ -109,8 +109,23 @@ enum
 
 int OnCallManagerEvent(void* r0,BOOK* b)
 {
-    switch(((CALLMANAGER_EVENT_DATA*)r0)->CallState)
-       {
+   int eventdata;
+   
+   switch (GetChipID()&CHIPID_MASK)
+   {
+   case CHIPID_DB2000:
+   case CHIPID_DB2010:
+   case CHIPID_DB2020:
+                 eventdata= (((CALLMANAGER_EVENT_DATA*)r0)->CallState);
+                 break;
+   case CHIPID_DB3150:
+   case CHIPID_DB3200:
+   case CHIPID_DB3210:
+   case CHIPID_DB3350:
+                 eventdata=(((CALLMANAGER_EVENT_DATA_A2*)r0)->CallState);
+   }
+        switch (eventdata)
+        {
          /*Поднятие трубки*/
          case CALLMANAGER_CALL_CONNECTED:
          {
@@ -171,114 +186,68 @@ int CheckConfig()
   int player_short_on_press  = 0;
   int player_long_on_press   = 0;
   
-  switch(radioOn){
-  case SHORT_PRESS:
-    radio_short_on_press++;
-    break;
-  case LONG_PRESS:
-    radio_long_on_press++;
-    break;
+  switch(radioOn)
+  {
+    case SHORT_PRESS: radio_short_on_press++;  break;
+    case LONG_PRESS:  radio_long_on_press++;   break;
   }
   
-  switch(radioOff){
-  case SHORT_PRESS:
-    radio_short_press++;
-    break;
-  case LONG_PRESS:
-    radio_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    radio_double_press++;
-    break;
+  switch(radioOff)
+  {
+    case SHORT_PRESS: radio_short_press++;     break;
+    case LONG_PRESS:  radio_long_press++;      break;
+    case DOUBLE_PRESS: radio_double_press++;   break;
   }
 
-  switch(radioNext){
-  case SHORT_PRESS:
-    radio_short_press++;
-    break;
-  case LONG_PRESS:
-    radio_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    radio_double_press++;
-    break;
+  switch(radioNext)
+  {
+    case SHORT_PRESS: radio_short_press++;     break;
+    case LONG_PRESS: radio_long_press++;       break;
+    case DOUBLE_PRESS: radio_double_press++;   break;
   }
 
-  switch(radioPrev){
-  case SHORT_PRESS:
-    radio_short_press++;
-    break;
-  case LONG_PRESS:
-    radio_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    radio_double_press++;
-    break;
+  switch(radioPrev)
+  {
+    case SHORT_PRESS: radio_short_press++;     break;
+    case LONG_PRESS: radio_long_press++;       break;
+    case DOUBLE_PRESS: radio_double_press++;   break;
   }
 
-  switch(playerOn){
-  case SHORT_PRESS:
-    player_short_on_press++;
-    break;
-  case LONG_PRESS:
-    player_long_on_press++;
-    break;
+  switch(playerOn)
+  {
+    case SHORT_PRESS: player_short_on_press++; break;
+    case LONG_PRESS: player_long_on_press++;   break;
   }
   
-  switch(playerOff){
-  case SHORT_PRESS:
-    player_short_press++;
-    break;
-  case LONG_PRESS:
-    player_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    player_double_press++;
-    break;
+  switch(playerOff)
+  {
+    case SHORT_PRESS: player_short_press++;    break;
+    case LONG_PRESS: player_long_press++;      break;
+    case DOUBLE_PRESS: player_double_press++;  break;
   }
 
-  switch(playerNext){
-  case SHORT_PRESS:
-    player_short_press++;
-    break;
-  case LONG_PRESS:
-    player_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    player_double_press++;
-    break;
+  switch(playerNext)
+  {
+    case SHORT_PRESS: player_short_press++;    break;
+    case LONG_PRESS: player_long_press++;      break;
+    case DOUBLE_PRESS: player_double_press++;  break;
   }
 
-  switch(playerPrev){
-  case SHORT_PRESS:
-    player_short_press++;
-    break;
-  case LONG_PRESS:
-    player_long_press++;
-    break;
-  case DOUBLE_PRESS:
-    player_double_press++;
-    break;
+  switch(playerPrev)
+  {
+    case SHORT_PRESS: player_short_press++;    break;
+    case LONG_PRESS: player_long_press++;      break;
+    case DOUBLE_PRESS: player_double_press++;  break;
   }
 
   if((radio_short_press > 1) || (radio_long_press > 1) || (radio_double_press > 1))
-    #ifndef ENG
-      err="Неправильно сконфигурировано управление радио!";
-    #else
-      err="Illegal radio configuration!";
-    #endif
+  err="Неправильно сконфигурировано управление радио!";
+
   else if((player_short_press > 1) || (player_long_press > 1) || (player_double_press > 1))
-    #ifndef ENG
-      err="Неправильно сконфигурировано управление плеером!";
-    #else
-      err="Illegal walkman configuration!";
-    #endif
+  err="Неправильно сконфигурировано управление плеером!";
+
   else if((radio_short_on_press ==  1 && player_short_on_press ==  1) || (radio_long_on_press == 1 && player_long_on_press ==  1))
-    #ifndef ENG
-      err="Неправильно сконфигурирован запуск кнопкой!";
-    #else
-      err="Illegal key run configuration!";
-    #endif
+  err="Неправильно сконфигурирован запуск кнопкой!";
       
   if(err)
   {
@@ -301,15 +270,16 @@ static int onReconfigElf(void *mess ,BOOK *book)
   }
   return(result);
 }
+
 const PAGE_MSG Management_PageEvents[]@ "DYN_PAGE" =
 {
-         ELF_TERMINATE_EVENT,      TerminateElf,
-         ELF_SHOW_INFO_EVENT,      ShowAuthorInfo,
-         ELF_RECONFIG_EVENT,       onReconfigElf,
-         ON_CALLMANAGER_EVENT_TAG, OnCallManagerEvent,
-         ACCESSORIES_ACCESSORY_CONNECTED_EVENT_TAG,OnAccChangedEvent,
-         ACCESSORIES_ACCESSORY_DISCONNECTED_EVENT_TAG,OffAccChangedEvent,
-         NIL_EVENT_TAG,            NULL
+         ELF_TERMINATE_EVENT,                          TerminateElf,
+         ELF_SHOW_INFO_EVENT,                          ShowAuthorInfo,
+         ELF_RECONFIG_EVENT,                           onReconfigElf,
+         ON_CALLMANAGER_EVENT_TAG,                     OnCallManagerEvent,
+         ACCESSORIES_ACCESSORY_CONNECTED_EVENT_TAG,    OnAccChangedEvent,
+         ACCESSORIES_ACCESSORY_DISCONNECTED_EVENT_TAG, OffAccChangedEvent,
+         NIL_EVENT_TAG,                                NULL
 };
 
 PAGE_DESC base_page ={"Management_BasePage",0,Management_PageEvents};
@@ -325,21 +295,21 @@ void MakeAction(int mode)
 {
   if (!AP && !FM)
   {
-    if(mode == playerOn)  UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
-    if(mode == radioOn)   UI_Event(UI_FMRADIO_CONTROL_EVENT);
+    if(mode == playerOn)   UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
+    if(mode == radioOn)    UI_Event(UI_FMRADIO_CONTROL_EVENT);
   }
   else if (AP)
   {
-    if(mode == playerNext) PlayerControl(AP, 6);
-    if(mode == playerPrev) PlayerControl(AP, 7);
+    if(mode == playerNext) UI_Event(UI_MEDIAPLAYER_NEXT_TRACK_EVENT);
+    if(mode == playerPrev) UI_Event(UI_MEDIAPLAYER_PREV_TRACK_EVENT);
     if(mode == playerOff)  UI_Event(UI_MEDIAPLAYER_CONTROL_EVENT);
     return;
   }
   else if (FM)
   {
-    if(mode == radioNext) SwitchRadioStationFromList(FM, 0);
-    if(mode == radioPrev) SwitchRadioStationFromList(FM, 1);
-    if(mode == radioOff)  UI_Event(UI_FMRADIO_CONTROL_EVENT);
+    if(mode == radioNext)  SwitchRadioStationFromList(FM, 0);
+    if(mode == radioPrev)  SwitchRadioStationFromList(FM, 1);
+    if(mode == radioOff)   UI_Event(UI_FMRADIO_CONTROL_EVENT);
   }
 }
 
@@ -407,11 +377,7 @@ int main (void)
   BOOK* alreadyrunned=FindBook(isManagementBook);
   if(alreadyrunned)
   {
-    #ifndef ENG
-      MessageBox(EMPTY_SID, STR("Management headset\nуже запущен"), NOIMAGE, 1 ,5000, 0);
-    #else
-      MessageBox(EMPTY_SID, STR("Management headset\nalready runned"), NOIMAGE, 1 ,5000, 0);
-    #endif
+    MessageBox(EMPTY_SID, STR("Management headset\nуже запущен"), NOIMAGE, 1 ,5000, 0);
     SUBPROC(elf_exit);
   }
   else
@@ -422,7 +388,7 @@ int main (void)
       SUBPROC(elf_exit);
       return 0;
     }
-
+    
     ManagementBook = new BOOK;
     if(!CreateBook(ManagementBook, onCloseManagementBook, &base_page, ELFNAME, -1, 0))
     {
@@ -434,14 +400,3 @@ int main (void)
   }
   return(0);
 }
-
-/*
-  Revision history.
-    2
-      + Изменения в структуре конфигурационного файла
-      + Добавлена возможность раздельного включения плеера и радио (на разные нажатия)
-
-    1.4.4
-      + Возможность компилировать английскую версию
-      + Устранена утечка памяти.
-*/
