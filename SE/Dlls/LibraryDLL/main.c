@@ -583,7 +583,7 @@ OSBOOLEAN dll_get_mem_0( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size )
   buf.to=to;
   buf.size=size;
   
-  return(get_mem_int(0,0,&buf));
+  return(get_mem_int(1,0,&buf));
 }
 #endif
 
