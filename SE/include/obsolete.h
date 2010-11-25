@@ -144,6 +144,10 @@ DEPRECATE(int,isDataBrowserBook,IsDataBrowserBook)
 DEPRECATE(IS_NEEDED_BOOK,isCameraBook,get_IsCameraBook)
 DEPRECATE(IS_NEEDED_BOOK,isSoundRecorderBook,get_IsSoundRecorderBook)
 DEPRECATE(wchar_t*,FSX_isNameInvalid,FSX_GetInvalidChar)
+DEPRECATE(int,CreateSMSCont,MSG_SendMessage_CreateMessage)
+DEPRECATE(int,FreeSMSCont,MSG_SendMessage_DestroyMessage)
+DEPRECATE(int,PrepareSMSCont,MSG_SendMessage_AddRecipient)
+DEPRECATE(int,CteateNewMessage,MSG_SendMessage_Start)
 
 #else
 
@@ -287,6 +291,11 @@ DEPRECATE(wchar_t*,FSX_isNameInvalid,FSX_GetInvalidChar)
 #define isCameraBook get_IsCameraBook
 #define isSoundRecorderBook get_IsSoundRecorderBook
 #define FSX_isNameInvalid FSX_GetInvalidChar
+#define CreateSMSCont MSG_SendMessage_CreateMessage
+#define FreeSMSCont MSG_SendMessage_DestroyMessage
+#define PrepareSMSCont MSG_SendMessage_AddRecipient
+#define CteateNewMessage MSG_SendMessage_Start
+
 
 #endif
 

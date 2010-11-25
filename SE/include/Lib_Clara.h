@@ -756,13 +756,13 @@ __swi __arm void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 __swi __arm void GUIObject_SetFocus( GUI*, int );
 
 #pragma swi_number=0x20C
-__swi __arm int CreateSMSCont( int, void* );
+__swi __arm int MSG_SendMessage_CreateMessage( int, void* );
 #pragma swi_number=0x20D
-__swi __arm int FreeSMSCont( void* );
+__swi __arm int MSG_SendMessage_DestroyMessage( void* );
 #pragma swi_number=0x20E
-__swi __arm int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
+__swi __arm int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
 #pragma swi_number=0x20F
-__swi __arm int CteateNewMessage( int, void*, int );
+__swi __arm int MSG_SendMessage_Start( int, void*, int );
 #pragma swi_number=0x8210
 __swi __arm void* get_APP_DESC_TABLE( void );
 
