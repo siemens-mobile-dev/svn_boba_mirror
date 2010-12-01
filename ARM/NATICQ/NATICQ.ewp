@@ -4119,6 +4119,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\auth.r79</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\cl_work.c</name>
   </file>
   <file>

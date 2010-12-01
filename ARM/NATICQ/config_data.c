@@ -16,7 +16,7 @@ __root const char PASS[9]="";
 //Network settings
 __root const CFG_HDR cfghdr2={CFG_LEVEL,"Hosts and paths",1,0};
   __root const CFG_HDR cfghdr2_1={CFG_STR_WIN1251,"Host",0,127};
-  __root const char NATICQ_HOST[128]="cbsie.dyndns.info; ig.kibab.com; ig.boba.su; himoza.org; ig3.boba.su";
+  __root const char NATICQ_HOST[128]="ig.boba.su;ig1.boba.su;ig2.boba.su;ig3.boba.su;ig4.boba.su;ig5.boba.su";
 
   __root const CFG_HDR cfghdr2_2={CFG_UINT,"Default port",0,65535};
   __root const unsigned int NATICQ_PORT=5050;
@@ -269,6 +269,4 @@ __root const CFG_HDR cfghdr8={CFG_LEVEL,"Notify power",1,0};
   
 
 __root const CFG_HDR cfghdr9={CFG_LEVEL,"",0,0};
-
-
 

@@ -1,16 +1,17 @@
 #include "../inc/swilib.h"
 #include "../inc/cfg_items.h"
 #include "../inc/pnglist.h"
+#include "../inc/xtask_ipc.h"
+#include "../inc/naticq_ipc.h"
 #include "NatICQ.h"
 #include "history.h"
 #include "conf_loader.h"
 #include "mainmenu.h"
 #include "main.h"
 #include "language.h"
-#include "../inc/xtask_ipc.h"
 #include "smiles.h"
-#include "../inc/naticq_ipc.h"
 #include "naticq_ipc.h"
+#include <stdbool.h>
 #include "status_change.h"
 #include "strings.h"
 #include "manage_cl.h"
@@ -18,7 +19,7 @@
 #include "select_smile.h"
 #include "revision.h"
 #include "lang.h"
-
+#include "auth.h"
 
 #ifndef NEWSGOLD
 #define SEND_TIMER
@@ -45,7 +46,6 @@ const char ipc_my_name[32]=IPC_NATICQ_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 
-
 char elf_path[256];
 int maincsm_id;
 int maingui_id;
@@ -57,8 +57,6 @@ char *sd = "%s%d";
 char *sw = "%s%w";
 char *s = "%s";
 char *empty_string = "";
-//
-
 
 void SMART_REDRAW(void)
 {
@@ -70,14 +68,13 @@ void SMART_REDRAW(void)
 }
 
 //По 10 секунд
-#define ACTIVE_TIME 360
+#define ACTIVE_TIME 180
 
 //Максимальное количество сообщений в логе
 #define MAXLOGMSG (20)
 #define MAXCHATSIZE 7168
 
 // Строковые описания статусов
-
 const char S_OFFLINE[]="Offline";
 const char S_INVISIBLE[]="Invisible";
 const char S_AWAY[]="Away";
@@ -88,13 +85,6 @@ const char S_ONLINE[]="Online";
 const char S_FFC[]="FFC";
 
 volatile int SENDMSGCOUNT;
-
-int IsActiveUp=0;
-
-int Is_Vibra_Enabled;
-unsigned int Is_Sounds_Enabled;
-int Is_Show_Offline;
-int Is_Show_Groups;
 
 int S_ICONS[TOTAL_ICONS+1];
 
@@ -138,7 +128,6 @@ static const char * const icons_names[TOTAL_ICONS]=
   "vis4.png",
   "vis5.png"
 };
-
 
 void setup_ICONS(void)
 {
@@ -246,12 +235,13 @@ volatile int silenthide;    //by BoBa 25.06.07
 volatile int disautorecconect;	//by BoBa 10.07
 ///////////
 int Is_Vibra_Enabled;
-unsigned int Is_Sounds_Enabled;
+int Is_Sounds_Enabled;
 int Is_Show_Offline;
 int Is_Show_Groups;
 int CurrentStatus;
 int CurrentXStatus;
 int CurrentPrivateStatus;
+int Is_Active_Up;
 
 //===================================================================
 int InAway()
@@ -284,6 +274,7 @@ void ReadDefSettings(void)
     Is_Show_Groups=def_set.show_groups;
     CurrentStatus=def_set.def_status+1;
     CurrentXStatus=def_set.def_xstatus;
+    Is_Active_Up=def_set.active_up;
   }
   else
   {
@@ -293,6 +284,7 @@ void ReadDefSettings(void)
     Is_Show_Groups=1;
     CurrentStatus=IS_ONLINE;
     CurrentXStatus=0;
+    Is_Active_Up=1;
   }
 }
 
@@ -311,6 +303,7 @@ void WriteDefSettings(void)
     def_set.show_groups=Is_Show_Groups;
     def_set.def_status=CurrentStatus-1;
     def_set.def_xstatus=CurrentXStatus;
+    def_set.active_up=Is_Active_Up;
     fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
     fclose(f,&err);
   }
@@ -328,7 +321,6 @@ extern const char sndGlobal[];
 extern const char sndMsg[];
 extern const char sndMsgSent[];
 extern const unsigned int sndVolume;
-
 
 void Play(const char *fname)
 {
@@ -381,7 +373,7 @@ void start_vibra(void)
 {
   extern const int VIBR_TYPE;
   void stop_vibra(void);
-  if((Is_Vibra_Enabled)&&(!IsCalling())&&!InAway())
+  if((Is_Vibra_Enabled)&&(GetVibraStatus())&&(!IsCalling())&&!InAway())
   {
     extern const unsigned int vibraPower;
     SetVibration(vibraPower);
@@ -580,9 +572,7 @@ int LoadTemplates(CLIST *t)
   return i;
 }
 
-
 //===================================================================
-
 typedef struct
 {
   CSM_RAM csm;
@@ -596,8 +586,6 @@ typedef struct
   WSHDR *ws2;
   int i1;
 }MAIN_GUI;
-
-
 
 int RXstate=EOP; //-sizeof(RXpkt)..-1 - receive header, 0..RXpkt.data_len - receive data
 
@@ -750,7 +738,6 @@ static const MENU_DESC contactlist_menu=
 };
 #endif
 
-//GBSTMR tmr_ping;
 int tenseconds_to_ping;
 
 LOGQ *NewLOGQ(const char *s)
@@ -883,7 +870,6 @@ LOGQ *FindContactLOGQByAck(TPKT *p)
   return q;
 }
 
-
 char ContactT9Key[32];
 
 void UpdateCLheader(void)
@@ -896,7 +882,8 @@ void UpdateCLheader(void)
   }
   else
   {
-    strcpy(clm_hdr_text,def_clm_hdr_text);
+//    clm_hdr_text[0]=FIRST_UCS2_BITMAP+CurrentXStatus;
+    strcpy(&clm_hdr_text[0],def_clm_hdr_text);
     strcpy(clmenu_sk_r,def_clmenu_sk_r);
   }
 }
@@ -1048,7 +1035,8 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     }
     if (key==GREEN_BUTTON)
     {
-      IsActiveUp=!IsActiveUp;
+      Is_Active_Up=!Is_Active_Up;
+      SUBPROC((void*)WriteDefSettings);
       RecountMenu(NULL, 1);
       return(-1);
     }
@@ -1314,9 +1302,12 @@ void create_connect(void)
   DNR_ID=0;
   *socklasterr()=0;
   
-  if(connect_state<2)
-    host_counter = mrand()%(GetHostsCount(NATICQ_HOST)+1);
-  //if(host_counter > GetHostsCount(NATICQ_HOST)-1) host_counter = 0;
+  if(connect_state<2){
+    TTime t;
+    GetDateTime(0,&t);
+    host_counter = t.sec%(GetHostsCount(NATICQ_HOST)+1);
+  }
+
   GetHost(host_counter, NATICQ_HOST, hostbuf);
   hostport = GetPort(host_counter, NATICQ_HOST);
   //host_counter++;
@@ -1510,24 +1501,6 @@ void SendAnswer(int dummy, TPKT *p)
   sendq_p=NULL;
 }
 
-void send_login(int dummy, TPKT *p)
-{
-  connect_state=2;
-  char rev[16];
-  //Кто будет менять в этом месте идентификатор клиента, буду банить на уровне сервера!!!
-  //А Вова будет банить на форуме!
-  snprintf(rev,9,"Sie_%04d",__SVN_REVISION__);
-
-  TPKT *p2=malloc(sizeof(PKT)+8);
-  p2->pkt.uin=UIN;
-  p2->pkt.type=T_SETCLIENT_ID;
-  p2->pkt.data_len=8;
-  memcpy(p2->data,rev,8);
-  SendAnswer(0,p2);
-  SendAnswer(dummy,p);
-  RXstate=-(int)sizeof(PKT);
-}
-
 void do_ping(void)
 {
   TPKT *pingp=malloc(sizeof(PKT));
@@ -1606,9 +1579,10 @@ void get_answer(void)
 	ALLTOTALRECEIVED+=(i+8);			//by BoBa 10.07
 	//Пакет удачно принят, можно разбирать...
 	RXbuf.data[i]=0; //Конец строки
-	switch(RXbuf.pkt.type)
+        aa(&RXbuf);
+        switch(RXbuf.pkt.type)
 	{
-	case T_LOGIN:
+        case T_LOGIN:
 	  //Удачно залогинились
 	  //Посылаем в MMI
 	  n=i+sizeof(PKT)+1;
@@ -1713,6 +1687,7 @@ void get_answer(void)
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  break;
 	}
+        ad(&RXbuf);
 	i=-(int)sizeof(PKT); //А может еще есть данные
       }
     }
@@ -1846,7 +1821,6 @@ void AddMsgToChat(void *data)
   ed_struct=EDIT_GetUserPointer(data);
   if (!ed_struct) return;
   if (!ed_struct->ed_contact->isunread) return;
-
 
   p=ed_struct->ed_contact->last_log;
   if (p)
@@ -2094,8 +2068,7 @@ void ReqAddMsgToChat(CLIST *t)
   }
 }
 
-
-ProcessPacket(TPKT *p)
+void ProcessPacket(TPKT *p)
 {
   extern const int VIBR_TYPE, VIBR_ON_CONNECT;
   CLIST *t,*t2;
@@ -2247,6 +2220,7 @@ ProcessPacket(TPKT *p)
     }
     break;
   case T_RECVMSG:
+    
     t=FindContactByUin(p->pkt.uin);
     if (!t)
     {
@@ -2348,6 +2322,8 @@ ProcessPacket(TPKT *p)
 	}
       }
     }
+//    }
+//    if (p->pkt.type==T_CLIENT_ACK) slientsend=false;
     break;
   case T_XTEXT_ACK:
     t=FindContactByUin(p->pkt.uin);
@@ -2439,42 +2415,41 @@ void onRedraw(MAIN_GUI *data)
 		   GetPaletteAdrByColorIndex(20));*/
   if (data->gui.state==2)
   {
+  DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,
+		   GetPaletteAdrByColorIndex(1),
+		   GetPaletteAdrByColorIndex(1));
+  DrawImg(0,0,S_ICONS[ICON_LOGO]);
+  unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;
+  wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
 
-    DrawRectangle(0,YDISP,scr_w-1,scr_h-1,0,
-                     GetPaletteAdrByColorIndex(1),
-                     GetPaletteAdrByColorIndex(1));
-    DrawImg(0,0,S_ICONS[ICON_LOGO]);
-    unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;			//by BoBa 10.07
-    wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
-  
-    if(pm != pl)
-    {
-       DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
-                       GetPaletteAdrByColorIndex(0),
-                       GetPaletteAdrByColorIndex(0));
-      pos_status = ((scr_w-1) * pl) / pm;
-      DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
-                       GetPaletteAdrByColorIndex(14),
-                       GetPaletteAdrByColorIndex(14));  
-      wstrcatprintf(data->ws1,"\nLoading images...");
-    }
-    /*  if (total_smiles)
-    {
-      wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
-    }
-    if (xstatuses_load)
-    {
-      wstrcatprintf(data->ws1,"\nLoaded %d/%d xstatus",total_xstatuses, xstatuses_max);
-    }*/
-    DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-               FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-    wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_string);
-    DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-               scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
-    wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
-    DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
-               scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  if(pm != pl)
+  {
+     DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
+                     GetPaletteAdrByColorIndex(0),
+                     GetPaletteAdrByColorIndex(0));
+    pos_status = ((scr_w-1) * pl) / pm;
+    DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
+                     GetPaletteAdrByColorIndex(14),
+                     GetPaletteAdrByColorIndex(14));  
+    wstrcatprintf(data->ws1,"\nLoading images...");
   }
+    if (total_smiles)
+  {
+    wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
+  }
+  if (xstatuses_load)
+  {
+    wstrcatprintf(data->ws1,"\nLoaded %d xstatus",total_xstatuses);
+  }
+  DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  wsprintf(data->ws2,percent_t,cltop? lgpData[LGP_GrsKeyClist] :empty_string);
+  DrawString(data->ws2,(scr_w >> 1),scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     scr_w-4,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNRIGHT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+  wsprintf(data->ws2,percent_t, lgpData[LGP_GrsKeyExit] );
+  DrawString(data->ws2,3,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
+	     scr_w>>1,scr_h-4,FONT_MEDIUM_BOLD,TEXT_ALIGNLEFT,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
+}
 }
 
 void onCreate(MAIN_GUI *data,void *(*malloc_adr)(int))
@@ -2538,6 +2513,7 @@ int onKey(MAIN_GUI *data,GUI_MSG *msg)
       SUBPROC((void*)end_socket);
       GBS_DelTimer(&reconnect_tmr);
       DNR_TRIES=3;
+      host_counter++;
       SUBPROC((void *)create_connect);
       break;
     }
@@ -2550,14 +2526,14 @@ int method8(void){return(0);}
 int method9(void){return(0);}
 
 const void * const gui_methods[11]={
-  (void *)onRedraw, //Redraw
-  (void *)onCreate, //Create
-  (void *)onClose,  //Close
-  (void *)onFocus,  //Focus
-  (void *)onUnfocus,//Unfocus
-  (void *)onKey,    //OnKey
+  (void *)onRedraw,
+  (void *)onCreate,
+  (void *)onClose,
+  (void *)onFocus,
+  (void *)onUnfocus,
+  (void *)onKey,
   0,
-  (void *)kill_data, //method7, //Destroy
+  (void *)kill_data, //Destroy
   (void *)method8,
   (void *)method9,
   0
@@ -2581,8 +2557,6 @@ void maincsm_oncreate(CSM_RAM *data)
   ews=AllocWS(16384);
   //  MutexCreate(&contactlist_mtx);
   DNR_TRIES=3;
-  //  SUBPROC((void *)InitSmiles);
-  //  SUBPROC((void *)create_connect);
   GBS_StartTimerProc(&tmr_active,TMR_SECOND*10,process_active_timer);
   sprintf((char *)ipc_my_name+6,percent_d,UIN);
   gipc.name_to=ipc_my_name;
@@ -2612,7 +2586,6 @@ void maincsm_onclose(CSM_RAM *csm)
 
   //  GBS_DelTimer(&tmr_dorecv);
   GBS_DelTimer(&tmr_active);
-//  GBS_DelTimer(&tmr_ping);
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&tmr_illumination);
@@ -2657,8 +2630,8 @@ void CheckDoubleRun(void)
   }
   else
   {
-    InitXStatusesImg();
-    //InitSmiles(); Это вызовется из InitXStatusesImg
+    SUBPROC((void *)InitXStatusesImg);
+    SUBPROC((void *)InitSmiles);
     create_connect();
   }
 }
@@ -2753,7 +2726,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      msg->pkt.type=T_RECVMSG;
 	      msg->pkt.data_len=l;
 	      memcpy(msg->data,fmp->msg,l+1);
-	      ProcessPacket(msg);
+	      ae(msg);
 	    }
 	    mfree(fmp->msg); //Освобождаем сам текст сообщения
 	    mfree(fmp->ipc); //Освобождаем родительский IPC_REQ
@@ -2844,8 +2817,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       is_gprs_online=0;
       return(1);
     case LMAN_CONNECT_CNF:
-      vibra_count=1;
-      start_vibra();
+      if(VIBR_ON_CONNECT){
+        vibra_count=1;
+        start_vibra();
+      }
       is_gprs_online=1;
       //strcpy(logmsg,LG_GRGPRSUP);
       snprintf(logmsg, 255, LG_GRGPRSUP, RECONNECT_TIME);
@@ -2890,7 +2865,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	else
 	{
 	  //Непосредственная обработка
-	  ProcessPacket(p);
+	  ae(p);
 	}
 	return(0);
       }
@@ -2899,21 +2874,14 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
 	if (connect_state==1)
 	{
-	  if(VIBR_ON_CONNECT)
+	  if(VIBR_ON_CONNECT){
             vibra_count=2;
-          else
-            vibra_count=1;
-	  start_vibra();
+    	    start_vibra();
+          }
 	  //Соединение установленно, посылаем пакет login
 	  strcpy(logmsg, LG_GRTRYLOGIN);
 	  {
-	    int i=strlen(PASS);
-	    TPKT *p=malloc(sizeof(PKT)+i);
-	    p->pkt.uin=UIN;
-	    p->pkt.type=T_REQLOGIN;
-	    p->pkt.data_len=i;
-	    memcpy(p->data,PASS,i);
-	    SUBPROC((void *)send_login,0,p);
+	    SUBPROC((void *)ab,0,0);
 	  }
 	  GROUP_CACHE=0;
 	  SENDMSGCOUNT=0; //Начинаем отсчет
@@ -2969,12 +2937,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	RecountMenu(NULL, 1);
 	connect_state=0;
 	sock=-1;
-        if(VIBR_ON_CONNECT)
+        if(VIBR_ON_CONNECT){
           vibra_count=4;
-        else
-          vibra_count=1;
-
-	start_vibra();
+	  start_vibra();
+        }
 	if (sendq_p)
 	{
 	  snprintf(logmsg,255,"Disconnected, %d bytes not sended!",sendq_l);
@@ -4053,7 +4019,7 @@ void Quote(GUI *data)
     wsInsertChar(ed_ws,' ',ed_pos);
   }
   while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
-  wsAppendChar(ed_ws,'\r');
+  wsAppendChar(ed_ws,'\n');
   wsAppendChar(ed_ws,'\r');
   ws=AllocWS(ec_ed.pWS->wsbody[0]+ed_ws->wsbody[0]);
   wstrcpy(ws,ec_ed.pWS);
@@ -4065,7 +4031,6 @@ void Quote(GUI *data)
   FreeWS(ws);
   GeneralFuncF1(1);
 }
-
 
 void GetShortInfo(GUI *data)
 {

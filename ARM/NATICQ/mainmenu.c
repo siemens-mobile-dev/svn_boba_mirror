@@ -26,13 +26,10 @@ extern int *XStatusesIconArray;
 extern  int S_ICONS[];
 extern const SOFTKEYSTAB menu_skt;
 
-
-
 extern int Is_Vibra_Enabled;
-extern unsigned int Is_Sounds_Enabled; 
+extern int Is_Sounds_Enabled; 
 extern int Is_Show_Offline;
 extern int Is_Show_Groups;
-
 
 static void ChangeVibraMode(void)
 {

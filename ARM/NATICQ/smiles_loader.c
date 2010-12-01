@@ -23,11 +23,15 @@ extern const char XSTATUSES_PATH[];
 extern const char ipc_my_name[32];
 extern  int S_ICONS[];
 
-static IPC_REQ gipc;
+static IPC_REQ gipc1;
 static char *p_buf;
 static char *s_buf;
 static S_SMILES *s_bot;
-static int n_pic;
+static int n_pic1;
+
+static int n_pic2;
+static IPC_REQ gipc2;
+
 
 S_SMILES *FindSmileById(int n)
 {
@@ -107,7 +111,7 @@ void InitSmiles(void)
 
   FreeSmiles();
 
-  n_pic=FIRST_UCS2_BITMAP;
+  n_pic1=FIRST_UCS2_BITMAP;
   if (GetFileStats(SMILE_FILE,&stat,&err)==-1)
     return;
 
@@ -121,11 +125,10 @@ void InitSmiles(void)
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
   //f=fopen("4:\\smiles.cfg",A_ReadWrite+A_BIN+A_Create+A_Append,P_READ+P_WRITE,&err);
-  gipc.name_to=ipc_my_name;
-  gipc.name_from=ipc_my_name;
-  gipc.data=0;
-      
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc);
+  gipc1.name_to=ipc_my_name;
+  gipc1.name_from=ipc_my_name;
+  gipc1.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc1);
 }
 
 void CheckSmiles(void)
@@ -186,10 +189,10 @@ void ProcessNextSmile(void)
     if ((c==10)||(c==13))
     {
       buf++;
-      gipc.name_to=ipc_my_name;
-      gipc.name_from=ipc_my_name;
-      gipc.data=0;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc);
+      gipc1.name_to=ipc_my_name;
+      gipc1.name_from=ipc_my_name;
+      gipc1.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc1);
       p_buf=buf;
       return;
     }
@@ -206,7 +209,7 @@ void ProcessNextSmile(void)
     buf=p;
     dp=malloc(sizeof(DYNPNGICONLIST));
     zeromem(dp,sizeof(DYNPNGICONLIST));
-    dp->icon=GetPicNByUnicodeSymbol(n_pic);
+    dp->icon=GetPicNByUnicodeSymbol(n_pic1);
     dp->img=CreateIMGHDRFromPngFile(fn,0);
     LockSched();
     if (SmilesImgList)
@@ -219,7 +222,7 @@ void ProcessNextSmile(void)
     si->next=NULL;
     si->lines=NULL;
     si->botlines=NULL;
-    si->uni_smile=n_pic;
+    si->uni_smile=n_pic1;
     if (s_bot)
     {
       //Не первый
@@ -232,7 +235,7 @@ void ProcessNextSmile(void)
       s_top=si;
       s_bot=si;
     }
-    n_pic++;
+    n_pic1++;
     while (*buf!=10 && *buf!=13 && *buf!=0)
     {
       buf++;
@@ -262,7 +265,7 @@ void ProcessNextSmile(void)
     total_smiles++;
   }
   //fclose(f,&err);
-//  total_smiles=0;
+  total_smiles=0;
   p_buf=NULL;
   mfree(s_buf);
   s_buf=NULL;
@@ -293,6 +296,8 @@ void FreeXStatusesImg(void)
   }
 }
 
+
+
 void InitXStatusesImg(void)
 {
   char fn[128];
@@ -304,11 +309,11 @@ void InitXStatusesImg(void)
   total_xstatuses=0;
   *(XStatusesIconArray=malloc(sizeof(int)))=S_ICONS[IS_NULLICON];
   xstatuses_load=1;
-  n_pic=FIRST_UCS2_BITMAP;
-  gipc.name_to=ipc_my_name;
-  gipc.name_from=ipc_my_name;
-  gipc.data=0;
-  
+  n_pic2=FIRST_UCS2_BITMAP;
+  gipc2.name_to=ipc_my_name;
+  gipc2.name_from=ipc_my_name;
+  gipc2.data=0;
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
   pictures_max = 0;
   do
   {
@@ -321,7 +326,7 @@ void InitXStatusesImg(void)
   pictures_max--;
   CheckSmiles();
   
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc);
+  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
 }
 
 void ProcessNextXStatImg(void)
@@ -342,7 +347,7 @@ void ProcessNextXStatImg(void)
     {
       dp=malloc(sizeof(DYNPNGICONLIST));
       zeromem(dp,sizeof(DYNPNGICONLIST));
-      dp->icon=i=GetPicNByUnicodeSymbol(n_pic);
+      dp->icon=i=GetPicNByUnicodeSymbol(n_pic2);
       dp->img=CreateIMGHDRFromPngFile(fn,0);
       LockSched();
       if (XStatusesImgList)
@@ -355,14 +360,14 @@ void ProcessNextXStatImg(void)
       pictures_loaded++;
       XStatusesIconArray=realloc(XStatusesIconArray,(total_xstatuses*sizeof(int)));
       *(XStatusesIconArray+(total_xstatuses-1))=i;
-      n_pic++;
-      gipc.name_to=ipc_my_name;
-      gipc.name_from=ipc_my_name;
-      gipc.data=0;
-      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc);
+      n_pic2++;
+      gipc2.name_to=ipc_my_name;
+      gipc2.name_from=ipc_my_name;
+      gipc2.data=0;
+      GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
       return;
     }
   }
   xstatuses_load=0;
-  SUBPROC((void *)InitSmiles);
+//  SUBPROC((void *)InitSmiles);
 }

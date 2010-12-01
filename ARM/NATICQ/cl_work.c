@@ -4,13 +4,12 @@
 #include "main.h"
 #include "cl_work.h"
 
-
 extern volatile unsigned int GROUP_CACHE; //Текущая группа для добавления
 extern volatile CLIST *cltop;
 extern int Is_Show_Groups;
 extern char ContactT9Key[32];
 extern int Is_Show_Offline;
-extern int IsActiveUp;
+extern int Is_Active_Up;
 
 extern const unsigned int UIN;
 extern const char TEMPLATES_PATH[];
@@ -132,7 +131,7 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
       if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
       
       if (!Is_Show_Offline) // by Seklth 13.06.2007
-        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)&&(t->uin!=UIN)&&(!(*s))) 
+        if ((!t->isgroup)&&(!t->isactive)&&(t->state==0xFFFF)/*&&(t->uin!=UIN)*/&&(!(*s))) 
           if (!t->isunread) goto L_NOT9;
       
       d=t->name;
@@ -162,7 +161,7 @@ int CountContacts(void)
 CLIST *FindContactByN(int i)
 {
   CLIST *t;
-  int f=IsActiveUp;
+  int f=Is_Active_Up;
   if (f)
   {
     t=FindContactByNS(&i,IS_ANY,1,NULL); if ((!i)&&(t)) return (t);
@@ -177,7 +176,7 @@ int FindContactByContact(CLIST *p)
 {
   int l=-1;
   //  CLIST *t;
-  int f=IsActiveUp;
+  int f=Is_Active_Up;
   if (f)
   {
     if (FindContactByNS(&l,IS_ANY,1,p)) return -1-l;

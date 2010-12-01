@@ -94,11 +94,11 @@
 
 //================================
 
-#define LG_ALL_CAN_SEE          "Видимый для всех"
-#define LG_VISLIST_CAN_SEE      "Видимый только для списка видящих"
-#define LG_INVISLIST_CANNOT_SEE "Видимый для всех, кроме списка невидящих"
-#define LG_CONTACTLIST_CAN_SEE  "Видимый только для списка контактов"
-#define LG_NOBODY_CAN_SEE       "Невидимый для всех"
+#define LG_ALL_CAN_SEE          "Видим всем"
+#define LG_INVISLIST_CANNOT_SEE "Невидим для списка"
+#define LG_CONTACTLIST_CAN_SEE  "Видим для КЛ"
+#define LG_VISLIST_CAN_SEE      "Видим для списка"
+#define LG_NOBODY_CAN_SEE       "Невидим всем"
 
 #define LG_ENTERNAME      "Введите имя"
 #define LG_CHOOSEGROUP    "Выберите группу"
@@ -125,7 +125,7 @@
 
 //=================================
 
-#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx:%db,Tx:%db\nQueue: %db\n%s\n%t"
+#define LG_GRSTATESTRING "State: %d, RXstate: %d\nRx:%db, Tx:%db\nQueue: %db\n%s\n%t"
 
 #define LG_GRSKEYEXIT    "Exit"
 #define LG_GRSKEYCLIST   "CList"
@@ -419,5 +419,4 @@
 #endif
 
 #endif
-
 
