@@ -619,8 +619,17 @@
 
 08F4: 0xA0F2BFD1 ; 23D __thumb void MD5_Init(MD5_CTX *c);
 08F8: 0xA0F2BC41 ; 23E __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
-08FC: 0xA0F2BED8 ; 23F __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);
+08FC: 0xA0F2BED9 ; 23F __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);
 0900: 0xA0F2C961 ; 240 __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA08CF5A7 ; 241: __thumb void SetDateTime(TDate *, TTime *);
+
+0910: 0xA0E62BA1   ;  244: int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
+0914: 0xA0E62C51   ;  245: int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
+
+0918: 0xA0712CE8   ; 246: int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);  
+
+092C: 0xA0954A8B   ; 24B: void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc)
+0930: 0xA0658FA1   ; 24C: int GetPeripheryState (int device, int check_state);
+
 #pragma disable old_equal_ff
 +0
