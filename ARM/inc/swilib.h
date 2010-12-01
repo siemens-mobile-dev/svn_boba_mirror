@@ -1398,6 +1398,9 @@ __swi __arm int setfilesize(int FileHandler, unsigned int iNewFileSize, unsigned
 //arm
 //pattern=7C,40,2D,E9,01,60,A0,E1,02,50,A0,E1,00,40,A0,E1,??,??,??,EB,00,30,E0,E3,00,30,8D,E5,48,C0,90,E5,00,00,A0,E3,05,30,A0,E1,06,20,A0,E1,04,10,A0,E1,3C,FF,2F,E1,7C,80,BD,E8
 
+#pragma swi_number=0x40 
+__swi __arm int GetVibraStatus (void);
+
 #pragma swi_number=0x0042
 __swi __arm int IsScreenSaver(void);
 //thumb
