@@ -1162,9 +1162,16 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
       }
       else
 	wsprintf(ws3,percent_d,t->uin);
-      if ((t->xstate<total_xstatuses)&&(t->xstate))
-      {
-	wsInsertChar(ws3,FIRST_UCS2_BITMAP+t->xstate,1);
+      if (t->xstate[0]){
+	int a=0;
+        while(a<4){
+          if (t->xstate[a] && (t->xstate[a]<total_xstatuses)){
+            wsInsertChar(ws3,FIRST_UCS2_BITMAP+t->xstate[a],1);
+          }else{
+            break;
+          }
+          a++;
+        }
       }
 #endif
     }
@@ -2157,11 +2164,13 @@ void ProcessPacket(TPKT *p)
     {
       int i=t->state;
       CLIST *oldt=NULL;
-      if (t->xstate!=p->data[2])  // ≈сли картинка икс статуса сменилась
+      int m=(p->pkt.data_len-2<sizeof(t->xstate)) ? p->pkt.data_len-2 : sizeof(t->xstate);
+      if (memcmp(t->xstate,&p->data[2],m))  // ≈сли картинка икс статуса сменилась
       {
-        t->xstate=p->data[2];
+        zeromem(t->xstate,sizeof(t->xstate));
+        memcpy(t->xstate,&p->data[2],m);
         FreeXText(t);
-        if (t->xstate && ENA_AUTO_XTXT)   // ≈сли установлен икс статус и можно запрашивать по смене икс статуса :)
+        if (t->xstate[0] && ENA_AUTO_XTXT)   // ≈сли установлен икс статус и можно запрашивать по смене икс статуса :)
         {
           t->req_xtext=1;
           if (edchat_id)   // ≈сли открыт чат

@@ -104,8 +104,6 @@ int acgd_onkey(GUI *data, GUI_MSG *msg)
   return (0);
 }
 
-
-
 void acgd_ghook(GUI *data, int cmd)
 {
   static SOFTKEY_DESC sk_add={0x0FFF,0x0000,NULL};

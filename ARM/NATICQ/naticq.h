@@ -24,7 +24,7 @@ typedef struct
   char name[64];
   char nickname[64];
   unsigned short state;
-  unsigned short xstate;
+  unsigned char xstate[4];
   int isunread;
   int req_add;
   int req_drawack;
@@ -41,15 +41,15 @@ typedef struct
 
 typedef struct
 {
-  unsigned long uin;
-  unsigned short type;
-  unsigned short data_len;
+  unsigned long uin;        //0
+  unsigned short type;      //4
+  unsigned short data_len;  //6
 }PKT;
 
 typedef struct
 {
   PKT pkt;
-  char data[16384];
+  char data[16384];     //8
 }TPKT;
 
 #ifdef NEWSGOLD
