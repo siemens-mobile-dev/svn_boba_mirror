@@ -42,7 +42,7 @@ void do_start_connection(void){
 
 void StartGPRS(void){
   GPRS_OnOff(1,1);
-  GBS_StartTimerProc(&reconnect_tmr,216*30,do_start_connection);
+  GBS_StartTimerProc(&reconnect_tmr,216*60,do_start_connection);
 }
 
 void create_connect(void){
@@ -77,13 +77,13 @@ void create_connect(void){
     }else{
       closesocket(sock);
       sock=-1;
-      GBS_StartTimerProc(&reconnect_tmr,216*10,do_start_connection);
+      GBS_StartTimerProc(&reconnect_tmr,216*60,do_start_connection);
     }
   }else{
     //Не осилили создания сокета, закрываем GPRS-сессию
     GPRS_OnOff(0,1);
     // и через 30 секунд запускаем жопорез
-    GBS_StartTimerProc(&reconnect_tmr, 216*30, StartGPRS);    
+    GBS_StartTimerProc(&reconnect_tmr, 216*60, StartGPRS);    
   }
 }
 
@@ -253,7 +253,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
           //Закрыт вызовом closesocket
           SUBPROC((void *)Parsing);
           GBS_DelTimer(&update_tmr);
-          GBS_StartTimerProc(&update_tmr, (216*60), do_start_connection); 
+          GBS_StartTimerProc(&update_tmr, (216*60)*10, do_start_connection); 
           old_ci=ramnet[0].ci;
           old_gprs_state[1] = 0;
           connect_state=0;
