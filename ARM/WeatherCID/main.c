@@ -123,12 +123,11 @@ void send_req(void){
   if (!buf) buf=malloc(BUFFSIZE);
 }
 
-void end_socket(void)
-{
-  if (sock>=0)
-  {
+void end_socket(void){
+  if (sock>=0){
     shutdown(sock,2);
     closesocket(sock);
+    buf[pbuf]=0;
     // выключаем жопорез, если он изначально был выключен
     if (!old_gprs_state[0]) GPRS_OnOff(0,1);
   }
@@ -136,19 +135,13 @@ void end_socket(void)
 
 void get_answer(void){
   int i=recv(sock,buf+pbuf,BUFFSIZE-1-pbuf,0);
-  if (i>=0){
-    pbuf+=i;
-    if (pbuf>=BUFFSIZE-1)
-      buf[pbuf]=0;
-      end_socket();
-  }else{
-    buf[pbuf]=0;
+  pbuf+=i;
+  if ((i<0)||(pbuf>=BUFFSIZE-1)){
     end_socket();
   }
 }
 
 //==============================================================================
-
 void GenerateString(){
     char sss[128];
     snprintf(sss, 127, "%s%s%s%s%s", 
