@@ -32,8 +32,12 @@ GBSTMR reconnect_tmr;
 void create_connect(void);
 
 void do_start_connection(void){
-  if (old_ci!=ramnet[0].ci)
+  if (old_ci!=ramnet[0].ci){
     SUBPROC((void *)create_connect);
+  }else{
+    GBS_DelTimer(&update_tmr);
+    GBS_StartTimerProc(&update_tmr, (216*60), do_start_connection); 
+  }
 }
 
 void StartGPRS(void){
@@ -85,7 +89,6 @@ void create_connect(void){
 
 char req_buf[100];
 void send_req(void){
-
   char *p=((char*)ramnet)-11;
   char cc1=*p;
   char cc2=*(p+1);
@@ -114,7 +117,9 @@ void end_socket(void){
     closesocket(sock);
     buf[pbuf]=0;
     // выключаем жопорез, если он изначально был выключен
-    if (!old_gprs_state[0]) GPRS_OnOff(0,1);
+    if (!old_gprs_state[0]){
+      GPRS_OnOff(0,1);
+    }
   }
 }
 
@@ -127,24 +132,6 @@ void get_answer(void){
 }
 
 //==============================================================================
-void log_data(char *data){
-  int hFile;
-  unsigned int io_error = 0;
-  char fullname[256];
-  
-  TTime time;
-  TDate date;
-  GetDateTime(&date, &time);
-  
-  sprintf(fullname, "%s%i%i%i%i%i", "4:\\", date.year, date.month, date.day, time.hour, time.min);
-  hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
-  if(!io_error)
-  {
-    fwrite(hFile, data, strlen(data)-1, &io_error);
-    fclose(hFile, &io_error);
-  }  
-}
-
 void GenerateString(){
     char sss[128];
     snprintf(sss, 127, "%s%s%s", 
@@ -159,7 +146,7 @@ char *valuetag(char *src,char *dst, int maxlen){
  if (!src) return 0;
  if (!*src) return src;
  int c=0;
- dst=dst+strlen(dst);
+// dst=dst+strlen(dst);
  while (*src!='\n' && *src!='"' && *src!=0 && c < maxlen){
   *dst++=*src++;
   c++;
@@ -181,20 +168,20 @@ void Parsing(){
   
   char *tag=0;  
   //Улица
+  locate.Street[0]=0;
   if(tag=findtag(buf,"STREET:")){
-    locate.Street[0]=0;
     valuetag(tag, locate.Street, sizeof(locate.Street)-1);
   }
 
   //Город
+  locate.City[0]='\n';
   if (tag=findtag(buf,"CITY:")){
-    locate.City[0]='\n';
     valuetag(tag, locate.City+1, sizeof(locate.City)-1);
   }
 
   //Страна
+  locate.Country[0]='\n';
   if (tag=findtag(buf,"COUNTRY:")){
-    locate.Country[0]='\n';
     valuetag(tag, locate.Country+1, sizeof(locate.Country)-1);
   }
 
@@ -266,7 +253,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
           //Закрыт вызовом closesocket
           SUBPROC((void *)Parsing);
           GBS_DelTimer(&update_tmr);
-          GBS_StartTimerProc(&update_tmr, (216*60)*10, do_start_connection); 
+          GBS_StartTimerProc(&update_tmr, (216*60), do_start_connection); 
           old_ci=ramnet[0].ci;
           old_gprs_state[1] = 0;
           connect_state=0;
