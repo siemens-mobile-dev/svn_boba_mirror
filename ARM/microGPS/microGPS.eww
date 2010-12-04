@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\WeatherD.ewp</path>
+    <path>$WS_DIR$\microGPS.ewp</path>
   </project>
   <batchBuild/>
 </workspace>

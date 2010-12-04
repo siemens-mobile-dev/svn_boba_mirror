@@ -45,9 +45,9 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\WeatherCID.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\microGPS.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\WeatherCID.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\microGPS.bcfg");
   }
 }
 

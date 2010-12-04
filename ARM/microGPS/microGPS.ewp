@@ -550,7 +550,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherCID.elf</state>
+          <state>microGPS.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -1373,7 +1373,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherCID.elf</state>
+          <state>microGPS.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -2197,7 +2197,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state>WeatherCID.elf</state>
+          <state>microGPS.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -3162,9 +3162,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\string_works.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\WeatherD.h</name>
   </file>
 </project>
 
