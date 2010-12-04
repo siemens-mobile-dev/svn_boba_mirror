@@ -67,11 +67,13 @@ int file_exists(const char * fname)
 }
 
 // Удаление расширения из имени файла
-void del_ext(char * source)
+void del_ext(char * source) // Twitch - оптимизация) (r) Ganster
 {
-  while(*source)source++;
+  char *c=strrchr(source,'.');
+  *c=0;
+  /*while(*source)source++;
   while(*source!='.')source--;
-  *source=0;
+  *source=0;*/
 }
 
 

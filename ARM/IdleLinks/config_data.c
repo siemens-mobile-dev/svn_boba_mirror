@@ -35,7 +35,7 @@ __root const CFG_HDR cfghdr2={CFG_LEVEL,"View",1,0};
   __root const CFG_HDR cfghdr2_2={CFG_CBOX,"Cycled navigation",0,3};
   __root const unsigned int BCFG_CYCLED = 1;
   __root const CFG_CBOX_ITEM cfgcbox3[3]={"None","In current line", "Go to next line"};
-
+  
 __root const CFG_HDR cfghdr3={CFG_LEVEL,"",0,0};
 
 // Настройка выбора
@@ -63,6 +63,53 @@ __root const CFG_HDR cfghdr4={CFG_LEVEL,"Select",1,0};
   
 __root const CFG_HDR cfghdr5={CFG_LEVEL,"",0,0};
 
+// Настройка вывода имени ярлычка
+
+__root const CFG_HDR cfghdr6={CFG_LEVEL,"Link name",1,0}; // Twitch - делаем подписи к ярлычкам
+
+  __root const CFG_HDR cfghdr5_1={CFG_CBOX,"How draw link name",0,3};	// Как рисовать
+  __root const unsigned int linkname_ena = 1;
+  __root const CFG_CBOX_ITEM cfgcbox03[3]={"None", "For each", "Only selected"};
+  
+  __root const CFG_HDR cfghdr5_2={CFG_LEVEL,"Set for each",1,0};	//Если подпись к каждому
+  
+    __root const CFG_HDR cfghdr5_2_1={CFG_CBOX,"Where draw link name",0,2};	//Где рисовать
+    __root const unsigned int linkname_wdraw = 0;
+    __root const CFG_CBOX_ITEM cfgcbox04[2]={"under link", "over link"};
+    
+    __root const CFG_HDR cfghdr5_2_2={CFG_UINT,"Shift",0,12};			//смещение
+    __root const unsigned int LN_SHIFT=2;
+    
+  __root const CFG_HDR cfghdr5_3={CFG_LEVEL,"",0,0};
+  
+  __root const CFG_HDR cfghdr5_4={CFG_LEVEL,"Set for selected",1,0};		//если только для выделенного
+  
+    __root const CFG_HDR cfghdr5_4_1={7,"Coords link name",0,0};		//где рисовать
+    __root const unsigned int linkname_x=110;
+    __root const unsigned int linkname_y=295;
+  
+    __root const CFG_HDR cfghdr5_4_2={CFG_CBOX,"Align link name",0,3};		//выравнивание
+    __root const unsigned int linkname_al = 0;
+    __root const CFG_CBOX_ITEM cfgcbox05[3]={"Left", "Center", "Right"};
+    
+  __root const CFG_HDR cfghdr5_5={CFG_LEVEL,"",0,0};
+  
+  __root const CFG_HDR cfghdr5_6={CFG_COLOR,"Link name color",0,0};	//цвет подписи
+  __root const char LN_COLOR[4]={255,255,255,100};
+
+  __root const CFG_HDR cfghdr5_7={CFG_UINT,"Link name font",0,12};	//шрифт
+  __root const unsigned int LN_FONT=8;
+  
+  __root const CFG_HDR cfghdr5_8={CFG_UINT,"Link name sel. font",0,12};	//шрифт выделенного
+  __root const unsigned int LN_SEL_FONT=9;
+
+  __root const CFG_HDR cfghdr5_9 = {CFG_CHECKBOX, "Link name fring", 0, 2};	//обводка
+  __root const int LN_FRING = 0;
+
+  __root const CFG_HDR cfghdr5_10={CFG_COLOR,"Link name fring color",0,0};	//цвет обводки
+  __root const char LN_FRING_COLOR[4]={0,255,0,100};
+
+__root const CFG_HDR cfghdr7={CFG_LEVEL,"",0,0};
 //
 
 

@@ -14,6 +14,21 @@ extern const char cl[4];
 extern const char chpic[128];
 extern const char frcol[4];
 
+// Twitch - делаем подписи к ярлычкам
+extern const unsigned int linkname_x;
+extern const unsigned int linkname_y;
+extern const unsigned int linkname_ena;
+extern const unsigned int linkname_wdraw;
+extern const unsigned int linkname_al;
+extern const char LN_COLOR[4];
+extern const unsigned int LN_FONT;
+extern const unsigned int LN_SEL_FONT;
+extern const int LN_FRING;
+extern const char LN_FRING_COLOR[4];
+extern const unsigned int LN_SHIFT;
+const char perc_t[2]="%t";
+/////////////////////////////////////////////
+
 int CalcPic(char* picture)
 {
   if(file_exists(picture))
@@ -64,6 +79,63 @@ void Draw_DoLabel(TLabelData *Link)
   }  
 }
 
+// Twitch - делаем подписи к ярлычкам
+char symb[1]=" "; // для Get_WS_width >_<
+
+void Draw_LinkNameIfActive (TLabelData *link)
+{
+  WSHDR *ws = AllocWS(128);
+  int i = 0,tattr=1;
+  char *tempstr;
+  int size=strlen(link->LinkName) + 1;
+  tempstr = malloc(size);
+  
+  sprintf(tempstr, link->LinkName);
+  del_ext(tempstr);
+  strcat(tempstr,symb);
+
+  str_2ws(ws,tempstr,size);
+    
+  i = Get_WS_width(ws,LN_SEL_FONT);
+
+  tattr+=(linkname_al == 2) ? 3 : linkname_al;
+  tattr+=(LN_FRING) ? 32 : 0;
+  
+  DrawString(ws,linkname_x,linkname_y,linkname_x+i,linkname_y+GetFontYSIZE(LN_SEL_FONT),LN_SEL_FONT,tattr,LN_COLOR,LN_FRING_COLOR);
+  
+  FreeWS(ws);
+}
+
+void Draw_LinkNameForEach (TLabelData *link, int ena)
+{
+  WSHDR *ws = AllocWS(128);
+  int i = 0, tattr=2, font, x, y;
+  int pic=CalcPic(link->Pic);
+  char *tempstr;
+  int size=strlen(link->LinkName) + 1;
+  tempstr = malloc(size);
+  
+  strcpy(tempstr,link->LinkName);
+  del_ext(tempstr);
+  strcat(tempstr,symb);
+  
+  font = (ena) ? LN_SEL_FONT : LN_FONT;
+
+  str_2ws(ws,tempstr,size);
+
+  i = Get_WS_width(ws,font);
+
+  x = link->x+(GetImgWidth(pic)/2)-i/2;
+  y = (linkname_wdraw) ? link->y-LN_SHIFT-GetFontYSIZE(font) : link->y+GetImgHeight(pic)+LN_SHIFT;
+
+  tattr+=(LN_FRING) ? 32 : 0;
+  
+  DrawString(ws,x,y,x+i,y+GetFontYSIZE(font),font,tattr,LN_COLOR,LN_FRING_COLOR);
+  
+  FreeWS(ws);
+}
+//////////////////////////////////////////
+
 void Draw_NSD(TLabelData *Label)
 {
   if (Label->Enabled)
@@ -75,7 +147,9 @@ void Draw_NSD(TLabelData *Label)
                           Label->y-1, 
                           Label->x+GetImgWidth(pic)+1, 
                           Label->y+GetImgHeight(pic)+1, 1); 
-    DrawImg(Label->x,Label->y,pic);    
+    DrawImg(Label->x,Label->y,pic);
+    if (linkname_ena == 1)		// Twitch - делаем подписи к ярлычкам
+      Draw_LinkNameForEach (Label,0);	//
   }
 }
 
@@ -132,6 +206,10 @@ void Draw_Select(TLabelData *Selected)
       DrawImg(Selected->x+GetImgWidth(pic)-GetImgWidth((int)chpic),
               Selected->y+GetImgHeight(pic)-GetImgHeight((int)chpic),(int)chpic);    
     }
+    if (linkname_ena == 2)		// Twitch - делаем подписи к ярлычкам
+      Draw_LinkNameIfActive (Selected);	//
+    else if (linkname_ena == 1)		//
+      Draw_LinkNameForEach (Selected,1);//
   }
 }
 
