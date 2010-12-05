@@ -6,12 +6,14 @@
 
 extern const RECT DATA_AREA;
 extern const int SHOW_COUNTRY;
+extern const int SHOW_AREA;
 extern const int SHOW_CITY;
 extern const int SHOW_STREET;
 
 typedef struct{
   char
     Country[32],
+    Area[32],
     City[32],
     Street[32];
 }LOCATE;
@@ -134,9 +136,10 @@ void get_answer(void){
 //==============================================================================
 void GenerateString(){
     char sss[128];
-    snprintf(sss, 127, "%s%s%s", 
+    snprintf(sss, 127, "%s%s%s%s", 
                 locate.Street,
                 SHOW_CITY    ? locate.City    : "", 
+                SHOW_AREA    ? locate.Area    : "", 
                 SHOW_COUNTRY ? locate.Country : ""
          );
     ascii2ws(ews, sss);
@@ -176,13 +179,19 @@ void Parsing(){
   //Город
   locate.City[0]='\n';
   if (tag=findtag(buf,"CITY:")){
-    valuetag(tag, locate.City+1, sizeof(locate.City)-1);
+    valuetag(tag, locate.City+1, sizeof(locate.City)-2);
+  }
+
+  //Область
+  locate.Area[0]='\n';
+  if (tag=findtag(buf,"AREA:")){
+    valuetag(tag, locate.Area+1, sizeof(locate.Area)-2);
   }
 
   //Страна
   locate.Country[0]='\n';
   if (tag=findtag(buf,"COUNTRY:")){
-    valuetag(tag, locate.Country+1, sizeof(locate.Country)-1);
+    valuetag(tag, locate.Country+1, sizeof(locate.Country)-2);
   }
 
   mfree(buf);
