@@ -13,8 +13,10 @@ int *XStatusesIconArray;
 
 volatile int total_smiles;
 volatile int total_xstatuses;
+volatile int total_xstatuses2;
+int total_clientid;
 volatile int xstatuses_load;
-volatile int pictures_max;
+volatile int pictures_max=100;
 volatile int pictures_loaded;
 
 extern const char SMILE_FILE[];
@@ -152,7 +154,7 @@ void CheckSmiles(void)
   buf[fread(f,buf,fsize,&err)]=0;
   fclose(f,&err);
   
-  f = pictures_max;
+//  f = pictures_max;
   for(buf=p_buf;*buf; buf++)
     if(*buf == ':')
     {
@@ -296,17 +298,11 @@ void FreeXStatusesImg(void)
   }
 }
 
-
-
 void InitXStatusesImg(void)
 {
-  char fn[128];
-  const char _slash[]="\\";
-  FSTATS stat;
-  unsigned err;
-  
   FreeXStatusesImg();
   total_xstatuses=0;
+  total_xstatuses2=0;
   *(XStatusesIconArray=malloc(sizeof(int)))=S_ICONS[IS_NULLICON];
   xstatuses_load=1;
   n_pic2=FIRST_UCS2_BITMAP;
@@ -314,6 +310,12 @@ void InitXStatusesImg(void)
   gipc2.name_from=ipc_my_name;
   gipc2.data=0;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
+
+/*  char fn[128];
+  const char _slash[]="\\";
+  FSTATS stat;
+  unsigned err;
+  
   pictures_max = 0;
   do
   {
@@ -325,8 +327,8 @@ void InitXStatusesImg(void)
   while (stat.size>0);
   pictures_max--;
   CheckSmiles();
-  
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
+*/  
+//  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
 }
 
 void ProcessNextXStatImg(void)
@@ -340,7 +342,7 @@ void ProcessNextXStatImg(void)
   
   strcpy(fn,XSTATUSES_PATH);
   if (fn[strlen(fn)-1]!='\\') strcat(fn,_slash);
-  sprintf(fn+strlen(fn),"%d.png",total_xstatuses);
+  sprintf(fn+strlen(fn),"%d.png",total_xstatuses2);
   if (GetFileStats(fn,&stat,&err)!=-1)
   {
     if (stat.size>0)
@@ -356,18 +358,26 @@ void ProcessNextXStatImg(void)
       }
       XStatusesImgList=dp;
       UnlockSched();
-      total_xstatuses++;
+      total_xstatuses2++;
       pictures_loaded++;
-      XStatusesIconArray=realloc(XStatusesIconArray,(total_xstatuses*sizeof(int)));
-      *(XStatusesIconArray+(total_xstatuses-1))=i;
+      XStatusesIconArray=realloc(XStatusesIconArray,(total_xstatuses2*sizeof(int)));
+      *(XStatusesIconArray+(total_xstatuses2-1))=i;
       n_pic2++;
+    l1:
       gipc2.name_to=ipc_my_name;
       gipc2.name_from=ipc_my_name;
       gipc2.data=0;
       GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
       return;
     }
+  }else{
+    if (total_xstatuses2<100){
+      total_xstatuses=total_xstatuses2;
+      total_xstatuses2=101;
+      goto l1;
+    }
   }
+  int a=total_xstatuses2;
+  total_clientid=a-total_xstatuses;
   xstatuses_load=0;
-//  SUBPROC((void *)InitSmiles);
 }

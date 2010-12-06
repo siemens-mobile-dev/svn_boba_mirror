@@ -29,6 +29,8 @@ GUI *deleting_contact;
 
 extern volatile int total_smiles;
 extern volatile int total_xstatuses;
+extern volatile int total_xstatuses2;
+extern int total_clientid;
 extern volatile int xstatuses_load;
 extern volatile int pictures_max;
 extern volatile int pictures_loaded;
@@ -605,6 +607,7 @@ volatile int sendq_l=0; //Длинна очереди для send
 volatile void *sendq_p=NULL; //указатель очереди
 
 volatile int is_gprs_online=1;
+int gprsdown=0;
 
 GBSTMR reconnect_tmr;
 
@@ -1151,6 +1154,8 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
         wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
+      if (t->clientid && t->clientid<=total_clientid)
+        wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses+t->clientid-1,wstrlen(ws1)+1);
       if (t->xtext && t->xtext[0]!=0)
       {
 	int i;
@@ -1394,6 +1399,7 @@ void create_connect(void)
 	UnlockSched();
 	//Не осилили создания сокета, закрываем GPRS-сессию
 	GPRS_OnOff(0,1);
+        gprsdown=6;
       }
     }
   }
@@ -1616,10 +1622,11 @@ void get_answer(void)
 	  //snprintf(logmsg,255,"CL: %s",RXbuf.data);
 	  break;
 	case T_STATUSCHANGE:
+	case T_CLIENTID:
 	  n=i+sizeof(PKT);
 	  p=malloc(n);
 	  memcpy(p,&RXbuf,n);
-	  snprintf(logmsg,255,LG_GRSTATUSCHNG,RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
+//	  snprintf(logmsg,255,LG_GRSTATUSCHNG,RXbuf.pkt.uin,*((unsigned short *)(RXbuf.data)));
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  break;
 	case T_ERROR:
@@ -2158,6 +2165,11 @@ void ProcessPacket(TPKT *p)
     DeleteContact(t);
     if(t2) RecountMenu(t2,1); 
     break;
+  case T_CLIENTID:
+    if (t=FindContactByUin(p->pkt.uin)){
+      t->clientid=*(char *)p->data;
+    }
+    break;
   case T_STATUSCHANGE:
     t=FindContactByUin(p->pkt.uin);
     if (t)
@@ -2431,8 +2443,7 @@ void onRedraw(MAIN_GUI *data)
   unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
 
-  if(pm != pl)
-  {
+  if(total_smiles && xstatuses_load){
      DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
                      GetPaletteAdrByColorIndex(0),
                      GetPaletteAdrByColorIndex(0));
@@ -2441,14 +2452,12 @@ void onRedraw(MAIN_GUI *data)
                      GetPaletteAdrByColorIndex(14),
                      GetPaletteAdrByColorIndex(14));  
     wstrcatprintf(data->ws1,"\nLoading images...");
-  }
-    if (total_smiles)
-  {
-    wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
-  }
-  if (xstatuses_load)
-  {
-    wstrcatprintf(data->ws1,"\nLoaded %d xstatus",total_xstatuses);
+    if (total_smiles){
+      wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
+    }
+    if (xstatuses_load){
+    wstrcatprintf(data->ws1,"\nLoaded %d xstatus",total_xstatuses2);
+    }
   }
   DrawString(data->ws1,3,3+YDISP,scr_w-4,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD),
 	     FONT_SMALL,0,GetPaletteAdrByColorIndex(0),GetPaletteAdrByColorIndex(23));
@@ -2707,6 +2716,9 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 		  if (IsGuiOnTop(edchat_id)) RefreshGUI();
 		}
 	      }
+              if (!gprsdown)   //включим гпрс, если сами же выключали.
+                GPRS_OnOff(1, 1);
+               else gprsdown--;
 	    }
 	    break;
      	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07

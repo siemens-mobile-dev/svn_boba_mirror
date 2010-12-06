@@ -334,6 +334,7 @@ CLIST *AddContact(unsigned int uin, char *name, unsigned int group, int local)
   p->group=group;
   strncpy(p->name,name,sizeof(p->name)-1);
   p->state=0xFFFF;
+  p->clientid=0;
   p->local=local;
   return AddContactOrGroup((CLIST **)&cltop,p);
 }

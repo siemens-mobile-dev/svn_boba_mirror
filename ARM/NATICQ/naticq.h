@@ -25,6 +25,7 @@ typedef struct
   char nickname[64];
   unsigned short state;
   unsigned char xstate[4];
+  char clientid;
   int isunread;
   int req_add;
   int req_drawack;
