@@ -43,6 +43,8 @@ extern void msrand(unsigned seed);
 
 #define TMR_SECOND 216
 
+#define UTF16_ALIGN_RIGHT (0xE01D)
+
 //IPC
 const char ipc_my_name[32]=IPC_NATICQ_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
@@ -1155,7 +1157,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
       }
 #ifdef USE_MLMENU
       if (t->clientid && t->clientid<=total_clientid)
+      {
+        wsInsertChar(ws1,UTF16_ALIGN_RIGHT,wstrlen(ws1)+1);
         wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses+t->clientid-1,wstrlen(ws1)+1);
+      }
       if (t->xtext && t->xtext[0]!=0)
       {
 	int i;
