@@ -24,7 +24,10 @@ __root const unsigned int FONT_SIZE=7; //SGOLD
 #endif
 
 __root const CFG_HDR cfghdr4={CFG_COLOR,"Font color",0,0};
-__root const char FONT_COLOR[4]={0x00,0xFF,0x00,0x5F};
+__root const char FONT_COLOR[4]={0x00,0x00,0x00,0x64};
+
+__root const CFG_HDR cfghdr7={CFG_COLOR,"Border color",0,0};
+__root const char BORDER_COLOR[4]={0xFF,0xFF,0xFF,0x64};
 
 __root const CFG_HDR cfghdr66={CFG_CHECKBOX,"Show City",0,0};
 __root const int SHOW_CITY = 1;

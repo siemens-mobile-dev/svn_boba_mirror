@@ -5,6 +5,7 @@ extern const char DATA_PATH[];
 
 extern const unsigned int FONT_SIZE;
 extern const char FONT_COLOR[];
+extern const char BORDER_COLOR[];
 
 extern const unsigned int DATA_X;
 extern const unsigned int DATA_Y;

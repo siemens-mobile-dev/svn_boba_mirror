@@ -337,7 +337,7 @@ void CountTime(void){
       min_before_update = 510-h+10/*10 минут запаса*/;
 
   GBS_DelTimer(&update_tmr);
-  GBS_StartTimerProc(&update_tmr, (216*60)*min_before_update, do_start_connection); 
+  GBS_StartTimerProc(&update_tmr, (216*60)*120, do_start_connection); 
 }
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
@@ -380,7 +380,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
         DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
-	         FONT_SIZE,0,FONT_COLOR,GetPaletteAdrByColorIndex(23));
+	         FONT_SIZE,0x20,FONT_COLOR,BORDER_COLOR);
       }
    }}    
   
