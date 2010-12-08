@@ -1156,10 +1156,10 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
         wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
-      if (t->clientid && t->clientid<=total_clientid)
-      {
-        wsInsertChar(ws1,UTF16_ALIGN_RIGHT,wstrlen(ws1)+1);
-        wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses+t->clientid-1,wstrlen(ws1)+1);
+      if (t->clientid && t->clientid<=total_clientid){
+        int a=wstrlen(ws1)+1;
+        wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses+t->clientid-1,a);
+        wsInsertChar(ws1,UTF16_ALIGN_RIGHT,a);
       }
       if (t->xtext && t->xtext[0]!=0)
       {
