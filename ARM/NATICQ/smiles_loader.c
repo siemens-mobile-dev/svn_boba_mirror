@@ -377,7 +377,6 @@ void ProcessNextXStatImg(void)
       goto l1;
     }
   }
-  int a=total_xstatuses2;
-  total_clientid=a-total_xstatuses;
+  total_clientid=total_xstatuses2-101;
   xstatuses_load=0;
 }
