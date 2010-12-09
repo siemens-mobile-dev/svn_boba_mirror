@@ -1,6 +1,6 @@
 ;C901 SW-R1GA028
 ;Библиотека функций
-;v230510
+;v281110
 ;(c) Hussein , IronMaster
 ;(p) Joker XT, Xamid, Lost
 ;pAtChFiLe=/boot/phone_app.cxc
@@ -255,10 +255,10 @@
 ;0824: xxxxxxxx yyyyyyyy ; 209:
 0828: 00000000 EDF42814 ; 20A: void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 082C: 00000000 9DB14A14 ; 20B: void GUIObject_SetFocus( GUI*, int );
-0830: 00000000 89A42914 ; 20C: int CreateSMSCont( int, void* );
-0834: 00000000 3D3B3E14 ; 20D: int FreeSMSCont( void* );
-0838: 00000000 81158215 ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
-083C: 00000000 2DE2EA14 ; 20F: int CteateNewMessage( int, void*, int );
+0830: 00000000 89A42914 ; 20C: int MSG_SendMessage_CreateMessage( int, void* );
+0834: 00000000 3D3B3E14 ; 20D: int MSG_SendMessage_DestroyMessage( void* );
+0838: 00000000 81158215 ; 20E: int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
+083C: 00000000 2DE2EA14 ; 20F: int MSG_SendMessage_Start( int, void*, int );
 0840: 00000000 9CAAB015 ;8210: void* get_APP_DESC_TABLE( void );
 0844: 00000000 69841A14 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 0848: 00000000 458D2715 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
@@ -383,7 +383,7 @@
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 1D59EE14 ; 28A: int IsFmRadioBook( BOOK *bk );
 0A2C: 00000000 85092714 ; 28B: int IsAudioPlayerBook( BOOK *bk);
-;0A30: xxxxxxxx yyyyyyyy ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
+0A30: 00000000 D5E0CC14 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: 00000000 5583DB14 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
 0A38: 00000000 29A1F514 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
 0A3C: 00000000 19000A14 ; 28F: int mkdir( const wchar_t* path );
@@ -554,9 +554,9 @@
 0CD0: 00000000 A9664415 ; 334: int IsSoundRecorderBook( BOOK *bk );
 0CD4: 00000000 4DB1F114 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 ;0CD8: xxxxxxxx yyyyyyyy ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
-;0CDC: xxxxxxxx yyyyyyyy ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
-;0CE0: xxxxxxxx yyyyyyyy ; 338: void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
-;0CE4: xxxxxxxx yyyyyyyy ; 339: void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
+0CDC: 00000000 DD664215 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
+0CE0: 00000000 696C4215 ; 338: void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
+0CE4: 00000000 A1664215 ; 339: void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
 0CE8: 00000000 050D4914 ; 33A: void RightNow_SetActive( int flag );
 ;0CEC: xxxxxxxx yyyyyyyy ; 33B: void VideoResize_AutomateMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
 ;0CF0: xxxxxxxx yyyyyyyy ; 33C: void VideoResize_AllScreenMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
@@ -564,11 +564,11 @@
 ;0CF8: xxxxxxxx yyyyyyyy ; 33E: void Video_SetSkin( GUI* VideoPlayerGUI, int skinID );
 ;0CFC: xxxxxxxx yyyyyyyy ; 33F: int Video_SetPermit( BOOK* VideoPlayerBook, u16 NewWidth, u16 NewHeight );
 ;0D00: xxxxxxxx yyyyyyyy ; 340: int Video_Refresh( BOOK* VideoPlayerBook, GUI* VideoPlayerGUI );
-;0D04: xxxxxxxx yyyyyyyy ; 341: void Video_Play( BOOK* VideoPlayerBook, void* );
-;0D08: xxxxxxxx yyyyyyyy ; 342: void Video_Pause( BOOK* VideoPlayerBook, void* );
+0D04: 00000000 F18FCF14 ; 341: void Video_Play( BOOK* VideoPlayerBook, void* );
+0D08: 00000000 1991E214 ; 342: void Video_Pause( BOOK* VideoPlayerBook, void* );
 ;0D0C: xxxxxxxx yyyyyyyy ; 343: void Video_Stop( BOOK* VideoPlayerBook, void* );
-;0D10: xxxxxxxx yyyyyyyy ; 344: void Audio_Pause( BOOK* );
-;0D14: xxxxxxxx yyyyyyyy ; 345: void Audio_Play( BOOK* );
+0D10: 00000000 B1E0CC14 ; 344: void Audio_Pause( BOOK* );
+0D14: 00000000 4D350215 ; 345: void Audio_Play( BOOK* );
 0D18: 00000000 19517015 ; 346: GUI* CreatePercentInputVA( int zero, ... );
 0D1C: 00000000 B9527015 ; 347: int PercentInput_GetPercent( GUI* PercentInput );
 0D20: 00000000 A1D88415 ; 348: void GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
@@ -607,7 +607,7 @@
 0DA4: 00000000 F13C0B14 ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
 0DA8: 00000000 213D0B14 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
 0DAC: 00000000 213F0B14 ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
-;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
+0DB0: 00000000 513F0B14 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 ;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
 0DB8: 00000000 09AA1614 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
 0DBC: 00000000 E5DD7A10 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
@@ -704,7 +704,7 @@
 0F28: 00000000 CDD71314 ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
 0F2C: 00000000 C5921614 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 21783914 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
-;0F34: xxxxxxxx yyyyyyyy ; 3CD: int sscanf( const char* buffer, const char* format, ... );
+0F34: 00000000 0D2B1D10 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 
 
 

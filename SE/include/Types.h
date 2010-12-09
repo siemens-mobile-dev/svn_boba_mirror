@@ -822,8 +822,8 @@ typedef struct
   wchar_t name1[0xC8];
   wchar_t name2[0xC8];
   char shortcut_state;
-  char unk2;
-  char unk3;
+  char shortcutID;
+  char press_mode;
   char is_name1_present;
   char name_type;
   char isEditable;
