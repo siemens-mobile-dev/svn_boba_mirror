@@ -1,9 +1,3 @@
-;K800 SW-R8BF003
-;elf library
-;v
-;(c) Hussein , IronMaster
-;(p) hippy dave, michlantecuhtli, MaPkiZzz, Alex_1992
-
 +45D1FC00
 0448: 00000000 94300020 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 18CB3F44 ; 113: int memcpy( void* dest, const void* source, int cnt );
@@ -705,9 +699,11 @@
 ;0F2C: xxxxxxxx yyyyyyyy ; 3CB: void OSE_GetShell( void** pInterface );
 ;0F30: xxxxxxxx yyyyyyyy ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 ;0F34: xxxxxxxx yyyyyyyy ; 3CD: int sscanf( const char* buffer, const char* format, ... );
-
-
-
+0F38: 00000000 9D544045 ; 3CE: int ListMenu_DispObject_GetItemCount(DISP_OBJ*);
+0F3C: 00000000 19544045 ; 3CF: int ListMenu_DispObject_GetSelectedItem(DISP_OBJ*);
+0F40: 00000000 FD6D4045 ; 3D0: void ListMenu_DispObject_DestroyItems(DISP_OBJ*);
+0F44: 00000000 55544045 ; 3D1: ivoid ListMenu_DispObject_SetItemCount(DISP_OBJ*,int count);
+0F48: 00000000 C9534045 ; 3D2: void ListMenu_DispObject_SetCursorToItem(DISP_OBJ*,int item);
 
 
 ;locale=Russian_Russia.1251
