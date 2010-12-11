@@ -255,10 +255,10 @@
 ;0824: xxxxxxxx yyyyyyyy ; 209:
 0828: 00000000 69E4F910 ; 20A: void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 082C: 00000000 EDD56511 ; 20B: void GUIObject_SetFocus( GUI*, int );
-0830: 00000000 75832211 ; 20C: int CreateSMSCont( int, void* );
-0834: 00000000 8D8A2211 ; 20D: int FreeSMSCont( void* );
-0838: 00000000 51852211 ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
-083C: 00000000 C5892211 ; 20F: int CteateNewMessage( int, void*, int );
+0830: 00000000 75832211 ; 20C: int MSG_SendMessage_CreateMessage( int, void* );
+0834: 00000000 8D8A2211 ; 20D: int MSG_SendMessage_DestroyMessage( void* );
+0838: 00000000 51852211 ; 20E: int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
+083C: 00000000 C5892211 ; 20F: int MSG_SendMessage_Start( int, void*, int );
 0840: 00000000 20BAA211 ;8210: void* get_APP_DESC_TABLE( void );
 ;0844: xxxxxxxx yyyyyyyy ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 ;0848: xxxxxxxx yyyyyyyy ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
@@ -307,7 +307,7 @@
 08F4: 00000000 0DDD6411 ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
 08F8: 00000000 A5DB6411 ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager( int cmd );
+0900: 00000000 1DA66611 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
 ;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
 0908: 00000000 D11BA5ED ; 242: STRID TextCopyId( STRID );
 090C: 00000000 25A85B11 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );

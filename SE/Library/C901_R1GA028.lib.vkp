@@ -307,8 +307,8 @@
 ;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
-;0900: xxxxxxxx yyyyyyyy ; 240: void JavaSession_Manager( int cmd );
-;0904: xxxxxxxx yyyyyyyy ; 241: int JavaSession_GetName( void );
+0900: 00000000 33EC2414 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
+0904: 00000000 31EC2414 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
 0908: 00000000 D11BA5ED ; 242: STRID TextCopyId( STRID );
 090C: 00000000 D5570414 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 0910: 00000000 3D922D14 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
