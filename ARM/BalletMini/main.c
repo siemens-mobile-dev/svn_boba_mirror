@@ -520,7 +520,6 @@ static void method3(VIEW_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(vo
 #ifdef ELKA
   DisableIconBar(1);
 #endif
-  SetCpuClockHi(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=&data->vd->dynpng_list->dp;
   ENABLE_REDRAW=1;
@@ -533,7 +532,6 @@ static void method4(VIEW_GUI *data,void (*mfree_adr)(void *))
 #ifdef ELKA
   DisableIconBar(0);
 #endif
-  SetCpuClockLow(2);
   PNGTOP_DESC *pltop=PNG_TOP();
   pltop->dyn_pltop=NULL;
   ENABLE_REDRAW=0;
