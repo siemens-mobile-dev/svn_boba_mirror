@@ -373,7 +373,7 @@ void ProcessNextXStatImg(void)
   }else{
     if (total_xstatuses2<100){
       total_xstatuses=total_xstatuses2;
-      total_xstatuses2=101;
+      total_xstatuses2=100;
       goto l1;
     }
   }
