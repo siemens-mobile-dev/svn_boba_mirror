@@ -1,7 +1,7 @@
 #ifndef _LANGUAGE_H_
 #define _LANGUAGE_H_
 
-#define LG_COPYRIGHT     "NATICQ v2.0\nRevision %d\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow\nSeklth"
+#define LG_COPYRIGHT     "NATICQ v2.1\nRevision %d\n(C) by Rst7/CBSIE\nKren\nKibab\nShadow\nSeklth"
 
 //Оставляем только один дефайн иначе будет кака
 #define LANG_RU

@@ -1227,7 +1227,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state></state>
+          <state>NEWSGOLD</state>
         </option>
         <option>
           <name>AList</name>
@@ -2874,7 +2874,8 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state></state>
+          <state>NEWSGOLD</state>
+          <state>ELKA</state>
         </option>
         <option>
           <name>AList</name>
@@ -3145,7 +3146,7 @@
         <option>
           <name>ModuleLocalSym</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcBitOrder</name>
@@ -3697,7 +3698,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state></state>
+          <state>X75</state>
         </option>
         <option>
           <name>AList</name>
@@ -5032,6 +5033,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\history.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\elfloader\IMB.asm</name>
   </file>
   <file>
     <name>$PROJ_DIR$\lang.c</name>
