@@ -1156,7 +1156,7 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
         wsInsertChar(ws1,0xE008,1);
       }
 #ifdef USE_MLMENU
-      if (t->state&0x800){
+      if ((t->state!=0xffff)&&(t->state&0x800)){
         wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses,1);
       }
       if (t->clientid && t->clientid<=total_clientid){
