@@ -168,7 +168,7 @@ extern const unsigned int IDLEICON_X;
 extern const unsigned int IDLEICON_Y;
 
 #ifdef NEWSGOLD
-#pragma swi_number=0x27 
+#pragma swi_number=0x27
 __swi __arm void AddIconToIconBar(int pic, short *num);
 
 extern const unsigned int ST_FIRST;
@@ -251,8 +251,8 @@ int Is_Active_Up;
 int InAway()
 {
   extern const int STRONG_AWAY;
-  if((CurrentStatus == IS_NA || 
-     CurrentStatus == IS_DND || 
+  if((CurrentStatus == IS_NA ||
+     CurrentStatus == IS_DND ||
      CurrentStatus == IS_OCCUPIED) &&
      STRONG_AWAY)
     return 1;
@@ -417,6 +417,50 @@ void ChangeSound(void)
     ShowMSG(1,(int)lgpData[LGP_MsgSndEna]);
 }
 
+int total_unread;
+int messages_unread;
+
+//===================================================================
+//ƒÂÎ‡ÂÏ SLI ËÌ‰ËÍ‡ˆË˛ Ë Ò˜ÂÚ˜ËÍ ÒÓÓ·˘ÂÌËÈ ‚ ÍÎ - Twitch
+
+extern const int cl_unreaded_cnt;
+
+#ifdef ELKA
+
+#pragma swi_number=0x0036
+__swi __arm void SLI_SetState(unsigned char state);
+
+extern const int SLI_State;
+
+/*
+0xA04B77D4; E71
+0xA04BDB9C; EL71
+
+0 - off
+1 - on
+2 - blink slow
+3 - blink fast
+*/
+
+void SetSLI (int state)
+{
+	SLI_SetState((unsigned char) state);
+}
+
+void UpdateSLIState()
+{
+  if(SLI_State != 0)
+  {
+    if (messages_unread > 0)
+      SetSLI (SLI_State);
+    else
+	  SetSLI (0);
+  }
+}
+
+#endif
+//===================================================================
+
 //===================================================================
 //Templates
 char *templates_chars; //—Ó·ÒÚ‚ÂÌÌÓ Ù‡ÈÎ
@@ -463,7 +507,7 @@ int LoadTemplates(CLIST *t)
     f=fopen(fn,A_ReadOnly+A_BIN,P_READ,&ul);
   }
   if (f==-1) return 0;
-  
+
   if(t->name[0] == '#')       //›ÚÓ ·ÓÚ
   {
     curlog = t->log;
@@ -474,7 +518,7 @@ int LoadTemplates(CLIST *t)
     }
     p=templates_chars=malloc(fsize+1+loglen); //‡ÁÏÂ ·ÛÙÂ‡ ÔÓ‰ ¯‡·ÎÓÌ˚
   }
-  else  
+  else
     p=templates_chars=malloc(fsize+1);
   p[fread(f,p,fsize,&ul)]=0;
   fclose(f,&ul);
@@ -502,14 +546,14 @@ int LoadTemplates(CLIST *t)
   }
   if(t->name[0] != '#')       //›ÚÓ ÌÂ ·ÓÚ
     return i;
-  
+
   curlog = t->log;
   firstgps = i;
   while(curlog)
   {
     pp = curlog->text;
     while(pp = strstr(pp, "| "))
-    {    
+    {
       pp+=2; j = pp;
       if(curlog->text[0] != 'g') for(j = pp; (*j >= '0' && *j <= '9') || *j == '*'; j++);
       for(; *j == ' '; j++);
@@ -546,17 +590,17 @@ int LoadTemplates(CLIST *t)
   {
     lastadd = 0;
     if(strstr(curlog->text, "add ")) lastadd = curlog;
-  
-    while(curlog->next) 
+
+    while(curlog->next)
     {
       curlog = curlog->next;
       if(strstr(curlog->text, "add ")) lastadd = curlog;
     }
-  
+
     if(lastadd)
     {
       pp = lastadd->text;
-      
+
       while(pp = strstr(pp, "add "))
       {
         for(j = pp = pp+4; *j >= '0' && *j <= '9'; j++);
@@ -620,9 +664,6 @@ void ElfKiller(void)
   extern void *ELF_BEGIN;
   kill_data(&ELF_BEGIN,(void (*)(void *))mfree_adr());
 }
-
-int total_unread;
-int messages_unread;
 
 //===============================================================================================
 #pragma inline
@@ -922,28 +963,28 @@ void create_contactlist_menu(void)
   int i;
   i=CountContacts();
   prev_clmenu_itemcount=i;
-  
-  
+
+
   //strcpy(def_clm_hdr_text, (char*)lgpData[LGP_ClTitle]);
   //strcpy(key_clm_hdr_text, (char*)lgpData[LGP_ClT9Inp]);
-  
+
   //strcpy(def_clmenu_sk_r,(char*) lgpData[LGP_Close]);
   //strcpy(key_clmenu_sk_r,(char*) lgpData[LGP_Clear]);
-  
+
   UpdateCLheader();
   patch_header(&contactlist_menuhdr);
-  
+
   clmenu_sk[0].lgp_id=(int)lgpData[LGP_Options];
   menu_sk[0].lgp_id=(int)lgpData[LGP_Select];
   menu_sk[1].lgp_id=(int)lgpData[LGP_Close];
-  
+
 
 #ifdef USE_MLMENU
   contactlist_menu_id=CreateMultiLinesMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i);
 #else
   contactlist_menu_id=CreateMenu(0,0,&contactlist_menu,&contactlist_menuhdr,0,i,0,0);
 #endif
-  
+
 }
 
 void contactlist_menu_ghook(void *data, int cmd)
@@ -1149,7 +1190,9 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
     icon=GetIconIndex(t);
     if (icon!=IS_GROUP)
     {
-      wsprintf(ws1,percent_t,t->name);
+      if (t->unreaded!=0 && cl_unreaded_cnt == 1)
+        wsprintf(ws1,"[%d] ",t->unreaded);		//Twitch
+	  wsprintf(ws1,"%w%t",ws1,t->name);
       if (t->isactive)
       {
         wsInsertChar(ws1,0x0002,1);
@@ -1159,7 +1202,8 @@ void contactlist_menu_iconhndl(void *data, int curitem, void *unk)
       if ((t->state!=0xffff)&&(t->state&0x800)){
         wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses,1);
       }
-      if (t->clientid && t->clientid<=total_clientid){
+      if (t->clientid && t->clientid<=total_clientid)
+      {
         int a=wstrlen(ws1)+1;
         wsInsertChar(ws1,FIRST_UCS2_BITMAP+total_xstatuses+t->clientid,a);
         wsInsertChar(ws1,UTF16_ALIGN_RIGHT,a);
@@ -1321,7 +1365,7 @@ void create_connect(void)
   }
   DNR_ID=0;
   *socklasterr()=0;
-  
+
   if(connect_state<2){
     TTime t;
     GetDateTime(0,&t);
@@ -1621,7 +1665,7 @@ void get_answer(void)
 	case T_GROUPID:
 	case T_GROUPFOLLOW:
 	case T_CLENTRY:
-        case T_CONTACTREMOVED: 
+        case T_CONTACTREMOVED:
 	  //œÓÒ˚Î‡ÂÏ ‚ MMI
 	  n=i+sizeof(PKT)+1;
 	  p=malloc(n);
@@ -1735,11 +1779,11 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
       if(strcmp(lastX, s) == 0) return;
   }
 
-  snprintf(hs,127,"%02d:%02d %02d-%02d %s:\r\n",tt.hour,tt.min,d.day,d.month,name);
+  snprintf(hs,127,"%02d:%02d:%02d %02d-%02d %s:\r\n",tt.hour,tt.min,tt.sec,d.day,d.month,name);
   if(code != 3 || LOG_XTXT) //ÕÛÊÌÓ ÒÓı‡ÌˇÚ¸ ËÍÒÒÚ‡ÚÛÒ
     Add2History(t, hs, s, code); // «‡ÔËÒ¸ ıËÒÚÓË
   LOGQ *p=NewLOGQ(s);
-  snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);
+  snprintf(p->hdr,79,"%02d:%02d:%02d %02d-%02d %s:",tt.hour,tt.min,tt.sec,d.day,d.month,name);
 //  snprintf(p->hdr,79,"%s:",name);
   p->type=code;
   p->ID=IDforACK;  //0-32767
@@ -1751,7 +1795,7 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
     i--;
   }
   t->msg_count=i;
-  
+
   int allsize = 0;
   p = t->log;
   while(p->next) {allsize+=strlen(p->text);p=p->next;}
@@ -1763,7 +1807,7 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
     RemoveLOGQ(&t->log,t->log);
     t->msg_count--;
   }
-  
+
   if (!t->last_log) t->last_log=p;
   if (code==3)
   {
@@ -1787,7 +1831,7 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   }
 L_INC:
   // œË ÔËıÓ‰Â ÌÓ‚Ó„Ó ÒÓÓ·˘ÂÌËˇ
-  if (!t->isunread) 
+  if (!t->isunread)
   {
     // œÓ‚˚¯‡ÂÏ Ò˜ÂÚ˜ËÍ ˛ÁÂÓ‚, ÓÚ ÍÓÚÓ˚ı ÔË¯ÎË ÌÓ‚˚Â ÒÓÓ·˘ÂÌËˇ
     total_unread++;
@@ -1798,6 +1842,9 @@ L_INC:
   messages_unread++;
   t->isunread=1;
   UpdateCSMname();
+#ifdef ELKA
+  UpdateSLIState(); //Twitch
+#endif
 L_NOINC:
   ChangeContactPos(t);
 }
@@ -1948,6 +1995,9 @@ void AddMsgToChat(void *data)
     ed_struct->ed_contact->isunread=1;
   }
   UpdateCSMname();
+#ifdef ELKA
+  UpdateSLIState(); //Twitch
+#endif
   ChangeContactPos(ed_struct->ed_contact);
   //  EDIT_SetFocus(data,ed_struct->ed_answer);
 }
@@ -2171,7 +2221,7 @@ void ProcessPacket(TPKT *p)
     };
     t2=t->prev;
     DeleteContact(t);
-    if(t2) RecountMenu(t2,1); 
+    if(t2) RecountMenu(t2,1);
     break;
   case T_CLIENTID:
     if (t=FindContactByUin(p->pkt.uin)){
@@ -2249,7 +2299,7 @@ void ProcessPacket(TPKT *p)
     }
     break;
   case T_RECVMSG:
-    
+
     t=FindContactByUin(p->pkt.uin);
     if (!t)
     {
@@ -2458,7 +2508,7 @@ void onRedraw(MAIN_GUI *data)
     pos_status = ((scr_w-1) * pl) / pm;
     DrawRectangle(1,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD)+1,pos_status,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-3,0,
                      GetPaletteAdrByColorIndex(14),
-                     GetPaletteAdrByColorIndex(14));  
+                     GetPaletteAdrByColorIndex(14));
     wstrcatprintf(data->ws1,"\nLoading images...");
     if (total_smiles){
       wstrcatprintf(data->ws1,"\nLoaded %d smiles",total_smiles);
@@ -3082,7 +3132,7 @@ void UpdateCSMname()
     if(messages_unread > 0)
     {
 #ifdef NEWSGOLD
-      wsprintf(task_name, "%w%c ", task_name, 0xE16D); 
+      wsprintf(task_name, "%w%c ", task_name, 0xE16D);
 #else
       wsprintf(task_name, "%w%c ", task_name, 0xE17A);
 #endif
@@ -3165,14 +3215,14 @@ int main(char *filename, const char *config_name)
   // ƒÂÎ‡ÂÏ ÏÌÓ„ÓÔÓÙËÎ¸ÌÓÒÚ¸
   InitConfig(config_name);
   //
- 
+
   s=strrchr(filename,'\\');
   len=(s-filename)+1;
   strncpy(elf_path,filename,len);
   elf_path[len]=0;
-  
+
   lgpLoadLangpack();
-  
+
   if (!UIN)
   {
     LockSched();
@@ -3183,7 +3233,7 @@ int main(char *filename, const char *config_name)
     SUBPROC((void *)ElfKiller);
     return 0;
   }
- 
+
   ReadDefSettings();
   setup_ICONS();
   LoadXStatusText();
@@ -3395,29 +3445,29 @@ unsigned short * wstrstr(unsigned short *ws, char *str, int *wslen, int len)
   char *s;
   unsigned short *w;
   int l;
- 
+
   while(*wslen >= len)
   {
     s = str;
     w = ws;
     l = len;
-    for(; (char16to8(*w) == *s) && l; w++, s++, l--);     
+    for(; (char16to8(*w) == *s) && l; w++, s++, l--);
     if(!l) return ws;
     ws++;
     (*wslen)--;
   }
   return 0;
-  
+
 }
 
 int IsUrl(WSHDR *ws, int pos, char *link)
 {
-  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?#‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ~";
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&#=/?#‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ~";
 
   int len = wstrlen(ws);
   unsigned short *str = ws->wsbody+1, *tmp, *begin;
   tmp = str;
-  
+
   begin = str = wstrstr(str, "http://", &len, 7);
 
   while(str && (begin-tmp <= pos))
@@ -3455,7 +3505,7 @@ int IsUrl(WSHDR *ws, int pos, char *link)
 
 void ParseAnswer(WSHDR *ws, const char *s)
 {
-  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),%;:@&=/?‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ";
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*#'(),%;:@&=/?‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ";
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
   STXT_SMILES *st;
@@ -3472,13 +3522,13 @@ void ParseAnswer(WSHDR *ws, const char *s)
       {
         wchar=char8to16(*s);
         wsAppendChar(ws,wchar);
-        s++;       
+        s++;
       }
       wsAppendChar(ws,UTF16_DIS_UNDERLINE);
       ulb=s[0]+(s[1]<<8)+(s[2]<<16)+(s[3]<<24);
       continue;
     }
-    
+
     t=t_root;
     while(t)
     {
@@ -3635,9 +3685,9 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
         wstrcpy(ews,ec.pWS);
         pos = EDIT_GetCursorPos(data);
         len = wstrlen(ews);
-        
+
         link = malloc(len+1);
-                
+
         if(IsUrl(ews, pos, link))
         {
           char templates_path[128];
@@ -3652,10 +3702,10 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
             fwrite(f,link,strlen(link),&err);
             fclose(f,&err);
             str_2ws(ews,fn,256);
-            ExecuteFile(ews,0,0);            
+            ExecuteFile(ews,0,0);
             unlink(fn, &err);
-          }          
-          
+          }
+
 //          LockSched();
 //          ShowMSG(1,(int)link);
 //          UnlockSched();
@@ -3668,8 +3718,8 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
           EDIT_OpenOptionMenuWithUserItems(data,ed_options_handler,ed_struct,i+2);
           mfree(link);
           return (-1);
-        }          
-          
+        }
+
       }
 
     }
@@ -3790,6 +3840,9 @@ void edchat_ghook(GUI *data, int cmd)
     ed_struct->ed_contact->isunread=0;
     ed_struct->requested_decrement_total_unread=0;
     UpdateCSMname();
+#ifdef ELKA
+    UpdateSLIState(); //Twitch
+#endif
 /*    if (request_close_edchat)
     {
       request_close_edchat=0;
@@ -3951,7 +4004,7 @@ void CreateEditChat(CLIST *t)
     AddEditControlToEditQend(eq,&ec,ma);
     lp=lp->next;
   }
-  if (t->isunread) 
+  if (t->isunread)
   {
     total_unread = total_unread - t->unreaded;
   }
@@ -3959,6 +4012,9 @@ void CreateEditChat(CLIST *t)
   t->unreaded = 0;
   t->isunread=0;
   UpdateCSMname();
+#ifdef ELKA
+  UpdateSLIState(); //Twitch
+#endif
   ChangeContactPos(t);
   wsprintf(ews, "-------");
   PrepareEditControl(&ec);
@@ -3989,7 +4045,7 @@ void CreateEditChat(CLIST *t)
   ed_struct->ed_contact=t;
   ed_struct->ed_answer=edchat_toitem;
   ed_struct->requested_decrement_total_unread=0;
-  
+
   t->req_add=0;
   t->last_log=NULL;
 
@@ -4000,8 +4056,8 @@ void CreateEditChat(CLIST *t)
   patch_header(&edchat_hdr);
   patch_input(&edchat_desc);
   //  edchat_desc.font=ED_FONT_SIZE;
-  
-  
+
+
   edchat_id=CreateInputTextDialog(&edchat_desc,&edchat_hdr,eq,1,ed_struct);
 }
 
@@ -4049,6 +4105,7 @@ void Quote(GUI *data)
   }
   while((ed_pos=wstrchr(ed_ws,ed_pos,'\r'))!=0xFFFF);
   wsAppendChar(ed_ws,'\n');
+
   wsAppendChar(ed_ws,'\r');
   ws=AllocWS(ec_ed.pWS->wsbody[0]+ed_ws->wsbody[0]);
   wstrcpy(ws,ec_ed.pWS);
@@ -4092,7 +4149,7 @@ void AddCurContact(GUI *data)
   GeneralFuncF1(1);
 }
 
-void ActionOnCurContact(GUI *data,int msg) 
+void ActionOnCurContact(GUI *data,int msg)
 {
   EDCHAT_STRUCT *ed_struct;
   ed_struct=MenuGetUserPointer(data);
@@ -4142,7 +4199,7 @@ void SendAuthReq(GUI *data)
   //const char s[]=LG_AUTHREQ;
   //char s[]=empty_string;
   //strcpy(s,(char*)lgpData[LGP_AuthReq]);
-  
+
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen((char*)lgpData[LGP_AuthReq]))+1);
@@ -4169,7 +4226,7 @@ void SendAuthGrant(GUI *data)
   //const char s[]=LG_AUTHGRANT;
   //char s[]=empty_string;
   //strcpy(s,(char*)lgpData[LGP_AuthGrant]);
-  
+
   if ((t=ed_struct->ed_contact)&&(connect_state==3))
   {
     p=malloc(sizeof(PKT)+(l=strlen((char*)lgpData[LGP_AuthGrant]))+1);
@@ -4198,7 +4255,7 @@ void OpenLogfile(GUI *data)
   zeromem(hist_path,128);
   strcpy(hist_path,HIST_PATH);
   if (hist_path[strlen(hist_path)-1]!='\\') strcat(hist_path,_slash);
-  
+
   WSHDR *ws=AllocWS(256);
   if ((t=ed_struct->ed_contact))
   {
@@ -4344,18 +4401,18 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
 
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
-    
+
     //»ÌËˆË‡ÎËÁ‡ˆËˇ ÎÂÌ„Ô‡Í‡
-    ecmenu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_MnuQuote]; 
+    ecmenu_ITEMS[0].lgp_id_small=(int)lgpData[LGP_MnuQuote];
     ecmenu_ITEMS[1].lgp_id_small=(int)lgpData[LGP_MnuAddSml];
-    ecmenu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_MnuShInfo]; 
+    ecmenu_ITEMS[2].lgp_id_small=(int)lgpData[LGP_MnuShInfo];
     ecmenu_ITEMS[3].lgp_id_small=(int)lgpData[LGP_MnuAddRen];
-    ecmenu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_MnuSAuthReq]; 
-    ecmenu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_MnuSAuthGrt]; 
-    ecmenu_ITEMS[6].lgp_id_small=(int)lgpData[LGP_MnuOpenLog]; 
-    ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuRemCont]; 
-    ecmenu_ITEMS[8].lgp_id_small=(int)lgpData[LGP_MnuClearCht]; 
-  
+    ecmenu_ITEMS[4].lgp_id_small=(int)lgpData[LGP_MnuSAuthReq];
+    ecmenu_ITEMS[5].lgp_id_small=(int)lgpData[LGP_MnuSAuthGrt];
+    ecmenu_ITEMS[6].lgp_id_small=(int)lgpData[LGP_MnuOpenLog];
+    ecmenu_ITEMS[7].lgp_id_small=(int)lgpData[LGP_MnuRemCont];
+    ecmenu_ITEMS[8].lgp_id_small=(int)lgpData[LGP_MnuClearCht];
+
     CreateMenu(0,0,&ecmenu_STRUCT,&ecmenu_HDR,0,EC_MNU_MAX,ed_struct,to_remove);
   }
 }
