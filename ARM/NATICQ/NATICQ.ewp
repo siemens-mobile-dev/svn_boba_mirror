@@ -1356,7 +1356,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>subwcrev $PROJ_DIR$ $PROJ_DIR$\revision.h_ $PROJ_DIR$\revision.h</prebuild>
         <postbuild>"obexcopy.exe" $EXE_DIR$\NatICQ.elf \MMCard\ZBin\NatICQ\NatICQ.elf</postbuild>
       </data>
     </settings>
@@ -2179,7 +2179,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>subwcrev $PROJ_DIR$ $PROJ_DIR$\revision.h_ $PROJ_DIR$\revision.h</prebuild>
         <postbuild>obexcopy.exe $EXE_DIR$\NATICQ.elf \Data\Zbin\NatICQ\NATICQ.elf</postbuild>
       </data>
     </settings>
@@ -2576,7 +2576,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>4.41A</state>
+          <state>4.42A</state>
         </option>
         <option>
           <name>GeneralMisraRules</name>
@@ -3004,7 +3004,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>subwcrev $PROJ_DIR$ $PROJ_DIR$\revision.h_ $PROJ_DIR$\revision.h</prebuild>
         <postbuild>"obexcopy.exe" $PROJ_DIR$\Release_ELKA\Exe\NatICQ.elf \MMCard\ZBin\NatICQ\NatICQ.elf</postbuild>
       </data>
     </settings>
@@ -3827,7 +3827,7 @@
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild></prebuild>
+        <prebuild>subwcrev $PROJ_DIR$ $PROJ_DIR$\revision.h_ $PROJ_DIR$\revision.h</prebuild>
         <postbuild>"obexcopy.exe" $PROJ_DIR$\Release\Exe\NATICQ.elf \MMCard\NATICQ.elf</postbuild>
       </data>
     </settings>
@@ -5054,9 +5054,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\rand.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\revision.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\select_smile.c</name>

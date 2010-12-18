@@ -1,1 +1,0 @@
-svn.exe info svn://svn.boba.su/ARM/NATICQ | ..\_SVN_Utility\getsvn.exe
