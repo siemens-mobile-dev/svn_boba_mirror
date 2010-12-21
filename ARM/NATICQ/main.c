@@ -1367,9 +1367,8 @@ void create_connect(void)
   *socklasterr()=0;
 
   if(connect_state<2){
-    TTime t;
-    GetDateTime(0,&t);
-    host_counter = t.sec%(GetHostsCount(NATICQ_HOST)+1);
+
+    host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
   }
 
   GetHost(host_counter, NATICQ_HOST, hostbuf);
@@ -2530,6 +2529,9 @@ void onRedraw(MAIN_GUI *data)
 
 void onCreate(MAIN_GUI *data,void *(*malloc_adr)(int))
 {
+  TTime t;
+  GetDateTime(0,&t);
+  msrand(t.sec);
   data->ws1=AllocWS(256);
   data->ws2=AllocWS(256);
   data->gui.state=1;
