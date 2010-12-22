@@ -48,6 +48,8 @@ LGP_Item LGPTAGS[]=
   {"LGP_MnuAddSml",              LGP_MnuAddSml},
   {"LGP_MnuShInfo",              LGP_MnuShInfo},
   {"LGP_MnuAddRen",              LGP_MnuAddRen},
+  {"LGP_MnuRemCont",             LGP_MnuRemCont},
+  {"LGP_MnuRemContQuestions",    LGP_MnuRemContQuestions},
   {"LGP_MnuSAuthReq",            LGP_MnuSAuthReq},
   {"LGP_MnuSAuthGrt",            LGP_MnuSAuthGrt},
   {"LGP_MnuOpenLog",             LGP_MnuOpenLog},
@@ -92,8 +94,7 @@ LGP_Item LGPTAGS[]=
   {"LGP_GrsKeyExit",             LGP_GrsKeyExit},
   {"LGP_GrsKeyClist",            LGP_GrsKeyClist},
   {"LGP_LangCode",               LGP_LangCode},
-  {"LGP_MnuRemCont",             LGP_MnuRemCont},
-  {"LGP_MnuRemContQuestions",    LGP_MnuRemContQuestions},  
+
   {"LGP_DATA_NUM",               LGP_DATA_NUM}
 };
 
@@ -169,6 +170,7 @@ void lgpLoadDefault()
   strcpy(en_lgp[LGP_MnuShInfo],              "Get short info");
   strcpy(en_lgp[LGP_MnuAddRen],              "Add/rename");
   strcpy(en_lgp[LGP_MnuRemCont],             "Remove");
+  strcpy(en_lgp[LGP_MnuRemContQuestions],    "Delete a contact?");
   strcpy(en_lgp[LGP_MnuSAuthReq],            "Send Auth Req");
   strcpy(en_lgp[LGP_MnuSAuthGrt],            "Send Auth Grant");
   strcpy(en_lgp[LGP_MnuOpenLog],             "Open logfile");
