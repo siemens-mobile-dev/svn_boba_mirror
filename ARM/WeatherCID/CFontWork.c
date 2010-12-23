@@ -4,11 +4,11 @@
 
 _cfont cfont;
 
-void LoadFont()
+void LoadFont(const char *fname)
 {
   unsigned err;
   int f;
-  if ((f=fopen("4:\\ZBin\\WeatherD\\Weather.cfnt",A_ReadOnly+A_BIN,P_READ,&err))!=-1)
+  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&err))!=-1)
   {
 //  int f = FileOpen("test.cfnt", fmOpenRead);
     lseek(f, 8, 0, &err, &err);
