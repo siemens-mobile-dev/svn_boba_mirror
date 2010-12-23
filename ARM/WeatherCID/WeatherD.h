@@ -2,6 +2,7 @@ extern const unsigned int TID;
 
 extern const char ICON_PATH[];
 extern const char DATA_PATH[];
+extern const char FONT_FILE[];
 
 extern const unsigned int FONT_SIZE;
 extern const char FONT_COLOR[];
