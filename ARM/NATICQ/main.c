@@ -2999,6 +2999,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_SOCK_REMOTE_CLOSED:
 	//Закрыт со стороны сервера
 	if (connect_state)
+          host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
 	  SUBPROC((void *)end_socket);
 	break;
       case ENIP_SOCK_CLOSED:
@@ -3018,6 +3019,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	RecountMenu(NULL, 1);
 	connect_state=0;
 	sock=-1;
+        host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
         if(VIBR_ON_CONNECT){
           vibra_count=4;
 	  start_vibra();
@@ -3030,8 +3032,9 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	SUBPROC((void *)ClearSendQ);
 	if (!disautorecconect)
         {
-          GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
-          snprintf(logmsg,255,LG_GRRECONNECT,logmsg, RECONNECT_TIME);
+          int rec_rand = (mrand()*30)>>15;
+          GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*(RECONNECT_TIME+rec_rand),do_reconnect);
+          snprintf(logmsg,255,LG_GRRECONNECT,logmsg, RECONNECT_TIME+rec_rand);
         }
 	break;
       }
