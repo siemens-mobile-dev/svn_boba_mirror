@@ -1889,11 +1889,11 @@
         </option>
         <option>
           <name>IExtraOptionsCheck</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state></state>
+          <state>--separate_cluster_for_initialized_variables</state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -2713,11 +2713,11 @@
         </option>
         <option>
           <name>IExtraOptionsCheck</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state></state>
+          <state>--separate_cluster_for_initialized_variables</state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -3537,11 +3537,11 @@
         </option>
         <option>
           <name>IExtraOptionsCheck</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state></state>
+          <state>--separate_cluster_for_initialized_variables</state>
         </option>
         <option>
           <name>CCLangConformance</name>
