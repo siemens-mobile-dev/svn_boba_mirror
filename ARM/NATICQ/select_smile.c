@@ -96,8 +96,8 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
           DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
-                        GetPaletteAdrByColorIndex(3),
-                        GetPaletteAdrByColorIndex(3));
+                        GetPaletteAdrByColorIndex(116),
+                        GetPaletteAdrByColorIndex(116));
         }
         DrwImg(img,x,y2);
       }
@@ -114,23 +114,23 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(1),GetPaletteAdrByColorIndex(23));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(129),GetPaletteAdrByColorIndex(130));
     }
   }
   return (res);  
 }
 
-static void method0(SMILE_GUI *data)
+static void onRedraw(SMILE_GUI *data)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
   DrawRectangle(0,YDISP,scr_w,scr_h,0,
-                GetPaletteAdrByColorIndex(0),
-                GetPaletteAdrByColorIndex(0));
+                GetPaletteAdrByColorIndex(130),
+                GetPaletteAdrByColorIndex(130));
   RenderPage(data,1);
 }
 
-static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
+static void onCreate(SMILE_GUI *data,void *(*malloc_adr)(int))
 {
   S_SMILES *sm=s_top;
   IMGHDR *img;
@@ -162,27 +162,27 @@ static void method1(SMILE_GUI *data,void *(*malloc_adr)(int))
   data->gui.state=1;
 }
 
-static void method2(SMILE_GUI *data,void (*mfree_adr)(void *))
+static void onClose(SMILE_GUI *data,void (*mfree_adr)(void *))
 {
   data->gui.state=0;
   mfree(data->icons);
   FreeWS(data->ws);
 }
 
-static void method3(SMILE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
+static void onFocus(SMILE_GUI *data,void *(*malloc_adr)(int),void (*mfree_adr)(void *))
 {
   DisableIDLETMR();
   data->gui.state=2;
 }
 
-static void method4(SMILE_GUI *data,void (*mfree_adr)(void *))
+static void onUnfocus(SMILE_GUI *data,void (*mfree_adr)(void *))
 {
   if (data->gui.state!=2)
     return;
   data->gui.state=1;
 }
 
-static int method5(SMILE_GUI *data,GUI_MSG *msg)
+static int onKey(SMILE_GUI *data,GUI_MSG *msg)
 {
   int i;
   int m=msg->gbsmsg->msg;
@@ -274,12 +274,12 @@ static int method9(void){return(0);}
 
 extern void kill_data(void *p, void (*func_p)(void *));
 static const void * const gui_methods[11]={
-  (void *)method0,  //Redraw
-  (void *)method1,  //Create
-  (void *)method2,  //Close
-  (void *)method3,  //Focus
-  (void *)method4,  //Unfocus
-  (void *)method5,  //OnKey
+  (void *)onRedraw,  //Redraw
+  (void *)onCreate,  //Create
+  (void *)onClose,  //Close
+  (void *)onFocus,  //Focus
+  (void *)onUnfocus,  //Unfocus
+  (void *)onKey,  //OnKey
   0,
   (void *)kill_data, //method7, //Destroy
   (void *)method8,
