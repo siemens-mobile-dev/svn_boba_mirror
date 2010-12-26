@@ -96,8 +96,8 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
           DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
-                        GetPaletteAdrByColorIndex(116),
-                        GetPaletteAdrByColorIndex(116));
+                        GetPaletteAdrByColorIndex(136),
+                        GetPaletteAdrByColorIndex(133));
         }
         DrwImg(img,x,y2);
       }
@@ -114,7 +114,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(129),GetPaletteAdrByColorIndex(130));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(131),GetPaletteAdrByColorIndex(132));
     }
   }
   return (res);  
