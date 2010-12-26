@@ -74,6 +74,14 @@ void PasteCharEditControl(EDCHAT_STRUCT *ed_struct, int wchar)
   FreeWS(ed_ws);
 }
 
+static char *getthefuckingcolour(int c1,int c2){
+ char *cc1=GetPaletteAdrByColorIndex(c1);
+ if (cc1[3]==100) return cc1;
+ char *cc2=GetPaletteAdrByColorIndex(c2);
+ if (cc1[3]<cc2[3]) return cc2;
+ return cc1;
+}
+
 int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нарисованной линии
 {
   int scr_w=ScreenW()-1;
@@ -95,9 +103,9 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нари
       {
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
-          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,
-                        GetPaletteAdrByColorIndex(136),
-                        GetPaletteAdrByColorIndex(133));
+          char *c=getthefuckingcolour(117,136);
+          char *c2=getthefuckingcolour(118,133);
+          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,c,c2);
         }
         DrwImg(img,x,y2);
       }
@@ -114,7 +122,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(131),GetPaletteAdrByColorIndex(132));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(102),GetPaletteAdrByColorIndex(103));
     }
   }
   return (res);  
@@ -124,9 +132,8 @@ static void onRedraw(SMILE_GUI *data)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  DrawRectangle(0,YDISP,scr_w,scr_h,0,
-                GetPaletteAdrByColorIndex(130),
-                GetPaletteAdrByColorIndex(130));
+  char *c=getthefuckingcolour(101,130);
+  DrawRectangle(0,YDISP,scr_w,scr_h,0,c,c);
   RenderPage(data,1);
 }
 
