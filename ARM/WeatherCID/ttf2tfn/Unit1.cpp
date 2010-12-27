@@ -413,6 +413,7 @@ PGLYPHSET glset;
           if(d.bottom > Form1->Height) break;
         }
         SelectObject(hdc, hOldFont);
+        delete []glset;
     }
 
   /*
@@ -602,7 +603,32 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
 
         unsigned char byte = 0;
         int bits = 0;
-        for(int y = 0, byteidx = 0; y < height; y++)
+        int bitsize = height*charwidths[k];
+        int byteidx = 0;
+        for(int x = 0, y = 0; bitsize; bitsize--, x++)
+        {
+          if(x>charwidths[k]) {x=0; y++;}
+          COLORREF c = GetPixel(hdc, x, y);
+          if(c == 0)
+            byte |= (1<<bits);
+          bits++;
+          if(bits == 8)
+          {
+            symbols[k][byteidx++] = byte;
+            byte = 0;
+            bits = 0;
+            charsize[k] = byteidx-1;
+          }
+        }
+        if(bits)
+        {
+          byte <<= (8-bits);
+          symbols[k][byteidx++] = byte;
+          byte = 0;
+          bits = 0;
+          charsize[k] = byteidx-1;
+        }
+/*        for(int y = 0, byteidx = 0; y < height; y++)
         {
           for(int x = 0; x < charwidths[k]; x++)
           {
@@ -621,7 +647,7 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
           }
 //          if(bits)
 //            symbols[k][byteidx++] = byte;
-        }
+        }  */
       }
     }
     SelectObject(hdc, hOldFont);
@@ -672,10 +698,11 @@ void __fastcall TForm1::Button4Click(TObject *Sender)
     FileClose(f);
 
     for(int i = 0; i < charscount; i++)
-      delete symbols[i];
+      delete []symbols[i];
     delete []charwidths;
     delete []charsize;
     delete []symbols;
+    delete []glset;
   }
 
 

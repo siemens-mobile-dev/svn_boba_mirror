@@ -324,7 +324,7 @@ typedef struct
 extern void kill_data(void *p, void (*func_p)(void *));
 
 void CountTime(void){
-/*  TDate date;
+  TDate date;
   TTime time;
   unsigned int min_before_update;
 
@@ -345,9 +345,9 @@ void CountTime(void){
    else  
   if (h >= 150) //2.30 мск
       min_before_update = 510-h+10; //10 минут запаса
-*/
+
   GBS_DelTimer(&update_tmr);
-  GBS_StartTimerProc(&update_tmr, (216*60)*120, do_start_connection); 
+  GBS_StartTimerProc(&update_tmr, (216*60)*min_before_update, do_start_connection); 
 }
 //==============================================================================
 
@@ -370,6 +370,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
       InitConfig();
+      UnloadFont();
+      LoadFont(FONT_FILE);  
 
       int uiWidth  = scr_w - DATA_X + 1;
       int uiHeight = scr_h - DATA_Y + 1;
