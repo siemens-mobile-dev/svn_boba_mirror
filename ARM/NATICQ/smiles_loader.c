@@ -16,8 +16,8 @@ volatile int total_xstatuses;
 volatile int total_xstatuses2;
 int total_clientid;
 volatile int xstatuses_load;
-volatile int pictures_max=100;
-volatile int pictures_loaded;
+volatile int pictures_max=110;
+volatile int pictures_loaded=0;
 
 extern const char SMILE_FILE[];
 extern const char SMILE_PATH[];

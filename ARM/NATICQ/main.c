@@ -508,7 +508,7 @@ int LoadTemplates(CLIST *t)
   }
   if (f==-1) return 0;
 
-  if(t->name[0] == '#')       //Это бот
+  if(t->name[0] == '#'||t->clientid==2)       //Это бот
   {
     curlog = t->log;
     while(curlog)               //Посчитаем предельную длину
@@ -1270,7 +1270,7 @@ extern const char NATICQ_HOST[];
 extern const unsigned int NATICQ_PORT;
 extern const unsigned int RECONNECT_TIME;
 char hostname[128];
-int host_counter = 0;
+int host_counter=-1;
 
 //---------------------------------------------------------------------------
 const char *GetHost(int cnt, const char *str, char *buf)
@@ -1366,8 +1366,7 @@ void create_connect(void)
   DNR_ID=0;
   *socklasterr()=0;
 
-  if(connect_state<2){
-
+  if(host_counter==-1){
     host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
   }
 
@@ -1396,7 +1395,7 @@ void create_connect(void)
     {
       if (DNR_ID)
       {
-        //host_counter--;
+        if (err==0xC9) host_counter=-1;
 	return; //Ждем готовности DNR
       }
     }
@@ -1404,6 +1403,7 @@ void create_connect(void)
     {
       snprintf(logmsg,255,LG_GRDNRERROR,err);
       SMART_REDRAW();
+      host_counter=-1;
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
       return;
     }
@@ -1657,7 +1657,6 @@ void get_answer(void)
 	  //        GBS_StartTimerProc(&tmr_ping,120*TMR_SECOND,call_ping);
 	  snprintf(logmsg,255,LG_GRLOGINMSG,RXbuf.data);
 	  connect_state=3;
-          //host_counter--; //Если уж законнектились, будем сидеть на этом сервере
 	  SMART_REDRAW();
 	  break;
 	case T_XTEXT_ACK:
@@ -2500,7 +2499,7 @@ void onRedraw(MAIN_GUI *data)
   unsigned long RX=ALLTOTALRECEIVED; unsigned long TX=ALLTOTALSENDED;
   wsprintf(data->ws1,LG_GRSTATESTRING,connect_state,RXstate,RX,TX,sendq_l,hostname,logmsg);
 
-  if(total_smiles && xstatuses_load){
+  if(total_smiles || xstatuses_load){
      DrawRectangle(0,scr_h-4-2*GetFontYSIZE(FONT_SMALL_BOLD),scr_w-1,scr_h-4-GetFontYSIZE(FONT_MEDIUM_BOLD)-2,0,
                      GetPaletteAdrByColorIndex(0),
                      GetPaletteAdrByColorIndex(0));
@@ -2591,7 +2590,6 @@ int onKey(MAIN_GUI *data,GUI_MSG *msg)
       SUBPROC((void*)end_socket);
       GBS_DelTimer(&reconnect_tmr);
       DNR_TRIES=3;
-      host_counter++;
       SUBPROC((void *)create_connect);
       break;
     }
@@ -2904,8 +2902,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       }
       is_gprs_online=1;
       //strcpy(logmsg,LG_GRGPRSUP);
-      snprintf(logmsg, 255, LG_GRGPRSUP, RECONNECT_TIME);
-      GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
+      if (!disautorecconect){
+        snprintf(logmsg, 255, LG_GRGPRSUP, RECONNECT_TIME);
+        GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
+      }
       return(1);
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
@@ -2998,8 +2998,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	break;
       case ENIP_SOCK_REMOTE_CLOSED:
 	//Закрыт со стороны сервера
-	if (connect_state)
-          host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
 	  SUBPROC((void *)end_socket);
 	break;
       case ENIP_SOCK_CLOSED:
@@ -3019,7 +3017,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	RecountMenu(NULL, 1);
 	connect_state=0;
 	sock=-1;
-        host_counter = (mrand()*GetHostsCount(NATICQ_HOST))>>15;
+        host_counter=-1;
         if(VIBR_ON_CONNECT){
           vibra_count=4;
 	  start_vibra();
@@ -4389,6 +4387,9 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
     if (EDIT_GetFocus(ed_struct->ed_chatgui)==ed_struct->ed_answer)
     {
       to_remove[++remove]=0;
+      if (!s_top){
+        to_remove[++remove]=1;
+      }
     }
     else
     {
@@ -4403,7 +4404,6 @@ void ec_menu(EDCHAT_STRUCT *ed_struct)
       to_remove[++remove]=4;
       to_remove[++remove]=5;
     }
-
     patch_header(&ecmenu_HDR);
     to_remove[0]=remove;
 
