@@ -1821,21 +1821,6 @@ __swi __arm int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 #pragma swi_number=0x3CD
 __swi __arm int sscanf( const char* buffer, const char* format, ... );
 
-#pragma swi_number=0x3CE
-__swi __arm int ListMenu_DispObject_GetItemCount(DISP_OBJ*);
-
-#pragma swi_number=0x3CF
-__swi __arm int ListMenu_DispObject_GetSelectedItem(DISP_OBJ*);
-
-#pragma swi_number=0x3D0
-__swi __arm void ListMenu_DispObject_DestroyItems(DISP_OBJ*);
-
-#pragma swi_number=0x3D1
-__swi __arm void ListMenu_DispObject_SetItemCount(DISP_OBJ*,int count);
-
-#pragma swi_number=0x3D2
-__swi __arm void ListMenu_DispObject_SetCursorToItem(DISP_OBJ*,int item);
-
 #ifdef LIBCLARANS
 }
 #endif

@@ -6,7 +6,7 @@
 
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE"  = 
 {
-  ELF_TERMINATE_EVENT,     NULL,
+  ELF_TERMINATE_EVENT,     MainPageOnTerminate,
   NIL_EVENT_TAG,           NULL
 };
 
@@ -94,6 +94,12 @@ static int MainPageOnClose(void *, BOOK *bk)
   WriteCalcSettings();
   FREE_GUI(mbk->si);
   return (1);
+}
+
+static int MainPageOnTerminate(void *, BOOK *bk)
+{
+    FreeBook(bk);
+    return 1;
 }
 
 int main()

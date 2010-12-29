@@ -121,15 +121,15 @@
 0610: FFFFFFFF C8411844 ; 184: PROCESS current_process( void );
 0614: FFFFFFFF 00411844 ; 185: void delay( OSTIME timeout );
 0618: FFFFFFFF C8421844 ; 186: OSBOOLEAN hunt( const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig );
-061C: FFFFFFFF 58431844 ; 187: void kill_proc( PROCESS pid );
+;061C: xxxxxxxx yyyyyyyy ; 187: void kill_proc( PROCESS pid );
 ;0620: xxxxxxxx yyyyyyyy ; 188:
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 ;062C: xxxxxxxx yyyyyyyy ; 18B: void stop( PROCESS pid );
 ;0630: xxxxxxxx yyyyyyyy ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 ;0634: xxxxxxxx yyyyyyyy ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
-;0638: xxxxxxxx yyyyyyyy ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
-;063C: xxxxxxxx yyyyyyyy ; 18F: PROCESS get_bid( PROCESS pid );
+0638: FFFFFFFF 719F1444 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
+063C: FFFFFFFF 00421844 ; 18F: PROCESS get_bid( PROCESS pid );
 0640: FFFFFFFF 050A0E45 ; 190: int datetime2unixtime ( DATETIME *dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
@@ -254,10 +254,10 @@
 ;0824: xxxxxxxx yyyyyyyy ; 209:
 0828: FFFFFFFF B1714245 ; 20A: void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 082C: FFFFFFFF 39340045 ; 20B: void GUIObject_SetFocus( GUI*, int );
-0830: FFFFFFFF 59262E45 ; 20C: int CreateSMSCont( int, void* );
-0834: FFFFFFFF 692B2E45 ; 20D: int FreeSMSCont( void* );
-0838: FFFFFFFF B9272E45 ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
-083C: FFFFFFFF B92A2E45 ; 20F: int CteateNewMessage( int, void*, int );
+0830: FFFFFFFF 59262E45 ; 20C: int MSG_SendMessage_CreateMessage( int, void* );
+0834: FFFFFFFF 692B2E45 ; 20D: int MSG_SendMessage_DestroyMessage( void* );
+0838: FFFFFFFF B9272E45 ; 20E: int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
+083C: FFFFFFFF B92A2E45 ; 20F: int MSG_SendMessage_Start( int, void*, int );
 0840: FFFFFFFF 6CF94644 ;8210: void* get_APP_DESC_TABLE( void );
 0844: FFFFFFFF 9D0C3B45 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 0848: FFFFFFFF 0DE20845 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );

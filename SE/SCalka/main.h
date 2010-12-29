@@ -15,6 +15,7 @@ typedef struct
 
 int MainPageOnCreate(void *, BOOK *bk);
 int MainPageOnClose(void *, BOOK *bk);
+int MainPageOnTerminate(void *, BOOK *bk);
 int isScalkaBook(BOOK * struc);
 void win12512unicode(wchar_t *ws, const char *s, int len);
 char *unicode2win1251(char *s, wchar_t *ws, int len);

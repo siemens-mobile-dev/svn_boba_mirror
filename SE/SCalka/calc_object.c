@@ -170,7 +170,7 @@ int IsCharNumber(int c)
 #pragma inline
 int GetCharByIndex(int c)
 {
-  return (c==29?'-':c==9?'.':c==10?'0':c+'1');
+  return (c==OP_NEG?'-':c==DIG_POINT?'.':c==DIG_0?'0':c+'1');
 }
 
 #pragma inline 
@@ -206,15 +206,15 @@ int PRIOR(int a)
   if (IsMathFunc(a)) return 4;
   switch(a)
   {    
-  case 13:   // *
-  case 14:   // /
+  case OP_MULT:   // *
+  case OP_DIV:   // /
     return 3;
     
-  case 16:  // +
-  case 17:  // -
+  case OP_PLUS:  // +
+  case OP_MINUS:  // -
     return 2;
     
-  case 19:  // (
+  case LEFTBRACKET:  // (
          return 1;
   }
   return (0);
@@ -354,132 +354,132 @@ void ParseOperation(DSTACK *dstack, int operation)
   double a, b, ans;
   switch (operation)
   {
-  case 12:    // sin
+  case OP_SIN:    // sin
     a=PopDoubleStack(dstack);
     ans=sin(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 13:    // *
+  case OP_MULT:    // *
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b*a;
     PushDoubleStack(dstack, ans);
     break;
-  case 14:    // /
+  case OP_DIV:    // /
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b/a;
     PushDoubleStack(dstack, ans);
     break;
-  case 15:    // cos
+  case OP_COS:    // cos
     a=PopDoubleStack(dstack);
     ans=cos(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 16:    // +
+  case OP_PLUS:    // +
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b+a;
     PushDoubleStack(dstack, ans);
     break;    
-  case 17:    // -
+  case OP_MINUS:    // -
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=b-a;
     PushDoubleStack(dstack, ans);
     break;
-  case 18:    // tan
+  case OP_TAN:    // tan
     a=PopDoubleStack(dstack);
     ans=tan(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 21:    // ^2
+  case OP_SQUARE:    // ^2
     a=PopDoubleStack(dstack);
     ans=pow(a, 2);
     PushDoubleStack(dstack, ans);
     break;
-  case 22:    // sqrt
+  case OP_SQRT:    // sqrt
     a=PopDoubleStack(dstack);
     ans=sqrt(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 24:    // asin
+  case OP_ASIN:    // asin
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(asin(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 25:   // ln
+  case OP_LN:   // ln
     a=PopDoubleStack(dstack);
     ans=log(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 26:   // log 10
+  case OP_LOG:   // log 10
     a=PopDoubleStack(dstack);
     ans=log10(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 27:   // acos
+  case OP_ACOS:   // acos
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(acos(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 28:    // e^
+  case OP_EPOW:    // e^
     a=PopDoubleStack(dstack);
     ans=exp(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 30:    // atan
+  case OP_ATAN:    // atan
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(atan(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 31:    // 10^
+  case OP_TENPOW:    // 10^
     a=PopDoubleStack(dstack);
     ans=pow(10, a);
     PushDoubleStack(dstack, ans);
     break;
-  case 33:     // ^
+  case OP_POW:     // ^
     a=PopDoubleStack(dstack);
     b=PopDoubleStack(dstack);
     ans=pow(b, a);
     PushDoubleStack(dstack, ans);
     break;
-  case 36:    // sinh
+  case OP_SH:    // sinh
     a=PopDoubleStack(dstack);
     ans=sinh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 37:    // asinh
+  case OP_ASH:    // asinh
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(asinh(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 39:    // cosh
+  case OP_CH:    // cosh
     a=PopDoubleStack(dstack);
     ans=cosh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 40:    // acosh
+  case OP_ACH:    // acosh
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(acosh(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 42:    // tanh
+  case OP_TH:    // tanh
     a=PopDoubleStack(dstack);
     ans=tanh(ConvertAngleToRadians(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 43:    // atanh
+  case OP_ATH:    // atanh
     a=PopDoubleStack(dstack);
     ans=ConvertRadiansToAngle(athh(a));
     PushDoubleStack(dstack, ans);
     break;
-  case 41:    // abs
+  case OP_ABS:    // abs
     a=PopDoubleStack(dstack);
     ans=fabs(a);
     PushDoubleStack(dstack, ans);
     break;
-  case 44:   // !
+  case OP_FAC:   // !
     a=PopDoubleStack(dstack);
     ans=gamma(a+1);
     PushDoubleStack(dstack, ans);
@@ -523,20 +523,20 @@ void calc_answer()
         PushDoubleStack(&dstack, a);
         if (!i) break;
       }
-      if (c==32)  // пи
+      if (c==NUM_PI)  // пи
       {
         double a=PI_CONST;
         PushDoubleStack(&dstack, a);
       }
-      else if (c==38)   // ANS
+      else if (c==NUM_ANS)   // ANS
       {
         PushDoubleStack(&dstack, d_answer);
       }
-      else if (c==45)   // X
+      else if (c==NUM_A)   // X
       {
         PushDoubleStack(&dstack, calc_set.x);
       }
-      else if (c==46)   // Y
+      else if (c==NUM_B)   // Y
       {
         PushDoubleStack(&dstack, calc_set.y);
       }
@@ -555,7 +555,7 @@ void calc_answer()
       {
         stack[stack_depth++]=c;
       }
-      else if (c==13 || c==14 || c==16 || c==17 || IsMathFunc(c) || IsPowFunc(c))  // Если знак операции
+      else if (c==OP_MULT || c==OP_DIV || c==OP_PLUS || c==OP_MINUS || IsMathFunc(c) || IsPowFunc(c))  // Если знак операции
       {
         if (!stack_depth)  // Если стек пуст
         {
