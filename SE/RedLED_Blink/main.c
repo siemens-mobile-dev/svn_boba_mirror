@@ -4,55 +4,110 @@
 #include "conf_loader.h"
 #include "config_data.h"
 
-u16 timer;
-
-BATT * bat_struct;
 
 void onTimer(u16 unk,void *);
 void BeginTimer(u16 unk,void *);
+
+
+typedef enum
+{
+  Start=0,
+  SafeCharge,
+  Charge,
+  Await,
+  AwaitExtTemp,
+  AwaiSafeTime,
+  SOSCharg,
+  Handheld,
+  Completed,
+  ConstCurrent,
+  ConstVoltage,
+  CompSafeTime,
+  CompLowCurr,
+  CompDVDT,
+  CompDTDT,
+  CompD2VDT2,
+  CompFlatV
+}ChargingState;
+
+
+typedef struct _MYBOOK : BOOK
+{
+  u16 timer;
+}RL_Book;
+
 
 typedef struct
 {
   BOOK * book;
 }MSG;
 
-BOOK * RLBook;
 
 int TerminateElf(void * ,BOOK * book)
 {
-  RedLED_Off(0);
   FreeBook(book);
   return(1);
 }
 
+
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("RedLED Blinked v1.1\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
-  return(1);
-}
-
-int BeginTimer_event(void *,BOOK * RLBook)
-{
-  BeginTimer(0,RLBook);
+  MessageBox(EMPTY_SID,STR("RedLED Blinked v1.2\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
 
-void BeginTimer(u16 unk,void * RLBook)
+int BeginTimer_event(void *,BOOK * book)
 {
+  RL_Book * RLBook = (RL_Book*)book;
+  
+  BeginTimer(RLBook->timer,book);
+  return(1);
+}
+
+
+int KillTimer_event(void *,BOOK * book)
+{
+  RL_Book * RLBook = (RL_Book*)book;
+  
+  if (RLBook->timer)
+  {
+    Timer_Kill(&RLBook->timer);
+    RLBook->timer=0;
+    RedLED_Off(0);
+  }
+  return(1);
+}
+
+
+void BeginTimer(u16 timerID,void * book)
+{
+  RL_Book * RLBook = (RL_Book*)book;
+  
   BATT bat_struct;
   GetBatteryState(SYNC,&bat_struct);
-  if ((bat_struct.ChargingState!=7)&&(bat_struct.ChargingState!=8))
+  
+  if ((bat_struct.ChargingState!=Handheld)&&(bat_struct.ChargingState!=Completed))
   {
     RedLED_On(0);
-    Timer_ReSet(&timer,OnTime,onTimer,RLBook);
+    Timer_ReSet(&RLBook->timer,OnTime,onTimer,RLBook);
   }
   else
   {
-    timer=0;
+    RLBook->timer=0;
   }
 }
+
+
+void onTimer (u16 unk,void * book)
+{
+  RL_Book * RLBook = (RL_Book*)book;
+  
+  RedLED_Off(0);
+  Timer_ReSet(&RLBook->timer,OffTime,BeginTimer,RLBook);
+}
+
 
 static int ReconfigElf(void *mess ,BOOK *book)
 {
@@ -66,15 +121,17 @@ static int ReconfigElf(void *mess ,BOOK *book)
   return(result);
 }
 
-const PAGE_MSG HW_PageEvents[]@ "DYN_PAGE" ={
+
+const PAGE_MSG RL_PageEvents[]@ "DYN_PAGE" ={
   ELF_TERMINATE_EVENT , TerminateElf,
   ELF_SHOW_INFO_EVENT  , ShowAuthorInfo,
-  BATTERY_CHARGING_STATE_EVENT_TAG, BeginTimer_event,
+  BATTERY_CHARGER_CONNECTED_EVENT_TAG, BeginTimer_event,
+  BATTERY_CHARGER_DISCONNECTED_EVENT_TAG, KillTimer_event,
   ELF_RECONFIG_EVENT,ReconfigElf,
   NIL_EVENT_TAG,0
 };
 
-PAGE_DESC base_page ={"RL_BasePage",0,HW_PageEvents};
+PAGE_DESC base_page ={"RL_BasePage",0,RL_PageEvents};
 
 
 void elf_exit(void)
@@ -84,26 +141,26 @@ void elf_exit(void)
 }
 
 
-void onTimer (u16 unk,void * RLBook)
+void onCloseRLBook(BOOK * book)
 {
-  RedLED_Off(0);
-  Timer_ReSet(&timer,OffTime,BeginTimer,RLBook);
-}
-
-void onCloseRLBook(BOOK * RLBook)
-{
-  if (timer)
+  RL_Book * RLBook = (RL_Book*)book;
+  
+  if (RLBook->timer)
   {
-    Timer_Kill(&timer);
+    Timer_Kill(&RLBook->timer);
+    RLBook->timer=0;
+    RedLED_Off(0);
   }
   SUBPROC(elf_exit);
 }
 
-BOOK * CreateRLBook()
+
+void CreateRLBook()
 {
-  RLBook=new(BOOK);
+  RL_Book * RLBook = (RL_Book*)malloc(sizeof(RL_Book));
   CreateBook(RLBook,onCloseRLBook,&base_page,"Blinked Red LED",-1,0);
-  return(RLBook);
+  RLBook->timer=0;
+  BeginTimer(RLBook->timer,RLBook);
 }
 
 
@@ -123,9 +180,8 @@ int main (void)
   }
   else
   {
-    CreateRLBook();
     InitConfig();
-    BeginTimer(0,RLBook);
+    CreateRLBook();
     return(0);
   }
 }
