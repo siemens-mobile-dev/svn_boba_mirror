@@ -1393,16 +1393,16 @@ void create_connect(void)
   {
     if ((err==0xC9)||(err==0xD6))
     {
+      snprintf(logmsg,255,LG_GRDNRERROR,err,DNR_ID);
+      SMART_REDRAW();
       if (DNR_ID)
       {
-        if (err==0xC9) host_counter=-1;
+//        if (err==0xC9) host_counter=-1;
 	return; //Ждем готовности DNR
       }
     }
     else
     {
-      snprintf(logmsg,255,LG_GRDNRERROR,err);
-      SMART_REDRAW();
       host_counter=-1;
       GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
       return;
@@ -1437,9 +1437,11 @@ void create_connect(void)
 	{
 	  closesocket(sock);
 	  sock=-1;
-	  LockSched();
-	  ShowMSG(1,(int)lgpData[LGP_MsgCantConn]);
-	  UnlockSched();
+//	  LockSched();
+//	  ShowMSG(1,(int)lgpData[LGP_MsgCantConn]); //надоела нашиш лезть
+//	  UnlockSched();
+          strcpy(logmsg,LG_MSGCANTCONN);
+          SMART_REDRAW();
 	  GBS_StartTimerProc(&reconnect_tmr,TMR_SECOND*RECONNECT_TIME,do_reconnect);
 	}
       }
@@ -2910,7 +2912,8 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     case ENIP_DNR_HOST_BY_NAME:
       if ((int)msg->data1==DNR_ID)
       {
-	if (DNR_TRIES) SUBPROC((void *)create_connect);
+        if ((int)msg->data0==148) host_counter=-1;
+        if (DNR_TRIES) SUBPROC((void *)create_connect);
       }
       return(1);
     }

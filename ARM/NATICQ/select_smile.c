@@ -74,12 +74,17 @@ void PasteCharEditControl(EDCHAT_STRUCT *ed_struct, int wchar)
   FreeWS(ed_ws);
 }
 
-static char *getthefuckingcolour(int c1,int c2){
+static char *getthefuckingcolour(char *c,int c1,int c2){
  char *cc1=GetPaletteAdrByColorIndex(c1);
- if (cc1[3]==100) return cc1;
- char *cc2=GetPaletteAdrByColorIndex(c2);
- if (cc1[3]<cc2[3]) return cc2;
- return cc1;
+ if (cc1[3]<64){
+   char *cc2=GetPaletteAdrByColorIndex(c2);
+   if (cc1[3]<cc2[3]) cc1=cc2;
+ }
+ c[0]=cc1[0];
+ c[1]=cc1[1];
+ c[2]=cc1[2];
+ c[3]=100;
+ return c;
 }
 
 int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нарисованной линии
@@ -103,9 +108,15 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //¬озвращает номер последней нари
       {
         if (i==data->cur_pos_y && k==data->cur_pos_x)
         {
-          char *c=getthefuckingcolour(117,136);
-          char *c2=getthefuckingcolour(118,133);
-          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,c,c2);
+          char c1[4];
+          char c2[4];
+          char c3[4];
+          getthefuckingcolour(c1,117,133);
+          getthefuckingcolour(c2,116,136);
+          getthefuckingcolour(c3,118,134);
+          DrawRectangle(x+2,y2+2,x+img->w-1+1,y2+img->h-1+1,0,c3,NULL);
+          DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,c1,c2);
+          
         }
         DrwImg(img,x,y2);
       }
@@ -132,7 +143,8 @@ static void onRedraw(SMILE_GUI *data)
 {
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
-  char *c=getthefuckingcolour(101,130);
+  char c[4];
+  getthefuckingcolour(c,101,130);
   DrawRectangle(0,YDISP,scr_w,scr_h,0,c,c);
   RenderPage(data,1);
 }

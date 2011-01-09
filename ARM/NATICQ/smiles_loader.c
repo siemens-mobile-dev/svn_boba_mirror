@@ -16,7 +16,7 @@ volatile int total_xstatuses;
 volatile int total_xstatuses2;
 int total_clientid;
 volatile int xstatuses_load;
-volatile int pictures_max=110;
+volatile int pictures_max=0;
 volatile int pictures_loaded=0;
 
 extern const char SMILE_FILE[];
@@ -131,6 +131,7 @@ void InitSmiles(void)
   gipc1.name_from=ipc_my_name;
   gipc1.data=0;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_SMILE_PROCESSED,&gipc1);
+  pictures_max+=60;
 }
 
 void CheckSmiles(void)
@@ -310,6 +311,7 @@ void InitXStatusesImg(void)
   gipc2.name_from=ipc_my_name;
   gipc2.data=0;
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_XSTATUSIMG_PROCESSED,&gipc2);
+  pictures_max+=50;
 
 /*  char fn[128];
   const char _slash[]="\\";

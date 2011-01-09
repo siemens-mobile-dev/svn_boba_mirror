@@ -133,7 +133,7 @@
 #define LG_GRTRYLOGIN    "Try to login..."
 #define LG_GRWAITFORGPRS "Waiting for GPRS up..."
 #define LG_GRSENDDNR     "Send DNR..."
-#define LG_GRDNRERROR    "DNR ERROR %d!"
+#define LG_GRDNRERROR    "DNR ERROR %d %d!"
 #define LG_GRDNROK       "DNR Ok, connecting..."
 #define LG_GRBADPACKET   "Bad packet"
 #define LG_GRLOGINMSG    "%s"
