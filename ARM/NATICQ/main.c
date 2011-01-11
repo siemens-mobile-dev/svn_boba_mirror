@@ -544,7 +544,7 @@ int LoadTemplates(CLIST *t)
     }
     p++;
   }
-  if(t->name[0] != '#')       //Это не бот
+  if(t->name[0]!='#'&&t->clientid!=2)       //Это не бот
     return i;
 
   curlog = t->log;
@@ -1713,7 +1713,7 @@ void get_answer(void)
 	  SendMSGACK(TOTALRECEIVED);
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  SMART_REDRAW();
-	  Play(sndMsg);
+//	  Play(sndMsg);
 //          UpdateCSMname();
 	  break;
 	case T_SSLRESP:
@@ -2316,7 +2316,7 @@ void ProcessPacket(TPKT *p)
       vibra_count=1;
     start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
-    if (t->name[0]=='#')
+    if (t->name[0]=='#'||t->clientid==2)
     {
       //Если это конференция, патчим имя
       char *s=strchr(p->data,'>');
@@ -2401,8 +2401,6 @@ void ProcessPacket(TPKT *p)
 	}
       }
     }
-//    }
-//    if (p->pkt.type==T_CLIENT_ACK) slientsend=false;
     break;
   case T_XTEXT_ACK:
     t=FindContactByUin(p->pkt.uin);
@@ -2789,7 +2787,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      msg->pkt.type=T_SENDMSG;
 	      msg->pkt.data_len=l;
 	      memcpy(msg->data,((IPCMsg *)(ipc->data))->msg,l);
-	      //slientsend=1;
 	      SENDMSGCOUNT++; //Номер сообщения
 	      SUBPROC((void *)SendAnswer,0,msg);
 	    }
@@ -2808,6 +2805,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      msg->pkt.data_len=l;
 	      memcpy(msg->data,fmp->msg,l+1);
 	      ae(msg);
+              Play(sndMsg);
 	    }
 	    mfree(fmp->msg); //Освобождаем сам текст сообщения
 	    mfree(fmp->ipc); //Освобождаем родительский IPC_REQ
