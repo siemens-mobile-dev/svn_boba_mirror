@@ -13,4 +13,12 @@ void SaveXStatusText(void);
 void FreeXStatusText(void);
 char *GetXStatusStr(int n, int *len);
 
+//  <tridog/>
+//  2.01.11. Автостатус.
+void AutoStatusOnIdle(void);
+void InitAutoStatusEngine(void);
+void DisposeAutoStatusEngine(void);
+void AutoStatusOnHeadset(int HeadsetPlugged);
+//  </tridog>
+
 #endif

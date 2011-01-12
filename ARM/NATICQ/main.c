@@ -2665,6 +2665,10 @@ void maincsm_onclose(CSM_RAM *csm)
   GBS_DelTimer(&tmr_vibra);
   GBS_DelTimer(&reconnect_tmr);
   GBS_DelTimer(&tmr_illumination);
+  //  <tridog/>
+  //  2.01.11. Автостатус.
+  DisposeAutoStatusEngine();
+  //  </tridog>
   SetVibration(0);
   FreeTemplates();
   FreeCLIST();
@@ -2778,6 +2782,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
                 if (!(--gprsdown))
                   GPRS_OnOff(1, 1);
 	    }
+            //  <tridog/>
+            //  Делаем автостатус по бездействию
+            AutoStatusOnIdle();
+            //  </tridog>
 	    break;
      	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07
 	    {
@@ -2870,6 +2878,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       RecountMenu(NULL, 1);
       UpdateCSMname();
       //      InitSmiles();
+      //  <tridog/>
+      //  Автостатус
+      DisposeAutoStatusEngine();
+      InitAutoStatusEngine();
+      //  </tridog>
     }
   }
   if (msg->msg==MSG_GUI_DESTROYED)
@@ -3039,6 +3052,26 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       }
     }
   }
+  //  <tridog/>
+  //  8.01.2011. Автостатус при подключении / отключении гарнитуры
+#ifdef ELKA
+  if (msg->msg==0x15680)
+#else
+  if (msg->msg==0x15682)
+#endif 
+  {
+    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==0)
+    {
+      //  Аксесуар подключен
+      AutoStatusOnHeadset(1);
+    }
+    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==1)
+    {
+      //  Аксесуар отключен
+      AutoStatusOnHeadset(0);
+    }
+  }
+  // </tridog>
   return(1);
 }
 
@@ -3245,6 +3278,10 @@ int main(char *filename, const char *config_name)
 #ifdef NEWSGOLD
   SetIconBarHandler();
 #endif
+  //  <tridog/>
+  //  2.01.11. Автостатус.
+  InitAutoStatusEngine();
+  //  </tridog>
   LockSched();
   maincsm_id=CreateCSM(&MAINCSM.maincsm,&main_csm,0);
   UnlockSched();
