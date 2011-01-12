@@ -653,7 +653,7 @@ volatile int sendq_l=0; //Длинна очереди для send
 volatile void *sendq_p=NULL; //указатель очереди
 
 volatile int is_gprs_online=1;
-int gprsdown=0;
+int gprsdown=-1;
 
 GBSTMR reconnect_tmr;
 
@@ -2774,9 +2774,9 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 		  if (IsGuiOnTop(edchat_id)) RefreshGUI();
 		}
 	      }
-              if (!gprsdown)   //включим гпрс, если сами же выключали.
-                GPRS_OnOff(1, 1);
-               else gprsdown--;
+              if (gprsdown)   //включим гпрс, если сами же выключали.
+                if (!(--gprsdown))
+                  GPRS_OnOff(1, 1);
 	    }
 	    break;
      	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07
