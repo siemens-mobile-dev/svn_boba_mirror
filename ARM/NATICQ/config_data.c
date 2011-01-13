@@ -284,29 +284,24 @@ __root const CFG_HDR cfghdr10={CFG_LEVEL,"Autostatus",1,0};
 
   __root const CFG_HDR cfghdr10_1={CFG_LEVEL,"Autostatus on idle",1,0};
     
-    __root const CFG_HDR cfghdr10_1_1={CFG_CHECKBOX, "Enabled",0,2};  //  Включить автостатус
-    __root const int AUTOSTATUS_IDLE_ENABLED = 0;
+    __root const CFG_HDR cfghdr10_1_3={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен после истечения таймаута
+    __root const int AUTOSTATUS_IDLE_STATUS = 0;
+    __root const CFG_CBOX_ITEM cfgcbox10_1[5]={"None","Away","Not available","Occupied","Do not disturb"};
 
     __root const CFG_HDR cfghdr10_1_2={CFG_UINT,"Time (minutes)",1,60}; //  Таймаут включения (в минутах)
     __root const unsigned int AUTOSTATUS_IDLE_TIME = 5;
 
-    __root const CFG_HDR cfghdr10_1_3={CFG_CBOX, "Set status", 0, 4}; // Статус, который будет установлен после истечения таймаута
-    __root const int AUTOSTATUS_IDLE_STATUS = 0;
-    __root const CFG_CBOX_ITEM cfgcbox10_1[4]={"Away","Not available","Occupied","Do not disturb"};
-
   __root const CFG_HDR cfghdr10_2={CFG_LEVEL,"",0,0};
   
+#ifdef NEWSGOLD  
   __root const CFG_HDR cfghdr10_3={CFG_LEVEL,"Autostatus on headset pluging",1,0};
     
-    __root const CFG_HDR cfghdr10_3_1={CFG_CHECKBOX, "Enabled",0,2};  //  Включить автостатус
-    __root const int AUTOSTATUS_HEADSET_ENABLED = 0;
-
-    __root const CFG_HDR cfghdr10_3_2={CFG_CBOX, "Set status", 0, 4}; // Статус, который будет установлен при подключении гарнитуры
+    __root const CFG_HDR cfghdr10_3_2={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен при подключении гарнитуры
     __root const int AUTOSTATUS_HEADSET_STATUS = 0;
-    __root const CFG_CBOX_ITEM cfgcbox10_3[4]={"Away","Not available","Occupied","Do not disturb"};
+    __root const CFG_CBOX_ITEM cfgcbox10_3[5]={"None","Away","Not available","Occupied","Do not disturb"};
 
   __root const CFG_HDR cfghdr10_4={CFG_LEVEL,"",0,0};
-  
+#endif
 
 __root const CFG_HDR cfghdr11={CFG_LEVEL,"",0,0};
 

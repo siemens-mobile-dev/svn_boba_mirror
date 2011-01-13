@@ -39,6 +39,10 @@ extern char *successed_config_filename;
 extern int mrand(void);
 extern void msrand(unsigned seed);
 
+extern int AutoStatusRemainedCounter;
+extern const int AUTOSTATUS_IDLE_STATUS;
+extern const int AUTOSTATUS_HEADSET_STATUS;
+
 #define USE_MLMENU
 
 #define TMR_SECOND 216
@@ -653,7 +657,7 @@ volatile int sendq_l=0; //Длинна очереди для send
 volatile void *sendq_p=NULL; //указатель очереди
 
 volatile int is_gprs_online=1;
-int gprsdown=-1;
+int gprsdown=0;
 
 GBSTMR reconnect_tmr;
 
@@ -2781,11 +2785,14 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
               if (gprsdown)   //включим гпрс, если сами же выключали.
                 if (!(--gprsdown))
                   GPRS_OnOff(1, 1);
-	    }
+
             //  <tridog/>
             //  Делаем автостатус по бездействию
-            AutoStatusOnIdle();
+              if(AutoStatusRemainedCounter)
+                if (!(--AutoStatusRemainedCounter))
+                  AutoStatusOnIdle();
             //  </tridog>
+	    }
 	    break;
      	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07
 	    {
@@ -3054,10 +3061,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   }
   //  <tridog/>
   //  8.01.2011. Автостатус при подключении / отключении гарнитуры
+#ifdef NEWSGOLD
 #ifdef ELKA
-  if (msg->msg==0x15680)
+  if (AUTOSTATUS_HEADSET_STATUS&&(msg->msg==0x15680))
 #else
-  if (msg->msg==0x15682)
+  if (AUTOSTATUS_HEADSET_STATUS&&(msg->msg==0x15682))
 #endif 
   {
     if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==0)
@@ -3071,6 +3079,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       AutoStatusOnHeadset(0);
     }
   }
+#endif
   // </tridog>
   return(1);
 }

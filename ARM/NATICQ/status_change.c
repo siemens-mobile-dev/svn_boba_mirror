@@ -661,104 +661,69 @@ char *GetXStatusStr(int n, int *len)
 //  <tridog/>
 //  2.01.11. Автостатус.
 
-int AutoStatusIdleActive;
-int RemainedCounter=-1;
+int AutoStatusIdleActive=0;
+int AutoStatusRemainedCounter=0;
 int LastStatus;
 
 extern volatile int contactlist_menu_id;
-extern const int AUTOSTATUS_IDLE_ENABLED;
 extern const unsigned int AUTOSTATUS_IDLE_TIME;
 extern const int AUTOSTATUS_IDLE_STATUS;
-extern const int AUTOSTATUS_HEADSET_ENABLED;
 extern const int AUTOSTATUS_HEADSET_STATUS;
 
 void AutoStatusOnIdle(void)
 {
-  if(AUTOSTATUS_IDLE_ENABLED)
+  // Меняем статус
+  if (!AutoStatusIdleActive)
   {
-    if (RemainedCounter)
-    {
-      if (!(--RemainedCounter))
-      {
-        // Меняем статус
-        if (!AutoStatusIdleActive)
-        {
-          LastStatus = CurrentStatus;
-        }
-        Change_Status(AUTOSTATUS_IDLE_STATUS + 2);
-        AutoStatusIdleActive = 1;
-      }
-    }
+    LastStatus = CurrentStatus;
+    Change_Status(AUTOSTATUS_IDLE_STATUS + 1);    //гарнитура приоритетнее
+    AutoStatusIdleActive = 1;
   }
-}
-
-void ResetIdleCounting(void)
-{
-  if (AUTOSTATUS_IDLE_TIME)
-  {
-    RemainedCounter = AUTOSTATUS_IDLE_TIME * 6; 
-  }
-  else
-  {
-    RemainedCounter = 6; // Если в конфиге указано ноль - будет одна минута :)
-  }    
 }
 
 int status_keyhook(int submsg, int msg)
 {
-  if(AUTOSTATUS_IDLE_ENABLED)
+  if(AUTOSTATUS_IDLE_STATUS)
   {
-    if (AutoStatusIdleActive)
+    if (AutoStatusIdleActive==1)    //гарнитура приоритетнее
     {
-      if (IsGuiOnTop(contactlist_menu_id))
-      {
         Change_Status(LastStatus);
         AutoStatusIdleActive = 0;
       }
-    }
-    else
-    {
-      ResetIdleCounting();
-    }
-  }
+    AutoStatusRemainedCounter = AUTOSTATUS_IDLE_TIME * 6; 
+   }
   return KEYHOOK_NEXT;
 }
 
 void InitAutoStatusEngine(void)
 {
-  if (AUTOSTATUS_IDLE_ENABLED)
+  if (AUTOSTATUS_IDLE_STATUS)
   {
     AddKeybMsgHook((void *)status_keyhook);
-    ResetIdleCounting();
-    AutoStatusIdleActive = 0;
+    AutoStatusRemainedCounter = AUTOSTATUS_IDLE_TIME * 6; 
   }
 }
 
 void DisposeAutoStatusEngine(void)
 {
-  RemoveKeybMsgHook((void *)status_keyhook); 
+    RemoveKeybMsgHook((void *)status_keyhook); 
 }
 
 void AutoStatusOnHeadset(int HeadsetPlugged)
 {
-  if(AUTOSTATUS_HEADSET_ENABLED)
+  if (HeadsetPlugged)
   {
-    if (HeadsetPlugged)
+    if (!AutoStatusIdleActive)
     {
-      if (!AutoStatusIdleActive)
-      {
-        LastStatus = CurrentStatus;
-      }
-      Change_Status(AUTOSTATUS_HEADSET_STATUS + 2);
-      AutoStatusIdleActive = 1;
+      LastStatus = CurrentStatus;
     }
-    else
-    {
-      Change_Status(LastStatus);
-      AutoStatusIdleActive = 0;
-    }
-  } 
+    Change_Status(AUTOSTATUS_HEADSET_STATUS + 1);
+    AutoStatusIdleActive = 2;
+  }
+  else
+  {
+    Change_Status(LastStatus);
+    AutoStatusIdleActive = 0;
+  }
 }
-
-
 //  </tridog>
