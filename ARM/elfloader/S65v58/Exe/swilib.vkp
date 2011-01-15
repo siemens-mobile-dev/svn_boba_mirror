@@ -628,8 +628,8 @@
 08F0: 0xA0C79A34 ; 23C: __arm int SetCurrentGPRSProfile(int profile);
 
 08F4: 0xA155FC81 ; 23D: __thumb void MD5_Init(MD5_CTX *c);
-08F8: 0xA155F8F1 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len); //
-08FC: 0xA155FB89 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
+08F8: 0xA155F8F1 ; 23E: __thumb void MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
+08FC: 0xA155FB89 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);
 0900: 0xA1560611 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA0C36E63 ; 241: __thumb void SetDateTime(TDate *, TTime *);
 
@@ -658,12 +658,7 @@
 //0xA1576BB9 ;  __thumb png_set_gray_to_rgb
 //0xA15754CB ;  __thumb png_get_rowbytes
 
-
-0FD4800: 0xA0FC7301   ; 800: Run ScreenShooter on function 200: ScreenSho
-
 #pragma disable old_equal_ff
 +0
-
-;********************************************************************************
 
 ;locale=Russian_Russia.1251

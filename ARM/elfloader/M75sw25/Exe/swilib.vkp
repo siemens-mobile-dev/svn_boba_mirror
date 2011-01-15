@@ -650,5 +650,11 @@
 08FC: 0xA0E4C645 ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
 0900: 0xA0E4D0CD ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA07D8FA3 ; 241: __thumb void SetDateTime(TDate *, TTime *);
+
+0910: 0xA0E4133D   ; 244: int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
+0914: 0xA0E413ED   ; 245: int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
+
 #pragma disable old_equal_ff
 +0
+
+;locale=Russian_Russia.1251

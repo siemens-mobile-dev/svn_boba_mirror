@@ -632,31 +632,56 @@
 0900: 0xA1512589 ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA0B2719B ; 241: __thumb void SetDateTime(TDate *, TTime *);
 
-0910: 0xA0D9F03D ; 244: __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);
-0914: 0xA0D9F0ED ; 245: __arm int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5);
-0918: 0xA03484B4 ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);
+0910: 0xA150F305 ; 244: __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);
+0914: 0xA150F3B5 ; 245: __arm int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5);
+0918: 0xA0967330 ; 246: __arm int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder);
 091C: 0xA127D234 ; 247: __thumb NetOff();
 
 ;920: NO_SGOLD65 ; 248: char *RamFormatTrack()
 ;924: NO_SGOLD65 ; 249: char *RamFreq()
 ;928: NO_SGOLD65 ; 24A: char *RamChannel()
 
-092C: 0xA077C9DA ; 24B: __arm void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc);
-0930: 0xA08D1A28 ; 24C: __arm int  GetPeripheryState (int device, int check_state); // device: 4-gprs  0 -BT  1 -irda   2 -COM ?; ChechState:    4 -IsActive  (1|2) - IsOn
+092C: 0xA1140A57 ; 24B: __arm void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc);
+0930: 0xA08D1A29 ; 24C: __arm int  GetPeripheryState (int device, int check_state); // device: 4-gprs  0 -BT  1 -irda   2 -COM ?; ChechState:    4 -IsActive  (1|2) - IsOn
 
-;934: NO_SGOLD65 ; 24D: __arm int PlayMelody_SetPosition(int handle, int pos_ms);
-;938: NO_SGOLD65 ; 24E: __arm void* GetPlayObjById(int handle);
-;93C: NO_SGOLD65 ; 24F: __arm int GetPlayObjPosition(void *playobj_3D0, int *pos_ms);
-;940: NO_SGOLD65 ; 250: __arm int GetPlayObjDuration(void *playobj_3D0, int *pos_ms);
+0934: 0xA094AFA0 ; 24D: __arm int PlayMelody_SetPosition(int handle, int pos_ms);
+0938: 0xA09760C8 ; 24E: __arm void* Obs_GetById(int handle)
+093C: 0xA095E328 ; 24F: __arm int Obs_GetPosition(void *playobj_3D0, int *pos_ms)
+0940: 0xA095E1B4 ; 250: __arm int Obs_GetDuration(void *playobj_3D0, int *pos_ms)
 
 ;944: NO_PATTERN ; 251: char *RamDataSendFName();
 ;948: NO_PATTERN ; 252: char *RamDataReceiveFName();
 ;94C: NO_PATTERN ; 253: char *RamLastCallNum();
 
 0950: 0xA0968E8C ; 254: __arm int StartNativeExplorer(NativeExplorerData* data);
-0954: 0xA1141640 ; 255: void MenuSetUserPointer(void *gui,void *user_pointer)
 
-; 256-26D: No patterns for SGOLD
+0954: 0xA1141641   ; 255: __thumb void MenuSetUserPointer(void *gui,void *user_pointer)
+;958:              ; 256: ;__unknown isSetupTheme()
+095C: 0xA132C59C   ; 257: __thumb int isSendReceiveFile()
+0960: 0xA115193F   ; 258: __thumb int CalcBitmapSize(short w,short h, char typy)
+0964: 0xA095D53C   ; 259: __arm HObj Obs_CreateObject(int uid, int unk1, int unk2, int unk3, int unk4, int unk6,unsigned int *ErrorNumber)
+0968: 0xA095DEA8   ; 25A: __arm Obs_DestroyObject(HObj hObj)
+096C: 0xA0961F60   ; 25B: __arm int Obs_SetInput_File (HObj hObj, int unk_zero, WSHDR *path)
+0970: 0xA095B910   ; 25C: __arm int Obs_GetInputImageSize (HObj hObj, short *w, short *h)
+0974: 0xA095BA68   ; 25D: __arm int Obs_SetOutputImageSize (HObj hObj, short w, short h)
+0978: 0xA0960C5C   ; 25E: __arm int Obs_Start(HObj hObj)
+097C: 0xA0978838   ; 25F: __arm int Obs_Output_GetPictstruct(HObj hObj, IMGHDR **img)
+
+0980: 0xA095C3B4   ; 260: __arm int Obs_Graphics_SetClipping(HObj hObj, short x, short y, short w, short h)
+0984: 0xA095BF20   ; 261: __arm int Obs_SetRotation(HObj hObj, int angle)
+0988: 0xA0960AEC   ; 262: __arm int Obs_GetInfo (HObj hObj, int unk_0or1)
+098C: 0xA095BDDC   ; 263: __arm int Obs_SetScaling (HObj hObj, int unk5)
+0990: 0xA0963584   ; 264: __arm int Obs_TranslateMessageGBS (GBS_MSG *msg, OBSevent *event_handler)
+0994: 0xA0960FA0   ; 265: __arm int Obs_Pause (HObj hObj)
+0998: 0xA096124C   ; 266: __arm int Obs_Resume (HObj hObj)
+099C: 0xA09610C8   ; 267: __arm int Obs_Stop (HObj hObj)
+;9A0:              ; 268: ;__unknown int Obs_Prepare (HObj hObj)
+;9A4:              ; 269: ;__unknown int Obs_SetRenderOffset (HObj hObj,short x,short y)
+09A8: 0xA095E2CC   ; 26A: ;__arm int Obs_SetPosition (HObj hObj,int ms)
+;9AC:              ; 26B: ;__unknown int Obs_Mam_SetPurpose (HObj hObj,int ms)
+09B0: 0xA090C108   ; 26C: __arm int Obs_Sound_SetVolume (HObj hObj, char vol, char delta)
+09B4: 0xA09786FC   ; 26D: __arm int Obs_Sound_GetVolume (HObj hObj, char *vol)
+;9B8:              ; 26E: ;__unknown int Obs_SetPurpose (HObj hObj,char purpose)
 
 0A04: 0xA86DD6C0 ; 281: __arm char *RamIsRunJava(); (2 - no java)
 ;A08: NO_PATTERN ; 282: __arm char *RamIsRunCamera();
@@ -672,21 +697,66 @@
 ;A70: NO_PATTERN ; 29C: char *RamInputLanguage()
 ; 2A0-2A2: Not for SGOLD
 
-;(NOT TESTED)
-0A8C: 0xA113F5DB ; 2A3: void UpdateMenuCursorItem(void *gui, int n)
-0A90: 0xA113CC3F ; 2A4: void *GetMenuGUI(void *malloc_adr, void *mfree_adr)
-0A94: 0xA11768CD ; 2A5: void *GetMultiLinesMenuGUI(void *malloc_adr, void *mfree_adr)
-0A98: 0xA163F41D ; 2A6: void SetHeaderToMenu(void *gui, const HEADER_DESC *hdr, void *malloc_adr)
-0A9C: 0xA14325AD ; 2A7: void SetMenuToGUI(void *gui, const void *menu_desc)
-0AA0: 0xA113D80F ; 2A8: int GetMenuItemCount(void *gui)
-0AA4: 0xA113BBF7 ; 2A9: int CreatePopupGUI(int flag, void *user_pointer, const POPUP_DESC *, int lgp_msg)
-0AA8: 0xA113BB57 ; 2AA: int CreatePopupGUI_ws(int flag, void *user_pointer, const POPUP_DESC *, WSHDR *msg)
-0AB8: 0xA1310D6B ; 2AE: void *GetHeaderPointer(void *gui)
-0AC0: 0xA114150B ; 2B0: void SetMenuSoftKey(void *gui, const SOFTKEY_DESC *,int n)
-;(/NOT TESTED)
+0A8C: 0xA113F5DB   ; 2A3: __thumb void UpdateMenuCursorItem(void *gui, int n)
+0A90: 0xA113CC3F   ; 2A4: __thumb void *GetMenuGUI(void *malloc_adr, void *mfree_adr)
+0A94: 0xA11768CD   ; 2A5: __thumb void *GetMultiLinesMenuGUI(void *malloc_adr, void *mfree_adr)
+0A98: 0xA163F41D   ; 2A6: __thumb void SetHeaderToMenu(void *gui, const HEADER_DESC *hdr, void *malloc_adr)
+0A9C: 0xA11401D1   ; 2A7: __thumb void SetMenuToGUI(void *gui, const void *menu_desc)
+0AA0: 0xA113D80F   ; 2A8: __thumb int GetMenuItemCount(void *gui)
+0AA4: 0xA113BB57   ; 2A9: __thumb int CreatePopupGUI(int flag, void *user_pointer, const POPUP_DESC *, int lgp_msg)
+0AA8: 0xA113BAC9   ; 2AA: __thumb int CreatePopupGUI_ws(int flag, void *user_pointer, const POPUP_DESC *, WSHDR *msg)
+0AAC: 0xA1155989   ; 2AB: __thumb void *GetPopupUserPointer(void *gui)
+;AB0:              ; 2AC: ;__unknown int DeleteSMS(int index, short *del_cnt)
+;AB4:              ; 2AD: ;__unknown int SetSmsStatus(int index, int type)
+0AB8: 0xA1140C2F   ; 2AE: __thumb void *GetHeaderPointer(void *gui)
+0ABC: 0xA11575F9   ; 2AF: __thumb void SetHeaderText(void *hdr_pointer, WSHDR *txt, void *malloc_adr, void *mfree_adr)
 
-0B08: 0xA0B4C025 ; 2C2: __arm int GetSubprovider(WSHDR* ws);
-0B0C: 0xA0B4C239 ; 2C3: __arm int GetRoamingState(); 
+0AC0: 0xA114150B   ; 2B0: __thumb void SetMenuSoftKey(void *gui, const SOFTKEY_DESC *,int n)
+0AC4: 0xA86D9E10   ; 2B1: __unknown SMS_DATA_ROOT *SmsDataRoot()
+0AC8: 0xA13187F1   ; 2B2: __thumb int GetSmsPosIndex(SMS_POS_INDEX_DATA *buf, int data_id)
+;ACC:              ; 2B3: ;__unknown NativeAbData *AllocNativeAbData(void)
+;AD0:              ; 2B4: ;__unknown int FreeNativeAbData(NativeAbData *ab_data)
+;AD4:              ; 2B5: ;__unknown int GetNativeAbDataType(NativeAbData *nab, int unk0)
+;AD8:              ; 2B6: ;__unknown WSHDR *GetNumFromNativeAbData(NativeAbData *nab, int type, int unk0)
+;ADC:              ; 2B7: ;__unknown int GetNativeAbDataStatus(NativeAbData *nab, int _0)
+;AE0:              ; 2B8: ;__unknown int SetNumToNativeAbData(NativeAbData *abd, int unk, WSHDR *num)
+;AE4:              ; 2B9: ;__unknown unsigned int OpenNativeAddressbook(int type, int unk1, int unk2, void *data)
+;AE8:              ; 2BA: ;__unknown void SetHeaderIcon(void *hdr_pointer, const int *icon, void *malloc_adr, void *mfree_adr)
+;AEC:              ; 2BB: ;__unknown void *GetTabGUI(void *malloc_adr, void *mfree_adr)
+;AF0:              ; 2BC: ;__unknown void SetGUIDefinition(void *gui, const void *definition)
+;AF4:              ; 2BD: ;__unknown int SetGUIToTabGUI(void *tabgui, int n, const int *tabicons, void *gui)
+;AF8:              ; 2BE: ;__unknown int SetCursorTab(void *tab_gui, int n)
+;AFC:              ; 2BF: ;__unknown int UpdateTab1stItem(void *tab_gui, int unk_0)
+
+;B00:              ; 2C0: ;__unknown int GetCursorTab(void *tab_gui)
+;B04:              ; 2C1: ;__unknown void *GetGuiByTab(void *tab_gui, int n)
+0B08: 0xA0B4C025   ; 2C2: __thumb int GetSubprovider(WSHDR* ws)
+0B0C: 0xA0B4C239   ; 2C3: __thumb int GetRoamingState()
+;B10:              ; 2C4: ;__unknown int GetProfileVolumeSetting(int profile, int type)
+0B14: 0xA0B20D2B   ; 2C5: __thumb RAM_EMS_ADMIN *RAM_EMS_Admin()
+0B18: 0xA082B57B   ; 2C6: __thumb int GetSecondsFromDateTime(int *result, TDate *t_date, TTime *time, TDate *s_date)
+0B1C: 0xA082B5CD   ; 2C7: __thumb int GetSecondsFromDateTimeSince1997(int *result, TDate *date, TTime *time)
+0B20: 0xA082B9BF   ; 2C8: __thumb int GetSecondsFromTime(*TTime time)
+0B24: 0xA082B4B5   ; 2C9: __thumb int GetDateTimeFromSeconds(int *seconds, TDate *t_date, TTime *time, TDate *s_date)
+0B28: 0xA082B5EF   ; 2CA: __thumb int GetDateTimeFromSecondsSince1997(int *seconds, TDate *date, TTime *time)
+0B2C: 0xA082B9D1   ; 2CB: __thumb void GetTimeFromSeconds(TTime *time, int seconds)
+0B30: 0xA0825A91   ; 2CC: __thumb void InitDate(TDate *date, unsigned long year, unsigned char month, unsigned char day)
+0B34: 0xA0825BA5   ; 2CD: __thumb void InitTime(TDate *time, unsigned char hour, unsigned char min, unsigned char sec, unsigned long millisec)
+0B38: 0xA0825671   ; 2CE: __thumb int CmpDates(TDate *date1, TDate *date2)
+0B3C: 0xA082B961   ; 2CF: __thumb int CmpTimes(TTime *time1, TTime *time2)
+
+0B40: 0xA08256C1   ; 2D0: __thumb int GetDaysFromMonth(TDate *date)
+0B44: 0xA08256A1   ; 2D1: __thumb int IsLeapYear(TDate *date)
+0B48: 0xA0B3DA67   ; 2D2: __thumb StartNativeBrowserCore()
+;B4C:              ; 2D3: ;__unknown int GetFilledNAbDataCount(NativeAbData *nab)
+;B50:              ; 2D4: ;__unknown void *GetDataFromNAbData(NativeAbData *nab, int n)
+0B54: 0xA0C167DD   ; 2D5: __thumb void UnpackNumPkt(PKT_NUM *pkt, char *buf, int maxlen)
+0B58: 0xA11565A7   ; 2D6: __thumb void *TViewGetGUI(void *malloc_adr, void *mfree_adr)
+0B5C: 0xA1156B59   ; 2D7: __thumb void TViewSetDefinition(void *gui, const TVIEW_DESC *)
+0B60: 0xA1156AE3   ; 2D8: __thumb void TViewSetText(void *gui, WSHDR *text, void *malloc_adr, void *mfree_adr)
+0B64: 0xA1156B81   ; 2D9: __thumb void TViewSetUserPointer(void *gui,void *user_pointer)
+0B68: 0xA1156B85   ; 2DA: __thumb void *TViewGetUserPointer(void *gui)
+0B6C: 0xA099F1F4   ; 2DB: void MediaSendCSM_Open()
 
 //0xA0941008 ;  __arm void GetFileNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
 //0xA09410C0 ;  __arm void GetFolderNameFromFullFileName(WSHDR * dest, WSHDR * fullname);
@@ -698,11 +768,11 @@
 //0xA08751A9 ;  __thumb int ZEXPORT inflateInit2_ OF((z_streamp strm, int  windowBits, const char *version, int stream_size));
 //0xA08752DF ;  __thumb int ZEXPORT inflate OF((z_streamp strm, int flush));
 //0xA087611B ;  __thumb int ZEXPORT inflateEnd OF((z_streamp strm));
+
+0BB0: 0xA1246218 ; 2EC: int i2c_transfer(I2C_MSG *msg);
+0BB4: 0xA1246264 ; 2ED: int i2c_receive(I2C_MSG *msg);
+
 #pragma disable old_equal_ff
 +0
-
-
-
-;locale=Russian_Russia.1251
 
 ;locale=Russian_Russia.1251

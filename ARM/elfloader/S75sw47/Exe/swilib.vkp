@@ -699,10 +699,84 @@
 08FC: 0xA0F41321   ; 23F: __thumb void MD5_Final(unsigned char *md, MD5_CTX *c);//
 0900: 0xA0F41DA9   ; 240: __thumb char *MD5_Hash(const unsigned char *data, unsigned long n, unsigned char *md=NULL);
 0904: 0xA090074B   ; 241: __thumb void SetDateTime(TDate *, TTime *);
+0910: 0xA0E7D969   ; 244: int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize)
+0914: 0xA0E7DA19   ; 245: int Base64Decode(char *inbuf, int insize, void *outbuf, int outsize, char *_null, int *unk5)
+0918: 0xA0598E9F   ; 246: int GetFileProp(FILE_PROP *wl,WSHDR *file,WSHDR *folder)
+091C: 0xA09A1E25   ; 247: NetOff()
+0920: 0xA8D06BCE   ; 248: char *RamFormatTrack()
+0924: 0xA8D06E36   ; 249: char *RamFreq()
+0928: 0xA8D06FEE   ; 24A: char *RamChannel()
+092C: 0xA097D1FB   ; 24B: void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc)
+0930: 0xA02EAB49   ; 24C: int GetPeripheryState(int device, int check_state)
+0934: 0xA027C93C   ; 24D: int PlayMelody_SetPosition(int handle, int pos_ms)
+0938: 0xA02C7290   ; 24E: void *GetPlayObjById(int handle)
+093C: 0xA0CF7C6C   ; 24F: int GetPlayObjPosition(void *playobj_3D0, int *pos_ms)
+
+0940: 0xA0CF7A04   ; 250: int GetPlayObjDuration(void *playobj_3D0, int *pos_ms)
+0944: 0xA8ACDA5C   ; 251: unsigned int *RamSizeOfPart()
+0948: 0xA8ACD9E4   ; 252: unsigned int *RamSizeOfRecievedSendFile()
+094C: 0xA8DE4E3E   ; 253: char *RamLastCallNum()
+0950: 0xA0529F0B   ; 254: int StartNativeExplorer(NativeExplorerData* data)
+0954: 0xA097E95F   ; 255: void MenuSetUserPointer(void *gui,void *user_pointer)
+0958: 0xA8ACDAD0   ; 256: char *RamNameOfRecievedSendFile()
+095C: 0xA8ACD9BE   ; 257: char *RamIsSendReceiveBT()
+0960: 0xA097577D   ; 258: int CalcBitmapSize(short w,short h, char typy)
+0964: 0xA0D05994   ; 259: HObj Obs_CreateObject(int uid, int unk2, int unk2, int unk3, int unk4, int unk6,int unk7)
+0968: 0xA0CFB3E0   ; 25A: Obs_DestroyObject(HObj hObj)
+096C: 0xA0D03978   ; 25B: int Obs_SetInput_File (HObj hObj, int unk_zero, WSHDR *path)
+0970: 0xA0D23534   ; 25C: int Obs_GetInputImageSize (HObj hObj, short *w, short *h)
+0974: 0xA0D236B0   ; 25D: int Obs_SetOutputImageSize (HObj hObj, short w, short h)
+0978: 0xA0CFAAF8   ; 25E: int Obs_Start(HObj hObj)
+097C: 0xA0D24828   ; 25F: int Obs_Output_GetPictstruct(HObj hObj, IMGHDR *img)
+
+0980: 0xA0D243EC   ; 260: int Obs_Graphics_SetClipping(HObj hObj, short x, short y, short w, short h)
+0984: 0xA0D23DF8   ; 261: int Obs_SetRotation(HObj hObj, int angle)
+0988: 0xA0CFA758   ; 262: __swi __arm int Obs_GetInfo (HObj hObj, int unk_0or1)
+098C: 0xA0D23BA4   ; 263: __swi __arm Obs_SetScaling (HObj hObj, int unk5)
+0990: 0xA0D07014   ; 264: int Obs_TranslateMessageGBS(GBS_MSG *msg, OBSevent *event_handler)
+0994: 0xA0CFAE4C   ; 265: int Obs_Pause (HObj hObj)
+0998: 0xA0CFB1A8   ; 266: int Obs_Resume (HObj hObj)
+099C: 0xA0CFAFD4   ; 267: int Obs_Stop (HObj hObj)
+09A0: 0xA0CFA96C   ; 268: int Obs_Prepare (HObj hObj)
+09A4: 0xA0D7FF8C   ; 269: int Obs_SetRenderOffset (HObj hObj,short x,short y)
+09A8: 0xA0CF7BA8   ; 26A: int Obs_SetPosition (HObj hObj,int ms)
+;09AC: 0x   ; 26B: int Obs_Mam_SetPurpose (HObj hObj,int ms)
+09B0: 0xA0D2008C   ; 26C: int Obs_SetVolumeEx (HObj hObj, char vol, char delta)
+09B4: 0xA0D20D68   ; 26D: int Obs_GetVolume (HObj hObj, char *vol)
+09B8: 0xA0D205A4   ; 26E: int Obs_SetPurpose (HObj hObj,char purpose)
+09BC: 0xA0D20840   ; 26F: int Obs_Sound_SetEqulizer (HObj hObj, char bass, char mid, char treble, char balance)
+09C0: 0xA0D20880   ; 270: int Obs_Sound_Set3dAudio (HObj hObj, int aud)
+
+0A04: 0xA8DF0324   ; 281: char *RamIsRunJava()
+0A08: 0xA8DD3664   ; 282: char *RamIsRunCamera()
+
+0A0C: 0xA05199A5   ; 283: int RunMidletLinkablely(const char *midlet_name, WSHDR *filename)
+0A10: 0xA0D45FB7   ; 284: int IsGPRS()
+0A14: 0xA8E2C738   ; 285: char *RamIsEDGE()
+0A18: 0xA0D3D46F   ; 286: int GetSMSState()
+0A1C: 0xA02D2E8B   ; 287: int BT_GetLocVisibility()
+0A20: 0xA02EDC55   ; 288: int GetCurrAudioPath()
+0A24: 0xA0DB2F01   ; 289: int isDecryption()
+;0A28: 0x          ; 28A: char *RamIsFileCache()
+
+0A2C: 0xA8E4301C   ; 28B: char *RamTotalHeapSize()
+0A30: 0xA8E4308C   ; 28C: char *RamTemporaryHeapSize()
+0A34: 0xA8D23CE8   ; 28D: char *RamBTNameDevice()
+0A38: 0xA8D22EDC   ; 28E: char *RamActiveGPRSProfileName()
+
+0A40: 0xA8E2B508   ; 290: char *RamCallState()
+0A44: 0xA029FB40   ; 291: int RefreshAlarmClock()
+
+0A58: 0xA028B051 ; 296: void getProfileNameByN(WSHDR *ws, int n, int _0)
+0A5C: 0xA8E8C4FC ; 297: char *RamIsSoundRecord()
+0A60: 0xA8E8C558 ; 298: char *RamIsSoundRecordQuality()
+0A64: 0xA8D7962C ; 299: char *RamExtendedCameraState()
+0A68: 0xA029471D ; 29A: SwitchAudioToBTHeadset(TypeOfHeadset, unk_0xFFFE0001)
+0A6C: 0xA029BD69 ; 29B: GetTypeOfHeadset
+0A70: 0xA8D293E9 ; 29C: char *RamInputLanguage()
+0A74: 0xA8D35460 ; 29D: char *RamDisplayLanguage()
+
 #pragma disable old_equal_ff
 +0
-;------------------------- end -------------------------
-
-
 
 ;locale=Russian_Russia.1251
