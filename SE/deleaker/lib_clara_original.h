@@ -703,13 +703,13 @@ __swi __arm void  __original_FileDelete( wchar_t* path, wchar_t* filename, int* 
 __swi __arm void  __original_GUIObject_SetFocus( GUI*, int );
 
 #pragma swi_number=0x20C
-__swi __arm int  __original_CreateSMSCont( int, void* );
+__swi __arm int  __original_MSG_SendMessage_CreateMessage( int, void* );
 #pragma swi_number=0x20D
-__swi __arm int  __original_FreeSMSCont( void* );
+__swi __arm int  __original_MSG_SendMessage_DestroyMessage( void* );
 #pragma swi_number=0x20E
-__swi __arm int  __original_PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
+__swi __arm int  __original_MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
 #pragma swi_number=0x20F
-__swi __arm int  __original_CteateNewMessage( int, void*, int );
+__swi __arm int  __original_MSG_SendMessage_Start( int, void*, int );
 #pragma swi_number=0x8210
 __swi __arm void*  __original_get_APP_DESC_TABLE( void );
 
@@ -1558,7 +1558,7 @@ __swi __arm void  __original_ObexSendFile( SEND_OBEX_STRUCT* );
 
 
 #pragma swi_number=0x37A
-__swi __arm void  __original_Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
+__swi __arm void  __original_Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 
 #pragma swi_number=0x37B
 __swi __arm int  __original_EqualizerGain_Set( int AudioSessionID, int Band, int Level );

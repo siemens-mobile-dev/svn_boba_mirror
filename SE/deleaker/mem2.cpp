@@ -781,9 +781,7 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
 //__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
-//__swi __arm int CreateSMSCont( int, void* );
 //__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
-//__swi __arm int CteateNewMessage( int, void*, int );
 //__swi __arm void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
 //__swi __arm void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
 //__swi __arm void DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
@@ -804,9 +802,8 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm int FILEITEM_SetPath( FILEITEM*, const wchar_t* fpath );
 //__swi __arm int FILEITEM_SetPathAndContentType( FILEITEM*, const wchar_t* fpath );
 //__swi __arm void Feedback_SetKeyHook( GUI_FEEDBACK*, void (*hook)( BOOK* book, int key, int unk, int unk2 ) );
-//__swi __arm void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
+//__swi __arm void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 //__swi __arm int FreeMessage( void** Mess );
-//__swi __arm int FreeSMSCont( void* );
 //__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
 //__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
@@ -824,6 +821,10 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm void ListMenu_DestroyItems( GUI_LIST* );
 //__swi __arm int ListMenu_GetItemCount( GUI_LIST* );
 //__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
+//__swi __arm int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
+//__swi __arm int MSG_SendMessage_CreateMessage( int, void* );
+//__swi __arm int MSG_SendMessage_DestroyMessage( void* );
+//__swi __arm int MSG_SendMessage_Start( int, void*, int );
 //__swi __arm char* MainInput_getPNUM( GUI* );
 //__swi __arm void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 //__swi __arm void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
@@ -838,7 +839,6 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm void OSE_GetShell( void** pInterface );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
-//__swi __arm int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
 //__swi __arm void REQUEST_ALARMCLOCKSTATUS_GET( const int* sync, char* alarm_status );
 //__swi __arm void REQUEST_ALARMCLOCKTIME_GET( const int* sync, TIME* t );
 //__swi __arm void REQUEST_ALARMDATEANDTIMESTATUS_GET( const int* sync, DATETIME* );

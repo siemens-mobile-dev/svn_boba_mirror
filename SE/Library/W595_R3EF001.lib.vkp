@@ -703,7 +703,7 @@
 0F20: 00000000 B1BB7110 ; 3C8: void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 ;0F24: xxxxxxxx yyyyyyyy ; 3C9: void GUIObject_SetSecondRowTitleText( GUI*, STRID );
 ;0F28: xxxxxxxx yyyyyyyy ; 3CA: int ListMenu_GetItemCount( GUI_LIST* );
-;0F2C: xxxxxxxx yyyyyyyy ; 3CB: void OSE_GetShell( void** pInterface );
+0F2C: 00000000 C9F5E010 ; 3CB: void OSE_GetShell( void** pInterface );
 ;0F30: xxxxxxxx yyyyyyyy ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 ;0F34: xxxxxxxx yyyyyyyy ; 3CD: int sscanf( const char* buffer, const char* format, ... );
 

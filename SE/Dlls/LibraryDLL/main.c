@@ -319,6 +319,20 @@ int dll_MetaData_Desc_GetCoverInfo_0( void* MetaData_Desc, char* cover_type, int
 #define USE_dll_RedLED_On_0
 void dll_RedLED_On_0( int __NULL )
 {
+  IIndicationDeviceManager * pIIndicationDeviceManager=0;
+  ILedControlDevice * pILedControlDevice=0;
+  
+  CoCreateInstance(&CID_CIndicationDeviceManager,&IID_IIndicationDeviceManager,PPINTERFACE(&pIIndicationDeviceManager));
+  if (pIIndicationDeviceManager) pIIndicationDeviceManager->CreateLedControlDevice(&pILedControlDevice);
+  if (pILedControlDevice)
+  {
+    int NrOfLeds=0;
+    pILedControlDevice->GetNrOfLeds(&NrOfLeds);
+    if (NrOfLeds) pILedControlDevice->TurnOn(1,1000,1000);
+  }
+  if (pIIndicationDeviceManager) pIIndicationDeviceManager->Release();
+  if (pILedControlDevice) pILedControlDevice->Release();
+  
   Illumination_LedID_SetLevel(RedLED_ID,100);
 }
 #endif
@@ -327,6 +341,20 @@ void dll_RedLED_On_0( int __NULL )
 #define USE_dll_RedLED_Off_0
 void dll_RedLED_Off_0( int __NULL )
 {
+  IIndicationDeviceManager * pIIndicationDeviceManager=0;
+  ILedControlDevice * pILedControlDevice=0;
+  
+  CoCreateInstance(&CID_CIndicationDeviceManager,&IID_IIndicationDeviceManager,PPINTERFACE(&pIIndicationDeviceManager));
+  if (pIIndicationDeviceManager) pIIndicationDeviceManager->CreateLedControlDevice(&pILedControlDevice);
+  if (pILedControlDevice)
+  {
+    int NrOfLeds=0;
+    pILedControlDevice->GetNrOfLeds(&NrOfLeds);
+    if (NrOfLeds) pILedControlDevice->TurnOff(1);
+  }
+  if (pIIndicationDeviceManager) pIIndicationDeviceManager->Release();
+  if (pILedControlDevice) pILedControlDevice->Release();
+  
   Illumination_LedID_Off(RedLED_ID);
 }
 #endif

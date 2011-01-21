@@ -1,3 +1,6 @@
+#ifndef _CFG_ITEMS_H_
+	#define _CFG_ITEMS_H_
+	
 #include "Types.h"
 
 #define CFG_UINT 1
@@ -131,3 +134,6 @@ typedef struct
 	CFG_HDR;
 	wchar_t chars[1];
 }CFG_HDR_WSTR;
+
+
+#endif

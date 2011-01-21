@@ -1615,7 +1615,7 @@ __swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 
 
 #pragma swi_number=0x37A
-__swi __arm void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
+__swi __arm void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 
 #pragma swi_number=0x37B
 __swi __arm int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
