@@ -27,7 +27,7 @@
 
 // PageActionHook
 -Z(CODE)PATCH_PageActionImpl_All=45453F9C-45453FA3
--Z(CODE)PATCH_PageActionImpl_EnterExit=51C7488-51C748F
+-Z(CODE)PATCH_PageActionImpl_EnterExit=451C7488-451C748F
 
 // TabMenuBar check
 -Z(CODE)PATCH_TabMenuCheck=4507F1A0-4507F1A7
