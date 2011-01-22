@@ -41,6 +41,5 @@ extern void DestroyDirHandle( DIR_HANDLE* handle );
 extern OSBOOLEAN set_envp(PROCESS pid, char *name, OSADDRESS value);
 extern PROCESS get_bid(PROCESS pid);
 extern PROCESS current_process(void);
-extern ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
 
 #endif

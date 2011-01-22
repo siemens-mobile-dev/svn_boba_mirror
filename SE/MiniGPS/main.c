@@ -117,8 +117,8 @@ int isImageViewerBook(BOOK * book)
 
 int myModifyUIHook(int event1 , int event2 , int (*PROC)(UI_MESSAGE*),int mode)
 {
-  if((event1) && (event1 != 0xFFFFFFFF)) return ModifyUIHook(event1, PROC, mode);
-  return ModifyUIHook(event2, PROC, mode);
+  if((event1) && (event1 != 0xFFFFFFFF)) return ModifyUIPageHook(event1, PROC, 0, mode);
+  return ModifyUIPageHook(event2, PROC, 0, mode);
 }
 
 int load_encode_file()
@@ -1007,13 +1007,13 @@ int NewKey(int key, int r1, int mode)
   return 0;
 }
 
-int StandbyModeActivatedHook(UI_MESSAGE*)
+int StandbyModeActivatedHook(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
 {
     IsInStandby = true;
     return(0);
 }
 
-int StandbyModeDeactivatedHook(UI_MESSAGE*)
+int StandbyModeDeactivatedHook(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
 {
     IsInStandby = false;
     return(0);

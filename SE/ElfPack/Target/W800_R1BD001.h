@@ -38,6 +38,8 @@
 #define PREVIOUS_EVENT 0x10
 #define CANCEL_EVENT 0x11
 
+#define KEY_LAST 0x144
+
 #ifndef NOICONS
 #define EP_EXTICON16x20
 #define EP_EXTICON48x36

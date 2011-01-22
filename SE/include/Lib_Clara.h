@@ -111,8 +111,8 @@ __swi __arm void MMIPROC( void (*PROC)( int, void* ), int p1, void* p2 );
 //#pragma swi_number=0x10B
 //__swi __arm void ELF_RemoveFromList( void* elf_begin );
 
-#pragma swi_number=0x10C
-__swi __arm int ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ), int mode );
+//#pragma swi_number=0x10C
+//__swi __arm int ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ), int mode );
 
 #pragma swi_number=0x10D
 __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
@@ -124,7 +124,7 @@ __swi __arm void* LoadDLL( wchar_t* DllName );
 __swi __arm int UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
+__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -1259,8 +1259,6 @@ __swi __arm BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param 
 #pragma swi_number=0x2E4
 __swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 
-#pragma swi_number=0x2E5
-__swi __arm ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
 #pragma swi_number=0x2E6
 __swi __arm int BookObj_GetSessionID( BOOK* book );
 #pragma swi_number=0x2E7

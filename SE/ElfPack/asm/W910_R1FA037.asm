@@ -16,9 +16,76 @@ a       EQU     b
         defadr   DB_PATCH5_RET,0x10FE40AC+1
         defadr   DB_PATCH6_RET,0x10FE40E0+1
         defadr   MESS_HOOK_RET,0x1072152C+1
-        defadr   PAGE_ACTION_RET,0x115D1CD0+1
+
         defadr  memalloc,0x1009840C
         defadr  memfree,0x10098434
+
+// --- Patch Keyhandler ---
+	EXTERN Keyhandler_Hook
+	RSEG  PATCH_KEYHANDLER1
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER1:
+
+	PUSH	{R0,R1}
+	LDRH	R0, [R4,#0]
+	BLX	Keyhandler_Hook
+	STRH	R0, [R4,#0]
+	MOV	R1, R0
+	LDR	R2, =SFE(PATCH_KEYHANDLER1)+1
+	MOV	R12, R2
+	POP	{R2,R3}
+	BX	R12
+
+	RSEG  PATCH_KEYHANDLER1
+        CODE16
+        LDR     R3,=NEW_KEYHANDLER1
+        BX      R3
+
+
+	RSEG  PATCH_KEYHANDLER2
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER2:
+
+	MOV	R7, R0
+	MOV	R1, #0x0
+	MOV	R0, R4
+	BLX	Keyhandler_Hook
+	MOV	R4, R0
+	MOV	R2, R7
+	MOV	R3, #0x0
+	MOV	R1, R4
+	MOV	R0, R6
+	LDR	R7, =SFE(PATCH_KEYHANDLER2)+1
+	BX	R7
+
+	RSEG  PATCH_KEYHANDLER2
+        CODE16
+        LDR     R2,=NEW_KEYHANDLER2
+        BX      R2
+
+
+	RSEG  PATCH_KEYHANDLER3
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER3:
+
+	PUSH	{R0,R1}
+	LDRH	R0, [R7,#0x4]
+	BLX	Keyhandler_Hook
+	POP	{R2,R3}
+	STRH	R0, [R7,#0x4]
+	MOV	R1, R0
+	LDR	R0, =SFE(PATCH_KEYHANDLER3)+1
+	BX	R0
+
+	RSEG  PATCH_KEYHANDLER3
+        CODE16
+        LDR     R3,=NEW_KEYHANDLER3
+        BX      R3
+
+
 // --- CreateLists ---
 
         EXTERN  CreateLists
@@ -40,28 +107,6 @@ PATCH_STANDBY:
         LDR     R6,=PATCH_STANDBY
         BX      R6
 
-// --- PageAction_Hook ---
-        EXTERN  PageAction_Hook
-        EXTERN  List_RemoveAt
-        RSEG  CODE
-        CODE16
-_PageAction:
-        LDR     R0, [R0, #0]
-        MOV     R1, #0
-        BLX     List_RemoveAt
-        BL      PageAction_Hook
-	MOV	R6, R0
-        LDR     R1, =PAGE_ACTION_RET
-        BX      R1
-
-
-
-        RSEG    PATCH_PageAction:CODE(1)
-        CODE16
-        LDR     R6, =_PageAction
-        BX      R6
-
-
 
 // --- ParseHelperMessage ---
         EXTERN  ParseHelperMessage
@@ -81,25 +126,56 @@ MESS_HOOK:
         BX      R1
 
 // --- PageAction1 ---
-        EXTERN  PageAction_Hook1
-        RSEG    PATCH_PageActionImpl
+        EXTERN  PageAction_Hook2
+        RSEG    PATCH_PageActionImpl_All
         RSEG   CODE
         CODE16
 PG_ACTION:
-        BL      PageAction_Hook1
-        MOV     R0, SP
-        MOV     R1, #0
-        STRB    R1, [R0,#4]
-        ADD     R6, R1, #0
-        LDR     R3,=SFE(PATCH_PageActionImpl)+1
-        BX      R3
+	MOV	R2, R6
+	MOV	R1, R5
+	MOV	R0, R4
+        BLX     PageAction_Hook2
+	CMP	R0, #0x0
+	BNE	SKIP_ORIGINAL
+	MOV	R1, R6
+        MOV	R0, R5
+	LDR	R2, [R4,#0]
+	BLX	R2
+
+SKIP_ORIGINAL:
+        LDR     R4,=SFE(PATCH_PageActionImpl_All)+1
+        BX      R4
 
 
 
-        RSEG    PATCH_PageActionImpl
+        RSEG    PATCH_PageActionImpl_All
         CODE16
-        LDR     R3, =PG_ACTION
-        BX      R3
+        LDR     R2, =PG_ACTION
+        BX      R2
+
+
+        EXTERN  PageAction_Hook2
+        RSEG    PATCH_PageActionImpl_EnterExit
+        RSEG   CODE
+        CODE16
+PG_ACTION2:
+	LDR	R2, [SP,#0x1C]
+	LDR	R1, [SP,#0x20]
+	MOV	R0, R6
+        BLX     PageAction_Hook2
+	LDR	R1, [SP,#0x1C]
+        LDR	R0, [SP,#0x20]
+	LDR	R2, [R6,#0]
+	BLX	R2
+        LDR     R7,=SFE(PATCH_PageActionImpl_EnterExit)+1
+        BX      R7
+
+
+
+        RSEG    PATCH_PageActionImpl_EnterExit
+        CODE16
+        LDR     R2, =PG_ACTION2
+        BX      R2
 
 // --- Data Browser ---
 

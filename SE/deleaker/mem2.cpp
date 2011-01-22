@@ -581,9 +581,9 @@ int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, i
 }
 #endif
 
-int  __deleaker_ModifyUIHook( char* __file__, int __line__, int event, int (*PROC)( UI_MESSAGE* ), int mode )
+int  __deleaker_ModifyUIPageHook( char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData, int mode )
 {
-  int  ret = __original_ModifyUIHook(event, PROC, mode);
+  int  ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
   if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
   if(mode==1)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
   return ret;
@@ -835,7 +835,6 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 //__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 //__swi __arm int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
-//__swi __arm int ModifyUIPageHook( int event, int (*PROC)( void* msg, BOOK* book ), int book_id, int mode );
 //__swi __arm void OSE_GetShell( void** pInterface );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );

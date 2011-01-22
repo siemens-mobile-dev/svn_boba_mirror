@@ -2,6 +2,8 @@
         RSEG   CODE
         CODE32
 
+TABMENUBAR_NAME EQU 0x4484BE6F
+
 defadr  MACRO   a,b
         PUBLIC  a
 a       EQU     b
@@ -9,6 +11,76 @@ a       EQU     b
 
         defadr  memalloc,0x452C26B8+1
         defadr  memfree,0x452C33EC+1
+
+// --- Patch Keyhandler ---
+	EXTERN Keyhandler_Hook
+	RSEG  PATCH_KEYHANDLER1
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER1:
+
+	PUSH	{R0,R1}
+	LDRH	R0, [R4,#0]
+	BLX	Keyhandler_Hook
+	STRH	R0, [R4,#0]
+	MOV	R1, R0
+	MOV	R0, R6
+	LDR	R2, =SFE(PATCH_KEYHANDLER1)+1
+	MOV	R12, R2
+	POP	{R2,R3}
+	BX	R12
+
+	RSEG  PATCH_KEYHANDLER1
+        CODE16
+        LDR     R3,=NEW_KEYHANDLER1
+        BX      R3
+
+
+	RSEG  PATCH_KEYHANDLER2
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER2:
+
+	MOV	R7, SP
+	PUSH	{R0}
+	MOV	R1, #0x0
+	LDRH	R0, [R7,#0x4]
+	BLX	Keyhandler_Hook
+	STRH	R0, [R7,#0x4]
+	POP	{R2}
+	MOV	R1, R0
+	MOV	R3, #0x0
+	LDR	R0, =SFE(PATCH_KEYHANDLER2)+1
+	BX	R0
+
+	RSEG  PATCH_KEYHANDLER2
+        CODE16
+        LDR     R2,=NEW_KEYHANDLER2
+        BX      R2
+
+
+	RSEG  PATCH_KEYHANDLER3
+        RSEG  CODE
+        CODE16
+NEW_KEYHANDLER3:
+
+	MOV	R3, SP
+	PUSH	{R0,R1}
+	LDRH	R0, [R3,#0x4]
+	BLX	Keyhandler_Hook
+	POP	{R2,R3}
+	MOV	R1, SP
+	STRH	R0, [R1,#0x0]
+	MOV	R1, R0
+	LDR	R0, =SFE(PATCH_KEYHANDLER3)+1
+	BX	R0
+
+	RSEG  PATCH_KEYHANDLER3
+        CODE16
+        LDR     R3,=NEW_KEYHANDLER3
+        BX      R3
+
+
 // --- CreateLists ---
 
         EXTERN  CreateLists
@@ -33,24 +105,6 @@ PATCH_STANDBY:
         LDR     R1,=PATCH_STANDBY
         BLX     R1
 
-// --- PageAction_Hook ---
-        EXTERN  PageAction_Hook
-        RSEG  CODE
-        CODE16
-
-
-_PageAction:
-        PUSH    {LR}
-        LDR     R3,=PageAction_Hook
-        BLX     R3
-        MOV     R4,R0
-        LDRB    R0,[R0,#0]
-        POP     {PC}
-
-
-        RSEG    PATCH_PageAction:CODE(1)
-        CODE16
-        BL    _PageAction
 
 // --- ParseHelperMessage ---
         EXTERN  ParseHelperMessage
@@ -73,25 +127,58 @@ MESS_HOOK:
         BLX     R3
 
 // --- PageAction1 ---
-        EXTERN  PageAction_Hook1
-        RSEG    PATCH_PageActionImpl
+        EXTERN  PageAction_Hook2
+        RSEG    PATCH_PageActionImpl_All
         RSEG   CODE
         CODE16
 PG_ACTION:
-        BL      PageAction_Hook1
-        MOV     R0, #0
-        MOV     R1, SP
-        STRB    R0, [R1,#0]
-        LDR     R1, [SP,#0xC]
-        LDR     R3,=SFE(PATCH_PageActionImpl)+1
-        BX      R3
+	MOV	R2, R6
+	MOV	R1, R5
+	MOV	R0, R4
+        BLX     PageAction_Hook2
+	CMP	R0, #0x0
+	BNE	SKIP_ORIGINAL
+	MOV	R1, R6
+        MOV	R0, R5
+	LDR	R2, [R4,#0]
+	BLX	R2
+
+SKIP_ORIGINAL:
+	MOV	R4, R0
+        LDR     R5,=SFE(PATCH_PageActionImpl_All)+1
+        BX      R5
 
 
 
-        RSEG    PATCH_PageActionImpl
+        RSEG    PATCH_PageActionImpl_All
         CODE16
-        LDR     R3, =PG_ACTION
-        BX      R3
+        LDR     R2, =PG_ACTION
+        BX      R2
+
+
+        EXTERN  PageAction_Hook2
+        RSEG    PATCH_PageActionImpl_EnterExit
+        RSEG   CODE
+        CODE16
+PG_ACTION2:
+	LDR	R2, [SP,#0x18]
+	LDR	R1, [SP,#0x1C]
+	MOV	R0, R6
+        BLX     PageAction_Hook2
+	LDR	R1, [SP,#0x18]
+        LDR	R0, [SP,#0x1C]
+	LDR	R2, [R6,#0]
+	BLX	R2
+        LDR     R7,=SFE(PATCH_PageActionImpl_EnterExit)+1
+        BX      R7
+
+
+
+        RSEG    PATCH_PageActionImpl_EnterExit
+        CODE16
+        LDR     R2, =PG_ACTION2
+        BX      R2
+
 // --- Data Browser ---
 
         EXTERN  GetExtTable
@@ -121,4 +208,27 @@ DBEXT:
         RSEG   PATCH_DB2
         CODE16
         BL       DBEXT
+
+        RSEG   CODE
+        CODE16
+TabMenuCheck:
+        PUSH    {LR}
+        LDR     R0, [R0, #0] //GUIObject_GetDispObject
+        LDR     R0, [R0, #8] //DispObject_GetName ptr1
+        LDR     R0, [R0, #0] //DispObject_GetName ptr2
+        LDR     R1, =TABMENUBAR_NAME
+        CMP     R0, R1
+        BNE     TabMenuCheck_false
+        MOV     R0, #1
+        POP     {PC}
+TabMenuCheck_false:
+        MOV     R0, #0
+        POP     {PC}
+
+
+        RSEG   PATCH_TabMenuCheck
+        CODE16
+        LDR     R3, =TabMenuCheck
+        BX      R3
+
         END

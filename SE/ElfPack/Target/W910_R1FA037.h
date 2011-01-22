@@ -39,6 +39,8 @@
 #define PREVIOUS_EVENT 0x3
 #define CANCEL_EVENT 0x4
 
+#define KEY_LAST 0x155
+
 #define A2
 
 #ifndef NOICONS

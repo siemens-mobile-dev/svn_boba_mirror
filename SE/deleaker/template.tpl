@@ -866,7 +866,7 @@ __make ModifyKeyHook
   return ret;
 }
 
-__make ModifyUIHook
+__make ModifyUIPageHook
 {
   __R ret = __O__;
   if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );

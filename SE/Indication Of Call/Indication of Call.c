@@ -71,7 +71,7 @@ void onMuteTimer(u16 timerID, LPARAM lparam)
   }
 }
 
-int DisableUP(UI_MESSAGE*)
+int DisableUP(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
 {
   if((incom==1) && (cfg_flash_silent==0))
   {
@@ -91,7 +91,8 @@ int DisableUP(UI_MESSAGE*)
   }
   return(0);
 }
-int DisableDOWN(UI_MESSAGE*)
+
+int DisableDOWN(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
 {
   if((incom==1) && (cfg_flash_silent==0))
   {
@@ -287,8 +288,8 @@ void bookOnDestroy(BOOK * book)
     if(rejectTimer) Timer_Kill(&rejectTimer);
     if(muteTimer) Timer_Kill(&muteTimer);
 
-    ModifyUIHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0);
-    ModifyUIHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0);
+    ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,0);
+    ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,0);
     StatusIndication_ShowNotes(EMPTY_SID);
     SUBPROC(elf_exit);
 }
@@ -574,8 +575,8 @@ int main(wchar_t* filename)
         {
             InitConfig();
 
-            ModifyUIHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,1);
-            ModifyUIHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,1);		
+            ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,1);
+            ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,1);		
             BOOK *myBook = (BOOK*)malloc(sizeof(BOOK));
             memset(myBook,0,sizeof(BOOK));
             if(!CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0))

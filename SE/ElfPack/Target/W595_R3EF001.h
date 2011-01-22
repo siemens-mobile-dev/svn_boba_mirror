@@ -38,6 +38,8 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define KEY_LAST 0x162
+
 #define A2
 
 #ifndef NOICONS

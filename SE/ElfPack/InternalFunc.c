@@ -225,20 +225,22 @@ int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
 	}
 }
 
-int KbdHook(int r0,int r1,int r2)
+
+//В качестве второго аргумента для proc сделан 0, для совместимости со старым хуком
+int Keyhandler_Hook(int key,int mode)
 {
 	int i=0;
 	int result;
 	while(i < elfpackdata->gKbdHookList->FirstFree)
 	{
 		KEY_HOOK_ELEM *elem = (KEY_HOOK_ELEM *)List_Get(elfpackdata->gKbdHookList,i++);
-		result = elem->proc(r0,r1,r2,elem->data);
-		if (result==-1) return(0);
+		result = elem->proc(key,0,mode,elem->data);
+		if (result==-1) return KEY_LAST;
 	}
-	return(0);
+        return key;
 }
 //===============  OSE_HOOK  ================
-int OSEHookCmpProc(OSE_HOOK_ITEM* ud, void (*e2)(void*))
+/*int OSEHookCmpProc(OSE_HOOK_ITEM* ud, void (*e2)(void*))
 {
 	return ud->HOOK != e2;
 }
@@ -275,150 +277,60 @@ int ModifyOSEHook(int event , void (*proc)(void*),int mode)
 		}
 	default: return(-4);
 	}
-}
+}*/
 
 //===============  UI_HOOK  ================
-__thumb UI_MESSAGE * PageAction_Hook(UI_MESSAGE * ui)
-{
-	int f=0;
-	int n;
-
-	if (elfpackdata)
-	{
-		LIST * UI_Hook_List = elfpackdata->UIHookList;
-		_printf("PageAction_Hook msg:0x%X",ui->event)  ;
-		n=UI_Hook_List->FirstFree;
-
-		if (n)
-		{
-			n--;
-			UI_HOOK_ITEM ** uihook = (UI_HOOK_ITEM**)(UI_Hook_List->listdata);
-			do
-			{
-				{
-					UI_HOOK_ITEM * item=uihook[n];
-					//          _printf("PageAction 0x%x 0x%x",item->event,uiev)  ;
-					{
-						if (item->event==ui->event) f|=item->HOOK(ui);
-					}
-				}
-			}
-			while(n--);
-		}
-	}
-	if (f) ui->mode=0xFF;
-	return(ui);
-}
-
-
-int UIHookCmpProc(UI_HOOK_ITEM* listitem, int (*itemtofind)(UI_MESSAGE*))
-{
-	return listitem->HOOK != itemtofind;
-}
-
-int ModifyUIHook(int event , int (*PROC)(UI_MESSAGE*),int mode)
-{
-	LIST * UI_Hook_List = elfpackdata->UIHookList;
-
-	int n = LIST_FIND(UI_Hook_List, PROC, UIHookCmpProc);
-
-	_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
-
-	switch (mode)
-	{
-	case 0: //remove
-		if (n!=0xFFFF)
-		{
-			mfree(List_RemoveAt(UI_Hook_List,n));
-
-			_printf("PROC@0x%X, Removed OK..",PROC)  ;
-
-			return(0);
-		}
-		else
-		{
-			return(-2);
-		}
-
-	case 1:
-		if (n==0xFFFF)
-		{
-			UI_HOOK_ITEM *item=malloc(sizeof(UI_HOOK_ITEM));
-			item->event=event;
-			item->HOOK=PROC;
-			List_InsertFirst(UI_Hook_List,(void*)item);
-
-			_printf("PROC@0x%X, Added OK..",PROC)  ;
-			_printf("Total HookItems : 0x%X",UI_Hook_List->FirstFree)  ;
-
-			return(0);
-		}
-		else
-		{
-			return(-3);
-		}
-	default: return(-4);
-	}
-}
-// ===============================================================
 
 typedef struct {
-	int (*PROC)(void *msg, BOOK *bk);
+	int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData);
 	int event;
-	int book_id;
+	LPARAM ClientData;
 } PAGE_HOOK_ELEM;
-
-__thumb void PageAction_Hook1(LIST *lst)
-{
-	if (elfpackdata)
-	{
-		LIST *UIPageHook = elfpackdata->UIPageHook;
-		int n_pages=UIPageHook->FirstFree;
-		while(n_pages--)
-		{
-			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook,n_pages);
-			int f=0;
-			int n=lst->FirstFree;
-			while(n--)
-			{
-				ACTION *act=(ACTION *)List_Get(lst,n);
-				if (act->event==my_act->event)
-				{
-					f=1;
-					break;
-				}
-			}
-			if (f)
-			{
-				ACTION *new_act = ActionCreate(my_act->PROC, my_act->book_id, my_act->event, NULL, NULL);
-				List_InsertFirst(lst, new_act);
-			}
-		}
-	}
-}
 
 
 int UIHook1CmpProc(void * e1, void * e2)
 {
-	ACTION * ud = (ACTION*)e1;
+	PAGE_HOOK_ELEM * ud = (PAGE_HOOK_ELEM*)e1;
 	PAGE_HOOK_ELEM *page_elem=(PAGE_HOOK_ELEM *)e2;
-	if (ud->PROC==page_elem->PROC && ud->event==page_elem->event) return (0); else  return(1);
+	if (ud->PROC==page_elem->PROC && ud->event==page_elem->event) return (0);
+        else  return(1);
 }
 
-int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book_id ,int mode)
+
+int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
+{
+  int res;
+  if (elfpackdata)
+  {
+    LIST * UIPageHook = elfpackdata->UIPageHook;
+    int n_pages=UIPageHook->FirstFree;
+    while(n_pages--)
+    {
+      PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook,n_pages);
+
+      if (my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
+      if (res==BLOCK_EVENT_GLOBALLY) return BLOCK_EVENT_GLOBALLY;
+      if (res==BLOCK_EVENT_IN_THIS_SESSION) return BLOCK_EVENT_IN_THIS_SESSION;
+    }
+  }
+  return 0;
+}
+
+
+int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData ,int mode)
 {
 	LIST * UIPageHook = elfpackdata->UIPageHook;
 	PAGE_HOOK_ELEM page_elem;
 	page_elem.PROC=PROC;
 	page_elem.event=event;
-	page_elem.book_id=book_id;
+	page_elem.ClientData=ClientData;
 	int n = List_Find(UIPageHook,&page_elem,UIHook1CmpProc);
 	_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
 
 	switch (mode)
 	{
 	case 0: //remove
-		if (n!=0xFFFF)
+		if (n!=LIST_ERROR)
 		{
 			mfree(List_RemoveAt(UIPageHook,n));
 			return(0);
@@ -429,7 +341,7 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book_id ,int
 		}
 
 	case 1:
-		if (n==0xFFFF)
+		if (n==LIST_ERROR)
 		{
 			ACTION *item=malloc(sizeof(PAGE_HOOK_ELEM));
 			memcpy(item,&page_elem,sizeof(PAGE_HOOK_ELEM));
@@ -444,6 +356,8 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK *bk), int book_id ,int
 	}
 }
 
+// ===============================================================
+
 
 extern void* Library;
 
@@ -457,7 +371,7 @@ void CreateLists(void)
 	elfpackdata->UserDataList=List_Create();
 	elfpackdata->gKbdHookList=List_Create();
 	elfpackdata->UIHookList=List_Create();
-	elfpackdata->OseHookList=List_Create();
+	//elfpackdata->OseHookList=List_Create();
 	elfpackdata->DLLList=List_Create();
 	elfpackdata->UIPageHook=List_Create();
 	elfpackdata->LibraryCache = NULL;
@@ -465,7 +379,7 @@ void CreateLists(void)
 	_printf("   epd->UserDataList @%x",elfpackdata->UserDataList)  ;
 	_printf("   epd->gKbdHookList @%x",elfpackdata->gKbdHookList)  ;
 	_printf("   epd->UIHookList @%x",elfpackdata->UIHookList)  ;
-	_printf("   epd->OseHookList @%x",elfpackdata->OseHookList)  ;
+	//_printf("   epd->OseHookList @%x",elfpackdata->OseHookList)  ;
 	//  _printf("   epd->elflist @%x",elfpackdata->elflist)  ;
 
 	elfpackdata->DBExtList=CreateDBExtList();
@@ -482,17 +396,11 @@ void CreateLists(void)
 
 void Init()
 {
-	//CreateLists();
-
 	FILELISTITEM* mem = malloc(sizeof(FILELISTITEM));
 
 	FILELISTITEM* fli;
 
 	_printf("     Entered Init...")  ;
-
-	// отняли обработчик клавы
-	ModifyKeyHook((KEYHOOKPROC)pKBD, 1, NULL);
-	pKBD=KbdHook;
 
 	// запустили хелпера
 

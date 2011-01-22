@@ -255,10 +255,10 @@
 ;0824: xxxxxxxx yyyyyyyy ; 209:
 0828: 00000000 C55F0111 ; 20A: void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 082C: 00000000 9D8C6E11 ; 20B: void GUIObject_SetFocus( GUI*, int );
-0830: 00000000 E5EC2911 ; 20C: int CreateSMSCont( int, void* );
-0834: 00000000 FDF32911 ; 20D: int FreeSMSCont( void* );
-0838: 00000000 C1EE2911 ; 20E: int PrepareSMSCont( void*, wchar_t*, wchar_t*, int, int );
-083C: 00000000 35F32911 ; 20F: int CteateNewMessage( int, void*, int );
+0830: 00000000 E5EC2911 ; 20C: int MSG_SendMessage_CreateMessage( int, void* );
+0834: 00000000 FDF32911 ; 20D: int MSG_SendMessage_DestroyMessage( void* );
+0838: 00000000 C1EE2911 ; 20E: int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
+083C: 00000000 35F32911 ; 20F: int MSG_SendMessage_Start( int, void*, int );
 0840: 00000000 2C2DAB11 ;8210: void* get_APP_DESC_TABLE( void );
 0844: 00000000 25576E11 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 0848: 00000000 211DFA10 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
@@ -472,7 +472,7 @@
 0B88: 00000000 E18A7011 ; 2E2: int Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 F93B6411 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 2D510611 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-0B94: 00000000 89556411 ; 2E5: ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
+;0B94: xxxxxxxx yyyyyyyy ; 2E5:
 0B98: 00000000 7D606411 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 2D496411 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
@@ -621,7 +621,7 @@
 0DDC: 00000000 29B16911 ; 377: int GUIonMessage_GetSelectedItem( GUI_MESSAGE* msg );
 0DE0: 00000000 35B16911 ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
 0DE4: 00000000 9DBDF810 ; 379: void ObexSendFile( SEND_OBEX_STRUCT* );
-0DE8: 00000000 DD156F11 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
+0DE8: 00000000 DD156F11 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 0DEC: 00000000 81151F11 ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
 0DF0: 00000000 05E55F10 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
 0DF4: 00000000 91D16A10 ; 37D: void GVI_BitBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3 );

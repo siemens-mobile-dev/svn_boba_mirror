@@ -42,6 +42,8 @@
 #define PREVIOUS_EVENT 3
 #define CANCEL_EVENT 4
 
+#define KEY_LAST 0x155
+
 #define DB2020
 
 #ifndef NOICONS

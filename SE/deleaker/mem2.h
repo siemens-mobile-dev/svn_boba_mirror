@@ -170,8 +170,8 @@ int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, i
 #else
 int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, int, int, void* ), int mode, void* lparam );
 #endif
-#define ModifyUIHook(event, PROC, mode) __deleaker_ModifyUIHook( __FILE__,  __LINE__, event, PROC, mode )
-int  __deleaker_ModifyUIHook( char* __file__, int __line__, int event, int (*PROC)( UI_MESSAGE* ), int mode );
+#define ModifyUIPageHook(event, PROC, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, PROC, ClientData, mode )
+int  __deleaker_ModifyUIPageHook( char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
 #define ImageID_Get(fpath, fname, imageID) __deleaker_ImageID_Get( __FILE__,  __LINE__, fpath, fname, imageID )
 int  __deleaker_ImageID_Get( char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, wchar_t* imageID );
 #define ImageID_GetIndirect(buf_image, size, __NULL, image_type, imageID) __deleaker_ImageID_GetIndirect( __FILE__,  __LINE__, buf_image, size, __NULL, image_type, imageID )

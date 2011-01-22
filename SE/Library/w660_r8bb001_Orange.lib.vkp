@@ -472,7 +472,7 @@
 0B88: 00000000 718F4E45 ; 2E2: int Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 F5104145 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 A9DA0245 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-0B94: 00000000 41104145 ; 2E5: ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
+;0B94: xxxxxxxx yyyyyyyy ; 2E5:
 0B98: 00000000 691E4145 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 49034145 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 E1102C44 ; 2E8: char* GetIMSI( void );
@@ -621,7 +621,7 @@
 0DDC: 00000000 E1144845 ; 377: int GUIonMessage_GetSelectedItem( GUI_MESSAGE* msg );
 0DE0: 00000000 ED144845 ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
 0DE4: 00000000 1D75F344 ; 379: void ObexSendFile( SEND_OBEX_STRUCT* );
-0DE8: 00000000 95E14C45 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, STRID );
+0DE8: 00000000 95E14C45 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 0DEC: 00000000 19D71245 ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
 0DF0: 00000000 E5D07444 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
 0DF4: 00000000 49F0B344 ; 37D: void GVI_BitBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3 );

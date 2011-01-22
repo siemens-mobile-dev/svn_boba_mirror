@@ -50,6 +50,5 @@ a       EQU     b
         call    set_envp,0x18E
         call    get_bid,0x18F
         call    current_process,0x184
-        call    ActionCreate,0x2E5
 
    END

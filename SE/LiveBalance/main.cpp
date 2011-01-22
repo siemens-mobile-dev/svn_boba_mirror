@@ -6,9 +6,8 @@
 #include "main.h"
 
 
-#pragma segment="ELFBEGIN"
 void elf_exit(void){
-  kill_data(__segment_begin("ELFBEGIN"), (void(*)(void*))mfree_adr());
+  kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 }
 
 int isUSSDBook(BOOK *book)
@@ -329,7 +328,6 @@ static int FindCash(const char *s)
   int n=0; //Номер
   const char *pat;
   int i;
-  int f=0;
   char *ep;
   const char *p;
   const char *pval;
@@ -394,13 +392,12 @@ static int FindCash(const char *s)
     if (i>(CurrentCASH[n]+(MaxCASH[n]/100))) //Если новый больше чем текущий +1 процент от максимального
     {
       MaxCASH[n]=i;
-      f=1;
     }
     CurrentCASH[n]=i;
     n++;
   }
   //while(n<CASH_SIZE);  Может быть ни одного пока идет поиск сети
-  if (f) SaveCash();
+  SaveCash();
   return (n);
 }
 
@@ -449,7 +446,7 @@ static void WriteLog(char *text, int len)
   }
 }
 
-static int OnReceiveUssd(void * data,BOOK *book)
+static int OnReceiveUssd(void * data, BOOK *book, PAGE_DESC * page_desc, LPARAM ClientData)
 {FUNCTION
   char *s1, *s2;
   wchar_t *ws;
@@ -486,12 +483,12 @@ static int OnReceiveUssd(void * data,BOOK *book)
     }
     StartHoursTimer();
   }
-  return(i?666:1);
+  return(i?BLOCK_EVENT_GLOBALLY:1);
 }
 
 static void onMyBookClose(BOOK * book)
 {FUNCTION
-  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd, BookObj_GetBookID(book),0);
+  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,0);
   DISP_OBJ *StBy_DispObj = GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
   DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),SIonRedraw);
   EndUSSDtimer();
@@ -561,7 +558,7 @@ int main()
   SetGetTextFunc();
   InitConfig();
   InitCache();
-  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd, BookObj_GetBookID((BOOK *)myBook),1);
+  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,1);
 
   StatusIndication=GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
   SIonRedraw=DispObject_GetOnRedraw(StatusIndication);

@@ -18,6 +18,7 @@
 #define SBY_REDRAW_RELEASE_EVENT 995
 
 #define BLOCK_EVENT_GLOBALLY 666
+#define BLOCK_EVENT_IN_THIS_SESSION 667
 
 #define EMPTY_REDRAW_METHOD (void (*)(DISP_OBJ *,int ,int ,int))-1
 

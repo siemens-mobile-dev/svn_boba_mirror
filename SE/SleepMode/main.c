@@ -9,6 +9,10 @@ void (*OldonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
 #define ICONS_COUNT 8
 #define color clBlack
 
+#define DB3150_OFFSET 0x1D0;
+#define DB3200_OFFSET 0x21C;
+#define DB3210_OFFSET 0x21C;
+#define DB2020_OFFSET 0x14C;
 
 #define KEYLOCK _T("KEYLOCK_SLEEPMODE_ICN")
 #define SILENT _T("SILENT_SLEEPMODE_ICN")
@@ -66,54 +70,22 @@ typedef struct
 
 BOOK * RLBook;
 
-int missed_icons[ICONS_COUNT];
-int days[7];
-//3210
-//int Offset1=0x21C;
-//int Offset2=0x216;
-//3150
-//int Offset1=0x1D0;
-//int Offset2=0x1CA;
-//2020
-int Offset1=0x14C;
-int DISPLAY_WIDTH;
 
-
-/*
-const int Start=1900;
-const int YEAR_0[]={0,31,60,91,121,152,182,213,244,274,305,335};
-const int YEAR_1[]={366,397,425,456,486,517,547,578,609,639,670,700};
-const int YEAR_2[]={731,762,790,821,851,882,912,943,974,1004,1035,1065};
-const int YEAR_3[]={1096,1127,1155,1186,1216,1247,1277,1308,1339,1369,1400,1430};
-*/
-
-/*
-wchar_t * days[7]={L"Воскресенье",
-L"Понедельник",
-L"Вторник",
-L"Среда",
-L"Четверг",
-L"Пятница",
-L"Суббота"
-};
-*/
-
-/*
-int GetDay(DATE *dt)
+typedef struct _MYBOOK : BOOK
 {
-  int Y=dt->year;
-  int HiYear = (Y/4)*4;
-  int FYear = ((HiYear-Start)/4)*(366+(365*3));
-  switch (Y - HiYear)
-  {
-  case 0: FYear = FYear + YEAR_0[dt->mon-1]; break;
-  case 1: FYear = FYear + YEAR_1[dt->mon-1]; break;
-  case 2: FYear = FYear + YEAR_2[dt->mon-1]; break;
-  case 3: FYear = FYear + YEAR_3[dt->mon-1]; break;
-  }
-  return(Str2ID(days[0][(FYear+dt->day-1)%7],0,SID_ANY_LEN));
+  int missed_icons[ICONS_COUNT];
+  int days[7];
+  int DISPLAY_WIDTH;
+  int offset;
+}SleepMode_Book;
+
+
+int myFind(BOOK* book)
+{
+   if(!strcmp(book->xbook->name,"SleepMode")) return(1);
+   return(0);
 }
-*/
+
 
 void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
 {
@@ -121,29 +93,31 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
   int SIDtime;
   char weekday;
   
+  SleepMode_Book * SM_Book=(SleepMode_Book*)FindBook(myFind);
+  
   char * p=(char*)dobj;
-  if ( p[Offset1] ) OldonRedraw(dobj,r1,r2,r3);
+  if ( p[SM_Book->offset] ) OldonRedraw(dobj,r1,r2,r3);
   else
   {
     REQUEST_DATEANDTIME_GET(SYNC,&dt);
 
     SIDtime=Time2ID(&dt.time,2,0);
     SetFont(font1);
-    DrawString(SIDtime,2,1,y0,DISPLAY_WIDTH,y0+GetImageHeight(30),20,0x05,color ,color);
+    DrawString(SIDtime,2,1,y0,SM_Book->DISPLAY_WIDTH,y0+GetImageHeight(30),20,0x05,color ,color);
     TextFree(SIDtime);
     
     
     SIDtime=Date2ID(&dt.date,0,1);
     SetFont(font2);
-    DrawString(SIDtime,2,1,y1,DISPLAY_WIDTH,y1+GetImageHeight(30),20,0x05,color ,color);
+    DrawString(SIDtime,2,1,y1,SM_Book->DISPLAY_WIDTH,y1+GetImageHeight(30),20,0x05,color ,color);
     TextFree(SIDtime);
     
     
     SetFont(font3);
     DATE_GetWeekDay(&dt.date,&weekday);
-    SIDtime=days[weekday];
+    SIDtime=SM_Book->days[weekday];
     
-    DrawString(SIDtime,2,1,y2,DISPLAY_WIDTH,y2+GetImageHeight(30),20,0x05,color ,color);
+    DrawString(SIDtime,2,1,y2,SM_Book->DISPLAY_WIDTH,y2+GetImageHeight(30),20,0x05,color ,color);
     TextFree(SIDtime);
     
     int missed[ICONS_COUNT];
@@ -154,7 +128,7 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
     {
       if (m&(1<<i))
       {
-        *p++=missed_icons[i];
+        *p++=SM_Book->missed_icons[i];
       }
     }
 
@@ -165,7 +139,7 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
       x = x + GetImageWidth(missed[i]);
     }
     
-    x = (DISPLAY_WIDTH - (x + (i-1)*10) )/2;
+    x = (SM_Book->DISPLAY_WIDTH - (x + (i-1)*10) )/2;
     for (i=0;i<(p-missed);i++)
     {
       GC_PutChar(get_DisplayGC(),x,y3,0,0,missed[i]);
@@ -241,39 +215,57 @@ void onCloseSMBook(BOOK * SMBook)
 }
 
 
-BOOK * CreateSleepModeBook()
+void CreateSleepModeBook()
 {
   int i;
   int icon_id;
-  BOOK * SM_Book=new(BOOK);
+  FSTAT fstat_struct;
+  wchar_t * path;
+  
+  SleepMode_Book * SM_Book=new(SleepMode_Book);
+  CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
 
   // иконки пропущенных
   for (i=0;i<ICONS_COUNT;i++)
   {
     iconidname2id(icons[i],SID_ANY_LEN,&icon_id);
-    missed_icons[i]=icon_id;
+    SM_Book->missed_icons[i]=icon_id;
   }
   
   //Дни недели
   for (i=0;i<7;i++)
   {
     textidname2id(days_str[i],SID_ANY_LEN,&icon_id);
-    days[i]=icon_id;
+    SM_Book->days[i]=icon_id;
   }
   
-  int platform=GetChipID()&CHIPID_MASK;
+  SM_Book->DISPLAY_WIDTH=Display_GetWidth(0)-1;
+  SM_Book->offset=0;
   
-  if (platform==CHIPID_DB3150) Offset1=0x1D0;
-  if (platform==CHIPID_DB3200||platform==CHIPID_DB3210) Offset1=0x21C;
-  CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
-  return(SM_Book);
-}
-
-
-int myFind(BOOK* book)
-{
-   if(!strcmp(book->xbook->name,"SleepMode")) return(1);
-   return(0);
+  path=GetDir( DIR_INI );
+  
+  if (fstat(path,L"sleepmode.ini",&fstat_struct)>=0)
+  {
+    char buf[20];
+    
+    int f=_fopen(path,L"sleepmode.ini",0x1,0x180,0);
+    fread(f,&buf,fstat_struct.fsize);
+    buf[fstat_struct.fsize]=0;
+    fclose(f);
+    
+    sscanf(buf,"%*s %x",&SM_Book->offset);
+    MessageBox(EMPTY_SID,int2strID(SM_Book->offset), NOIMAGE, 1, 0,0);
+  }
+  
+  if (!SM_Book->offset)
+  {
+    int platform=GetChipID()&CHIPID_MASK;
+    
+    if (platform==CHIPID_DB2020) SM_Book->offset=DB2020_OFFSET;
+    if (platform==CHIPID_DB3150) SM_Book->offset=DB3150_OFFSET;
+    if (platform==CHIPID_DB3200) SM_Book->offset=DB3200_OFFSET;
+    if (platform==CHIPID_DB3210) SM_Book->offset=DB3210_OFFSET;
+  }
 }
 
 
@@ -286,7 +278,6 @@ int main()
   }
   else
   {
-    DISPLAY_WIDTH=Display_GetWidth(0)-1;
     InitConfig();
     CreateSleepModeBook();
     return(0);

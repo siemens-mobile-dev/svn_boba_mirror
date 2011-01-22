@@ -142,7 +142,7 @@ Library:
         DC32    0//ModifyOSEHook
         DC32    0//ELF_RemoveFromList
 
-        DC32    ModifyUIHook
+        DC32    0//ModifyUIHook
         DC32    elfload_int
 
         DC32    LoadDLL_int
