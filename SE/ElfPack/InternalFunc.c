@@ -236,8 +236,9 @@ int Keyhandler_Hook(int key,int mode)
 		KEY_HOOK_ELEM *elem = (KEY_HOOK_ELEM *)List_Get(elfpackdata->gKbdHookList,i++);
 		result = elem->proc(key,0,mode,elem->data);
 		if (result==-1) return KEY_LAST;
+		if (result>0) return result;
 	}
-        return key;
+	return key;
 }
 //===============  OSE_HOOK  ================
 /*int OSEHookCmpProc(OSE_HOOK_ITEM* ud, void (*e2)(void*))
