@@ -311,7 +311,7 @@ int SoftKeys_OnKey(int Key, int r1, int Mode)
     return(0);
 };
 
-int ModifyUIHookEx(int Event1, int Event2, int (*PROC)(UI_MESSAGE*), int Mode)     // (r) ploik
+int ModifyUIHookEx(int Event1, int Event2, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), int Mode)       // (r) ploik
 {
     if ((Event1) && (Event1 != 0xFFFFFFFF))
       return ModifyUIPageHook(Event1, PROC, 0, Mode);

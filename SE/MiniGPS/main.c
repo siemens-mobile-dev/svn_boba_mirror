@@ -115,7 +115,7 @@ int isImageViewerBook(BOOK * book)
   return(0);
 }
 
-int myModifyUIHook(int event1 , int event2 , int (*PROC)(UI_MESSAGE*),int mode)
+int myModifyUIHook(int event1 , int event2 , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), int mode)
 {
   if((event1) && (event1 != 0xFFFFFFFF)) return ModifyUIPageHook(event1, PROC, 0, mode);
   return ModifyUIPageHook(event2, PROC, 0, mode);
