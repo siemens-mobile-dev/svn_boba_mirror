@@ -7,247 +7,247 @@
 
 void CDispObjBase::GetRect( RECT* retrect )
 {
-	::DispObject_GetRect( this, retrect );
+	DispObject_GetRect( this, retrect );
 }
 
-void CDispObjBase::InvalidateRect(RECT* rect)
+void CDispObjBase::InvalidateRect( RECT* rect )
 {
-	::DispObject_InvalidateRect(this, rect);
+	DispObject_InvalidateRect( this, rect );
 }
 
 char* CDispObjBase::GetName()
 {
-	return DispObject_GetName(this);
+	return DispObject_GetName( this );
 }
 
 char CDispObjBase::IsVisible()
 {
-	return DispObject_GetVisible(this);
+	return DispObject_GetVisible( this );
 }
 
 DISP_DESC* CDispObjBase::GetDESC()
 {
-	return DispObject_GetDESC(this);
+	return DispObject_GetDESC( this );
 }
 
 WINDOW* CDispObjBase::GetWindow()
 {
-	return DispObject_GetWindow(this);
+	return DispObject_GetWindow( this );
 }
 
 int CDispObjBase::GetAbsoluteXPos()
 {
-	return DispObject_GetAbsoluteXPos(this);
+	return DispObject_GetAbsoluteXPos( this );
 }
 
 int CDispObjBase::GetAbsoluteYPos()
 {
-	return DispObject_GetAbsoluteYPos(this);
+	return DispObject_GetAbsoluteYPos( this );
 }
 
 int CDispObjBase::GetWindowHeight()
 {
-	return DispObject_GetWindowHeight(this);
+	return DispObject_GetWindowHeight( this );
 }
 
 int CDispObjBase::GetWindowWidth()
 {
-	return DispObject_GetWindowWidth(this);
+	return DispObject_GetWindowWidth( this );
 }
 
 void CDispObjBase::KillRefreshTimer()
 {
-	DispObject_KillRefreshTimer(this);
+	DispObject_KillRefreshTimer( this );
 }
 
-void CDispObjBase::SetRefreshTimer(int time)
+void CDispObjBase::SetRefreshTimer( int time )
 {
-	DispObject_SetRefreshTimer(this,time);
+	DispObject_SetRefreshTimer( this, time );
 }
 
-void CDispObjBase::SetLayerColor(int color)
+void CDispObjBase::SetLayerColor( int color )
 {
-	DispObject_SetLayerColor(this, color);
+	DispObject_SetLayerColor( this, color );
 }
 
 CGuiBase* CDispObjBase::GetGUI()
 {
-	return (CGuiBase*)DispObject_GetGUI(this);
+	return (CGuiBase*)DispObject_GetGUI( this );
 }
 
-void CDispObjBase::Show(int mode)
+void CDispObjBase::Show( int mode )
 {
-	DispObject_Show(this, mode);
+	DispObject_Show( this, mode );
 }
 
-void CDispObjBase::SetTitleText(STRID strid)
+void CDispObjBase::SetTitleText( STRID strid )
 {
-	DispObject_SetTitleText(this, strid);
+	DispObject_SetTitleText( this, strid );
 }
 ////////////////////////////////////////////////////////////////////////
 
 CBookBase* CGuiBase::GetBook()
 {
-	return (CBookBase*) ::GUIObject_GetBook(this);
+	return (CBookBase*) GUIObject_GetBook( this );
 }
 
 CDispObjBase* CGuiBase::GetDISPObj()
 {
-	return (CDispObjBase*)::GUIObject_GetDispObject(this);
+	return (CDispObjBase*)GUIObject_GetDispObject( this );
 }
 
 CGuiBase* CGuiBase::Free()
 {
-	return (CGuiBase*)::GUIObject_Destroy(this);
+	return (CGuiBase*)GUIObject_Destroy( this );
 }
 
 void CGuiBase::SoftKeys_Hide()
 {
-	::GUIObject_SoftKeys_Hide(this);
+	GUIObject_SoftKeys_Hide( this );
 }
 
-void CGuiBase::SetFocus(int i)
+void CGuiBase::SetFocus( int i )
 {
-	::GUIObject_SetFocus(this, i);
+	GUIObject_SetFocus( this, i );
 }
 
-void CGuiBase::SetTitleText(int StrID)
+void CGuiBase::SetTitleText( int StrID )
 {
-	::GUIObject_SetTitleText(this, StrID);
+	GUIObject_SetTitleText( this, StrID );
 }
 
-void CGuiBase::SetStyle(int style)
+void CGuiBase::SetStyle( int style )
 {
-	::GUIObject_SetStyle(this, style);
+	GUIObject_SetStyle( this, style );
 }
 
-void CGuiBase::SetTitleType(int type)
+void CGuiBase::SetTitleType( int type )
 {
-	::GUIObject_SetTitleType(this, type);
+	GUIObject_SetTitleType( this, type );
 }
 
 void CGuiBase::Show()
 {
-	::GUIObject_Show(this);
+	GUIObject_Show( this );
 }
 
 void CGuiBase::SoftKeys_Show()
 {
-	::GUIObject_SoftKeys_Show(this);
+	GUIObject_SoftKeys_Show( this );
 }
 
-void CGuiBase::SetBackgroundImage(wchar_t imageID)
+void CGuiBase::SetBackgroundImage( wchar_t imageID )
 {
-	::GUIObject_SetBackgroundImage(this, imageID);
+	GUIObject_SetBackgroundImage( this, imageID );
 }
 
-void CGuiBase::SetCursorImage(wchar_t imageID)
+void CGuiBase::SetCursorImage( wchar_t imageID )
 {
-	::GUIObject_SetCursorImage(this, imageID);
+	GUIObject_SetCursorImage( this, imageID );
 }
 
-void CGuiBase::SetTitleIcon(wchar_t imageID)
+void CGuiBase::SetTitleIcon( wchar_t imageID )
 {
-	::GUIObject_SetTitleIcon(this, imageID);
+	GUIObject_SetTitleIcon( this, imageID );
 }
 
-void CGuiBase::SetTitleImage(wchar_t imageID)
+void CGuiBase::SetTitleImage( wchar_t imageID )
 {
-	::GUIObject_SetTitleBackgroundImage(this, imageID);
+	GUIObject_SetTitleBackgroundImage( this, imageID );
 }
 
-void CGuiBase::SoftKeys_AddErrorStr( u16 actionID, STRID strid)
+void CGuiBase::SoftKeys_AddErrorStr( u16 actionID, STRID strid )
 {
-	::GUIObject_SoftKeys_AddErrorStr( this, actionID, strid);
+	GUIObject_SoftKeys_AddErrorStr( this, actionID, strid );
 }
 
 void CGuiBase::SoftKeys_ExecuteAction( u16 actionID )
 {
-	::GUIObject_SoftKeys_ExecuteAction( this, actionID );
+	GUIObject_SoftKeys_ExecuteAction( this, actionID );
 }
 
-void CGuiBase::SoftKeys_RemoveItem(u16 actionID )
+void CGuiBase::SoftKeys_RemoveItem( u16 actionID )
 {
-	::GUIObject_SoftKeys_RemoveItem( this, actionID );
+	GUIObject_SoftKeys_RemoveItem( this, actionID );
 }
 
-void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ) )
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*) )
 {
-	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
+	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 }
 
-void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID strid )
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid )
 {
-	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
-	::GUIObject_SoftKeys_SetText( this, actionID, strid );
+	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
+	GUIObject_SoftKeys_SetText( this, actionID, strid );
 }
 
-void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)( CBookBase*, CGuiBase* ), STRID short_text, STRID full_text )
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID short_text, STRID full_text )
 {
-	::GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*,GUI*))proc );
-	::GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
+	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
+	GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
 }
 
-void CGuiBase::SoftKeys_SetEnable(u16 actionID, BOOL enabled )
+void CGuiBase::SoftKeys_SetEnable( u16 actionID, BOOL enabled )
 {
-	::GUIObject_SoftKeys_SetEnable( this, actionID, enabled );
+	GUIObject_SoftKeys_SetEnable( this, actionID, enabled );
 }
 
-void CGuiBase::SoftKeys_SetInfoText( u16 actionID, STRID strid)
+void CGuiBase::SoftKeys_SetInfoText( u16 actionID, STRID strid )
 {
-	::GUIObject_SoftKeys_SetInfoText( this, actionID, strid );
+	GUIObject_SoftKeys_SetInfoText( this, actionID, strid );
 }
 
 void CGuiBase::SoftKeys_SetItemAsSubItem( u16 actionID, int subitem )
 {
-	::GUIObject_SoftKeys_SetItemAsSubItem( this, actionID, subitem );
+	GUIObject_SoftKeys_SetItemAsSubItem( this, actionID, subitem );
 }
 
-void CGuiBase::SoftKeys_SetText(u16 actionID, STRID strid )
+void CGuiBase::SoftKeys_SetText( u16 actionID, STRID strid )
 {
-	::GUIObject_SoftKeys_SetText( this, actionID, strid );
+	GUIObject_SoftKeys_SetText( this, actionID, strid );
 }
 
 void CGuiBase::SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text )
 {
-	::GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
+	GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
 }
 
-void CGuiBase::SoftKeys_SetVisible(u16 actionID, BOOL visible )
+void CGuiBase::SoftKeys_SetVisible( u16 actionID, BOOL visible )
 {
-	::GUIObject_SoftKeys_SetVisible( this, actionID, visible );
+	GUIObject_SoftKeys_SetVisible( this, actionID, visible );
 }
 
 void CGuiBase::SoftKeys_SuppressDefaultAction( u16 actionID )
 {
-	::GUIObject_SoftKeys_SuppressDefaultAction( this, actionID );
+	GUIObject_SoftKeys_SuppressDefaultAction( this, actionID );
 }
 
 void CGuiBase::SoftKeys_RemoveBackground()
 {
-	::GUIObject_SoftKeys_RemoveBackground( this );
+	GUIObject_SoftKeys_RemoveBackground( this );
 }
 
 void CGuiBase::SoftKeys_RestoreBackground()
 {
-	::GUIObject_SoftKeys_RestoreBackground( this );
+	GUIObject_SoftKeys_RestoreBackground( this );
 }
 
 void CGuiBase::SetBacklightTimeout( int time )
 {
-	::GUIObject_SetBacklightTimeout( this, time );
+	GUIObject_SetBacklightTimeout( this, time );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-void CBookBase::AddGUIObject(CGuiBase* gui)
+void CBookBase::AddGUIObject( CGuiBase* gui )
 {
 	BookObj_AddGUIObject( this, gui );
 }
 
 void CBookBase::Free()
 {
-	FreeBook(this);
+	FreeBook( this );
 }
 
 void CBookBase::Hide( int display )
@@ -262,51 +262,77 @@ void CBookBase::Show( int display )
 
 int CBookBase::GetBookID()
 {
-	return BookObj_GetBookID(this);
+	return BookObj_GetBookID( this );
 }
 
 UI_APP_SESSION* CBookBase::GetSession()
 {
-	return BookObj_GetSession(this);
+	return BookObj_GetSession( this );
 }
 
 int CBookBase::GetSessionID()
 {
-	return BookObj_GetSessionID(this);
+	return BookObj_GetSessionID( this );
 }
 
 int CBookBase::GetDisplayOrientation()
 {
-	return BookObj_GetDisplayOrientation(this);
+	return BookObj_GetDisplayOrientation( this );
 }
 
-void CBookBase::SetDisplayOrientation(int orientation)
+void CBookBase::SetDisplayOrientation( int orientation )
 {
-	BookObj_SetDisplayOrientation(this, orientation);
+	BookObj_SetDisplayOrientation( this, orientation );
 }
 
-void CBookBase::UI_Event(int event)
+void CBookBase::UI_Event( int event )
 {
-	UI_Event_toBookID(event,GetBookID());
+	UI_Event_toBookID( event, GetBookID() );
 }
-void CBookBase::UI_Event_wData(int event,void *message,void (*mfree)(void*))
+void CBookBase::UI_Event_wData( int event, void* message, void (*mfree)(void*) )
 {
-	UI_Event_toBookIDwData(event,GetBookID(),message,mfree);
-}
-
-void CBookBase::GotoPage(const PAGE_DESC  * page)
-{
-	BookObj_GotoPage(this, page);
+	UI_Event_toBookIDwData( event, GetBookID(), message, mfree );
 }
 
-void CBookBase::ReturnPage(int event)
+void CBookBase::GotoPage( const PAGE_DESC* page )
 {
-	BookObj_ReturnPage(this, event);
+	BookObj_GotoPage( this, page );
 }
 
-void CBookBase::CallPage(const PAGE_DESC  * page)
+void CBookBase::ReturnPage( int event )
 {
-	BookObj_CallPage(this, page);
+	BookObj_ReturnPage( this, event );
+}
+
+void CBookBase::CallPage( const PAGE_DESC* page )
+{
+	BookObj_CallPage( this, page );
+}
+
+void CBookBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*) )
+{
+	BookObj_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
+}
+
+void CBookBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid )
+{
+	BookObj_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
+	BookObj_SoftKeys_SetText( this, actionID, strid );
+}
+
+void CBookBase::SoftKeys_SetText( u16 actionID, STRID strid )
+{
+	BookObj_SoftKeys_SetText( this, actionID, strid );
+}
+
+void CBookBase::SetFocus( int display )
+{
+	BookObj_SetFocus( this, display );
+}
+
+void CBookBase::WindowSetWantsFocus( int display, BOOL WantsFocus )
+{
+	BookObj_WindowSetWantsFocus( this, display, WantsFocus );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -319,83 +345,83 @@ CGCBase::~CGCBase()
 {
 }
 
-int CGCBase::DrawRawBitmap(int x1, int y1, int x2, int y2, int * bmp)
+int CGCBase::DrawRawBitmap( int x1, int y1, int x2, int y2, int* bmp )
 {
-	return ::GC_WritePixels(gc, x1, y1, x2, y2, bmp);
+	return GC_WritePixels( gc, x1, y1, x2, y2, bmp );
 }
 
 int CGCBase::GetBrushColor()
 {
-	return GC_GetBrushColor(gc);
+	return GC_GetBrushColor( gc );
 }
 
 int CGCBase::GetPenColor()
 {
-	return GC_GetPenColor(gc);
+	return GC_GetPenColor( gc );
 }
 
 int CGCBase::GetXX()
 {
-	return GC_GetXX(gc);
+	return GC_GetXX( gc );
 }
 
-void CGCBase::SetXX(int arg)
+void CGCBase::SetXX( int arg )
 {
-	GC_SetXX(gc, arg);
+	GC_SetXX( gc, arg );
 }
 
-void CGCBase::DrawFRect(int color,int x1,int y1,int x2 ,int y2)
+void CGCBase::DrawFRect( int color, int x1, int y1, int x2, int y2 )
 {
-	GC_DrawFRect(gc, color, x1, y1, x2, y2);
+	GC_DrawFRect( gc, color, x1, y1, x2, y2 );
 }
 
-void CGCBase::DrawLine(int x1, int y1, int x2, int y2)
+void CGCBase::DrawLine( int x1, int y1, int x2, int y2 )
 {
-	GC_DrawLine(gc, x1,  y1, x2, y2);
+	GC_DrawLine( gc, x1, y1, x2, y2 );
 }
 
-void CGCBase::DrawRoundRect(RECT* rect,int arcWidth,int arcHeight,int border_flag,int fill_flag)
+void CGCBase::DrawRoundRect( RECT* rect, int arcWidth, int arcHeight, int border_flag, int fill_flag )
 {
-	GC_DrawRoundRect(gc, rect, arcWidth, arcHeight, border_flag, fill_flag);
+	GC_DrawRoundRect( gc, rect, arcWidth, arcHeight, border_flag, fill_flag );
 }
 
-void CGCBase::SetBrushColor(int brush_color)
+void CGCBase::SetBrushColor( int brush_color )
 {
-	GC_SetBrushColor(gc, brush_color);
+	GC_SetBrushColor( gc, brush_color );
 }
 
-void CGCBase::SetPenColor(int pen_color)
+void CGCBase::SetPenColor( int pen_color )
 {
-	GC_SetPenColor(gc, pen_color);
+	GC_SetPenColor( gc, pen_color );
 }
 
-void CGCBase::SetPixel(int x1,int y1,int color)
+void CGCBase::SetPixel( int x1, int y1, int color )
 {
-	GC_SetPixel(gc, x1, y1, color);
+	GC_SetPixel( gc, x1, y1, color );
 }
 
-void CGCBase::ValidateRect(RECT* rect)
+void CGCBase::ValidateRect( RECT* rect )
 {
-	GC_ValidateRect(gc, rect);
+	GC_ValidateRect( gc, rect );
 }
 
-void CGCBase::GetRect(RECT* rect)
+void CGCBase::GetRect( RECT* rect )
 {
-	GC_GetRect(gc,rect);
+	GC_GetRect( gc, rect );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-CBook::CBook(char* pBookName, const PAGE_DESC * bp)
+CBook::CBook( char* pBookName, const PAGE_DESC* bp )
 {
-	CreateBook( this, (void(*)(BOOK*)) & __onClose, bp, pBookName, -1, 0);
+	CreateBook( this, (void(*)(BOOK*)) &__onClose, bp, pBookName, -1, 0 );
 }
 
 CBook::~CBook()
 {
 }
 
-void CBook::__onClose(CBook* bk)
+void CBook::__onClose( CBook* bk )
 {
 	bk->~CBook();
 }
@@ -494,24 +520,24 @@ void CGUIMessage::SetLineSeparator( int _unk1 )
 
 wchar_t* CGUIMessage::GetSearchString()
 {
-	return ::GUIonMessage_GetSearchString( this );
+	return GUIonMessage_GetSearchString( this );
 }
 
 int CGUIMessage::GetSearchStringLength()
 {
-	return ::GUIonMessage_GetSearchStringLength( this );
+	return GUIonMessage_GetSearchStringLength( this );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-CStdGui::CStdGui(CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*),
-				 void (*ondispmessage)( DISP_OBJ*, void*, GUI* ) )
+CStdGui::CStdGui( CBook* book, int display, void(*onguidestroy)(GUI*), void(*ondesccreate)(DISP_DESC*),
+				 void (*ondispmessage)(DISP_OBJ*, void*, GUI*) )
 {
-	GUIObject_Create(this, (void(*)(GUI*))__onclose, ondesccreate, book,
+	GUIObject_Create( this, (void(*)(GUI*))__onclose, ondesccreate, book,
 					 ondispmessage, display, sizeof(CGuiBase) );
 	oldonclose = onguidestroy;
-	if(book)
-		book->AddGUIObject(this);
+	if( book )
+		book->AddGUIObject( this );
 }
 
 void CStdGui::__onclose( CStdGui* gui )
@@ -534,7 +560,7 @@ int CGuiListMenu::OnMessage( CGUIMessage* msg )
 
 int CGuiListMenu::__onmessage( CGUIMessage* msg )
 {
-	return ( static_cast<CGuiListMenu*>( msg->GetGui() ) ) -> OnMessage( msg );
+	return static_cast<CGuiListMenu*>( msg->GetGui() ) -> OnMessage( msg );
 }
 
 CGuiListMenu::CGuiListMenu( CBook* book, int display )
@@ -568,6 +594,11 @@ void CGuiListMenu::DestroyItems()
 	ListMenu_DestroyItems( this );
 }
 
+int CGuiListMenu::GetItemCount()
+{
+	return ListMenu_GetItemCount( this );
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 int CGuiOneOfMany::OnMessage( CGUIMessage* msg )
@@ -577,7 +608,7 @@ int CGuiOneOfMany::OnMessage( CGUIMessage* msg )
 
 int CGuiOneOfMany::__onmessage( CGUIMessage* msg )
 {
-	return ( static_cast<CGuiOneOfMany*>( msg->GetGui() ) ) -> OnMessage( msg );
+	return static_cast<CGuiOneOfMany*>(msg->GetGui()) -> OnMessage( msg );
 }
 
 CGuiOneOfMany::CGuiOneOfMany( CBook* book, int display )
@@ -620,7 +651,7 @@ int CGuiNOfMany::OnMessage( CGUIMessage* msg )
 
 int CGuiNOfMany::__onmessage( CGUIMessage* msg )
 {
-	return ( static_cast<CGuiNOfMany*>( msg->GetGui() ) ) -> OnMessage( msg );
+	return static_cast<CGuiNOfMany*>(msg->GetGui()) -> OnMessage( msg );
 }
 
 CGuiNOfMany::CGuiNOfMany( CBook* book, int display )
@@ -700,28 +731,28 @@ void CGuiTabMenuBar::SetTabTitle( int tab, STRID strid )
 
 CPaintGC::CPaintGC()
 {
-	gc= get_DisplayGC();
+	gc = get_DisplayGC();
 	gc_xx_old = GetXX();
-	SetXX(1);
+	SetXX( 1 );
 }
 
 CPaintGC::~CPaintGC()
 {
-	SetXX(gc_xx_old);
+	SetXX( gc_xx_old );
 }
 
 /////////////////////////////////////////////////////////////////////////
 
 CMemoryGC::CMemoryGC( int xsize, int ysize, int bpp )
 {
-	gc= GC_CreateMemoryGC( xsize, ysize, bpp, 0, 0, 0 );
+	gc = GC_CreateMemoryGC( xsize, ysize, bpp, 0, 0, 0 );
 	gc_xx_old = GetXX();
-	SetXX(1);
+	SetXX( 1 );
 }
 
 CMemoryGC::~CMemoryGC()
 {
-	SetXX(gc_xx_old);
+	SetXX( gc_xx_old );
 	GC_FreeGC( gc );
 }
 

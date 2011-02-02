@@ -226,15 +226,14 @@ int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
 }
 
 
-//В качестве второго аргумента для proc сделан 0, для совместимости со старым хуком
-int Keyhandler_Hook(int key,int mode)
+int Keyhandler_Hook(int key,int mode,int repeat_count)
 {
 	int i=0;
 	int result;
 	while(i < elfpackdata->gKbdHookList->FirstFree)
 	{
 		KEY_HOOK_ELEM *elem = (KEY_HOOK_ELEM *)List_Get(elfpackdata->gKbdHookList,i++);
-		result = elem->proc(key,0,mode,elem->data);
+		result = elem->proc(key,repeat_count,mode,elem->data);
 		if (result==-1) return KEY_LAST;
 		if (result>0) return result;
 	}
@@ -388,6 +387,7 @@ void CreateLists(void)
 	elfpackdata->IconSmall = NOIMAGE;
 	elfpackdata->IconBig = NOIMAGE;
 	elfpackdata->LibraryDLL = NULL;
+        elfpackdata->LastKey = KEY_LAST;
 
 	set_envp(get_bid(current_process()),"elfpackdata",(OSADDRESS)elfpackdata);
 

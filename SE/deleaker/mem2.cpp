@@ -564,7 +564,7 @@ int  __deleaker_ModifyKeyHook( char* __file__, int __line__, KEYHOOKPROC proc, i
   if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
   return ret;
 }
-int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, int, int ), int mode, LPARAM lparam )
+int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam )
 {
   int  ret = __original_ModifyKeyHook(proc, mode, lparam);
   if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
@@ -572,7 +572,7 @@ int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, i
   return ret;
 }
 #else
-int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, int, int, void* ), int mode, void* lparam )
+int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam )
 {
   int  ret = __original_ModifyKeyHook(proc, mode, lparam);
   if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
@@ -775,7 +775,8 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
   if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
   __original_GUIObject_SetTitleBackgroundImage(__unknwnargname1, imageID);
 }
-//__swi __arm ACTION* ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
+//__swi __arm void BookObj_StayOnTop( BOOK* book, int mode );
+//__swi __arm void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 //__swi __arm void* CallID_GetCallStatusDesc( int CallID );
 //__swi __arm wchar_t* CallStatusDesc_GetName( void* CallStatusDesc );
@@ -794,6 +795,8 @@ void  __deleaker_GUIObject_SetTitleBackgroundImage( char* __file__, int __line__
 //__swi __arm DB_FILE_FILTER DataBrowser_isFileInListExt_adr( void );
 //__swi __arm int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
 //__swi __arm void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
+//__swi __arm void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+//__swi __arm void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 //__swi __arm FILEITEM* FILEITEM_Create( void );
 //__swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 //__swi __arm void FILEITEM_Destroy( FILEITEM* );

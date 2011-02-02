@@ -705,6 +705,10 @@
 0F2C: 00000000 299A1145 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 8D3F6844 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 0F34: 00000000 A5B23E44 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
+0F38: 00000000 75AF3B45 ; 3CE: void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
+0F3C: 00000000 85B33B45 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
+0F40: 00000000 3D764645 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+0F44: 00000000 DD754645 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 
 

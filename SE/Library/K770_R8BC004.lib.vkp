@@ -658,7 +658,7 @@
 0E70: 00000000 F179B244 ; 39C: GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
 0E74: 00000000 2D7D8644 ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc );
 0E78: 00000000 DD5E5645 ; 39E: int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
-0E7C: 00000000 A5F31A45 ; 39F: int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
+0E7C: 00000000 19312F45 ; 39F: int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
 0E80: 00000000 893C4545 ; 3A0: int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
 0E84: 00000000 7D53F844 ; 3A1: void wstrnupr( wchar_t* wstr, int maxlen );
 0E88: 00000000 850E2245 ; 3A2: void wstrnlwr( wchar_t* wstr, int maxlen );
@@ -705,6 +705,10 @@
 0F2C: 00000000 05F21345 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 B13A6844 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 0F34: 00000000 69B23E44 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
+0F38: 00000000 B1483E45 ; 3CE: void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
+0F3C: 00000000 C14C3E45 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
+0F40: 00000000 E90F4945 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+0F44: 00000000 890F4945 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 
 

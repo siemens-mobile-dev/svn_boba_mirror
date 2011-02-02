@@ -1,4 +1,5 @@
 //W715_R1GA030
+#include "temp\target.h"
         RSEG   CODE
         CODE32
 
@@ -14,6 +15,8 @@ a       EQU     b
         defadr   DB_PATCH3_RET,0x14FD9BB4+1
         defadr   DB_PATCH4_RET,0x15001068+1
         defadr   MESS_HOOK_RET,0x10136694+1
+	defadr   KEY_HOOK_REPEAT_RETUN,0x144A7D50+1
+	defadr   KEY_HOOK_TIMER_RETUN,0x144A7DC0+1
 
         defadr  memalloc,0x4BA32A7C
         defadr  memfree,0x4BA32AA4
@@ -26,6 +29,7 @@ a       EQU     b
 NEW_KEYHANDLER1:
 
 	MOV	R7, R0
+	MOV	R2, #0x1
 	LDR	R1, [SP,#0]
 	MOV	R0, R4
 	BLX	Keyhandler_Hook
@@ -49,6 +53,7 @@ NEW_KEYHANDLER1:
 NEW_KEYHANDLER2:
 
 	PUSH	{R0,R1}
+	MOV	R2, R1
 	LDR	R1, [SP,#8]
 	ADD	R0, SP,#0xC
 	LDRH	R0, [R0,#0x8]
@@ -72,9 +77,13 @@ NEW_KEYHANDLER2:
 NEW_KEYHANDLER3:
 
 	PUSH	{R0,R1}
+	MOV	R2, R1
 	LDR	R1, [SP,#8]
 	LDRH	R0, [R4,#0]
 	BLX	Keyhandler_Hook
+	LDR	R1, =KEY_LAST
+	CMP	R1, R0
+	BEQ	GO_TO_TIMER
 	STRH	R0, [R4,#0]
 	MOV	R1, R0
 	MOV	R0, R7
@@ -83,10 +92,40 @@ NEW_KEYHANDLER3:
 	POP	{R2,R3}
 	BX	R12
 
+GO_TO_TIMER:
+	ADD	SP, #0xC
+	LDR	R0, =KEY_HOOK_REPEAT_RETUN
+	BX	R0
+
+
 	RSEG  PATCH_KEYHANDLER3
         CODE16
         LDR     R3,=NEW_KEYHANDLER3
         BX      R3
+
+
+	RSEG  PATCH_KEYHANDLER4
+        RSEG  CODE
+        CODE32
+NEW_KEYHANDLER4:
+
+	MOV	R2, R4
+	SWI	0x129
+	STRH	R0, [R4,#16]
+	LDRH	R0, [R4,#0]
+	LDR	R1, =KEY_LAST
+	CMP	R0, R1
+	LDRNE	R0, =SFE(PATCH_KEYHANDLER4)+1
+	BXNE	R0
+	ADD	SP, SP,#0x4
+	LDR	R0, =KEY_HOOK_TIMER_RETUN
+	BX	R0
+
+
+	RSEG  PATCH_KEYHANDLER4
+        CODE16
+        LDR     R2,=NEW_KEYHANDLER4
+        BX      R2
 
 
 // --- CreateLists ---

@@ -5,21 +5,32 @@
 #include "main.h"
 #include "keyinput.h"
 
-void KeyCode_KeyHook( BOOK* bk, int key, int unk, int unk2 )
+void KeyCode_KeyHook( BOOK* bk, int key, int unk, int mode )
 {
-	MyBOOK* mbk = (MyBOOK*) bk;
-	wchar_t ustr[64];
-	STRID sid[3];
-
-	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
-
-	mbk->cur_hp.key->keycode = key;
-
-	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
-	sid[1] = KeyCode2Name( key );
-	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
-	Feedback_SetTextExtended( mbk->key_input, Str2ID( sid, 5, 3 ), 0 );
-	Feedback_SetTimeout( mbk->key_input, 3000 );
+        if (mode==KBD_SHORT_PRESS)
+        {
+         	MyBOOK* mbk = (MyBOOK*) bk;
+         	EP_DATA * epd = (EP_DATA *)get_envp(get_bid(current_process()), "elfpackdata");
+          
+          	if (key==epd->LastKey)
+          	{
+            		Feedback_SetTextExtended( mbk->key_input, Str2ID( "Key blocked", 6, SID_ANY_LEN ), 0 );
+            		return;
+          	}
+          
+          	wchar_t ustr[64];
+          	STRID sid[3];
+          
+          	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
+          
+          	mbk->cur_hp.key->keycode = key;
+          
+          	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
+          	sid[1] = KeyCode2Name( key );
+          	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
+          	Feedback_SetTextExtended( mbk->key_input, Str2ID( sid, 5, 3 ), 0 );
+          	Feedback_SetTimeout( mbk->key_input, 3000 );
+        }
 }
 
 void KeyCode_OnClose( BOOK* bk )

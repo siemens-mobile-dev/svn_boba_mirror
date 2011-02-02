@@ -479,7 +479,7 @@
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
 0BA4: 00000000 99EEAF11 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE( int book_id );
 0BA8: 00000000 D11BA5ED ; 2EA: int MainInput_getCurPos( GUI* );
-;0BAC: xxxxxxxx yyyyyyyy ; 2EB: void MainInput_Hide( GUI* );
+0BAC: 00000000 7986E210 ; 2EB: void MainInput_Hide( GUI* );
 0BB0: 00000000 F57F8A10 ; 2EC: void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 0BB4: 00000000 45F2BE10 ; 2ED: STRID PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
 0BB8: 00000000 7567C110 ; 2EE: int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );

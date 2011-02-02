@@ -269,7 +269,7 @@ typedef struct
   int unk1;
   int fsize;
   int unk3;
-  int unk4;
+  int unix_file_creation_time;
   int unk5;
   int unk6;
 }FSTAT;
@@ -425,6 +425,7 @@ typedef struct
   wchar_t IconBig;
   void ** LibraryCache;  //Не перемещать!!!!!
   void *LibraryDLL;
+  wchar_t LastKey;
 }EP_DATA;
 
 typedef struct
@@ -994,7 +995,7 @@ typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
 
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
-typedef int (*KEYHOOKPROC)(int, int, int, void*);
+typedef int (*KEYHOOKPROC)(int key, int repeat_count, int mode, void*);
 typedef int (*LISTFINDCALLBACK)(void* listitem, void* itemtofind);
 
 typedef enum _LISTMENU_HOTKEY_MODE

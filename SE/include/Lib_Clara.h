@@ -74,10 +74,10 @@ __swi __arm int ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam = NULL 
 
 //устаревший вариант, пока для совместимости
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL );
+__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam = NULL );
 #else
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int, int, int, void* ), int mode, void* lparam );
+__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
 #endif
 
 #pragma swi_number=0x108
@@ -1818,6 +1818,18 @@ __swi __arm int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 
 #pragma swi_number=0x3CD
 __swi __arm int sscanf( const char* buffer, const char* format, ... );
+
+#pragma swi_number=0x3CE
+__swi __arm void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
+
+#pragma swi_number=0x3CF
+__swi __arm void BookObj_StayOnTop( BOOK* book, int mode );
+
+#pragma swi_number=0x3D0
+__swi __arm void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+
+#pragma swi_number=0x3D1
+__swi __arm void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 #ifdef LIBCLARANS
 }

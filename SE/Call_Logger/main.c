@@ -567,7 +567,7 @@ char * get_region(wchar_t * w_PNUM)
         {
           count=count+1;
           wstr2strn(PNUM_str,w_PNUM,count);
-          if (strstr(buffer_ini,PNUM_str)==0) break;
+          if (!strstr(buffer_ini,PNUM_str)) break;
         }
         count=count-1;
       }
@@ -588,7 +588,7 @@ char * get_region(wchar_t * w_PNUM)
       {
         wstr2strn(PNUM_str,w_PNUM,count);
         region=manifest_GetParam(buffer_ini,PNUM_str,0);
-        break;
+        if (region) break;
       }
     }
     fclose(f);

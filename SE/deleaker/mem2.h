@@ -166,9 +166,9 @@ void  __deleaker_VCALL_SetNameIcon( char* __file__, int __line__, void* vc, wcha
 #ifdef __cplusplus
 #define ModifyKeyHook(proc, mode, lparam) __deleaker_ModifyKeyHook( __FILE__,  __LINE__, proc, mode, lparam )
 int  __deleaker_ModifyKeyHook( char* __file__, int __line__, KEYHOOKPROC proc, int mode, LPARAM lparam );
-int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, int, int ), int mode, LPARAM lparam );
+int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam );
 #else
-int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int, int, int, void* ), int mode, void* lparam );
+int  __deleaker_ModifyKeyHook( char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
 #endif
 #define ModifyUIPageHook(event, PROC, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, PROC, ClientData, mode )
 int  __deleaker_ModifyUIPageHook( char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData, int mode );

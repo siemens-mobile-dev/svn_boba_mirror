@@ -794,7 +794,7 @@ void tryvkp(int dirplace, Vkp& vkp)
 {
     wchar_t* patchesdir = GetDir(dirplace | DIR_ELFS_CONFIG);
     FILELISTITEM * fli;
-    FILELISTITEM* mem = (FILELISTITEM* ) malloc(sizeof(FILELISTITEM));
+    FILELISTITEM* mem = new FILELISTITEM;
     DIR_HANDLE * handle = AllocDirHandle( patchesdir );
     if(handle)
     {
@@ -810,21 +810,21 @@ void tryvkp(int dirplace, Vkp& vkp)
                     
                     if ((f=_fopen(patchesdir,fli->fname,0x001,0x180,0))>=0)
                     {
-                        char* vkpf = (char*)malloc(st.fsize);
+                        char* vkpf = new char[st.fsize];
                         fread(f,vkpf,st.fsize);
                         fclose(f);
                         
                         int errorline = vkp.dovkp(vkpf, st.fsize);
                         //писать в лог об ошибках?
                         
-                        mfree( vkpf );
+                        delete[] vkpf;
                     }
                 }
             }
         }
         DestroyDirHandle( handle);
     }
-    mfree( mem );
+    delete mem;
 }
 
 LIBRARY_DLL_FUNCTIONINFO* dovkp()

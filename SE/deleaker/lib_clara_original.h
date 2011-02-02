@@ -41,10 +41,10 @@ __swi __arm int  __original_fopen( const wchar_t* fname, int mode, int rights );
 __swi __arm int  __original_ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam = NULL );
 
 #pragma swi_number=0x107
-__swi __arm int  __original_ModifyKeyHook( int (*proc)( int, int, int ), int mode, LPARAM lparam = NULL );
+__swi __arm int  __original_ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam = NULL );
 #else
 #pragma swi_number=0x107
-__swi __arm int  __original_ModifyKeyHook( int (*proc)( int, int, int, void* ), int mode, void* lparam );
+__swi __arm int  __original_ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
 #endif
 
 #pragma swi_number=0x108
@@ -1200,8 +1200,6 @@ __swi __arm BOOK*  __original_FindBookEx( int (*cmp_proc)( BOOK* book_from_list,
 #pragma swi_number=0x2E4
 __swi __arm FILEITEM*  __original_FILEITEM_CreateCopy( FILEITEM* );
 
-#pragma swi_number=0x2E5
-__swi __arm ACTION*  __original_ActionCreate( int (*PROC)( void* msg, BOOK* ), int BookID, u16 event, APP_DESC* app_desc, PAGE_DESC* pag_desc );
 #pragma swi_number=0x2E6
 __swi __arm int  __original_BookObj_GetSessionID( BOOK* book );
 #pragma swi_number=0x2E7
@@ -1749,5 +1747,17 @@ __swi __arm int  __original_swscanf( const wchar_t* buffer, const wchar_t* forma
 
 #pragma swi_number=0x3CD
 __swi __arm int  __original_sscanf( const char* buffer, const char* format, ... );
+
+#pragma swi_number=0x3CE
+__swi __arm void  __original_BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
+
+#pragma swi_number=0x3CF
+__swi __arm void  __original_BookObj_StayOnTop( BOOK* book, int mode );
+
+#pragma swi_number=0x3D0
+__swi __arm void  __original_DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+
+#pragma swi_number=0x3D1
+__swi __arm void  __original_DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 
