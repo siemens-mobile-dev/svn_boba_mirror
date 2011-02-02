@@ -1,5 +1,5 @@
 //W660_R8BB001_Orange
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

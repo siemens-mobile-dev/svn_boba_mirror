@@ -1,5 +1,5 @@
 //K660_R1FA037_Hutchison
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

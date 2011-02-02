@@ -1,5 +1,5 @@
 //C901_R1GA028
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

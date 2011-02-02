@@ -1,5 +1,5 @@
 //W580 R6ca001 Orange
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

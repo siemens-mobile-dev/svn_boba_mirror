@@ -1,5 +1,5 @@
 //W580 R8BE001_Orange
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

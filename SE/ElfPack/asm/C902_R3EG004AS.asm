@@ -1,5 +1,5 @@
 //C902_R3EG004AS
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

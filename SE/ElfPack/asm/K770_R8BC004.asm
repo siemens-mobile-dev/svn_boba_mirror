@@ -1,5 +1,5 @@
 //K770 R8BC004
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

@@ -1,5 +1,5 @@
 //Z610 R6DA001
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

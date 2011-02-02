@@ -1,5 +1,5 @@
 //W710 R1JC002
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 

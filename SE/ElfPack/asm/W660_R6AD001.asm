@@ -1,5 +1,5 @@
 //W660 R6AD001
-#include "temp\target.h"
+#include "target.h"
         RSEG   CODE
         CODE32
 
