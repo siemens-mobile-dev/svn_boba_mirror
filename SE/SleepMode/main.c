@@ -252,9 +252,6 @@ void CreateSleepModeBook()
     fread(f,&buf,fstat_struct.fsize);
     buf[fstat_struct.fsize]=0;
     fclose(f);
-    
-    sscanf(buf,"%*s %x",&SM_Book->offset);
-    MessageBox(EMPTY_SID,int2strID(SM_Book->offset), NOIMAGE, 1, 0,0);
   }
   
   if (!SM_Book->offset)
