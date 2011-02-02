@@ -3,7 +3,7 @@
         RSEG   CODE
         CODE32
 
-EXT_TABLE EQU 0x45A4E168
+//EXT_TABLE EQU 0x45A4E168
 TABMENUBAR_NAME EQU 0x45B42900 //getTabMenuBarOnDescCreate
 
 defadr  MACRO   a,b
