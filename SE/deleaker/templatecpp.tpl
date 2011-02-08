@@ -5,6 +5,12 @@
 void* operator new(size_t sz){return malloc(sz);};
 void* operator new[](size_t sz){return malloc(sz);};
 void operator delete(void * p){mfree(p);};
+void operator delete[](void * p){mfree(p);};
+
+void* operator new(size_t size, void* p){ return p; }
+void* operator new[](size_t size, void* p){ return p; }
+void operator delete (void*, void*) { }
+void operator delete[] (void*, void*) { }
 
 #else
 
@@ -12,21 +18,7 @@ void operator delete(void * p){mfree(p);};
 #include "..\include\dir.h"
 #include "lib_clara_original.h"
 
-
-enum trace_types
-{
-  trace_memory,
-  trace_strid,
-  trace_iconid,
-  trace_timer,
-  trace_file,
-  trace_hook,
-  trace_dll,
-
-  trace_unallocated,
-
-  trace_typescount
-};
+int __deleaker_skip;
 
 static char* leaktypes[]={
   "memory/book/gui/gc",
@@ -49,9 +41,10 @@ static LIST* buffers[trace_typescount];
 
 void trace_init()
 {
-  for(int i=0;i<trace_typescount;i++)
-    buffers[i]=__original_List_Create();
-  started=true;
+    for(int i=0;i<trace_typescount;i++)
+        buffers[i]=__original_List_Create();
+    started=true;
+    __deleaker_skip=0;
 }
 
 void trace_done()
@@ -89,14 +82,18 @@ void trace_done()
     __original_w_fclose(f);
 }
 
-void trace_alloc(int mt, void* ptr, char *file, int line)
+void trace_alloc(int mt, void* ptr, const char* file, int line)
 {
-    __original_List_InsertLast(buffers[mt],ptr);
-    __original_List_InsertLast(buffers[mt],file);
-    __original_List_InsertLast(buffers[mt],(void*)line);
+    if(__deleaker_skip==0)
+    {
+        __original_List_InsertLast(buffers[mt],ptr);
+        __original_List_InsertLast(buffers[mt],(void*)file);
+        __original_List_InsertLast(buffers[mt],(void*)line);
+    }
+    __deleaker_skip=0;
 }
 
-void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line)
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue, const char* file, int line)
 {
   if( ptr != badvalue )
      trace_alloc( mt, ptr, file, line);
@@ -104,7 +101,7 @@ void* trace_alloc_ret(int mt, void* ptr, void* badvalue,char *file, int line)
 }
 
 
-void trace_free(int mt,void* p, char* file, int line)
+void trace_free(int mt,void* p, const char* file, int line)
 {
   if(started)
   {
@@ -122,7 +119,7 @@ void trace_free(int mt,void* p, char* file, int line)
     if(!found)
     {
       __original_List_InsertLast(buffers[trace_unallocated],(void*)p);
-      __original_List_InsertLast(buffers[trace_unallocated],file);
+      __original_List_InsertLast(buffers[trace_unallocated],(void*)file);
       __original_List_InsertLast(buffers[trace_unallocated],(void*)line);
     }
   }

@@ -214,8 +214,8 @@
             fprintf($fh," )\r\n");
           }
 
-          fprintf($fcpp,"%s __deleaker_%s( char* __file__, int __line__",$rettype,$name);
-          fprintf($fh,"%s __deleaker_%s( char* __file__, int __line__",$rettype,$name);
+          fprintf($fcpp,"%s __deleaker_%s( const char* __file__, int __line__",$rettype,$name);
+          fprintf($fh,"%s __deleaker_%s( const char* __file__, int __line__",$rettype,$name);
           for($j=0;$j<$arglistsize;$j++)
           {
             fprintf($fcpp,", %s",$arglisttype[$j]);

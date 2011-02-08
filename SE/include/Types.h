@@ -419,13 +419,14 @@ typedef struct
   LIST *DBExtList;
   FILESUBROUTINE* elf_ext_m;
   LIST *DLLList;
-  LIST *UIPageHook;
+  LIST *UIPageHook_Before;
   DB_EXT * (*CreateDbExt)(void);
   wchar_t IconSmall;
   wchar_t IconBig;
   void ** LibraryCache;  //Не перемещать!!!!!
   void *LibraryDLL;
   wchar_t LastKey;
+  LIST *UIPageHook_After;
 }EP_DATA;
 
 typedef struct

@@ -140,14 +140,6 @@ PG_ACTION:
 	MOV	R1, R5
 	MOV	R0, R4
         BLX     PageAction_Hook2
-	CMP	R0, #0x0
-	BNE	SKIP_ORIGINAL
-	MOV	R1, R6
-        MOV	R0, R5
-	LDR	R2, [R4,#0]
-	BLX	R2
-
-SKIP_ORIGINAL:
 	MOV	R4, R0
         LDR     R5,=SFE(PATCH_PageActionImpl_All)+1
         BX      R5
@@ -169,10 +161,6 @@ PG_ACTION2:
 	LDR	R1, [SP,#0x1C]
 	MOV	R0, R6
         BLX     PageAction_Hook2
-	LDR	R1, [SP,#0x18]
-        LDR	R0, [SP,#0x1C]
-	LDR	R2, [R6,#0]
-	BLX	R2
         LDR     R7,=SFE(PATCH_PageActionImpl_EnterExit)+1
         BX      R7
 

@@ -293,46 +293,63 @@ int UIHook1CmpProc(void * e1, void * e2)
 	PAGE_HOOK_ELEM * ud = (PAGE_HOOK_ELEM*)e1;
 	PAGE_HOOK_ELEM *page_elem=(PAGE_HOOK_ELEM *)e2;
 	if (ud->PROC==page_elem->PROC && ud->event==page_elem->event) return (0);
-        else  return(1);
+	else  return(1);
 }
 
 
 int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
 {
-  int res;
-  if (elfpackdata)
-  {
-    LIST * UIPageHook = elfpackdata->UIPageHook;
-    int n_pages=UIPageHook->FirstFree;
-    while(n_pages--)
-    {
-      PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook,n_pages);
+	int res=0;
+	if (elfpackdata)
+	{
+		LIST * UIPageHook_Before = elfpackdata->UIPageHook_Before;
+		LIST * UIPageHook_After = elfpackdata->UIPageHook_After;
+		int n_before=UIPageHook_Before->FirstFree;
+		int n_after=UIPageHook_After->FirstFree;
+		while(n_before--)
+		{
+			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_Before,n_before);
 
-      if (my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
-      if (res==BLOCK_EVENT_GLOBALLY) return BLOCK_EVENT_GLOBALLY;
-      if (res==BLOCK_EVENT_IN_THIS_SESSION) return BLOCK_EVENT_IN_THIS_SESSION;
-    }
-  }
-  return 0;
+			if (my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
+			if (res==BLOCK_EVENT_GLOBALLY) return res;
+			if (res==BLOCK_EVENT_IN_THIS_SESSION) return res;
+		}
+		res=act->PROC(msg,book);
+		while(n_after--)
+		{
+			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_After,n_after);
+
+			if (my_act->event==act->event)
+				my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
+		}
+	}
+	return res;
 }
 
 
 int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData ,int mode)
 {
-	LIST * UIPageHook = elfpackdata->UIPageHook;
+	LIST * UIPageHook_Before = elfpackdata->UIPageHook_Before;
+	LIST * UIPageHook_After = elfpackdata->UIPageHook_After;
 	PAGE_HOOK_ELEM page_elem;
 	page_elem.PROC=PROC;
 	page_elem.event=event;
 	page_elem.ClientData=ClientData;
-	int n = List_Find(UIPageHook,&page_elem,UIHook1CmpProc);
+	int n_before = List_Find(UIPageHook_Before,&page_elem,UIHook1CmpProc);
+	int n_after = List_Find(UIPageHook_After,&page_elem,UIHook1CmpProc);
 	_printf("ModifyUIHook PROC@0x%x, mode=0x%x",PROC,mode)  ;
 
 	switch (mode)
 	{
 	case 0: //remove
-		if (n!=LIST_ERROR)
+		if (n_before!=LIST_ERROR)
 		{
-			mfree(List_RemoveAt(UIPageHook,n));
+			mfree(List_RemoveAt(UIPageHook_Before,n_before));
+			return(0);
+		}
+		else if (n_after!=LIST_ERROR)
+		{
+			mfree(List_RemoveAt(UIPageHook_After,n_after));
 			return(0);
 		}
 		else
@@ -340,18 +357,32 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * pa
 			return(-2);
 		}
 
-	case 1:
-		if (n==LIST_ERROR)
+	case 1: //insert (before original callback)
+		if (n_before==LIST_ERROR)
 		{
 			ACTION *item=malloc(sizeof(PAGE_HOOK_ELEM));
 			memcpy(item,&page_elem,sizeof(PAGE_HOOK_ELEM));
-			List_InsertLast(UIPageHook,item);
+			List_InsertLast(UIPageHook_Before,item);
 			return(0);
 		}
 		else
 		{
 			return(-3);
 		}
+
+	case 2: //insert (after original callback)
+		if (n_after==LIST_ERROR)
+		{
+			ACTION *item=malloc(sizeof(PAGE_HOOK_ELEM));
+			memcpy(item,&page_elem,sizeof(PAGE_HOOK_ELEM));
+			List_InsertLast(UIPageHook_After,item);
+			return(0);
+		}
+		else
+		{
+			return(-3);
+		}
+
 	default: return(-4);
 	}
 }
@@ -373,7 +404,8 @@ void CreateLists(void)
 	elfpackdata->UIHookList=List_Create();
 	//elfpackdata->OseHookList=List_Create();
 	elfpackdata->DLLList=List_Create();
-	elfpackdata->UIPageHook=List_Create();
+	elfpackdata->UIPageHook_Before=List_Create();
+	elfpackdata->UIPageHook_After=List_Create();
 	elfpackdata->LibraryCache = NULL;
 
 	_printf("   epd->UserDataList @%x",elfpackdata->UserDataList)  ;
@@ -387,7 +419,7 @@ void CreateLists(void)
 	elfpackdata->IconSmall = NOIMAGE;
 	elfpackdata->IconBig = NOIMAGE;
 	elfpackdata->LibraryDLL = NULL;
-        elfpackdata->LastKey = KEY_LAST;
+	elfpackdata->LastKey = KEY_LAST;
 
 	set_envp(get_bid(current_process()),"elfpackdata",(OSADDRESS)elfpackdata);
 
