@@ -1191,7 +1191,7 @@ __swi __arm IS_NEEDED_BOOK  __original_get_IsDataBrowserBook( void );
 __swi __arm SUB_EXECUTE*  __original_BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 
 #pragma swi_number=0x2E1
-__swi __arm int  __original_Shortcut_Get_MenuItemName( void* );
+__swi __arm STRID  __original_Shortcut_Get_MenuItemName( void* );
 #pragma swi_number=0x2E2
 __swi __arm int  __original_Shortcut_Get_MenuItemIconID( void* );
 

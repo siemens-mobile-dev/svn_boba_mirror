@@ -1250,7 +1250,7 @@ __swi __arm IS_NEEDED_BOOK get_IsDataBrowserBook( void );
 __swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 
 #pragma swi_number=0x2E1
-__swi __arm int Shortcut_Get_MenuItemName( void* );
+__swi __arm STRID Shortcut_Get_MenuItemName( void* );
 #pragma swi_number=0x2E2
 __swi __arm int Shortcut_Get_MenuItemIconID( void* );
 

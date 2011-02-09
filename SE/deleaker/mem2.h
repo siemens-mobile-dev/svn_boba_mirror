@@ -26,17 +26,22 @@ extern int __deleaker_skip;
 
 enum trace_types
 {
-  trace_memory,
-  trace_strid,
-  trace_iconid,
-  trace_timer,
-  trace_file,
-  trace_hook,
-  trace_dll,
+	trace_memory,
+	trace_strid,
+	trace_iconid,
+	trace_timer,
+	trace_file,
+	trace_hook,
+	trace_dll,
+	trace_gc,
+	trace_gvi,
+	trace_gui,
+	trace_book,
+	trace_process,
 
-  trace_unallocated,
+	trace_unallocated,
 
-  trace_typescount
+	trace_typescount
 };
 
 
@@ -67,33 +72,34 @@ inline void* operator new(size_t size, void* p){ __deleaker_skip=1; return p; }
 inline void* operator new[](size_t size, void* p){ __deleaker_skip=1; return p; }
 
 
-struct NewRecorder 
-{ 
-    NewRecorder(const char* file, int lineNo) 
-        : mFile(file), mLineNo(lineNo) 
-        { 
-        } 
-        
-        template <class T> 
-            T * operator<<(T* t) const 
-            { 
-                if(t)trace_alloc(trace_memory, (void*)t, mFile, mLineNo);
-                return t;
-            } 
-          
-private: 
-    const char* mFile; 
-    const int mLineNo; 
+struct NewRecorder
+{
+	NewRecorder(const char* file, int lineNo)
+		: mFile(file), mLineNo(lineNo)
+		{
+		}
+
+		template <class T>
+			T * operator<<(T* t) const
+			{
+				if(t)trace_alloc(trace_memory, (void*)t, mFile, mLineNo);
+				return t;
+			}
+
+private:
+	const char* mFile;
+	const int mLineNo;
 };
 
 #define new NewRecorder(__FILE__,__LINE__) << new
-
 #define malloc(size) __deleaker_malloc( __FILE__,  __LINE__, size )
 void*  __deleaker_malloc( const char* __file__, int __line__, int size );
 #define mfree_adr() __deleaker_mfree_adr( __FILE__,  __LINE__ )
 void*  __deleaker_mfree_adr( const char* __file__, int __line__ );
 #define mfree(p) __deleaker_mfree( __FILE__,  __LINE__, p )
 void  __deleaker_mfree( const char* __file__, int __line__, void* p );
+#define CreateBook(pbook, onClose, bp, name, ParentBookID, __unknwnargname6) __deleaker_CreateBook( __FILE__,  __LINE__, pbook, onClose, bp, name, ParentBookID, __unknwnargname6 )
+int  __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* __unknwnargname6 );
 #define FreeBook(book) __deleaker_FreeBook( __FILE__,  __LINE__, book )
 void  __deleaker_FreeBook( const char* __file__, int __line__, BOOK* book );
 #define BookObj_KillBook(book) __deleaker_BookObj_KillBook( __FILE__,  __LINE__, book )
@@ -108,6 +114,8 @@ char*  __deleaker_manifest_GetParam( const char* __file__, int __line__, const c
 DIR_HANDLE*  __deleaker_AllocDirHandle( const char* __file__, int __line__, const wchar_t* path );
 #define DestroyDirHandle(handle) __deleaker_DestroyDirHandle( __FILE__,  __LINE__, handle )
 void  __deleaker_DestroyDirHandle( const char* __file__, int __line__, DIR_HANDLE* handle );
+#define GUIObject_Create(__unknwnargname1, GuiDestroy, DispDescCreate, __unknwnargname4, DispObjCallBack, display, size_of_gui) __deleaker_GUIObject_Create( __FILE__,  __LINE__, __unknwnargname1, GuiDestroy, DispDescCreate, __unknwnargname4, DispObjCallBack, display, size_of_gui )
+int  __deleaker_GUIObject_Create( const char* __file__, int __line__, GUI* __unknwnargname1, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK* __unknwnargname4, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui );
 #define GUIObject_Destroy(__unknwnargname1) __deleaker_GUIObject_Destroy( __FILE__,  __LINE__, __unknwnargname1 )
 GUI*  __deleaker_GUIObject_Destroy( const char* __file__, int __line__, GUI* __unknwnargname1 );
 #define _fopen(filpath, filname, mode, rights, __0) __deleaker__fopen( __FILE__,  __LINE__, filpath, filname, mode, rights, __0 )
@@ -275,6 +283,22 @@ void  __deleaker_GUIObject_SetBackgroundImage( const char* __file__, int __line_
 void  __deleaker_GUIObject_SetCursorImage( const char* __file__, int __line__, GUI* __unknwnargname1, wchar_t imageID );
 #define GUIObject_SetTitleBackgroundImage(__unknwnargname1, imageID) __deleaker_GUIObject_SetTitleBackgroundImage( __FILE__,  __LINE__, __unknwnargname1, imageID )
 void  __deleaker_GUIObject_SetTitleBackgroundImage( const char* __file__, int __line__, GUI* __unknwnargname1, wchar_t imageID );
+#define Shortcut_Get_MenuItemName(__unknwnargname1) __deleaker_Shortcut_Get_MenuItemName( __FILE__,  __LINE__, __unknwnargname1 )
+STRID  __deleaker_Shortcut_Get_MenuItemName( const char* __file__, int __line__, void* __unknwnargname1 );
+#define YesNoQuestion_SetIcon(__unknwnargname1, iconId) __deleaker_YesNoQuestion_SetIcon( __FILE__,  __LINE__, __unknwnargname1, iconId )
+void  __deleaker_YesNoQuestion_SetIcon( const char* __file__, int __line__, GUI* __unknwnargname1, wchar_t iconId );
+#define ListMenu_SetItemIcon(__unknwnargname1, Item, unk_FFFF, mode, ImageID) __deleaker_ListMenu_SetItemIcon( __FILE__,  __LINE__, __unknwnargname1, Item, unk_FFFF, mode, ImageID )
+int  __deleaker_ListMenu_SetItemIcon( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
+#define Shortcut_Get_MenuItemIconID(__unknwnargname1) __deleaker_Shortcut_Get_MenuItemIconID( __FILE__,  __LINE__, __unknwnargname1 )
+int  __deleaker_Shortcut_Get_MenuItemIconID( const char* __file__, int __line__, void* __unknwnargname1 );
+#define create_process(proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user) __deleaker_create_process( __FILE__,  __LINE__, proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user )
+PROCESS  __deleaker_create_process( const char* __file__, int __line__, int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
+#define kill_proc(pid) __deleaker_kill_proc( __FILE__,  __LINE__, pid )
+void  __deleaker_kill_proc( const char* __file__, int __line__, PROCESS pid );
+#define MediaPlayer_SoftKeys_AddHelpStr(player_gui, item, __unknwnargname3) __deleaker_MediaPlayer_SoftKeys_AddHelpStr( __FILE__,  __LINE__, player_gui, item, __unknwnargname3 )
+void  __deleaker_MediaPlayer_SoftKeys_AddHelpStr( const char* __file__, int __line__, GUI* player_gui, int item, STRID __unknwnargname3 );
+#define MediaPlayer_SoftKeys_SetText(player_gui, actionID, __unknwnargname3) __deleaker_MediaPlayer_SoftKeys_SetText( __FILE__,  __LINE__, player_gui, actionID, __unknwnargname3 )
+void  __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__, GUI* player_gui, int actionID, STRID __unknwnargname3 );
 
 #endif
 #endif

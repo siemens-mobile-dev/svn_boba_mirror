@@ -30,8 +30,12 @@ skip BookObj_SetDisplayOrientation
 skip BookObj_SetFocus
 skip BookObj_Show
 skip BookObj_SoftKeys_SetAction
+skip BookObj_StayOnTop
+skip BookObj_WindowSetWantsFocus
 skip Browser_OpenURI
 skip Cale_GetSettings
+skip CallID_GetCallStatusDesc
+skip CallStatusDesc_GetName
 skip CANVAS_Get_GviGC
 skip chmod
 skip ConnectionManager_Connection_GetState
@@ -48,6 +52,7 @@ skip DataBrowserDesc_SetSelectAction
 skip DataBrowserDesc_SetSelectActionOnFolders
 skip DataBrowserDesc_SetStyle
 skip DataBrowser_isFileInListExt
+skip DataBrowser_isFileInListExt_adr
 skip DATE_GetWeekDay
 skip debug_printf
 skip delay
@@ -93,7 +98,10 @@ skip DispObject_SetTitleTextColor
 skip DispObject_Show
 skip DispObject_SoftKeys_Get
 skip DispObject_SoftKeys_GetList
+skip DispObject_SoftKeys_GetParams
 skip DispObject_SoftKeys_RestoreDefaultAction
+skip DispObject_WindowSetPosition
+skip DispObject_WindowSetSize
 skip DISP_DESC_GetSize
 skip DISP_DESC_SetMethod04
 skip DISP_DESC_SetMethod05
@@ -117,6 +125,7 @@ skip DrawString
 skip elfload
 skip EqualizerGain_Get
 skip EqualizerGain_Set
+skip Feedback_SetManualScrollingText
 skip Feedback_SetOnClose
 skip Feedback_SetTimeout
 skip FileCopy
@@ -172,6 +181,7 @@ skip GetVolumeSize
 skip get_AB_ITEMS_DESC
 skip get_APP_DESC_TABLE
 skip get_bid
+skip get_CellData
 skip get_DisplayGC
 skip get_envp
 skip get_IsAudioPlayerBook
@@ -264,9 +274,12 @@ skip IsRightNowBook
 skip IsScreenSaverBook
 skip IsSoundRecorderBook
 skip IsVolumeControllerBook
+skip JavaSession_Manager
 skip lang_get_name
 skip LastExtDB
+skip ListMenu_DestroyItems
 skip ListMenu_EnableSearchHeader
+skip ListMenu_GetItemCount
 skip ListMenu_GetSelectedItem
 skip ListMenu_SetCursorToItem
 skip ListMenu_SetHotkeyMode
@@ -298,6 +311,7 @@ skip MediaPlayer_SoftKeys_SetItemAsSubItem
 skip memcmp
 skip memcpy
 skip memset
+skip MenuBook_Desktop
 skip MissedEvents
 skip mkdir
 skip MMIPROC
@@ -328,6 +342,7 @@ skip RedLED_On
 skip rename
 skip REQUEST_DATEANDTIME_GET
 skip REQUEST_DATEFORMAT_GET
+skip Request_ICA_ShutdownAllConnections
 skip REQUEST_PROFILE_GETACTIVEPROFILE
 skip REQUEST_SETTING_ALLOWEDCALLERS_GET
 skip REQUEST_SETTING_ALLOWEDCALLERS_SET
@@ -374,6 +389,7 @@ skip strcmp
 skip strcpy
 skip StrID2Str
 skip StringInput_DispObject_SetLanguage
+skip StringInput_GetStringAndLen
 skip StringInput_MenuItem_SetPriority
 skip StringInput_SetCursorPosition
 skip strlen
@@ -450,613 +466,688 @@ skip _REQUEST_OAF_START_APPLICATION
 
 __make malloc
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 void mfree_(void* p)
 {
-  mfree(p);
+	mfree(p);
 }
 
 __make mfree_adr
 {
-  return (void*)mfree_;
+	return (void*)mfree_;
 }
 
 __make mfree
 {
-  trace_free(trace_memory, p, __file__, __line__);
-  __O__;
+	trace_free(trace_memory, p, __file__, __line__);
+	__O__;
+}
+
+__make CreateBook
+{
+	trace_free(trace_memory, pbook, __file__, __line__);
+	trace_alloc(trace_book, pbook, __file__, __line__);
+	return __O__;
 }
 
 __make FreeBook
 {
-  trace_free(trace_memory, book, __file__, __line__);
-  __O__;
+	trace_free(trace_book, book, __file__, __line__);
+	__O__;
 }
 
 __make BookObj_KillBook
 {
-  trace_free(trace_memory, book, __file__, __line__);
-  __O__;
+	trace_free(trace_book, book, __file__, __line__);
+	__O__;
 }
 
 __make List_Create
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make List_Destroy
 {
-  trace_free(trace_memory, lst, __file__, __line__);
-  __O__;
+	trace_free(trace_memory, lst, __file__, __line__);
+	__O__;
 }
 
 __make manifest_GetParam
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make AllocDirHandle
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make DestroyDirHandle
 {
-  trace_free(trace_memory, handle, __file__, __line__);
-  __O__;
+	trace_free(trace_memory, handle, __file__, __line__);
+	__O__;
+}
+
+__make GUIObject_Create
+{
+	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
+	trace_alloc(trace_gui, __unknwnargname1, __file__, __line__);
+	return __O__;
 }
 
 __make GUIObject_Destroy
 {
-  //освобождает или просто возвращает?
-  trace_free(trace_memory, __unknwnargname1, __file__, __line__);
-  return __O__;
+	//освобождает или просто возвращает?
+	trace_free(trace_gui, __unknwnargname1, __file__, __line__);
+	return __O__;
 }
 
 __make _fopen
 {
-  __R ret = __O__;
-  if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make fopen
 {
-  __R ret = __O__;
-  if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make fclose
 {
-  trace_free(trace_file, (void*)file, __file__, __line__);
-  return __O__;
+	trace_free(trace_file, (void*)file, __file__, __line__);
+	return __O__;
 }
 
 __make w_fopen
 {
-  //тот же trace_file?
-  __R ret = __O__;
-  if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
-  return ret;
+	//тот же trace_file?
+	__R ret = __O__;
+	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make w_fclose
 {
-  trace_free(trace_file, (void*)f, __file__, __line__);
-  return __O__;
+	trace_free(trace_file, (void*)f, __file__, __line__);
+	return __O__;
 }
 
 
 __make TabMenuBar_SetTabGui
 {
-  trace_free(trace_memory, (void*)__unknwnargname3, __file__, __line__);
-  return __O__;
+	trace_free(trace_gui, (void*)__unknwnargname3, __file__, __line__);
+	return __O__;
 }
 
 __make CreateListMenu
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make CreateNOfMany
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make CreateOneOfMany
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make CreateTabMenuBar
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make CreateProgressBar
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
-//что у strid функций при ошибке?
 __make Str2ID
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  if(flag==5)
-  {
-    for(int i=0;i<len;i++)
-      trace_free(trace_strid, (void*)((long*)wstr)[i], __file__, __line__);  
-  }
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+	{
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+		if(flag==5)
+		{
+			for(int i=0;i<len;i++)
+				trace_free(trace_strid, (void*)((long*)wstr)[i], __file__, __line__);
+		}
+	}
+	return ret;
 }
 
 __make TextCopyId
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make int2strID
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make TextFree
 {
-  trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
-  return __O__;
+	trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIObject_SetTitleText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIObject_SoftKeys_SetText
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIonMessage_SetMenuItemText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIonMessage_SetMenuItemSecondLineText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIonMessage_SetMenuItemInfoText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIonMessage_SetMenuItemUnavailableText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make MessageBox
 {
-  if(isallocatedstrid(header_text))trace_free(trace_strid, (void*)header_text, __file__, __line__ );
-  if(isallocatedstrid(message_text) && message_text!=header_text)trace_free(trace_strid, (void*)message_text, __file__, __line__ );
-  if(isallocatediconid(IconID))trace_free(trace_iconid, (void*)IconID, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(header_text))trace_free(trace_strid, (void*)header_text, __file__, __line__ );
+	if(isallocatedstrid(message_text) && message_text!=header_text)trace_free(trace_strid, (void*)message_text, __file__, __line__ );
+	if(isallocatediconid(IconID))trace_free(trace_iconid, (void*)IconID, __file__, __line__ );
+	return __O__;
 }
 
 __make BookObj_SoftKeys_SetText
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make DataBrowserDesc_SetHeaderText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make DataBrowserDesc_SetOKSoftKeyText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make DispObject_SetTitleText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make GUIObject_SoftKeys_AddErrorStr
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make ProgressBar_SetText
 {
-  if(isallocatedstrid(text))trace_free(trace_strid, (void*)text, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(text))trace_free(trace_strid, (void*)text, __file__, __line__ );
+	return __O__;
 }
 
 __make StatusIndication_Item8_SetText
 {
-  if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make StatusIndication_SetItemText
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make StatusIndication_ShowNotes
 {
-  if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
+	return __O__;
 }
-  
+
 __make StringInput_DispObject_SetText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIObject_SoftKeys_SetInfoText
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
 
 __make ListMenu_SetSecondLineText
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIonMessage_SubItem_SetText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make Feedback_SetTextExtended
 {
-  if(isallocatedstrid(text))trace_free(trace_strid, (void*)text, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(text))trace_free(trace_strid, (void*)text, __file__, __line__ );
+	return __O__;
 }
 
 __make GUIObject_SoftKeys_SetTexts
 {
-  if(isallocatedstrid(short_text))trace_free(trace_strid, (void*)short_text, __file__, __line__ );
-  if(isallocatedstrid(full_text) /*&& StrID1!=StrID*/)trace_free(trace_strid, (void*)full_text, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(short_text))trace_free(trace_strid, (void*)short_text, __file__, __line__ );
+	if(isallocatedstrid(full_text) /*&& StrID1!=StrID*/)trace_free(trace_strid, (void*)full_text, __file__, __line__ );
+	return __O__;
 }
 
 __make PNUM2Name
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make Date2ID
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make Time2ID
 {
-  __R ret = __O__;
-  trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make KeyCode2Name
 {
-  __R ret = __O__;
-  if(isallocatedstrid(ret))trace_alloc(trace_strid, (void*)ret, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(isallocatedstrid(ret))trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make NOfMany_SetTexts
 {
-  for(int i=0;i<items_count;i++)
-    if(isallocatedstrid(strids[i]))trace_free(trace_strid, (void*)strids[i], __file__, __line__ );
-  __O__;
+	for(int i=0;i<items_count;i++)
+		if(isallocatedstrid(strids[i]))trace_free(trace_strid, (void*)strids[i], __file__, __line__ );
+	__O__;
 }
 
 __make OneOfMany_SetTexts
 {
-  for(int i=0;i<Count;i++)
-    if(isallocatedstrid(strids[i]))trace_free(trace_strid, (void*)strids[i], __file__, __line__ );
-  __O__;
+	for(int i=0;i<Count;i++)
+		if(isallocatedstrid(strids[i]))trace_free(trace_strid, (void*)strids[i], __file__, __line__ );
+	__O__;
 }
 
 __make FeedBack_SetText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make Gif2ID
-{
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_iconid, (void*)*ID, __file__, __line__);  
-  return ret;
+{//проверить код ошибки
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_iconid, (void*)*ID, __file__, __line__);
+	return ret;
 }
 
 __make GUIObject_SetTitleIcon
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make GUIInput_SetIcon
 {
-  if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	__O__;
 }
 
 __make ProgressBar_SetIcon
 {
-  if(isallocatediconid(icon_id))trace_free(trace_iconid, (void*)icon_id, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(icon_id))trace_free(trace_iconid, (void*)icon_id, __file__, __line__ );
+	__O__;
 }
 
 __make GUIonMessage_SetMenuItemIcon
 {
-  if(isallocatediconid(iconID))trace_free(trace_iconid, (void*)iconID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(iconID))trace_free(trace_iconid, (void*)iconID, __file__, __line__ );
+	__O__;
 }
 
 __make TabMenuBar_SetTabIcon
 {
-  if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	__O__;
 }
 
 __make VCALL_SetNameIcon
 {
-  if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	__O__;
 }
 
 __make ModifyKeyHook
 {
-  __R ret = __O__;
-  if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
-  if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+	return ret;
 }
 
 __make ModifyUIPageHook
 {
-  __R ret = __O__;
-  if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
-  if(mode==1)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);  
-  return ret;
+	__R ret = __O__;
+	if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
+	if(mode==1)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
+	return ret;
 }
 
 __make ImageID_Get
 {
-  __R ret = __O__;
-  trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(isallocatediconid(ret))
+		trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
+	return ret;
 }
 
 __make ImageID_GetIndirect
-{
-  __R ret = __O__;
-  trace_free(trace_memory, buf_image, __file__, __line__);
-  trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
-  return ret;
+{//проверить возвращаемое значение
+	__R ret = __O__;
+	trace_free(trace_memory, buf_image, __file__, __line__);
+	trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
+	return ret;
 }
 
 __make ImageID_Free
 {
-  trace_free(trace_iconid, (void*)imageID, __file__, __line__);
-  __O__;
+	trace_free(trace_iconid, (void*)imageID, __file__, __line__);
+	__O__;
 }
 
 __make GC_CreateMemoryGC
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gc, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GC_FreeGC
 {
-  trace_free(trace_memory, gc, __file__, __line__);
-  __O__;
+	trace_free(trace_gc, gc, __file__, __line__);
+	__O__;
 }
 
 __make GVI_CreateDashedPen
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GVI_CreatePen
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GVI_CreateSolidBrush
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GVI_CreateBitmap
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GVI_CreateMemoryGC
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make GVI_Delete_GVI_Object
 {
-  trace_free(trace_memory, *__unknwnargname1, __file__, __line__);
-  return __O__;
+	trace_free(trace_gvi, *__unknwnargname1, __file__, __line__);
+	return __O__;
 }
 
 __make GVI_DeleteMemoryGC
 {
-  trace_free(trace_memory, gc, __file__, __line__);
-  return __O__;
+	trace_free(trace_gvi, gc, __file__, __line__);
+	return __O__;
 }
 
 __make TextFeedbackWindow
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make DataBrowserDesc_Create
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make DataBrowserDesc_Destroy
 {
-  trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
-  return __O__;
+	trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
+	return __O__;
 }
 
-#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
-#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
-#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
-#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
-#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
-#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_memory, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __file__, __line__ )
+#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
 __make CreateMonitorFeedback
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make LoadDLL
 {
-  __R ret = __O__;
-  if(ret)trace_alloc(trace_dll, (void*)ret, __file__, __line__);
-  return ret;
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_dll, (void*)ret, __file__, __line__);
+	return ret;
 }
 
 __make UnLoadDLL
 {
-  trace_free(trace_dll, DllData, __file__, __line__);
-  return __O__;
+	trace_free(trace_dll, DllData, __file__, __line__);
+	return __O__;
 }
 
 __make GUIObject_SetSecondRowTitleText
 {
-  if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
+	return __O__;
 }
 
 __make ListMenu_SetNoItemText
 {
-  if(isallocatedstrid(str))trace_free(trace_strid, (void*)str, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(str))trace_free(trace_strid, (void*)str, __file__, __line__ );
+	return __O__;
 }
 
 __make TabMenuBar_SetTabTitle
 {
-  if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-  return __O__;
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	return __O__;
 }
 
 __make DispObject_SetBackgroundImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make DispObject_SetCursorImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make DispObject_SetTitleBackgroundImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make GUIObject_SetBackgroundImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make GUIObject_SetCursorImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
 
 __make GUIObject_SetTitleBackgroundImage
 {
-  if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
-  __O__;
+	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	__O__;
 }
+
+__make Shortcut_Get_MenuItemName
+{
+	__R ret = __O__;
+	trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make YesNoQuestion_SetIcon
+{
+	if(isallocatediconid(iconId))trace_free(trace_iconid, (void*)iconId, __file__, __line__ );
+	__O__;
+}
+
+__make ListMenu_SetItemIcon
+{
+	//!!!unknown arg unk_FFFF
+	if(isallocatediconid(ImageID))trace_free(trace_iconid, (void*)ImageID, __file__, __line__ );
+	return __O__;
+}
+
+__make Shortcut_Get_MenuItemIconID
+{
+	__R ret = __O__;
+	if(isallocatediconid(ret))trace_alloc(trace_iconid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make create_process
+{
+	__R ret = __O__;
+	trace_alloc(trace_process, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make kill_proc
+{
+	trace_free(trace_process, (void*)pid, __file__, __line__);
+	return __O__;
+}
+
+__make MediaPlayer_SoftKeys_AddHelpStr
+{
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	__O__;
+}
+
+__make MediaPlayer_SoftKeys_SetText
+{
+	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
+	__O__;
+}
+
