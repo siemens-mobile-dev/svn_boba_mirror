@@ -43,6 +43,7 @@ typedef unsigned short wchar_t;
 
 typedef int BOOL;
 typedef int STRID;
+typedef wchar_t IMAGEID;
 
 union SIGNAL;
 
@@ -872,7 +873,7 @@ enum schemeID {
 
 typedef struct {
   wchar_t lenght;
-  char flag;
+  char encoding;
   void* ptr;
 } STRID_DATA;
 

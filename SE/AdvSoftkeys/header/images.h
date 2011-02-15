@@ -7,6 +7,5 @@
 #define STANDBY 4
 #define DESKTOP 5
 #define NAVIGATION 6
-#define IMG_NULL 0xFFFF
-extern wchar_t images[10];
+extern IMAGEID images[10];
 #endif

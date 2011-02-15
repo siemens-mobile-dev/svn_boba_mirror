@@ -37,11 +37,6 @@ typedef struct
 
 typedef struct
 {
-  wchar_t ImageID;
-}IMG;
-
-typedef struct
-{
   BOOK book;
   GUI_LIST *menu;
   DISP_OBJ_ONKEY_METHOD oldOnKey;

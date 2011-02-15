@@ -158,12 +158,12 @@ void trace_free(int mt,void* p, const char* file, int line)
 }
 
 
-bool isallocatedstrid(int strid)
+bool isallocatedstrid(STRID strid)
 {
 	return strid!=EMPTY_SID && (strid&0xFFFF0000)!=0;
 }
 
-bool isallocatediconid(int iconid)
+bool isallocatediconid(IMAGEID iconid)
 {
 	return iconid >= iconid_start && iconid <= iconid_end;
 }

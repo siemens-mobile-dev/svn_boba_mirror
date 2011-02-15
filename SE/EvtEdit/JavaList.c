@@ -10,7 +10,7 @@ typedef struct
   wchar_t * name;
   wchar_t * fullpath;
   int appID;
-  wchar_t imageID;
+  IMAGEID imageID;
 }java_list_elem;
 
 LIST * java_list;

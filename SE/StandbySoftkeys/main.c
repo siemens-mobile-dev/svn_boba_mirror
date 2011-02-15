@@ -29,8 +29,8 @@ DISP_OBJ_ONREDRAW_METHOD SoftKeys_DefaultRedraw;
 
 typedef struct
 {
-    wchar_t ImageID;
-    wchar_t ImageID_Pressed;
+    IMAGEID ImageID;
+    IMAGEID ImageID_Pressed;
     int ImageWidth;
     int ImageWidth_Pressed;
     BOOL Pressed;

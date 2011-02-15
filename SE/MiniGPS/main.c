@@ -83,10 +83,10 @@ bool isUCodeFile = false;
 
 char * db_buf = 0;
 
-IMG auto_image = {NOIMAGE};
+IMAGEID auto_image = NOIMAGE;
 STRID CellNameID = empty;
 
-IMG location_image = {NOIMAGE};
+IMAGEID location_image = NOIMAGE;
 int imageWidth = 0;
 int imageHeight = 0;
 
@@ -345,14 +345,14 @@ void vibrate(int mode)
 
 void GetLocationImage(wchar_t *path, wchar_t *name)
 {
-  if(ImageID_Get(path,name,&location_image.ImageID)<0)
+  if(ImageID_Get(path,name,&location_image)<0)
   {
-    location_image.ImageID = NOIMAGE;
+    location_image = NOIMAGE;
   }
   else
   {
-    int Width  = GetImageWidth(location_image.ImageID);
-    int Height = GetImageHeight(location_image.ImageID);
+    int Width  = GetImageWidth(location_image);
+    int Height = GetImageHeight(location_image);
     int Width0  = cfg_location_image.x2 - cfg_location_image.x1;
     int Height0 = cfg_location_image.y2 - cfg_location_image.y1;
     if((imageWidth = (Width * Height0) / Height) <= Width0)
@@ -371,10 +371,10 @@ void UpdateLocationImage()
 {
   FSTAT _fstat;
   imageWidth = imageHeight = 0;
-  if(location_image.ImageID != NOIMAGE)
+  if(location_image != NOIMAGE)
   {
-    ImageID_Free(location_image.ImageID);
-    location_image.ImageID = NOIMAGE;
+    ImageID_Free(location_image);
+    location_image = NOIMAGE;
   }
 
   if(cfg_show_type & 2)
@@ -415,10 +415,10 @@ void InitVar()
   SoftBarY      = DisplayHeight - DispObject_GetWindowHeight(DispObject_SoftKeys_Get());
 
   FSTAT _fstat;
-  if(auto_image.ImageID != NOIMAGE)
+  if(auto_image != NOIMAGE)
   {
-    ImageID_Free(auto_image.ImageID);
-    auto_image.ImageID = NOIMAGE;
+    ImageID_Free(auto_image);
+    auto_image = NOIMAGE;
   }
 
   if(cfg_auto_image_show)
@@ -428,7 +428,7 @@ void InitVar()
     {
       MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONIMG,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
-    else if(ImageID_Get(tmppath,tmpname,&auto_image.ImageID)<0) auto_image.ImageID = NOIMAGE;
+    else if(ImageID_Get(tmppath,tmpname,&auto_image)<0) auto_image = NOIMAGE;
   }
 
   isUCodeFile = false;
@@ -511,14 +511,14 @@ void DrawParams(int y)
 {
   GC *GC_DISP=get_DisplayGC ();
 
-  if ((cfg_show_type & 2) && visible && (location_image.ImageID != NOIMAGE))
+  if ((cfg_show_type & 2) && visible && (location_image != NOIMAGE))
   {
-    GC_PutChar(GC_DISP, cfg_location_image.x1, cfg_location_image.y1 - y, imageWidth, imageHeight, location_image.ImageID);
+    GC_PutChar(GC_DISP, cfg_location_image.x1, cfg_location_image.y1 - y, imageWidth, imageHeight, location_image);
   }
 
-  if(cfg_auto_image_show && AutoLocation && (auto_image.ImageID != NOIMAGE))
+  if(cfg_auto_image_show && AutoLocation && (auto_image != NOIMAGE))
   {
-    GC_PutChar(GC_DISP, cfg_auto_image_x, cfg_auto_image_y - y, 0, 0, auto_image.ImageID);
+    GC_PutChar(GC_DISP, cfg_auto_image_x, cfg_auto_image_y - y, 0, 0, auto_image);
   }
 
   if((cfg_location == 9) && (cfg_show_type & 1) && visible && (CellNameID != empty))
@@ -1041,16 +1041,16 @@ void onCloseMiniGPSBook(BOOK * book)
     FREE_GUI(mbk->menu);
     FREE_GUI(mbk->text_input);
 
-    if(auto_image.ImageID != NOIMAGE)
+    if(auto_image != NOIMAGE)
     {
-      ImageID_Free(auto_image.ImageID);
-      auto_image.ImageID = NOIMAGE;
+      ImageID_Free(auto_image);
+      auto_image = NOIMAGE;
     }
 
-    if(location_image.ImageID != NOIMAGE)
+    if(location_image != NOIMAGE)
     {
-      ImageID_Free(location_image.ImageID);
-      location_image.ImageID = NOIMAGE;
+      ImageID_Free(location_image);
+      location_image = NOIMAGE;
     }
 
     if(CellNameID != empty)

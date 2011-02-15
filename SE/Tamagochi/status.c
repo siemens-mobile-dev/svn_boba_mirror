@@ -116,7 +116,7 @@ void ViewSex(int indx)
     wchar_t s[256];
     ++CountSex;
     snwprintf(s,255,L"%ls: %ls", LG_SEX, smenu_sextexts[Pets[indx].Status.Sex]);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[smenu_sexiconsnum[Pets[indx].Status.Sex]].ImageID, 1, 5000*msgShowTime, 0);
+    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[smenu_sexiconsnum[Pets[indx].Status.Sex]], 1, 5000*msgShowTime, 0);
   }
   else
   {
@@ -143,7 +143,7 @@ void ViewAge(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d\n%d/%d",
             LG_AGE, Pets[indx].Status.Age, (int)Pets[indx].Status.TimeAge, Pets[indx].Status.Age*10+100 );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_SMILE_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_SMILE_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewFamilyLife(int indx)
@@ -151,7 +151,7 @@ void ViewFamilyLife(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d",
             LG_FAMILYLIFE, Pets[indx].Status.FamilyLife );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FAMILY_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FAMILY_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewHealth(int indx)
@@ -159,42 +159,42 @@ void ViewHealth(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%\n%d/%d",
             LG_HEALTH, (int)Pets[indx].Status.Health*100/Pets[indx].Status.MaxHealth, Pets[indx].Status.Health, Pets[indx].Status.MaxHealth );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HEALTH_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HEALTH_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewHunger(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_HUNGER, (int)Pets[indx].Status.Hunger*100/Pets[indx].Status.MaxHunger);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HUNGER_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HUNGER_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewHappiness(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_HAPPINESS,(int)Pets[indx].Status.Happiness*100/Pets[indx].Status.MaxHappiness);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HAPPINESS_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HAPPINESS_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewDirtiness(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_DIRTINESS, 100-(int)Pets[indx].Status.Dirtiness*100/Pets[indx].Status.MaxDirtiness);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_DIRTINESS_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_DIRTINESS_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewBoredom(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_BOREDOM,(int)Pets[indx].Status.Boredom*100/Pets[indx].Status.MaxBoredom);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BOREDOM_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BOREDOM_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewBehaviour(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_BEHAVIOUR,(int)Pets[indx].Status.Behaviour*100/Pets[indx].Status.MaxBehaviour);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BEHAVIOUR_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BEHAVIOUR_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewFatigue(int indx)
@@ -202,13 +202,13 @@ void ViewFatigue(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_FATIGUE, (int)Pets[indx].Fatigue);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FATIGUE_ICN].ImageID, 1, 5000*msgShowTime, 0);
+  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FATIGUE_ICN], 1, 5000*msgShowTime, 0);
 }
 
 int status_list_callback(GUI_MESSAGE * msg)
 {
-  int str_id;
-  wchar_t icon_id;
+  STRID str_id;
+  IMAGEID icon_id;
   wchar_t ws[128];
   switch( GUIonMessage_GetMsg(msg) )
   {
@@ -217,7 +217,7 @@ int status_list_callback(GUI_MESSAGE * msg)
 //    MyBOOK * bk = (MyBOOK *)msg->book;
     MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
     int indx = TabMenuBar_GetFocusedTab(bk->gui);
-    icon_id = img_menu[smenuiconsnum[curitem]].ImageID;
+    icon_id = img_menu[smenuiconsnum[curitem]];
     {
       switch(curitem)
       {

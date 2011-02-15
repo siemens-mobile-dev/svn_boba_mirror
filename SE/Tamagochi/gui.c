@@ -146,7 +146,7 @@ int menu_list_callback(GUI_MESSAGE * msg)
 //    MyBOOK * bk = (MyBOOK *)msg->book;
     MyBOOK * bk = (MyBOOK *) FindBook(isTamagochiBook);
     int indx = TabMenuBar_GetFocusedTab(bk->gui);
-    icon_id = img_menu[menuiconsnum[curitem]].ImageID;
+    icon_id = img_menu[menuiconsnum[curitem]];
     if (curitem!= SLEEP_CMD){
       str_id  = Str2ID(menutexts[curitem],0,SID_ANY_LEN);
     }
@@ -252,8 +252,8 @@ int CreateMenuList(void *data, BOOK * book)
 
     TabMenuBar_SetTabGui(bk->gui,indx,bk->menu_list[indx]);
 
-    TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_BOREDOM_ICN].ImageID,0);
-    TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_SMILE_ICN].ImageID,1);
+    TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_BOREDOM_ICN],0);
+    TabMenuBar_SetTabIcon(bk->gui,indx,img_menu[SM_SMILE_ICN],1);
   }
   TabMenuBar_SetFocusedTab(bk->gui,tab_pos);
   TabMenuBar_SetOnTabSwitch(bk->gui,onTabSwitch);

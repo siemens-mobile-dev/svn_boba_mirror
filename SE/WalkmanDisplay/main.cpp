@@ -1442,7 +1442,7 @@ L_SkipAlbum:
 int GetIconID(wchar_t *txt);
 
 #pragma optimize = z 9
-wchar_t getimgID(wchar_t old)
+IMAGEID getimgID(IMAGEID old)
 {
   return old;
 };

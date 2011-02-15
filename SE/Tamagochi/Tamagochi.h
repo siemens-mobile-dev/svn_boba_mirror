@@ -15,7 +15,6 @@
 
 #define FREE_GUI(a) if (a) {GUIObject_Destroy(a); a = 0;}
 
-#define EMPTY_IMG 0xFFFF
 #define SOUND_NAME_COUNT   22
 #define ICONS_NAMES_COUNT  12
 #define ICONS_STATUS_COUNT 4
@@ -131,11 +130,6 @@ enum MENU_ICN {
   MENU_LAST_ICN
 };
 
-typedef struct
-{
-  wchar_t ImageID;
-}IMG;
-
 typedef struct{
   int Age;          // возраст
   int TimeAge;      // минут после увеличения возраста
@@ -169,8 +163,8 @@ typedef struct{
   int Behaviour;
   int Bathe;
   // для отрисовки смайла и статуса
-  IMG *Smile;
-  IMG *StatImg;
+  IMAGEID *Smile;
+  IMAGEID *StatImg;
   int old_img_status;
   int old_simg_status;
   int simg_status;
@@ -201,7 +195,7 @@ extern void life_proc(int indx, BOOK *bk, int snd);
 
 extern TStatusPets Pets[MAX_PET_COUNT_GLB];
 
-extern IMG img_menu[ICONS_MENU_COUNT];
+extern IMAGEID img_menu[ICONS_MENU_COUNT];
 
 extern const unsigned int PARENT_AGE;
 extern const unsigned int MAX_PET_COUNT;

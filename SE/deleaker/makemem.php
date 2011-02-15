@@ -103,7 +103,7 @@
          }
          if(preg_match("/^(__swi __arm\s+[^\s]+((\s*\*+\s*)|(\s+)))([^\s\(]+)(\s*\(.*)/",$lib[$i],$m))
          {
-           fprintf($liborig,"%s __original_%s%s\r\n",$m[1],$m[5],$m[6]);
+           fprintf($liborig,"%s__original_%s%s\r\n",$m[1],$m[5],$m[6]);
   
            $func=$m[5];
 
@@ -214,8 +214,8 @@
             fprintf($fh," )\r\n");
           }
 
-          fprintf($fcpp,"%s __deleaker_%s( const char* __file__, int __line__",$rettype,$name);
-          fprintf($fh,"%s __deleaker_%s( const char* __file__, int __line__",$rettype,$name);
+          fprintf($fcpp,"%s__deleaker_%s( const char* __file__, int __line__",$rettype,$name);
+          fprintf($fh,"%s__deleaker_%s( const char* __file__, int __line__",$rettype,$name);
           for($j=0;$j<$arglistsize;$j++)
           {
             fprintf($fcpp,", %s",$arglisttype[$j]);

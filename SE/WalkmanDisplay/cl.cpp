@@ -10,7 +10,7 @@ static void __onClose(BOOK* bk)
 
 CBook::CBook(char* pBookName, const PAGE_DESC * bp)
 {
-  CreateBook( this, &__onClose, bp, pBookName, -1, 0);
+  CreateBook( &bk, &__onClose, bp, pBookName, -1, 0);
   MyBook=this;
 };
 

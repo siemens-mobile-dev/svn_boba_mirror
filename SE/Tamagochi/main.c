@@ -157,18 +157,18 @@ MyBOOK *TamagochiBook = 0;
 
 static char myappname[128]=ELFNAME;
 
-IMG img_names[ICONS_NAMES_COUNT] = {{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                    {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                    {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG}};
+IMAGEID img_names[ICONS_NAMES_COUNT] = {NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                    NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                    NOIMAGE,NOIMAGE,NOIMAGE};
 
-IMG img_status[ICONS_STATUS_COUNT] = {{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG}};
+IMAGEID img_status[ICONS_STATUS_COUNT] = {NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE};
 
-IMG img_menu[ICONS_MENU_COUNT] = {{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                  {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                  {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                  {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                  {EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},{EMPTY_IMG},
-                                  {EMPTY_IMG},{EMPTY_IMG}};
+IMAGEID img_menu[ICONS_MENU_COUNT] = {NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                  NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                  NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                  NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                  NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,
+                                  NOIMAGE,NOIMAGE};
 
 int SmileSize = 0;
 int StatSize  = 0;
@@ -308,26 +308,26 @@ void free_icons()
 {
   for (int i=0;i<ICONS_NAMES_COUNT;i++)
   {
-      if(img_names[i].ImageID != EMPTY_IMG)
+      if(img_names[i] != NOIMAGE)
       {
-          ImageID_Free(img_names[i].ImageID);
-          img_names[i].ImageID = EMPTY_IMG;
+          ImageID_Free(img_names[i]);
+          img_names[i] = NOIMAGE;
       }
   }
   for (int i=0;i<ICONS_STATUS_COUNT;i++)
   {
-      if(img_status[i].ImageID != EMPTY_IMG)
+      if(img_status[i] != NOIMAGE)
       {
-          ImageID_Free(img_status[i].ImageID);
-          img_status[i].ImageID = EMPTY_IMG;
+          ImageID_Free(img_status[i]);
+          img_status[i] = NOIMAGE;
       }
   }
   for (int i=0;i<ICONS_MENU_COUNT;i++)
   {
-      if(img_menu[i].ImageID != EMPTY_IMG)
+      if(img_menu[i] != NOIMAGE)
       {
-          ImageID_Free(img_menu[i].ImageID);
-          img_menu[i].ImageID = EMPTY_IMG;
+          ImageID_Free(img_menu[i]);
+          img_menu[i] = NOIMAGE;
       }
   }
 
@@ -346,27 +346,27 @@ void load_icons()
   {
     if(fstat(path,icons_names[i],&_fstat)==0)
     {
-      if(ImageID_Get(path,icons_names[i],&img_names[i].ImageID)<0) img_names[i].ImageID = EMPTY_IMG;
+      if(ImageID_Get(path,icons_names[i],&img_names[i])<0) img_names[i] = NOIMAGE;
     }
   }
 
-  SmileSize = GetImageWidth(img_names[0].ImageID);
+  SmileSize = GetImageWidth(img_names[0]);
 
   for(int i=0; i< ICONS_STATUS_COUNT; i++)
   {
     if(fstat(path,icons_status[i],&_fstat)==0)
     {
-      if(ImageID_Get(path,icons_status[i],&img_status[i].ImageID)<0) img_status[i].ImageID = EMPTY_IMG;
+      if(ImageID_Get(path,icons_status[i],&img_status[i])<0) img_status[i] = NOIMAGE;
     }
   }
 
-  StatSize = GetImageWidth(img_status[0].ImageID);
+  StatSize = GetImageWidth(img_status[0]);
 
   for(int i=0; i< ICONS_MENU_COUNT; i++)
   {
     if(fstat(path,icons_menu[i],&_fstat)==0)
     {
-      if(ImageID_Get(path,icons_menu[i],&img_menu[i].ImageID)<0) img_menu[i].ImageID = EMPTY_IMG;
+      if(ImageID_Get(path,icons_menu[i],&img_menu[i])<0) img_menu[i] = NOIMAGE;
     }
   }
 //  RegisterImage(path, L"test.gif");
@@ -1414,8 +1414,8 @@ void DrawParams(int y)
   GC *GC_DISP=get_DisplayGC ();
   for(int i=0; i<Pets[0].Status.Count; i++)
   {
-    GC_PutChar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus].ImageID);
-    if(Pets[i].simg_status) GC_PutChar(GC_DISP, Pets[i].x + Pets[i].img_size - StatSize, Pets[i].y + Pets[i].img_size - StatSize - y, StatSize, StatSize, img_status[Pets[i].simg_status].ImageID);
+    GC_PutChar(GC_DISP, Pets[i].x, Pets[i].y - y, Pets[i].img_size, Pets[i].img_size, img_names[Pets[i].Status.ImageStatus]);
+    if(Pets[i].simg_status) GC_PutChar(GC_DISP, Pets[i].x + Pets[i].img_size - StatSize, Pets[i].y + Pets[i].img_size - StatSize - y, StatSize, StatSize, img_status[Pets[i].simg_status]);
   }
 //  if(ImageID != NOIMAGE) DrawString(ImageID + 0x78000000,0,50,50,150,150,1,1,clGreen,clRed);
 //  if(ImageID != NOIMAGE) GC_PutChar(GC_DISP, 150, 150, 0, 0, ImageID);

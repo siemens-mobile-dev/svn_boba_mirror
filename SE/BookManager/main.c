@@ -1097,7 +1097,7 @@ int get_file( wchar_t* name, char** buf_set )
 void get_iconsID( MyBOOK* mbk )
 {
   int i;
-  wchar_t imgID;
+  IMAGEID imgID;
   int _imgID;
   wchar_t wstr_path[100];
   

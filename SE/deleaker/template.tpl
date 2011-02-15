@@ -706,7 +706,7 @@ __make MessageBox
 {
 	if(isallocatedstrid(header_text))trace_free(trace_strid, (void*)header_text, __file__, __line__ );
 	if(isallocatedstrid(message_text) && message_text!=header_text)trace_free(trace_strid, (void*)message_text, __file__, __line__ );
-	if(isallocatediconid(IconID))trace_free(trace_iconid, (void*)IconID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname3))trace_free(trace_iconid, (void*)__unknwnargname3, __file__, __line__ );
 	return __O__;
 }
 
@@ -846,7 +846,7 @@ __make OneOfMany_SetTexts
 	__O__;
 }
 
-__make FeedBack_SetText
+__make Feedback_SetText
 {
 	if(isallocatedstrid(__unknwnargname2))trace_free(trace_strid, (void*)__unknwnargname2, __file__, __line__ );
 	return __O__;
@@ -855,43 +855,43 @@ __make FeedBack_SetText
 __make Gif2ID
 {//проверить код ошибки
 	__R ret = __O__;
-	if(ret)trace_alloc(trace_iconid, (void*)*ID, __file__, __line__);
+	if(ret)trace_alloc(trace_iconid, (void*)*__unknwnargname4, __file__, __line__);
 	return ret;
 }
 
 __make GUIObject_SetTitleIcon
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make GUIInput_SetIcon
 {
-	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make ProgressBar_SetIcon
 {
-	if(isallocatediconid(icon_id))trace_free(trace_iconid, (void*)icon_id, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make GUIonMessage_SetMenuItemIcon
 {
-	if(isallocatediconid(iconID))trace_free(trace_iconid, (void*)iconID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname3))trace_free(trace_iconid, (void*)__unknwnargname3, __file__, __line__ );
 	__O__;
 }
 
 __make TabMenuBar_SetTabIcon
 {
-	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname3))trace_free(trace_iconid, (void*)__unknwnargname3, __file__, __line__ );
 	__O__;
 }
 
 __make VCALL_SetNameIcon
 {
-	if(isallocatediconid(icon))trace_free(trace_iconid, (void*)icon, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
@@ -914,8 +914,8 @@ __make ModifyUIPageHook
 __make ImageID_Get
 {
 	__R ret = __O__;
-	if(isallocatediconid(ret))
-		trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
+	if(ret && isallocatediconid(*__unknwnargname3))
+		trace_alloc(trace_iconid, (void*)(*__unknwnargname3), __file__, __line__);
 	return ret;
 }
 
@@ -923,13 +923,13 @@ __make ImageID_GetIndirect
 {//проверить возвращаемое значение
 	__R ret = __O__;
 	trace_free(trace_memory, buf_image, __file__, __line__);
-	trace_alloc(trace_iconid, (void*)(*imageID), __file__, __line__);
+	trace_alloc(trace_iconid, (void*)(*__unknwnargname5), __file__, __line__);
 	return ret;
 }
 
 __make ImageID_Free
 {
-	trace_free(trace_iconid, (void*)imageID, __file__, __line__);
+	trace_free(trace_iconid, (void*)__unknwnargname1, __file__, __line__);
 	__O__;
 }
 
@@ -1065,37 +1065,37 @@ __make TabMenuBar_SetTabTitle
 
 __make DispObject_SetBackgroundImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make DispObject_SetCursorImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make DispObject_SetTitleBackgroundImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make GUIObject_SetBackgroundImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make GUIObject_SetCursorImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make GUIObject_SetTitleBackgroundImage
 {
-	if(isallocatediconid(imageID))trace_free(trace_iconid, (void*)imageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
@@ -1108,14 +1108,14 @@ __make Shortcut_Get_MenuItemName
 
 __make YesNoQuestion_SetIcon
 {
-	if(isallocatediconid(iconId))trace_free(trace_iconid, (void*)iconId, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname2))trace_free(trace_iconid, (void*)__unknwnargname2, __file__, __line__ );
 	__O__;
 }
 
 __make ListMenu_SetItemIcon
 {
 	//!!!unknown arg unk_FFFF
-	if(isallocatediconid(ImageID))trace_free(trace_iconid, (void*)ImageID, __file__, __line__ );
+	if(isallocatediconid(__unknwnargname5))trace_free(trace_iconid, (void*)__unknwnargname5, __file__, __line__ );
 	return __O__;
 }
 

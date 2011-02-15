@@ -74,12 +74,12 @@ wchar_t *media_fnames[]={
   L"Loop_mode_off_icn.png"
 };
 
-inline wchar_t RegisterImage (wchar_t  * path, wchar_t * fname)
+inline IMAGEID RegisterImage (wchar_t  * path, wchar_t * fname)
 { 
   FSTAT fst;
   if (fstat(path,fname,&fst)==0)
   {
-    wchar_t ret;
+    IMAGEID ret;
     ImageID_Get(path, fname,&ret);
     
     return ret;

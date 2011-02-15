@@ -38,7 +38,7 @@ typedef struct
 
 typedef struct
 {
-  wchar_t ImageID;
+  IMAGEID ImageID;
   u16 ImageHandle;
   signed int x;
   signed int y;

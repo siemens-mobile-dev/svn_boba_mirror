@@ -31,7 +31,7 @@ wchar_t * GetType_str(int cover_type)
 
 wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *meta)
 {
-  wchar_t imageID = NOIMAGE;
+  IMAGEID imageID = NOIMAGE;
   if (GetCover_SWI==true)
   {
     char cover_type;
@@ -267,7 +267,7 @@ IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
           else if (GetCover_SWI==2)
           {
             //Берём напрямую из буфера
-            wchar_t imageID;
+            IMAGEID imageID;
             int psize;
             if (isMid==false){
               psize=TotalSize-1;

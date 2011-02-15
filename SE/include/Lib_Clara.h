@@ -43,6 +43,7 @@ extern void kill_data( void* p, void (*func_p)( void* ) );
 
 #pragma diag_suppress=Ta035
 #pragma diag_suppress=Ta036
+#pragma diag_suppress=Ta031
 
 #pragma swi_number=0x100
 __swi __arm void IMB ( void );
@@ -124,7 +125,7 @@ __swi __arm void* LoadDLL( wchar_t* DllName );
 __swi __arm int UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
+__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -261,7 +262,7 @@ __swi __arm char GUIonMessage_SetMenuItemInfoText( GUI_MESSAGE* msg, STRID );
 __swi __arm char GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, STRID );
 
 #pragma swi_number=0x13C
-__swi __arm void GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, wchar_t iconID );
+__swi __arm void GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, IMAGEID );
 
 #pragma swi_number=0x13D
 __swi __arm void DispObject_SetTitleText( DISP_OBJ* , STRID );
@@ -412,10 +413,10 @@ __swi __arm void List_Destroy( LIST* lst );
 __swi __arm int List_InsertFirst( LIST* lst, void* item );
 
 #pragma swi_number=0x16C
-__swi __arm int Gif2ID( u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, wchar_t* ID );
+__swi __arm int Gif2ID( u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, IMAGEID* );
 
 #pragma swi_number=0x16D
-__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* IMAGEHANDLE, char* unk );
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* ImageHandler, char* unk );
 
 #pragma swi_number=0x16E
 __swi __arm void REQUEST_DATEANDTIME_GET( const int* sync, DATETIME* dt );
@@ -615,11 +616,11 @@ __swi __arm void TabMenuBar_SetTabCount( GUI_TABMENUBAR*, int count );
 #pragma swi_number=0x1CC
 __swi __arm void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
 #pragma swi_number=0x1CD
-__swi __arm void TabMenuBar_SetTabIcon( GUI_TABMENUBAR*, int tab, wchar_t icon, int for_state );
+__swi __arm void TabMenuBar_SetTabIcon( GUI_TABMENUBAR*, int tab, IMAGEID, int for_state );
 #pragma swi_number=0x1CE
 __swi __arm GUI* GUIObject_Destroy( GUI* );
 #pragma swi_number=0x1CF
-__swi __arm void GUIInput_SetIcon( GUI* , wchar_t icon );
+__swi __arm void GUIInput_SetIcon( GUI* , IMAGEID );
 
 #pragma swi_number=0x1D0
 __swi __arm int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
@@ -666,7 +667,7 @@ __swi __arm void OneOfMany_SetOnMessage( GUI_ONEOFMANY*, int (*proc)( GUI_MESSAG
 #pragma swi_number=0x1E2
 __swi __arm GUI_FEEDBACK* CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 #pragma swi_number=0x1E3
-__swi __arm void FeedBack_SetText( GUI_FEEDBACK*, STRID );
+__swi __arm void Feedback_SetText( GUI_FEEDBACK*, STRID );
 #pragma swi_number=0x1E4
 __swi __arm int GetBatteryState( void* unused, BATT* );
 #pragma swi_number=0x1E5
@@ -738,7 +739,7 @@ __swi __arm void VCALL_Init( void* vc );
 #pragma swi_number=0x203
 __swi __arm void VCALL_SetName( void* vc, wchar_t* name, unsigned short name_len );
 #pragma swi_number=0x204
-__swi __arm void VCALL_SetNameIcon( void* vc, wchar_t icon );
+__swi __arm void VCALL_SetNameIcon( void* vc, IMAGEID );
 #pragma swi_number=0x205
 __swi __arm void VCALL_SetNumber( void* vc, wchar_t* number, unsigned short num_len );
 #pragma swi_number=0x206
@@ -914,7 +915,7 @@ __swi __arm DB_EXT* LastExtDB( void );
 #pragma swi_number=0x256
 __swi __arm void GetOtherExtMethods( FILESUBROUTINE** );
 #pragma swi_number=0x257
-__swi __arm int MessageBox( STRID header_text, STRID message_text, wchar_t IconID, int style, int time, BOOK* book );
+__swi __arm int MessageBox( STRID header_text, STRID message_text, IMAGEID, int style, int time, BOOK* book );
 #pragma swi_number=0x258
 __swi __arm int Display_GetHeight( int display );
 #pragma swi_number=0x259
@@ -1010,9 +1011,9 @@ __swi __arm void GUIObject_SetTitleType( GUI* , int type );
 #pragma swi_number=0x282
 __swi __arm void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 #pragma swi_number=0x283
-__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandle, wchar_t* path, wchar_t* fname, int unk, wchar_t* ImageID, char* error );
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandler, wchar_t* path, wchar_t* fname, int unk, IMAGEID*, char* error );
 #pragma swi_number=0x284
-__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandle, u16*, u16*, wchar_t ImageID, int unk_1, char* error );
+__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandler, u16*, u16*, IMAGEID, int unk_1, char* error );
 #pragma swi_number=0x8285
 __swi __arm SURFACE** get_Surfaces( void );
 
@@ -1052,9 +1053,9 @@ __swi __arm int chmod( const wchar_t* path, const wchar_t* fname, int amode );
 __swi __arm int rename( const wchar_t* oldpath, const wchar_t* oldfname, const wchar_t* newpath, const wchar_t* newfname, int zero );
 
 #pragma swi_number=0x293
-__swi __arm int GetImageWidth( wchar_t ImageID );
+__swi __arm int GetImageWidth( IMAGEID );
 #pragma swi_number=0x294
-__swi __arm int GetImageHeight( wchar_t ImageID );
+__swi __arm int GetImageHeight( IMAGEID );
 
 #pragma swi_number=0x295
 __swi __arm void* CallID_GetCallStatusDesc( int CallID );
@@ -1199,9 +1200,9 @@ __swi __arm void TabMenuBar_SetOnTabSwitch( GUI_TABMENUBAR*, void (*proc)( BOOK*
 __swi __arm STRID KeyCode2Name( int key_code );
 
 #pragma swi_number=0x2CC
-__swi __arm int ImageID_Get( const wchar_t* fpath, const wchar_t* fname, wchar_t* imageID );
+__swi __arm int ImageID_Get( const wchar_t* fpath, const wchar_t* fname, IMAGEID* );
 #pragma swi_number=0x2CD
-__swi __arm void ImageID_Free( wchar_t imageID );
+__swi __arm void ImageID_Free( IMAGEID );
 
 #pragma swi_number=0x2CE
 __swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
@@ -1252,7 +1253,7 @@ __swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 #pragma swi_number=0x2E1
 __swi __arm STRID Shortcut_Get_MenuItemName( void* );
 #pragma swi_number=0x2E2
-__swi __arm int Shortcut_Get_MenuItemIconID( void* );
+__swi __arm IMAGEID Shortcut_Get_MenuItemIconID( void* );
 
 #pragma swi_number=0x2E3
 __swi __arm BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
@@ -1321,7 +1322,7 @@ __swi __arm int Disp_GetStrIdWidth( STRID, int len );
 #pragma swi_number=0x301
 __swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 #pragma swi_number=0x302
-__swi __arm int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, wchar_t* imageID );
+__swi __arm int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, IMAGEID* );
 
 #pragma swi_number=0x303
 __swi __arm void unixtime2datetime( int, DATETIME* );
@@ -1346,14 +1347,14 @@ __swi __arm int JavaAppDesc_GetJavaAppID( void* JavaDesc );
 __swi __arm void REQUEST_UI_OAF_START_APPLICATION( const int* sync, int appID, char* flag );
 
 #pragma swi_number=0x30C
-__swi __arm int JavaApp_LogoImageID_Get( wchar_t* fullpath, wchar_t* imageID );
+__swi __arm int JavaApp_LogoImageID_Get( wchar_t* fullpath, IMAGEID* );
 
 #pragma swi_number=0x30D
 __swi __arm GUI* CreateProgressBar( BOOK* book, int display );
 #pragma swi_number=0x30E
 __swi __arm void ProgressBar_SetText( GUI*, STRID text );
 #pragma swi_number=0x30F
-__swi __arm void ProgressBar_SetIcon( GUI*, u16 icon_id );
+__swi __arm void ProgressBar_SetIcon( GUI*, IMAGEID );
 #pragma swi_number=0x310
 __swi __arm void ProgressBar_SetPercentValue( GUI*, int value );
 #pragma swi_number=0x311
@@ -1363,13 +1364,13 @@ __swi __arm void ProgressBar_SetBarDisabled( GUI*, BOOL );
 __swi __arm void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
 
 #pragma swi_number=0x313
-__swi __arm void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
+__swi __arm void GUIObject_SetTitleBackgroundImage( GUI*, IMAGEID );
 #pragma swi_number=0x314
-__swi __arm void GUIObject_SetTitleIcon( GUI*, wchar_t imageID );
+__swi __arm void GUIObject_SetTitleIcon( GUI*, IMAGEID );
 #pragma swi_number=0x315
-__swi __arm void GUIObject_SetCursorImage( GUI*, wchar_t imageID );
+__swi __arm void GUIObject_SetCursorImage( GUI*, IMAGEID );
 #pragma swi_number=0x316
-__swi __arm void GUIObject_SetBackgroundImage( GUI*, wchar_t imageID );
+__swi __arm void GUIObject_SetBackgroundImage( GUI*, IMAGEID );
 
 #pragma swi_number=0x317
 __swi __arm void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
@@ -1506,7 +1507,7 @@ __swi __arm void GUIObject_SoftKeys_RemoveBackground( GUI* );
 __swi __arm void GUIObject_SoftKeys_RestoreBackground( GUI* );
 
 #pragma swi_number=0x34D
-__swi __arm void SetTrayIcon( wchar_t iconID, char mode );
+__swi __arm void SetTrayIcon( IMAGEID, char mode );
 
 #pragma swi_number=0x34E
 __swi __arm int REQUEST_SETTING_RINGVOLUME_SET( const int* sync, int unk, int null, int vol );
@@ -1703,7 +1704,7 @@ __swi __arm int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int 
 __swi __arm int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
 
 #pragma swi_number=0x3A0
-__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, wchar_t ImageID );
+__swi __arm int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, IMAGEID );
 
 #pragma swi_number=0x3A1
 __swi __arm void wstrnupr( wchar_t* wstr, int maxlen );
@@ -1722,11 +1723,11 @@ __swi __arm void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
 #pragma swi_number=0x3A7
 __swi __arm void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 #pragma swi_number=0x3A8
-__swi __arm void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
+__swi __arm void DispObject_SetCursorImage( DISP_OBJ*, IMAGEID );
 #pragma swi_number=0x3A9
-__swi __arm void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
+__swi __arm void DispObject_SetBackgroundImage( DISP_OBJ*, IMAGEID );
 #pragma swi_number=0x3AA
-__swi __arm void DispObject_SetTitleBackgroundImage( DISP_OBJ*, wchar_t imageID );
+__swi __arm void DispObject_SetTitleBackgroundImage( DISP_OBJ*, IMAGEID );
 
 #pragma swi_number=0x3AB
 __swi __arm void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
@@ -1780,7 +1781,7 @@ __swi __arm void DispObject_SetScrollBarColor( DISP_OBJ*, int color );
 __swi __arm void DispObject_SetSoftkeysColor( DISP_OBJ*, int color );
 
 #pragma swi_number=0x3BF
-__swi __arm void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
+__swi __arm void YesNoQuestion_SetIcon( GUI*, IMAGEID );
 #pragma swi_number=0x3C0
 __swi __arm void GUIObject_SetBacklightTimeout( GUI*, int time );
 

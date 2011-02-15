@@ -38,7 +38,7 @@ typedef struct
   wchar_t Year[1024];
   wchar_t Genre[1024];
   int TrackNum;
-  wchar_t ImageID;
+  IMAGEID ImageID;
 } METADATA;
 
 typedef struct

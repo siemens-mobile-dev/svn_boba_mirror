@@ -10,7 +10,7 @@
     wchar_t Genre[1024];
     int TrackNum;
     bool HasImage;
-    wchar_t ImageID;
+    IMAGEID ImageID;
     u16 ImageHandle;
     bool Handle;
   } METADATA;
@@ -75,7 +75,7 @@
   
   typedef struct
   {
-    wchar_t ImageID;
+    IMAGEID ImageID;
     u16 ImageHandle;
     signed int x;
     signed int y;
@@ -147,7 +147,7 @@
   
   typedef struct
   {
-    wchar_t ImageID;
+    IMAGEID ImageID;
     bool HasImage;
     u16 ImageHandle;
     bool Handle;

@@ -1,6 +1,6 @@
 #include "..\include\types.h"
 
-typedef wchar_t (*GET_IMGID)(wchar_t old);
+typedef IMAGEID (*GET_IMGID)(IMAGEID old);
 typedef void (*GET_OLD_REDR)(DISP_OBJ_ONREDRAW_METHOD);
 typedef void (*PAGEHOOK)(void*, BOOK *book, int id);
 //typedef int (*ONREDRAW_METHOD)(DISP_OBJ *DO, int a, int b, int c);

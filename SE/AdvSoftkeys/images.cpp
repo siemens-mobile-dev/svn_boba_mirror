@@ -1,8 +1,8 @@
 #include "..\\include\Lib_Clara.h" 
 #include "..\\include\Dir.h" 
 #include "header\images.h"
-wchar_t images[10]={IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL};
-u16 handles[10]={IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL,IMG_NULL};
+IMAGEID images[10]={NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE};
+u16 handles[10]={NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE,NOIMAGE};
 
 wchar_t ImageHandler_Get(wchar_t * path, wchar_t * fname, int x)
 {
@@ -47,11 +47,11 @@ void destroy_all_images()
   int x;
   for (x=0;x<7;x++)
   {
-    if (images[x]!=IMG_NULL)
+    if (images[x]!=NOIMAGE)
     {
       ImageHandler_Free(x);
     }
-    images[x]=IMG_NULL;
+    images[x]=NOIMAGE;
   }
 };
 
