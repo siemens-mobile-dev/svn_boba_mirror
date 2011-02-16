@@ -44,17 +44,19 @@ public:
 	void Show( int mode ); //DispObject_Show
 	WINDOW* GetWindow(); //DispObject_GetWindow
 	void GetRect( RECT* retrect ); //DispObject_GetRect
+	void WindowSetPosition( int x, int y ); //DispObject_WindowSetPosition
+	void WindowSetSize( int w, int h ); //DispObject_WindowSetSize
+	void SetBackgroundImage( IMAGEID imageID ); //DispObject_SetBackgroundImage
+	void SetCursorImage( IMAGEID imageID ); //DispObject_SetCursorImage
+	void SetTitleImage( IMAGEID imageID ); //DispObject_SetTitleImage
 
 	/*
 	LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
 	u16 DISP_DESC_GetSize( DISP_OBJ* );
-	void DispObject_SetBackgroundImage( DISP_OBJ*, wchar_t imageID );
-	void DispObject_SetCursorImage( DISP_OBJ*, wchar_t imageID );
 	void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 	void DispObject_SetScrollBarBackgroundColor( void* disp_obj, int color );
 	void DispObject_SetScrollBarColor( void* disp_obj, int color );
 	void DispObject_SetSoftkeysColor( void* disp_obj, int color );
-	void DispObject_SetTitleImage( DISP_OBJ*, wchar_t imageID );
 	void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
 	void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 	void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
@@ -173,6 +175,7 @@ public:
 	void SoftKeys_SetText( u16 actionID, STRID ); //BookObj_SoftKeys_SetText
 	void SetFocus( int display ); //BookObj_SetFocus
 	void WindowSetWantsFocus( int display, BOOL WantsFocus ); //BookObj_WindowSetWantsFocus
+	void StayOnTop( int mode ); //BookObj_StayOnTop
 	/*
 	void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
 

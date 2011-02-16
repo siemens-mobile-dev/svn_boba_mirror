@@ -1044,7 +1044,7 @@ void TerminateManager( BOOK* Book, GUI* )
   MessageBox( EMPTY_SID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
   FreeBook( Book );
   DestroyDaemon();
-  ModifyKeyHook( NewKey, 0 );
+  ModifyKeyHook( NewKey, KEY_HOOK_REMOVE );
   SUBPROC( elf_exit );
 };
 
@@ -1239,7 +1239,7 @@ int main ( void )
   {
     CreateDaemon();
     InitConfig();
-    ModifyKeyHook( NewKey, 1 );
+    ModifyKeyHook( NewKey, KEY_HOOK_ADD );
   }
   else
   {

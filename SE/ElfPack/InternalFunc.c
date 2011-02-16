@@ -54,7 +54,7 @@ void* GetUserData (int size, USERDATACONSTRUCTOR constr, void* param)
 
 	_printf("GetUserData(0x%X,0x%X,0x%X)",size,constr,param);
 	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
-	if (index!=0xFFFF)
+	if (index!=LIST_ERROR)
 	{
 		ud=List_Get(elfpackdata->UserDataList,index);
 		_printf("UserData  @0x%X",ud->data);
@@ -93,7 +93,7 @@ int RemoveUserData(void (*constr)(void *, void *))
 	_printf("RemoveUserData(0x%X)",constr);
 
 	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
-	if (index!=0xFFFF)
+	if (index!=LIST_ERROR)
 	{
 		ud=List_RemoveAt(elfpackdata->UserDataList,index);
 		{
@@ -181,8 +181,8 @@ int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
 	i = LIST_FIND(elfpackdata->gKbdHookList, proc, KeyHookCmpProc);
 	switch (mode)
 	{
-	case 0: //remove
-		if (i!=0xFFFF)
+	case KEY_HOOK_REMOVE: //remove
+		if (i!=LIST_ERROR)
 		{
 			mfree(List_Get(elfpackdata->gKbdHookList,i));
 			List_RemoveAt(elfpackdata->gKbdHookList,i);
@@ -197,8 +197,8 @@ int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
 
 			return(-2);
 		}
-	case 1: //add
-		if (i==0xFFFF)
+	case KEY_HOOK_ADD: //add
+		if (i==LIST_ERROR)
 		{
 			KEY_HOOK_ELEM *elem = malloc(sizeof(KEY_HOOK_ELEM));
 			elem->proc = proc;
@@ -252,7 +252,7 @@ int ModifyOSEHook(int event , void (*proc)(void*),int mode)
 	switch (mode)
 	{
 	case 0: //remove
-		if (n!=0xFFFF)
+		if (n!=LIST_ERROR)
 		{
 			mfree(List_RemoveAt(elfpackdata->OseHookList, n));
 			return(0);
@@ -263,7 +263,7 @@ int ModifyOSEHook(int event , void (*proc)(void*),int mode)
 		}
 
 	case 1:
-		if (n==0xFFFF)
+		if (n==LIST_ERROR)
 		{
 			OSE_HOOK_ITEM *item=malloc(sizeof(OSE_HOOK_ITEM));
 			item->signo=event;
@@ -341,7 +341,7 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * pa
 
 	switch (mode)
 	{
-	case 0: //remove
+	case PAGE_HOOK_REMOVE: //remove
 		if (n_before!=LIST_ERROR)
 		{
 			mfree(List_RemoveAt(UIPageHook_Before,n_before));
@@ -357,7 +357,7 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * pa
 			return(-2);
 		}
 
-	case 1: //insert (before original callback)
+	case PAGE_HOOK_ADD_BEFORE: //insert (before original callback)
 		if (n_before==LIST_ERROR)
 		{
 			ACTION *item=malloc(sizeof(PAGE_HOOK_ELEM));
@@ -370,7 +370,7 @@ int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * pa
 			return(-3);
 		}
 
-	case 2: //insert (after original callback)
+	case PAGE_HOOK_ADD_AFTER: //insert (after original callback)
 		if (n_after==LIST_ERROR)
 		{
 			ACTION *item=malloc(sizeof(PAGE_HOOK_ELEM));

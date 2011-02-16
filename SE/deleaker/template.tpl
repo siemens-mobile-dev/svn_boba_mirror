@@ -47,10 +47,10 @@ skip DataBrowserDesc_Menu_AddNewFolder
 skip DataBrowserDesc_SetBookID
 skip DataBrowserDesc_SetFocusToFILEITEM
 skip DataBrowserDesc_SetFoldersNumber
+skip DataBrowserDesc_SetItemStyle
 skip DataBrowserDesc_SetOpenEmptyFolder
 skip DataBrowserDesc_SetSelectAction
 skip DataBrowserDesc_SetSelectActionOnFolders
-skip DataBrowserDesc_SetStyle
 skip DataBrowser_isFileInListExt
 skip DataBrowser_isFileInListExt_adr
 skip DATE_GetWeekDay
@@ -125,6 +125,7 @@ skip DrawString
 skip elfload
 skip EqualizerGain_Get
 skip EqualizerGain_Set
+skip Feedback_DispObject_GetText
 skip Feedback_SetManualScrollingText
 skip Feedback_SetOnClose
 skip Feedback_SetTimeout
@@ -898,16 +899,16 @@ __make VCALL_SetNameIcon
 __make ModifyKeyHook
 {
 	__R ret = __O__;
-	if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 
 __make ModifyUIPageHook
 {
 	__R ret = __O__;
-	if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
+	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
+	if(mode==PAGE_HOOK_ADD_BEFORE || mode==PAGE_HOOK_ADD_AFTER)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
 	return ret;
 }
 

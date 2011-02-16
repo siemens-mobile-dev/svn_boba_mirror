@@ -149,6 +149,7 @@ DEPRECATE(int,FreeSMSCont,MSG_SendMessage_DestroyMessage)
 DEPRECATE(int,PrepareSMSCont,MSG_SendMessage_AddRecipient)
 DEPRECATE(int,CteateNewMessage,MSG_SendMessage_Start)
 DEPRECATE(void,FeedBack_SetText,Feedback_SetText)
+DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 
 #else
 
@@ -297,6 +298,7 @@ DEPRECATE(void,FeedBack_SetText,Feedback_SetText)
 #define PrepareSMSCont MSG_SendMessage_AddRecipient
 #define CteateNewMessage MSG_SendMessage_Start
 #define FeedBack_SetText Feedback_SetText
+#define DataBrowserDesc_SetStyle DataBrowserDesc_SetItemStyle
 
 #endif
 

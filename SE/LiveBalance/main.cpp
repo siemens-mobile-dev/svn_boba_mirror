@@ -488,7 +488,7 @@ static int OnReceiveUssd(void * data, BOOK *book, PAGE_DESC * page_desc, LPARAM 
 
 static void onMyBookClose(BOOK * book)
 {FUNCTION
-  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,0);
+  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,PAGE_HOOK_REMOVE);
   DISP_OBJ *StBy_DispObj = GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
   DISP_DESC_SetOnRedraw(DispObject_GetDESC(StatusIndication),SIonRedraw);
   EndUSSDtimer();
@@ -558,7 +558,7 @@ int main()
   SetGetTextFunc();
   InitConfig();
   InitCache();
-  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,1);
+  ModifyUIPageHook(USSD_RECIEVED_EVENT,OnReceiveUssd,0,PAGE_HOOK_ADD_BEFORE);
 
   StatusIndication=GUIObject_GetDispObject( SBY_GetStatusIndication(Find_StandbyBook()) );
   SIonRedraw=DispObject_GetOnRedraw(StatusIndication);

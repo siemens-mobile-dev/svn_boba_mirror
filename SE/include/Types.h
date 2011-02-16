@@ -88,6 +88,20 @@ typedef struct XGUILIST_type XGUILIST;
 typedef struct UI_APP_SESSION_type UI_APP_SESSION;
 typedef struct GUI_type GUI;
 
+
+enum PAGE_HOOK_MODE {
+  PAGE_HOOK_REMOVE=0,
+  PAGE_HOOK_ADD_BEFORE,
+  PAGE_HOOK_ADD_AFTER
+};
+
+
+enum KEY_HOOK_MODE {
+  KEY_HOOK_REMOVE=0,
+  KEY_HOOK_ADD
+};
+
+
 typedef struct SURFACE
 {
   int Ifc;

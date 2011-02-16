@@ -84,6 +84,32 @@ void CDispObjBase::SetTitleText( STRID strid )
 {
 	DispObject_SetTitleText( this, strid );
 }
+
+void CDispObjBase::WindowSetPosition( int x, int y )
+{
+	DispObject_WindowSetPosition( this, x, y );
+}
+
+void CDispObjBase::WindowSetSize( int w, int h )
+{
+	DispObject_WindowSetSize( this, w, h );
+}
+
+void CDispObjBase::SetBackgroundImage( IMAGEID imageID )
+{
+	DispObject_SetBackgroundImage( this, imageID );
+}
+
+void CDispObjBase::SetCursorImage( IMAGEID imageID )
+{
+	DispObject_SetCursorImage( this, imageID );
+}
+
+void CDispObjBase::SetTitleImage( IMAGEID imageID )
+{
+	DispObject_SetTitleImage( this, imageID );
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 CBookBase* CGuiBase::GetBook()
@@ -335,6 +361,10 @@ void CBookBase::WindowSetWantsFocus( int display, BOOL WantsFocus )
 	BookObj_WindowSetWantsFocus( this, display, WantsFocus );
 }
 
+void CBookBase::StayOnTop( int mode )
+{
+	BookObj_StayOnTop( this, mode );
+}
 ////////////////////////////////////////////////////////////////////////
 
 CGCBase::CGCBase()

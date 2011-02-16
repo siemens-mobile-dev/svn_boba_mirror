@@ -61,7 +61,7 @@ int onkey(int key)
       }
     }
   }
-  return key;
+  return 0;
 };
 
 int NewKey(int key, int r1 , int mode)
@@ -119,10 +119,9 @@ int NewKey(int key, int r1 , int mode)
       MessageBox(EMPTY_SID,Str2ID(ws,0,SID_ANY_LEN),NOIMAGE,1,0,0);
       return -1;
     }
-    
   }
 #endif
-  return 0;
+  return (onkey(key));
 };
 
 char *unicode2win1251(char *s, wchar_t *ws, int len)

@@ -709,6 +709,7 @@
 0F3C: 00000000 D5013845 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 89D14245 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 29D14245 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
+0F48: 00000000 9DD44345 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
 
 
 

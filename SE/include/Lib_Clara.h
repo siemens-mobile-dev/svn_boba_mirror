@@ -168,7 +168,7 @@ __swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 __swi __arm void* DataBrowserDesc_Create( void );
 
 #pragma swi_number=0x120
-__swi __arm void DataBrowserDesc_SetStyle( void* DataBrowserDesc, int style );
+__swi __arm void DataBrowserDesc_SetItemStyle( void* DataBrowserDesc, int style );
 
 #pragma swi_number=0x121
 __swi __arm void DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, STRID );
@@ -265,7 +265,7 @@ __swi __arm char GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, STRI
 __swi __arm void GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, IMAGEID );
 
 #pragma swi_number=0x13D
-__swi __arm void DispObject_SetTitleText( DISP_OBJ* , STRID );
+__swi __arm void DispObject_SetTitleText( DISP_OBJ*, STRID );
 
 #pragma swi_number=0x13E
 __swi __arm int ListMenu_GetSelectedItem( GUI_LIST* );
@@ -282,7 +282,7 @@ __swi __arm int IsScreenSaverBook( BOOK *bk );
 __swi __arm IS_NEEDED_BOOK get_IsScreenSaverBook( void );
 
 #pragma swi_number=0x142
-__swi __arm void StatusIndication_SetItemText( GUI* , int item, STRID );
+__swi __arm void StatusIndication_SetItemText( GUI*, int item, STRID );
 
 #pragma swi_number=0x143
 __swi __arm void StatusIndication_ShowNotes( STRID );
@@ -620,7 +620,7 @@ __swi __arm void TabMenuBar_SetTabIcon( GUI_TABMENUBAR*, int tab, IMAGEID, int f
 #pragma swi_number=0x1CE
 __swi __arm GUI* GUIObject_Destroy( GUI* );
 #pragma swi_number=0x1CF
-__swi __arm void GUIInput_SetIcon( GUI* , IMAGEID );
+__swi __arm void GUIInput_SetIcon( GUI*, IMAGEID );
 
 #pragma swi_number=0x1D0
 __swi __arm int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
@@ -665,7 +665,7 @@ __swi __arm void OneOfMany_SetOnMessage( GUI_ONEOFMANY*, int (*proc)( GUI_MESSAG
 
 
 #pragma swi_number=0x1E2
-__swi __arm GUI_FEEDBACK* CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
+__swi __arm GUI_FEEDBACK* CreateMonitorFeedback( STRID, BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 #pragma swi_number=0x1E3
 __swi __arm void Feedback_SetText( GUI_FEEDBACK*, STRID );
 #pragma swi_number=0x1E4
@@ -1006,7 +1006,7 @@ __swi __arm char* strncpy( char* dest, const char* source, int maxlen );
 #pragma swi_number=0x280
 __swi __arm char* strcat( char* dest, const char* src );
 #pragma swi_number=0x281
-__swi __arm void GUIObject_SetTitleType( GUI* , int type );
+__swi __arm void GUIObject_SetTitleType( GUI*, int type );
 
 #pragma swi_number=0x282
 __swi __arm void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
@@ -1579,10 +1579,10 @@ __swi __arm void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int ite
 #pragma swi_number=0x36C
 __swi __arm void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 #pragma swi_number=0x36D
-__swi __arm void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
+__swi __arm void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 
 #pragma swi_number=0x36E
-__swi __arm void DispObject_Show( DISP_OBJ* , int mode );
+__swi __arm void DispObject_Show( DISP_OBJ*, int mode );
 #pragma swi_number=0x36F
 __swi __arm int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 
@@ -1671,7 +1671,7 @@ __swi __arm void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2
 #pragma swi_number=0x392
 __swi __arm void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 #pragma swi_number=0x393
-__swi __arm int GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
+__swi __arm int GVI_FillSolidRoundRect( GVI_GC gc, int x, int y, int w, int h, int arcx, int arcy, int color );
 #pragma swi_number=0x394
 __swi __arm void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 
@@ -1831,6 +1831,9 @@ __swi __arm void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 
 #pragma swi_number=0x3D1
 __swi __arm void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
+
+#pragma swi_number=0x3D2
+__swi __arm STRID Feedback_DispObject_GetText( DISP_OBJ* );
 
 #ifdef LIBCLARANS
 }

@@ -609,23 +609,23 @@ void __deleaker_VCALL_SetNameIcon( const char* __file__, int __line__, void* vc,
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, KEYHOOKPROC proc, int mode, LPARAM lparam )
 {
 	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
-	if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam )
 {
 	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
-	if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 #else
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam )
 {
 	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
-	if(mode==0)trace_free(trace_hook, (void*)proc, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
+	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 #endif
@@ -633,8 +633,8 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode )
 {
 	int  ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
-	if(mode==0)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
-	if(mode==1)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
+	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
+	if(mode==PAGE_HOOK_ADD_BEFORE || mode==PAGE_HOOK_ADD_AFTER)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
 	return ret;
 }
 

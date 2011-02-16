@@ -127,7 +127,7 @@ __swi __arm FILELISTITEM* __original_GetFname( DIR_HANDLE*, FILELISTITEM* );
 __swi __arm void* __original_DataBrowserDesc_Create( void );
 
 #pragma swi_number=0x120
-__swi __arm void __original_DataBrowserDesc_SetStyle( void* DataBrowserDesc, int style );
+__swi __arm void __original_DataBrowserDesc_SetItemStyle( void* DataBrowserDesc, int style );
 
 #pragma swi_number=0x121
 __swi __arm void __original_DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, STRID );
@@ -1759,5 +1759,8 @@ __swi __arm void __original_DispObject_WindowSetPosition( DISP_OBJ*, int x, int 
 
 #pragma swi_number=0x3D1
 __swi __arm void __original_DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
+
+#pragma swi_number=0x3D2
+__swi __arm STRID __original_Feedback_DispObject_GetText( DISP_OBJ* );
 
 
