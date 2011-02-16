@@ -207,3 +207,13 @@ void ascii2ws(WSHDR *ws, const char *s)
     wsAppendChar(ws,char8to16(c));
   }
 }
+
+void str2ws(WSHDR *ws, const char *s, int encoding, int maxlen)
+{
+  if(encoding == UTF8)
+  {
+    CutWSTR(ws, 0);
+    utf8_2ws(ws, s, strlen(s));
+  }
+  else ascii2ws(ws, s);
+}

@@ -11,6 +11,6 @@ typedef struct {
 
 extern RSS_ITEM *rss_first;
 extern RSS_ITEM *rss_last;
-
+extern int encoding;
 
 #endif

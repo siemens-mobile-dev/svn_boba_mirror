@@ -73,7 +73,7 @@ static void items_menu_iconhndl(void *data, int curitem, void *user_pointer)
   {
     if (p->title)
     {
-      ascii2ws(ws1, p->title);
+      str2ws(ws1, p->title, encoding, 128);
     }
     else
     {
@@ -83,7 +83,7 @@ static void items_menu_iconhndl(void *data, int curitem, void *user_pointer)
     
     if (p->description)
     {
-      ascii2ws(ws3, p->description);
+      str2ws(ws3, p->description, encoding, 128);
     }
     else
     {

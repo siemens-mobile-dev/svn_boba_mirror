@@ -148,6 +148,8 @@ XMLNode *XMLDecode(char *buf, int size)
       } else if (c == '?') {
         MSState = MS_MIDDLETAG;
         TagState = TS_DECLARATION;
+        i++;
+        continue;
       } else if (c == '/') {
         MSState = MS_MIDDLETAG;
         TagState = TS_CLOSE;
@@ -192,7 +194,7 @@ XMLNode *XMLDecode(char *buf, int size)
         MSState = MS_ATTRIBNAME;
         AttrName=buf+i;
         AttrNameLen=1;
-      } else if (c == '/'){
+      } else if (c == '/' || (c == '?' && TagState == TS_DECLARATION)){
         MSState = MS_ENDTAG;
         TagState = TS_EMPTY;
       } else if (c == '>'){
@@ -200,7 +202,7 @@ XMLNode *XMLDecode(char *buf, int size)
         Text=buf+i+1;
         TextLen=0;
         goto L_ADD_TAG;
-      } else if (!IsSpace(c) && (c != '?' && TagState != TS_DECLARATION)) {
+      } else if (!IsSpace(c)) {
         goto L_ERR;
       }
       break;

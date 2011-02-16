@@ -49,7 +49,7 @@ enum XML_TAGSTATE{
   TS_NORMAL,                  //< Обычный (не)закрывающийся. Точно не декларация
   TS_CLOSE,                   //< Закрывающийся
   TS_EMPTY,                   //< Сам и закрывается
-  TS_DECLARATION              //< Декларация, что это XML. Парсер аттрибуты игнорирует
+  TS_DECLARATION              //< Декларация, что это XML. Берем отсюда encoding
 };
 
 #endif

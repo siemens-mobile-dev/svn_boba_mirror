@@ -81,6 +81,7 @@ void FreeRSS_FILE(RSS_FILE *frss)
 
 RSS_ITEM *rss_first;
 RSS_ITEM *rss_last;
+int encoding;
 
 
 void FreeRssItems(void)
@@ -563,7 +564,6 @@ char *html_decode(char *s)
 }
 
 
-
 void DecodeRSS(XMLNode *root)
 {
   XMLNode *rss, *channel, *items, *item;
@@ -571,6 +571,21 @@ void DecodeRSS(XMLNode *root)
   if (root)
   {
     rss=root;
+    if(!strcmp(rss->name, "xml"))
+    {
+      XMLAttr *attr = rss->attr;
+      while(attr)
+      {
+        if(!strcmp(attr->name, "encoding"))
+        {
+          if(strcmp_nocase(attr->param, "utf-8")==0) encoding = UTF8;
+          else encoding = ASCII;
+          break;
+        }
+        attr=attr->next;
+      }
+      rss=rss->next;
+    }
     while(rss)
     {
       if (!strcmp(rss->name, "rss")) break;
