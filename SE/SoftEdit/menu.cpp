@@ -91,23 +91,23 @@ void OnDelGui( BOOK* bk, GUI* )
       if (wstrcmp(mbk->curit->name,L"DEFAULT") && wstrcmp(mbk->curit->name,L"StandbyBook"))
       {
         DELETE(mbk->curit->name);
-        ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+        ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
       }
     }
     if (item==1)
     {
       DELETE(mbk->curit->lsi);
-      ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
     }
     if (item==2)
     {
       DELETE(mbk->curit->msi);
-      ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
     }
     if (item==3)
     {
       DELETE(mbk->curit->rsi);
-      ListMenu_SetSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
     }
     else if (item==4)
     {
@@ -116,7 +116,7 @@ void OnDelGui( BOOK* bk, GUI* )
       mbk->curit->style=0;
       iconidname2id(IDN_CHECKBOX_UNCHECKED_ICON,-1,&icon_id);
       ids= 0x78000000 + icon_id;
-      ListMenu_SetSecondLineText(mbk->lst,item,ids);
+      ListMenu_SetItemSecondLineText(mbk->lst,item,ids);
     }
     else if (item>4)
     {
@@ -302,7 +302,7 @@ void OnSelectGui( BOOK* bk, GUI* )
         mbk->curit->style=2;
         ids=Str2ID(L"standart",0,SID_ANY_LEN);
       }
-      ListMenu_SetSecondLineText(mbk->lst,item,ids);
+      ListMenu_SetItemSecondLineText(mbk->lst,item,ids);
       mbk->opt_lastindex=item;
       FREE_GUI(mbk->lst);
       openeditor(bk);

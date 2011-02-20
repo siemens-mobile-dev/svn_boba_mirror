@@ -160,7 +160,7 @@ class CMyBook:public CBook
   static int ShowAuthorInfo(CBook** bm_book,CMyBook* mbk);
   static int TerminateElf(CBook** bm_book,CMyBook* mbk);
   static int OnMainPage(void*,CMyBook* mbk);
-  static int OnMyKey(int key,int r,int mode,void*data);
+  static int OnMyKey(int key,int r,int mode,void*data,DISP_OBJ*);
   ~CMyBook(void);
   CGuiBase*gui;
   DECLARE_PAGE_DESC_MEMBER(base_page)

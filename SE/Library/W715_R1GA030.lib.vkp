@@ -20,7 +20,7 @@
 0474: 00000000 65B01714 ; 11D: DIR_HANDLE* AllocDirHandle( const wchar_t* path );
 0478: 00000000 19BD1714 ; 11E: FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 047C: 00000000 45002E14 ; 11F: void* DataBrowserDesc_Create( void );
-0480: 00000000 E56F4215 ; 120: void DataBrowserDesc_SetStyle( void* DataBrowserDesc, int style );
+0480: 00000000 71AE1614 ; 120: void DataBrowserDesc_SetItemStyle( void* DataBrowserDesc, int style );
 0484: 00000000 A1B22314 ; 121: void DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, STRID );
 0488: 00000000 79DB2514 ; 122: void DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
 048C: 00000000 F9DB2914 ; 123: void DataBrowserDesc_SetOKSoftKeyText( void* DataBrowserDesc, STRID );
@@ -710,6 +710,7 @@
 0F3C: 00000000 956E2C14 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 49B50C14 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 F5B60C14 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
+0F48: 00000000 354F8115 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
 
 
 

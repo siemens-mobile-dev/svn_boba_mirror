@@ -184,8 +184,8 @@ void __deleaker_StatusIndication_ShowNotes( const char* __file__, int __line__, 
 void __deleaker_StringInput_DispObject_SetText( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, STRID __unknwnargname2 );
 #define GUIObject_SoftKeys_SetInfoText(__unknwnargname1, actionID, __unknwnargname3) __deleaker_GUIObject_SoftKeys_SetInfoText( __FILE__,  __LINE__, __unknwnargname1, actionID, __unknwnargname3 )
 void __deleaker_GUIObject_SoftKeys_SetInfoText( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID __unknwnargname3 );
-#define ListMenu_SetSecondLineText(__unknwnargname1, elem_num, __unknwnargname3) __deleaker_ListMenu_SetSecondLineText( __FILE__,  __LINE__, __unknwnargname1, elem_num, __unknwnargname3 )
-void __deleaker_ListMenu_SetSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3 );
+#define ListMenu_SetItemSecondLineText(__unknwnargname1, elem_num, __unknwnargname3) __deleaker_ListMenu_SetItemSecondLineText( __FILE__,  __LINE__, __unknwnargname1, elem_num, __unknwnargname3 )
+void __deleaker_ListMenu_SetItemSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3 );
 #define GUIonMessage_SubItem_SetText(msg, __unknwnargname2) __deleaker_GUIonMessage_SubItem_SetText( __FILE__,  __LINE__, msg, __unknwnargname2 )
 void __deleaker_GUIonMessage_SubItem_SetText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
 #define Feedback_SetTextExtended(__unknwnargname1, text, where) __deleaker_Feedback_SetTextExtended( __FILE__,  __LINE__, __unknwnargname1, text, where )
@@ -225,10 +225,10 @@ void __deleaker_VCALL_SetNameIcon( const char* __file__, int __line__, void* vc,
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, KEYHOOKPROC proc, int mode, LPARAM lparam );
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam );
 #else
-int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
+int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
 #endif
 #define ModifyUIPageHook(event, PROC, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, PROC, ClientData, mode )
-int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
+int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
 #define ImageID_Get(fpath, fname, __unknwnargname3) __deleaker_ImageID_Get( __FILE__,  __LINE__, fpath, fname, __unknwnargname3 )
 int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, IMAGEID* __unknwnargname3 );
 #define ImageID_GetIndirect(buf_image, size, __NULL, image_type, __unknwnargname5) __deleaker_ImageID_GetIndirect( __FILE__,  __LINE__, buf_image, size, __NULL, image_type, __unknwnargname5 )

@@ -226,14 +226,14 @@ int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
 }
 
 
-int Keyhandler_Hook(int key,int mode,int repeat_count)
+int Keyhandler_Hook(int key,int mode,int repeat_count, DISP_OBJ* disp)
 {
 	int i=0;
 	int result;
 	while(i < elfpackdata->gKbdHookList->FirstFree)
 	{
 		KEY_HOOK_ELEM *elem = (KEY_HOOK_ELEM *)List_Get(elfpackdata->gKbdHookList,i++);
-		result = elem->proc(key,repeat_count,mode,elem->data);
+		result = elem->proc(key,repeat_count,mode,elem->data,disp);
 		if (result==-1) return KEY_LAST;
 		if (result>0) return result;
 	}
@@ -282,7 +282,7 @@ int ModifyOSEHook(int event , void (*proc)(void*),int mode)
 //===============  UI_HOOK  ================
 
 typedef struct {
-	int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData);
+	int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event);
 	int event;
 	LPARAM ClientData;
 } PAGE_HOOK_ELEM;
@@ -310,7 +310,7 @@ int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
 		{
 			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_Before,n_before);
 
-			if (my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
+			if (!my_act->event || my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData,act->event);
 			if (res==BLOCK_EVENT_GLOBALLY) return res;
 			if (res==BLOCK_EVENT_IN_THIS_SESSION) return res;
 		}
@@ -319,15 +319,15 @@ int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
 		{
 			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_After,n_after);
 
-			if (my_act->event==act->event)
-				my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData);
+			if (!my_act->event || my_act->event==act->event)
+				my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData,act->event);
 		}
 	}
 	return res;
 }
 
 
-int ModifyUIHook1(int event , int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), LPARAM ClientData ,int mode)
+int ModifyUIHook1(int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event), LPARAM ClientData ,int mode)
 {
 	LIST * UIPageHook_Before = elfpackdata->UIPageHook_Before;
 	LIST * UIPageHook_After = elfpackdata->UIPageHook_After;

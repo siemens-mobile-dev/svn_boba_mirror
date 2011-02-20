@@ -538,7 +538,7 @@ void OnSelect1GuiBcfg( BOOK* bk, GUI* )
 		return;
 	case CFG_CHECKBOX:
 		mbk->cur_hp.checkbox->isChecked = !mbk->cur_hp.checkbox->isChecked;
-		ListMenu_SetSecondLineText( mbk->bcfg, item, (mbk->cur_hp.checkbox->isChecked ? mbk->check_box_checked : mbk->check_box_unchecked) );
+		ListMenu_SetItemSecondLineText( mbk->bcfg, item, (mbk->cur_hp.checkbox->isChecked ? mbk->check_box_checked : mbk->check_box_unchecked) );
 		break;
 	case CFG_TIME:
 		BookObj_CallPage( mbk, &bk_time_input );

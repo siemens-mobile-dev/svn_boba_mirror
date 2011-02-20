@@ -24,7 +24,7 @@ a       EQU     b
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER1:
-
+	MOV	R3, R7
 	PUSH	{R0,R1}
 	MOV	R2, R0
 	LDRH	R0, [R4,#0]
@@ -56,7 +56,7 @@ GO_TO_TIMER:
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER2:
-
+	MOV	R3, R6
 	MOV	R7, R0
 	MOV	R2, R0
 	MOV	R1, #0x0
@@ -80,7 +80,7 @@ NEW_KEYHANDLER2:
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER3:
-
+	MOV	R3, R6
 	PUSH	{R0,R1}
 	MOV	R2, R0
 	LDRH	R0, [R7,#0x4]

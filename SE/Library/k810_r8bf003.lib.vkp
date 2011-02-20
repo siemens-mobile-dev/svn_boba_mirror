@@ -379,7 +379,7 @@
 0A14: 00000000 0C6D2E20 ;8285: SURFACE** get_Surfaces( void );
 0A18: 00000000 81D0D444 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 0A1C: 00000000 0D79E544 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
-0A20: 00000000 51A14245 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
+0A20: 00000000 3DA14245 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 59EA2145 ; 28A: int IsFmRadioBook( BOOK *bk );
 0A2C: 00000000 6D9E0445 ; 28B: int IsAudioPlayerBook( BOOK *bk);

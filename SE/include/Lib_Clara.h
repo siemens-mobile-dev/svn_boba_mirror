@@ -78,7 +78,7 @@ __swi __arm int ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam = NULL 
 __swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam = NULL );
 #else
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
+__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
 #endif
 
 #pragma swi_number=0x108
@@ -125,7 +125,7 @@ __swi __arm void* LoadDLL( wchar_t* DllName );
 __swi __arm int UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
+__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -1105,7 +1105,7 @@ __swi __arm int StandbyBackground_SetImage( int type, int, int, const wchar_t* p
 #pragma swi_number=0x2A5
 __swi __arm GUI* CreateYesNoQuestionVA( int zero, ... );
 #pragma swi_number=0x2A6
-__swi __arm void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
+__swi __arm void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
 
 #pragma swi_number=0x2A7
 __swi __arm void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );

@@ -777,7 +777,7 @@ __make GUIObject_SoftKeys_SetInfoText
 	return __O__;
 }
 
-__make ListMenu_SetSecondLineText
+__make ListMenu_SetItemSecondLineText
 {
 	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
 	return __O__;

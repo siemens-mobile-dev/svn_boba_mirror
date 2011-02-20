@@ -1011,7 +1011,7 @@ typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ *,int ,int,int,int);
 
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ *);
 
-typedef int (*KEYHOOKPROC)(int key, int repeat_count, int mode, void*);
+typedef int (*KEYHOOKPROC)(int key, int repeat_count, int mode, void* lparam, DISP_OBJ* disp);
 typedef int (*LISTFINDCALLBACK)(void* listitem, void* itemtofind);
 
 typedef enum _LISTMENU_HOTKEY_MODE

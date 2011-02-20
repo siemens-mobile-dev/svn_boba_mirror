@@ -446,7 +446,7 @@ static void WriteLog(char *text, int len)
   }
 }
 
-static int OnReceiveUssd(void * data, BOOK *book, PAGE_DESC * page_desc, LPARAM ClientData)
+static int OnReceiveUssd(void * data, BOOK *book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event)
 {FUNCTION
   char *s1, *s2;
   wchar_t *ws;

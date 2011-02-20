@@ -71,7 +71,7 @@ void onMuteTimer(u16 timerID, LPARAM lparam)
   }
 }
 
-int DisableUP(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
+int DisableUP(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event)
 {
   if((incom==1) && (cfg_flash_silent==0))
   {
@@ -92,7 +92,7 @@ int DisableUP(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
   return(0);
 }
 
-int DisableDOWN(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
+int DisableDOWN(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event)
 {
   if((incom==1) && (cfg_flash_silent==0))
   {

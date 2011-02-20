@@ -18,7 +18,7 @@ a       EQU     b
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER1:
-
+	MOV	R3, R6
 	PUSH	{R0,R1}
 	MOV	R2, R0
 	LDRH	R0, [R4,#0]
@@ -41,7 +41,7 @@ NEW_KEYHANDLER1:
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER2:
-
+	MOV	R3, R5
 	MOV	R7, SP
 	PUSH	{R0}
 	MOV	R2, R0
@@ -65,11 +65,11 @@ NEW_KEYHANDLER2:
         RSEG  CODE
         CODE16
 NEW_KEYHANDLER3:
-
 	MOV	R3, SP
 	PUSH	{R0,R1}
 	MOV	R2, R0
 	LDRH	R0, [R3,#0x4]
+	MOV	R3, R7
 	BLX	Keyhandler_Hook
 	POP	{R2,R3}
 	MOV	R1, SP

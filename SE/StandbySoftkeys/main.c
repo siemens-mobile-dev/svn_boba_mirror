@@ -238,7 +238,7 @@ void SetPressed(int SoftIndex, BOOL Pressed)
 };
 
 // Обновляем при возвращение в стендбай, чтобы не было "зависания" софтов
-int RefreshSoftKeys(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData)
+int RefreshSoftKeys(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event)
 {
     SetPressed(SOFTKEY_LEFT, false); // Убираем Pressed у софтов
     SetPressed(SOFTKEY_CENTER, false);
@@ -311,7 +311,7 @@ int SoftKeys_OnKey(int Key, int r1, int Mode)
     return(0);
 };
 
-int ModifyUIHookEx(int Event1, int Event2, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData), int Mode)       // (r) ploik
+int ModifyUIHookEx(int Event1, int Event2, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event), int Mode)       // (r) ploik
 {
     if ((Event1) && (Event1 != 0xFFFFFFFF))
       return ModifyUIPageHook(Event1, PROC, 0, Mode);

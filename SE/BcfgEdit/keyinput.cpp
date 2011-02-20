@@ -70,7 +70,7 @@ int KeyCode_OnExit( void* , BOOK* bk )
 	MyBOOK* mbk = (MyBOOK*) bk;
 	int key;
 	key = mbk->cur_hp.key->keycode;
-	ListMenu_SetSecondLineText( mbk->key_sel_list, 0, KeyCode2Name( key ) );
+	ListMenu_SetItemSecondLineText( mbk->key_sel_list, 0, KeyCode2Name( key ) );
 	return 1;
 }
 
@@ -124,7 +124,7 @@ void KeyModeSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
 
 	myBook->cur_hp.key->keymode = item;
 
-	ListMenu_SetSecondLineText( myBook->key_sel_list, 1, Str2ID( modes[item], 0, SID_ANY_LEN ) );
+	ListMenu_SetItemSecondLineText( myBook->key_sel_list, 1, Str2ID( modes[item], 0, SID_ANY_LEN ) );
 	FREE_GUI( myBook->keymode_sel_list );
 }
 
@@ -182,11 +182,11 @@ void KeyCodeSelect_OnDelete( BOOK* bk, GUI* )
 	{
 	case 0:
 		mbk->cur_hp.key->keycode = 0;
-		ListMenu_SetSecondLineText( mbk->key_sel_list, 0, KeyCode2Name( 0 ) );
+		ListMenu_SetItemSecondLineText( mbk->key_sel_list, 0, KeyCode2Name( 0 ) );
 		break;
 	case 1:
 		mbk->cur_hp.key->keymode = 0;
-		ListMenu_SetSecondLineText( mbk->key_sel_list, 1, Str2ID( modes[ 0 ], 0, SID_ANY_LEN ) );
+		ListMenu_SetItemSecondLineText( mbk->key_sel_list, 1, Str2ID( modes[ 0 ], 0, SID_ANY_LEN ) );
 		break;
 	}
 }
@@ -210,8 +210,8 @@ int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 	ListMenu_SetItemCount( lo, 2 );
 	OneOfMany_SetTexts( lo, strid, 2 );
 
-	ListMenu_SetSecondLineText( lo, 0, KeyCode2Name( mbk->cur_hp.key->keycode ) );
-	ListMenu_SetSecondLineText( lo, 1, Str2ID( modes[ mbk->cur_hp.key->keymode ], 0, SID_ANY_LEN ) );
+	ListMenu_SetItemSecondLineText( lo, 0, KeyCode2Name( mbk->cur_hp.key->keycode ) );
+	ListMenu_SetItemSecondLineText( lo, 1, Str2ID( modes[ mbk->cur_hp.key->keymode ], 0, SID_ANY_LEN ) );
 
 	ListMenu_SetCursorToItem( lo, 0 );
 	ListMenu_SetItemStyle( lo, 1 );

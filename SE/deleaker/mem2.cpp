@@ -486,10 +486,10 @@ void __deleaker_GUIObject_SoftKeys_SetInfoText( const char* __file__, int __line
 	return __original_GUIObject_SoftKeys_SetInfoText(__unknwnargname1, actionID, __unknwnargname3);
 }
 
-void __deleaker_ListMenu_SetSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3 )
+void __deleaker_ListMenu_SetItemSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3 )
 {
 	if(isallocatedstrid(__unknwnargname3))trace_free(trace_strid, (void*)__unknwnargname3, __file__, __line__ );
-	return __original_ListMenu_SetSecondLineText(__unknwnargname1, elem_num, __unknwnargname3);
+	return __original_ListMenu_SetItemSecondLineText(__unknwnargname1, elem_num, __unknwnargname3);
 }
 
 void __deleaker_GUIonMessage_SubItem_SetText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 )
@@ -621,7 +621,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 	return ret;
 }
 #else
-int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam )
+int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam )
 {
 	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
 	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
@@ -630,7 +630,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 }
 #endif
 
-int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode )
+int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode )
 {
 	int  ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
 	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );

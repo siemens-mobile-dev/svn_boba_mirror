@@ -27,7 +27,7 @@ int CMyBook::ShowAuthorInfo(CBook** bm_book,CMyBook* mbk)
   MESSAGE(L"Snake\n\n(c)mmcorp");
   return 0;
 };
-int CMyBook::OnMyKey(int key,int r,int mode,void*data)
+int CMyBook::OnMyKey(int key,int r,int mode,void*data, DISP_OBJ*)
 {
   if(key==KEY_ESC || key==KEY_DEL) if(!strcmp("Snake",Display_GetTopBook(0)->xbook->name)) ((CMyBook*)data)->Free();
   return 0;

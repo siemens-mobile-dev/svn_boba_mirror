@@ -44,7 +44,7 @@ __swi __arm int __original_ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lpa
 __swi __arm int __original_ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam = NULL );
 #else
 #pragma swi_number=0x107
-__swi __arm int __original_ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void* ), int mode, void* lparam );
+__swi __arm int __original_ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
 #endif
 
 #pragma swi_number=0x108
@@ -85,7 +85,7 @@ __swi __arm void* __original_LoadDLL( wchar_t* DllName );
 __swi __arm int __original_UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int __original_ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData), LPARAM ClientData, int mode );
+__swi __arm int __original_ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
 
 #pragma swi_number=0x112
 __swi __arm void* __original_memset( void* mem, char chr, int size );
@@ -224,7 +224,7 @@ __swi __arm char __original_GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE
 __swi __arm void __original_GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, IMAGEID );
 
 #pragma swi_number=0x13D
-__swi __arm void __original_DispObject_SetTitleText( DISP_OBJ* , STRID );
+__swi __arm void __original_DispObject_SetTitleText( DISP_OBJ*, STRID );
 
 #pragma swi_number=0x13E
 __swi __arm int __original_ListMenu_GetSelectedItem( GUI_LIST* );
@@ -241,7 +241,7 @@ __swi __arm int __original_IsScreenSaverBook( BOOK *bk );
 __swi __arm IS_NEEDED_BOOK __original_get_IsScreenSaverBook( void );
 
 #pragma swi_number=0x142
-__swi __arm void __original_StatusIndication_SetItemText( GUI* , int item, STRID );
+__swi __arm void __original_StatusIndication_SetItemText( GUI*, int item, STRID );
 
 #pragma swi_number=0x143
 __swi __arm void __original_StatusIndication_ShowNotes( STRID );
@@ -568,7 +568,7 @@ __swi __arm void __original_TabMenuBar_SetTabIcon( GUI_TABMENUBAR*, int tab, IMA
 #pragma swi_number=0x1CE
 __swi __arm GUI* __original_GUIObject_Destroy( GUI* );
 #pragma swi_number=0x1CF
-__swi __arm void __original_GUIInput_SetIcon( GUI* , IMAGEID );
+__swi __arm void __original_GUIInput_SetIcon( GUI*, IMAGEID );
 
 #pragma swi_number=0x1D0
 __swi __arm int __original_StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
@@ -613,7 +613,7 @@ __swi __arm void __original_OneOfMany_SetOnMessage( GUI_ONEOFMANY*, int (*proc)(
 
 
 #pragma swi_number=0x1E2
-__swi __arm GUI_FEEDBACK* __original_CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
+__swi __arm GUI_FEEDBACK* __original_CreateMonitorFeedback( STRID, BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 #pragma swi_number=0x1E3
 __swi __arm void __original_Feedback_SetText( GUI_FEEDBACK*, STRID );
 #pragma swi_number=0x1E4
@@ -948,7 +948,7 @@ __swi __arm char* __original_strncpy( char* dest, const char* source, int maxlen
 #pragma swi_number=0x280
 __swi __arm char* __original_strcat( char* dest, const char* src );
 #pragma swi_number=0x281
-__swi __arm void __original_GUIObject_SetTitleType( GUI* , int type );
+__swi __arm void __original_GUIObject_SetTitleType( GUI*, int type );
 
 #pragma swi_number=0x282
 __swi __arm void __original_GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
@@ -1047,7 +1047,7 @@ __swi __arm int __original_StandbyBackground_SetImage( int type, int, int, const
 #pragma swi_number=0x2A5
 __swi __arm GUI* __original_CreateYesNoQuestionVA( int zero, ... );
 #pragma swi_number=0x2A6
-__swi __arm void __original_ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
+__swi __arm void __original_ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
 
 #pragma swi_number=0x2A7
 __swi __arm void __original__REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -1519,10 +1519,10 @@ __swi __arm void __original_MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_g
 #pragma swi_number=0x36C
 __swi __arm void __original_MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 #pragma swi_number=0x36D
-__swi __arm void __original_MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
+__swi __arm void __original_MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 
 #pragma swi_number=0x36E
-__swi __arm void __original_DispObject_Show( DISP_OBJ* , int mode );
+__swi __arm void __original_DispObject_Show( DISP_OBJ*, int mode );
 #pragma swi_number=0x36F
 __swi __arm int __original_Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 
@@ -1611,7 +1611,7 @@ __swi __arm void __original_GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int
 #pragma swi_number=0x392
 __swi __arm void __original_GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 #pragma swi_number=0x393
-__swi __arm int __original_GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
+__swi __arm int __original_GVI_FillSolidRoundRect( GVI_GC gc, int x, int y, int w, int h, int arcx, int arcy, int color );
 #pragma swi_number=0x394
 __swi __arm void __original_GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 

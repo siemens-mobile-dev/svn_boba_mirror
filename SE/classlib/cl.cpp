@@ -629,6 +629,11 @@ int CGuiListMenu::GetItemCount()
 	return ListMenu_GetItemCount( this );
 }
 
+void CGuiListMenu::SetItemStyle( int style )
+{
+	ListMenu_SetItemStyle( this, style );
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 int CGuiOneOfMany::OnMessage( CGUIMessage* msg )

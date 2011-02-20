@@ -26,7 +26,6 @@ DEPRECATE(void,List2lineSubitemAddText,GUIonMessage_SubItem_SetText)
 DEPRECATE(int,List2LineGetCurrentIndex,GUIonMessage_SubItem_GetCreatedIndex)
 DEPRECATE(GUI_LIST*,CreateListObject,CreateListMenu)
 DEPRECATE(void,SetNumOfMenuItem,ListMenu_SetItemCount)
-DEPRECATE(void,SoftKeys_SetText,GUIObject_SoftKeys_SetTexts)
 DEPRECATE(DISP_OBJ*,GUIObj_GetDISPObj,GUIObject_GetDispObject)
 DEPRECATE(void,GuiObject_SetBackgroundImage,GUIObject_SetBackgroundImage)
 DEPRECATE(void,GuiObject_SetHighlightImage,GUIObject_SetCursorImage)
@@ -72,7 +71,6 @@ DEPRECATE(void,GC_validate_RECT,GC_ValidateRect)
 DEPRECATE(int,get_GC_xx,GC_GetXX)
 DEPRECATE(void,get_GC_RECT,GC_GetRect)
 DEPRECATE(void*,set_GC_xx,GC_SetXX)
-DEPRECATE(void,SetFocus,GUIObject_SetFocus)
 DEPRECATE(char,DISP_OBJ_getVisible,DispObject_GetVisible)
 DEPRECATE(void,GetGuiRect,DispObject_GetRect)
 DEPRECATE(BOOK*,GUI_GetBook,GUIObject_GetBook)
@@ -100,7 +98,6 @@ DEPRECATE(GUI*,CreateStringInput,CreateStringInputVA)
 DEPRECATE(int,GetBattaryState,GetBatteryState)
 DEPRECATE(GUI_FEEDBACK*,CreateFeedBack,CreateMonitorFeedback)
 DEPRECATE(void,InputFeedback_SetIcon,GUIInput_SetIcon)
-DEPRECATE(void,InvalidateRect,DispObject_InvalidateRect)
 DEPRECATE(void,GUIObject_HideSoftkeys,GUIObject_SoftKeys_Hide)
 DEPRECATE(void,GUIObject_ShowSoftkeys,GUIObject_SoftKeys_Show)
 DEPRECATE(void,GUIObject_Softkey_SetAction,GUIObject_SoftKeys_SetAction)
@@ -150,6 +147,7 @@ DEPRECATE(int,PrepareSMSCont,MSG_SendMessage_AddRecipient)
 DEPRECATE(int,CteateNewMessage,MSG_SendMessage_Start)
 DEPRECATE(void,FeedBack_SetText,Feedback_SetText)
 DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
+DEPRECATE(void,ListMenu_SetSecondLineText,ListMenu_SetItemSecondLineText)
 
 #else
 
@@ -175,7 +173,6 @@ DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 #define List2LineGetCurrentIndex GUIonMessage_SubItem_GetCreatedIndex
 #define CreateListObject CreateListMenu
 #define SetNumOfMenuItem ListMenu_SetItemCount
-#define SoftKeys_SetText GUIObject_SoftKeys_SetTexts
 #define GUIObj_GetDISPObj GUIObject_GetDispObject
 #define GuiObject_SetBackgroundImage GUIObject_SetBackgroundImage
 #define GuiObject_SetHighlightImage GUIObject_SetCursorImage
@@ -221,7 +218,6 @@ DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 #define get_GC_xx GC_GetXX
 #define get_GC_RECT GC_GetRect
 #define set_GC_xx GC_SetXX
-#define SetFocus GUIObject_SetFocus
 #define DISP_OBJ_getVisible DispObject_GetVisible
 #define GetGuiRect DispObject_GetRect
 #define GUI_GetBook GUIObject_GetBook
@@ -249,7 +245,6 @@ DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 #define GetBattaryState GetBatteryState
 #define CreateFeedBack CreateMonitorFeedback
 #define InputFeedback_SetIcon GUIInput_SetIcon
-#define InvalidateRect DispObject_InvalidateRect
 #define GUIObject_HideSoftkeys GUIObject_SoftKeys_Hide
 #define GUIObject_ShowSoftkeys GUIObject_SoftKeys_Show
 #define GUIObject_Softkey_SetAction GUIObject_SoftKeys_SetAction
@@ -299,6 +294,7 @@ DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 #define CteateNewMessage MSG_SendMessage_Start
 #define FeedBack_SetText Feedback_SetText
 #define DataBrowserDesc_SetStyle DataBrowserDesc_SetItemStyle
+#define ListMenu_SetSecondLineText ListMenu_SetItemSecondLineText
 
 #endif
 

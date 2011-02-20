@@ -20,8 +20,6 @@ class CBookBase;
 //class CPaintGC;
 //class CMemoryGC;
 
-//template class auto_ptr;
-
 
 
 
@@ -93,7 +91,7 @@ public:
 	void SetBackgroundImage( wchar_t imageID ); //GUIObject_SetBackgroundImage
 	void SetBacklightTimeout( int time ); //GUIObject_SetBacklightTimeout
 	void SetCursorImage( wchar_t imageID ); //GUIObject_SetCursorImage
-	void SetFocus ( int i ); //GUIObject_SetFocus
+	void SetFocus( int i ); //GUIObject_SetFocus
 	void SetStyle( int style ); //GUIObject_SetStyle
 	void SetTitleIcon( wchar_t imageID ); //GUIObject_SetTitleIcon
 	void SetTitleImage( wchar_t imageID ); //GUIObject_SetTitleBackgroundImage
@@ -385,15 +383,19 @@ public:
 	CGuiListMenu( CBook* book, int display = 0 );
 	virtual int OnMessage( CGUIMessage* msg );
 
-	void SetItemCount( int count );
-	int GetSelectedItem();
-	void SetFocused( int item );
-	void SetNoItemText( STRID );
-	void DestroyItems();
-	int GetItemCount();
-	// void ListMenu_SetHotkeyMode( GUI*, LISTMENU_HOTKEY_MODE mode );
-	// void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
+	void SetItemCount( int count ); //ListMenu_SetItemCount
+	int GetSelectedItem(); //ListMenu_GetSelectedItem
+	void SetFocused( int item ); //ListMenu_SetCursorToItem
+	void SetNoItemText( STRID ); //ListMenu_SetNoItemText
+	void DestroyItems(); //ListMenu_DestroyItems
+	int GetItemCount(); //ListMenu_GetItemCount
+	void SetItemStyle( int style ); //ListMenu_SetItemStyle
+	// int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, IMAGEID );
+	// int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 	// void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
+	// void ListMenu_SetHotkeyMode( GUI*, LISTMENU_HOTKEY_MODE mode );
+	// void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
+	// void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
 };
 
 /////////////////////////////////////////////////////////////////////////
