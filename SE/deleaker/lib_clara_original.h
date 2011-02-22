@@ -962,7 +962,7 @@ __swi __arm SURFACE** __original_get_Surfaces( void );
 #pragma swi_number=0x286
 __swi __arm int __original_iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 #pragma swi_number=0x287
-__swi __arm int __original_textidname2id( const wchar_t* idname, int maxnamelen, int* id );
+__swi __arm int __original_textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 
 #pragma swi_number=0x288
 __swi __arm void __original_ListMenu_SetNoItemText( GUI_LIST*, STRID str );

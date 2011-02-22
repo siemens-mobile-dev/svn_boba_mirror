@@ -1020,7 +1020,7 @@ __swi __arm SURFACE** get_Surfaces( void );
 #pragma swi_number=0x286
 __swi __arm int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 #pragma swi_number=0x287
-__swi __arm int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
+__swi __arm int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 
 #pragma swi_number=0x288
 __swi __arm void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
@@ -1834,6 +1834,9 @@ __swi __arm void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 #pragma swi_number=0x3D2
 __swi __arm STRID Feedback_DispObject_GetText( DISP_OBJ* );
+
+#pragma swi_number=0x3D3
+__swi __arm void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 #ifdef LIBCLARANS
 }

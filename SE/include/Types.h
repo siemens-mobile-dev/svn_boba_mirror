@@ -1059,6 +1059,7 @@ typedef struct
 #define CHIPID_DB3210 0xE800
 #define CHIPID_DB3350 0xF000
 
+
 typedef enum
 {
   UI_OverlayStyle_NotDefined = 0,
@@ -1075,6 +1076,7 @@ typedef enum
   UI_OverlayStyle_Last
 } UI_OverlayStyle_t;
 
+
 typedef enum
 {
   UI_TitleMode_Uninitated = 0, // Uninitiated
@@ -1086,5 +1088,55 @@ typedef enum
   UI_TitleMode_Desktop,    // Only for desktop title. Will be removed after hb107.
   UI_TitleMode_Last
 } UI_TitleMode_t;
+
+
+typedef struct
+{
+  u16 action;
+  u16 unk1;
+  BOOK * book;
+  DISP_OBJ * disp_object;
+  void * IUIImage;
+  STRID ButtonText;
+  STRID MenuText;
+  STRID DisabledMessage;
+  STRID HelpText;
+  STRID LongSKButtonText;
+  u16 parent_action;
+  u16 SubItemHighlight_action;
+  LIST * subitems_list;
+  void (*proc)(BOOK*,GUI*);
+  void (*DisabledAction)(BOOK*,GUI*);
+  char unk2[8];
+  char enable;
+  char visible;
+  char SuppressDefaultAction;
+  char unk3[49];
+}SOFTKEY_DESC_A2;
+
+
+typedef struct
+{
+  u16 action;
+  u16 unk1;
+  BOOK * book;
+  DISP_OBJ * disp_object;
+  IMAGEID Icon;
+  u16 unk2;
+  STRID ButtonText;
+  STRID MenuText;
+  STRID DisabledMessage;
+  STRID HelpText;
+  u16 parent_action;
+  u16 SubItemHighlight_action;
+  LIST * subitems_list;
+  void (*proc)(BOOK*,GUI*);
+  void (*DisabledAction)(BOOK*,GUI*);
+  char unk3[8];
+  char enable;
+  char visible;
+  char SuppressDefaultAction;
+  char unk4[49];
+}SOFTKEY_DESC;
 
 #endif

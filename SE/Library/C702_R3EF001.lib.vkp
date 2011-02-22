@@ -19,7 +19,7 @@
 0474: 00000000 795C9C10 ; 11D: DIR_HANDLE* AllocDirHandle( const wchar_t* path );
 0478: 00000000 495E9C10 ; 11E: FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 047C: 00000000 71CF8611 ; 11F: void* DataBrowserDesc_Create( void );
-0480: 00000000 F1D18611 ; 120: void DataBrowserDesc_SetStyle( void* DataBrowserDesc, int style );
+0480: 00000000 F1D18611 ; 120: void DataBrowserDesc_SetItemStyle( void* DataBrowserDesc, int style );
 0484: 00000000 21D28611 ; 121: void DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, STRID );
 0488: 00000000 09D28611 ; 122: void DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
 048C: 00000000 29D28611 ; 123: void DataBrowserDesc_SetOKSoftKeyText( void* DataBrowserDesc, STRID );
@@ -48,12 +48,12 @@
 04E8: 00000000 2579AF11 ; 13A: char GUIonMessage_SetMenuItemInfoText( GUI_MESSAGE* msg, STRID );
 04EC: 00000000 3579AF11 ; 13B: char GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, STRID );
 04F0: 00000000 5579AF11 ; 13C: void GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, IMAGEID );
-04F4: 00000000 8962A310 ; 13D: void DispObject_SetTitleText( DISP_OBJ* , STRID );
+04F4: 00000000 8962A310 ; 13D: void DispObject_SetTitleText( DISP_OBJ*, STRID );
 04F8: 00000000 316DAF11 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: 00000000 816DAF11 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 0500: 00000000 D11BA5ED ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 0504: 00000000 2D859510 ; 141: int IsScreenSaverBook( BOOK *bk );
-0508: 00000000 BDDEDF10 ; 142: void StatusIndication_SetItemText( GUI* , int item, STRID );
+0508: 00000000 BDDEDF10 ; 142: void StatusIndication_SetItemText( GUI*, int item, STRID );
 050C: 00000000 D1FADF10 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: 00000000 05869010 ; 144: GUI* CreateStringInputVA( int, ... );
 0514: 00000000 0D91AF11 ; 145: GUI_ONEOFMANY* CreateOneOfMany( BOOK* book );
@@ -194,7 +194,7 @@
 0730: 00000000 59577F11 ; 1CC: void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
 0734: 00000000 D9577F11 ; 1CD: void TabMenuBar_SetTabIcon( GUI_TABMENUBAR*, int tab, IMAGEID, int for_state );
 0738: 00000000 410DA410 ; 1CE: GUI* GUIObject_Destroy( GUI* );
-073C: 00000000 0910A410 ; 1CF: void GUIInput_SetIcon( GUI* , IMAGEID );
+073C: 00000000 0910A410 ; 1CF: void GUIInput_SetIcon( GUI*, IMAGEID );
 0740: 00000000 B58E9010 ; 1D0: int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 0744: 00000000 A070FC2A ;81D1: PAudioControl* GetAudioControlPtr( );
 0748: 00000000 455B5C11 ; 1D2: int AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
@@ -213,7 +213,7 @@
 077C: 00000000 C195A511 ; 1DF: PAudioControl AudioControl_Init( );
 0780: 00000000 7D92AF11 ; 1E0: void OneOfMany_SetFocused( GUI_ONEOFMANY*, int item );
 0784: 00000000 E192AF11 ; 1E1: void OneOfMany_SetOnMessage( GUI_ONEOFMANY*, int (*proc)( GUI_MESSAGE* ) );
-0788: 00000000 8502AD11 ; 1E2: GUI_FEEDBACK* CreateMonitorFeedback( STRID , BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
+0788: 00000000 8502AD11 ; 1E2: GUI_FEEDBACK* CreateMonitorFeedback( STRID, BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 078C: 00000000 3D03AD11 ; 1E3: void Feedback_SetText( GUI_FEEDBACK*, STRID );
 0790: 00000000 65470F11 ; 1E4: int GetBatteryState( void* unused, BATT* );
 0794: 00000000 91EDA310 ; 1E5: GC* get_DisplayGC( void );
@@ -372,13 +372,13 @@
 09F8: 00000000 4DF47610 ; 27E: int strncmp( const char* s1, const char* s2, int len );
 09FC: 00000000 81F47610 ; 27F: char* strncpy( char* dest, const char* source, int maxlen );
 0A00: 00000000 7DF37610 ; 280: char* strcat( char* dest, const char* src );
-0A04: 00000000 2D11A410 ; 281: void GUIObject_SetTitleType( GUI* , int type );
+0A04: 00000000 2D11A410 ; 281: void GUIObject_SetTitleType( GUI*, int type );
 0A08: 00000000 BD79AF11 ; 282: void GUIonMessage_SetItemDisabled( GUI_MESSAGE* msg, BOOL );
 0A0C: 00000000 497F8110 ; 283: int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandler, wchar_t* path, wchar_t* fname, int unk, IMAGEID*, char* error );
 0A10: 00000000 D17F8110 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandler, u16*, u16*, IMAGEID, int unk_1, char* error );
 0A14: 00000000 503A182B ;8285: SURFACE** get_Surfaces( void );
 0A18: 00000000 FD295911 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
-0A1C: 00000000 A1B17711 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
+0A1C: 00000000 A1B17711 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 0A20: 00000000 D56EAF11 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 BDA20111 ; 28A: int IsFmRadioBook( BOOK *bk );
@@ -409,7 +409,7 @@
 0A8C: 00000000 A1F48710 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
 0A90: 00000000 0DEAEC10 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
 0A94: 00000000 AD757F11 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
-0A98: 00000000 F970AF11 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
+0A98: 00000000 F970AF11 ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 FDA0B910 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
 0AA0: 00000000 A1AF9C10 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 11D28611 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
@@ -528,7 +528,7 @@
 0C68: 00000000 691CE610 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 A90FE610 ; 31B: BOOK* Display_GetTopBook( int display );
 0C70: 00000000 D11BA5ED ; 31C: void Display_SetBrightness( int display, int brightness );
-0C74: 00000000 F923E310 ; 31D: int Display_GetBrightness( int display );
+0C74: 00000000 8123E310 ; 31D: int Display_GetBrightness( int display );
 0C78: 00000000 79D18611 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 D5D18611 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
 0C80: 00000000 DDD18611 ; 320: void DataBrowserDesc_Menu_AddMarkFiles( void* DataBrowserDesc, int );
@@ -608,8 +608,8 @@
 ;0DA8: xxxxxxxx yyyyyyyy ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
 ;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 ;0DB0: xxxxxxxx yyyyyyyy ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
-;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ* , int );
-0DB8: 00000000 3974A310 ; 36E: void DispObject_Show( DISP_OBJ* , int mode );
+;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
+0DB8: 00000000 3974A310 ; 36E: void DispObject_Show( DISP_OBJ*, int mode );
 ;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 0DC0: 00000000 A9308810 ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
 0DC4: 00000000 F1BC4511 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
@@ -646,7 +646,7 @@
 0E40: 00000000 09191B11 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
 0E44: 00000000 15061B11 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
 0E48: 00000000 85191B11 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
-0E4C: 00000000 ED071B11 ; 393: int GVI_FillSolidRoundRect( GVI_GC , int x, int y, int w, int h, int arcx, int arcy, int color );
+0E4C: 00000000 ED071B11 ; 393: int GVI_FillSolidRoundRect( GVI_GC gc, int x, int y, int w, int h, int arcx, int arcy, int color );
 0E50: 00000000 B10E1B11 ; 394: void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
 0E54: 00000000 A1EDA310 ; 395: GC* GC_CreateMemoryGC( int xsize, int ysize, int bpp, int unk, void* somefn, int unk2 );
 0E58: 00000000 69EEA310 ; 396: void GC_FreeGC( GC* gc );
@@ -710,6 +710,7 @@
 0F40: 00000000 958AA310 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 018AA310 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 59207F11 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
+0F4C: 00000000 B5F08710 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 
