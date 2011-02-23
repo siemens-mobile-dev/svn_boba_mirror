@@ -131,7 +131,7 @@
 0634: 00000000 81A00A10 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 95A00A10 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 A4470F10 ; 18F: PROCESS get_bid( PROCESS pid );
-0640: 00000000 B5AE2111 ; 190: int datetime2unixtime ( DATETIME *dt );
+0640: 00000000 B5AE2111 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -169,12 +169,12 @@
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: 00000000 0D557E11 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE( const int* sync, int* level );
 06D4: 00000000 257A7E11 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
-06D8: 00000000 19696611 ; 1B6: void SetBrightnessOfScreen(int br);
+;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 39017211 ; 1B7: int isKeylocked( void );
 06E0: 00000000 91926211 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
-06E8: 00000000 77D66411 ; 1BA: void ShuttingDown(void);
-06EC: 00000000 DD331F11 ; 1BB: void Vibra(int t1, int t2, int t3);
+;06E8: xxxxxxxx yyyyyyyy ; 1BA:
+;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 06F0: 00000000 D5ACEE10 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: 00000000 F5ADEE10 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
 06F8: 00000000 A1F16411 ; 1BE: int Date2ID( DATE*, int TimeFormat, int );
@@ -315,7 +315,7 @@
 0914: 00000000 59B26911 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
 0918: 00000000 4DB26911 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 D15D6711 ; 247: void GoMusic( void );
-0920: 00000000 AD341F11 ; 248: void Vibra_Off (int t1);
+;0920: xxxxxxxx yyyyyyyy ; 248:
 ;0924: xxxxxxxx yyyyyyyy ; 249:
 0928: 00000000 49592211 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 F5281F11 ; 24B: int GetSilent( void );
@@ -572,8 +572,8 @@
 0D18: 00000000 AD636F11 ; 346: GUI* CreatePercentInputVA( int zero, ... );
 0D1C: 00000000 39656F11 ; 347: int PercentInput_GetPercent( GUI* PercentInput );
 0D20: 00000000 05B26911 ; 348: void GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
-0D24: 00000000 71816611 ; 349: int PHF_GetState(void);
-0D28: 00000000 79816611 ; 34A: int CHF_GetState(void);
+0D24: 00000000 71816611 ; 349: int PHF_GetState( void );
+0D28: 00000000 79816611 ; 34A: int CHF_GetState( void );
 0D2C: 00000000 01297011 ; 34B: void GUIObject_SoftKeys_RemoveBackground( GUI* );
 0D30: 00000000 0D297011 ; 34C: void GUIObject_SoftKeys_RestoreBackground( GUI* );
 0D34: 00000000 ED286511 ; 34D: void SetTrayIcon( IMAGEID, char mode );

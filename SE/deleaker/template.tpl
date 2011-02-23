@@ -37,6 +37,7 @@ skip Cale_GetSettings
 skip CallID_GetCallStatusDesc
 skip CallStatusDesc_GetName
 skip CANVAS_Get_GviGC
+skip CHF_GetState
 skip chmod
 skip ConnectionManager_Connection_GetState
 skip CreateBook
@@ -53,6 +54,7 @@ skip DataBrowserDesc_SetSelectAction
 skip DataBrowserDesc_SetSelectActionOnFolders
 skip DataBrowser_isFileInListExt
 skip DataBrowser_isFileInListExt_adr
+skip datetime2unixtime
 skip DATE_GetWeekDay
 skip debug_printf
 skip delay
@@ -330,6 +332,7 @@ skip OneOfMany_SetItemCount
 skip OneOfMany_SetOnMessage
 skip OrangeLED_Control
 skip PercentInput_GetPercent
+skip PHF_GetState
 skip PID_MMI
 skip PlayerControl
 skip PlayFile

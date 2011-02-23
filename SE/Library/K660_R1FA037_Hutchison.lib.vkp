@@ -131,7 +131,7 @@
 0634: 00000000 159A0A10 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 299A0A10 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 38410F10 ; 18F: PROCESS get_bid( PROCESS pid );
-0640: 00000000 4D201E11 ; 190: int datetime2unixtime ( DATETIME *dt );
+0640: 00000000 4D201E11 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -169,12 +169,12 @@
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: 00000000 9D167A11 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE( const int* sync, int* level );
 06D4: 00000000 BD3B7A11 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
-06D8: 00000000 3D6A6211 ; 1B6: void SetBrightnessOfScreen(int br);
+;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 49FD6D11 ; 1B7: int isKeylocked( void );
 06E0: 00000000 559B5E11 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
-06E8: 00000000 C7D76011 ; 1BA: void ShuttingDown(void);
-06EC: 00000000 6DA51B11 ; 1BB: void Vibra(int t1, int t2, int t3);
+;06E8: xxxxxxxx yyyyyyyy ; 1BA:
+;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 06F0: 00000000 E90EEB10 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: 00000000 0910EB10 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
 06F8: 00000000 F1F26011 ; 1BE: int Date2ID( DATE*, int TimeFormat, int );
@@ -572,8 +572,8 @@
 0D18: 00000000 E1646B11 ; 346: GUI* CreatePercentInputVA( int zero, ... );
 0D1C: 00000000 6D666B11 ; 347: int PercentInput_GetPercent( GUI* PercentInput );
 0D20: 00000000 29B36511 ; 348: void GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
-;0D24: xxxxxxxx yyyyyyyy ; 349:
-;0D28: xxxxxxxx yyyyyyyy ; 34A:
+;0D24: xxxxxxxx yyyyyyyy ; 349: int PHF_GetState( void );
+;0D28: xxxxxxxx yyyyyyyy ; 34A: int CHF_GetState( void );
 0D2C: 00000000 352A6C11 ; 34B: void GUIObject_SoftKeys_RemoveBackground( GUI* );
 0D30: 00000000 412A6C11 ; 34C: void GUIObject_SoftKeys_RestoreBackground( GUI* );
 0D34: 00000000 3D2A6111 ; 34D: void SetTrayIcon( IMAGEID, char mode );

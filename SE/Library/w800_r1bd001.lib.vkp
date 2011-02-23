@@ -131,7 +131,7 @@
 0634: FFFFFFFF AF1A0344 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: FFFFFFFF C31A0344 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: FFFFFFFF F48D0644 ; 18F: PROCESS get_bid( PROCESS pid );
-0640: FFFFFFFF ED7FE444 ; 190: int datetime2unixtime( DATETIME *dt );
+0640: FFFFFFFF ED7FE444 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -169,12 +169,12 @@
 ;06CC: xxxxxxxx yyyyyyyy ; 1B3:
 06D0: FFFFFFFF 71D31545 ; 1B4: int REQUEST_PROFILE_GETACTIVEPROFILE( const int* sync, int* level );
 06D4: FFFFFFFF CDD31545 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
-06D8: FFFFFFFF 7530EB44 ; 1B6: void SetBrightnessOfScreen(int br);
+;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: FFFFFFFF E97AD444 ; 1B7: int isKeylocked( void );
 06E0: FFFFFFFF C10DF744 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
-06E4: FFFFFFFF 1927F744 ; 1B9: void VideoOnWholeScreen(BOOK * MediaPlayer_Video_Book);
-06E8: FFFFFFFF 1D87D444 ; 1BA: void ShuttingDown(void);
-06EC: FFFFFFFF B5AEF844 ; 1BB: void Vibra(int t1, int t2, int t3);
+;06E4: xxxxxxxx yyyyyyyy ; 1B9:
+;06E8: xxxxxxxx yyyyyyyy ; 1BA:
+;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 06F0: FFFFFFFF 05740C45 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: FFFFFFFF A5740C45 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
 06F8: FFFFFFFF 6133D344 ; 1BE: int Date2ID( DATE*, int TimeFormat, int );
@@ -315,8 +315,8 @@
 0914: FFFFFFFF B14AD644 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
 0918: FFFFFFFF A14AD644 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: FFFFFFFF A5C8D144 ; 247: void GoMusic( void );
-0920: FFFFFFFF 85AFF844 ; 248: void Vibra_Off(int t1);
-0924: FFFFFFFF 8527F744 ; 249: void VideoOnNormalScreen(BOOK * MediaPlayer_Video_Book);
+;0920: xxxxxxxx yyyyyyyy ; 248:
+;0924: xxxxxxxx yyyyyyyy ; 249:
 0928: FFFFFFFF 19D7D344 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: FFFFFFFF 39A5F844 ; 24B: int GetSilent( void );
 0930: FFFFFFFF F571F844 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -572,8 +572,8 @@
 0D18: FFFFFFFF 91CCD344 ; 346: GUI* CreatePercentInputVA( int zero, ... );
 0D1C: FFFFFFFF 21CED344 ; 347: int PercentInput_GetPercent( GUI* PercentInput );
 0D20: FFFFFFFF 654AD644 ; 348: void GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
-0D24: FFFFFFFF B5A20645 ; 349: int PHF_GetState(void);
-0D28: FFFFFFFF CDA20645 ; 34A: int CHF_GetState(void);
+0D24: FFFFFFFF B5A20645 ; 349: int PHF_GetState( void );
+0D28: FFFFFFFF CDA20645 ; 34A: int CHF_GetState( void );
 ;0D2C: xxxxxxxx yyyyyyyy ; 34B: void GUIObject_SoftKeys_RemoveBackground( GUI* );
 ;0D30: xxxxxxxx yyyyyyyy ; 34C: void GUIObject_SoftKeys_RestoreBackground( GUI* );
 0D34: FFFFFFFF 5599EA44 ; 34D: void SetTrayIcon( IMAGEID, char mode );

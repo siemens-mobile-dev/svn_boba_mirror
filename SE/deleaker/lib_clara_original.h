@@ -455,6 +455,9 @@ __swi __arm OSBOOLEAN __original_set_envp( PROCESS pid, char* name, OSADDRESS va
 #pragma swi_number=0x18F
 __swi __arm PROCESS __original_get_bid( PROCESS pid );
 
+#pragma swi_number=0x190
+__swi __arm int __original_datetime2unixtime( DATETIME* dt );
+
 #pragma swi_number=0x1A0
 __swi __arm char* __original_strcpy( char* dest, const char* source );
 
@@ -1440,6 +1443,11 @@ __swi __arm int __original_PercentInput_GetPercent( GUI* PercentInput );
 
 #pragma swi_number=0x348
 __swi __arm void __original_GUIonMessage_SetLineSeparator( GUI_MESSAGE* msg, int _unk1 );
+
+#pragma swi_number=0x349
+__swi __arm int __original_PHF_GetState( void );
+#pragma swi_number=0x34A
+__swi __arm int __original_CHF_GetState( void );
 
 #pragma swi_number=0x34B
 __swi __arm void __original_GUIObject_SoftKeys_RemoveBackground( GUI* );
