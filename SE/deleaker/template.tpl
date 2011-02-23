@@ -96,6 +96,7 @@ skip DispObject_SetScrollBarColor
 skip DispObject_SetSoftkeysColor
 skip DispObject_SetTitleTextColor
 skip DispObject_Show
+skip DispObject_SoftKeys_ExecuteAction
 skip DispObject_SoftKeys_Get
 skip DispObject_SoftKeys_GetList
 skip DispObject_SoftKeys_GetParams

@@ -710,7 +710,7 @@
 0F40: 00000000 49B50C14 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 F5B60C14 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 29CF7715 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
-;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+0F4C: 00000000 95DE4114 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 

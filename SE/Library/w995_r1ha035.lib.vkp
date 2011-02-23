@@ -377,7 +377,7 @@
 0A10: 00000000 51F21515 ; 284: int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandler, u16*, u16*, IMAGEID, int unk_1, char* error );
 0A14: 00000000 E8CCD74B ;8285: SURFACE** get_Surfaces( void );
 0A18: 00000000 1D044C14 ; 286: int iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
-0A1C: 00000000 AD074C14 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, int* id );
+0A1C: 00000000 AD074C14 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 0A20: 00000000 35E60C15 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
 0A28: 00000000 B918FA14 ; 28A: int IsFmRadioBook( BOOK *bk );
@@ -408,7 +408,7 @@
 0A8C: 00000000 A9594614 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
 0A90: 00000000 69094E14 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
 0A94: 00000000 9DE7FD14 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
-0A98: 00000000 A5A52D14 ; 2A6: void ListMenu_SetSecondLineText( GUI_LIST*, int elem_num, STRID );
+0A98: 00000000 A5A52D14 ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
 0A9C: 00000000 05D9DC14 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
 0AA0: 00000000 DD190E14 ; 2A8: wchar_t* FSX_GetInvalidChar( wchar_t* name );
 0AA4: 00000000 99BE2614 ; 2A9: void DataBrowserDesc_SetFoldersNumber( void* DataBrowserDesc, int state );
@@ -417,7 +417,7 @@
 0AB0: 00000000 6DFEF514 ; 2AC: void DataBrowserDesc_SetSelectActionOnFolders( void* DataBrowserDesc, int state );
 0AB4: 00000000 7DBE2614 ; 2AD: void DataBrowserDesc_SetBookID( void* DataBrowserDesc, int BookID );
 0AB8: 00000000 0DFDF514 ; 2AE: void DataBrowserDesc_SetItemFilter( void* DataBrowserDesc, DB_FILE_FILTER );
-0ABC: 00000000 19258615 ; 2AF: void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
+0ABC: 00000000 A1BE2614 ; 2AF: void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
 0AC0: 00000000 65FEF514 ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder( void* DataBrowserDesc, int state );
 0AC4: 00000000 D5BC2614 ; 2B1: void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
 0AC8: 00000000 F1B6FB14 ; 2B2: void FSX_RemoveIllegalSymbolsName( FILEITEM* );
@@ -704,11 +704,12 @@
 0F2C: 00000000 B1A11614 ; 3CB: void OSE_GetShell( void** pInterface );
 0F30: 00000000 B5923914 ; 3CC: int swscanf( const wchar_t* buffer, const wchar_t* format, ... );
 0F34: 00000000 259D1E10 ; 3CD: int sscanf( const char* buffer, const char* format, ... );
-;0F38: xxxxxxxx yyyyyyyy ; 3CE: void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
-;0F3C: xxxxxxxx yyyyyyyy ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
-;0F40: xxxxxxxx yyyyyyyy ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
-;0F44: xxxxxxxx yyyyyyyy ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
+0F38: 00000000 B19DF114 ; 3CE: void BookObj_WindowSetWantsFocus( BOOK* book, int display, BOOL WantsFocus );
+0F3C: 00000000 89774F14 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
+0F40: 00000000 317D1114 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
+0F44: 00000000 85801114 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 ;0F48: xxxxxxxx yyyyyyyy ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
+;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 

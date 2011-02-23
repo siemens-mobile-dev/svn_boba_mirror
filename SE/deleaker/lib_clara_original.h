@@ -1763,4 +1763,7 @@ __swi __arm void __original_DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 #pragma swi_number=0x3D2
 __swi __arm STRID __original_Feedback_DispObject_GetText( DISP_OBJ* );
 
+#pragma swi_number=0x3D3
+__swi __arm void __original_DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+
 
