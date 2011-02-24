@@ -131,7 +131,7 @@
 0634: 00000000 D1D03E44 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 E5D03E44 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 745C4344 ; 18F: PROCESS get_bid( PROCESS pid );
-;0640: xxxxxxxx yyyyyyyy ; 190: int datetime2unixtime( DATETIME* dt );
+0640: 00000000 B1A31145 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -535,7 +535,7 @@
 0C84: 00000000 11DC4845 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 7DC74845 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 41C34845 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: 00000000 C9C74F45 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
 0C94: 00000000 71DDEC44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 F9EEEC44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 F92B1B44 ; 327: int GetRadioState( char* level, char* flag );
@@ -709,8 +709,8 @@
 0F3C: 00000000 85B33B45 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 3D764645 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 DD754645 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
-;0F48: xxxxxxxx yyyyyyyy ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
-;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+0F48: 00000000 15794745 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
+0F4C: 00000000 1D994845 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 
