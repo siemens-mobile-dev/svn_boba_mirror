@@ -133,7 +133,7 @@
 0634: 00000000 75612C44 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 89612C44 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 98EB3044 ; 18F: PROCESS get_bid( PROCESS pid );
-;0640: xxxxxxxx yyyyyyyy ; 190: int datetime2unixtime( DATETIME* dt );
+0640: 00000000 FDD8FC44 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -711,8 +711,8 @@
 0F3C: 00000000 1DB22645 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 45723145 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 E5713145 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
-;0F48: xxxxxxxx yyyyyyyy ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
-;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+0F48: 00000000 25753245 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
+0F4C: 00000000 1D953345 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 

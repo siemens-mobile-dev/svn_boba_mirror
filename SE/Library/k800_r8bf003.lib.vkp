@@ -52,7 +52,7 @@
 04F8: 00000000 05DB4145 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: 00000000 55DB4145 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 0500: 00000000 39224645 ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
-0504: 00000000 A1234945 ; 141: int IsScreenSaverBook( BOOK *bk );
+0504: 00000000 A1234945 ; 141: int IsScreenSaverBook( BOOK* bk );
 0508: 00000000 99394745 ; 142: void StatusIndication_SetItemText( GUI*, int item, STRID );
 050C: 00000000 45393C45 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: 00000000 955C3F45 ; 144: GUI* CreateStringInputVA( int, ... );
@@ -171,7 +171,7 @@
 06D4: 00000000 21683D45 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
 ;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 29204945 ; 1B7: int isKeylocked( void );
-06E0: 00000000 399F0545 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
+06E0: 00000000 399F0545 ; 1B8: int IsMediaPlayerVideoBook( BOOK* bk );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
 ;06E8: xxxxxxxx yyyyyyyy ; 1BA:
 ;06EC: xxxxxxxx yyyyyyyy ; 1BB:
@@ -381,8 +381,8 @@
 0A1C: 00000000 21E2E444 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 0A20: 00000000 A9DC4145 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
-0A28: 00000000 E5252145 ; 28A: int IsFmRadioBook( BOOK *bk );
-0A2C: 00000000 1D030445 ; 28B: int IsAudioPlayerBook( BOOK *bk);
+0A28: 00000000 E5252145 ; 28A: int IsFmRadioBook( BOOK* bk );
+0A2C: 00000000 1D030445 ; 28B: int IsAudioPlayerBook( BOOK* bk);
 0A30: 00000000 8D560445 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: 00000000 0D082145 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
 0A38: 00000000 11D84845 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
@@ -535,7 +535,7 @@
 0C84: 00000000 D5164845 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 41024845 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 05FE4745 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-0C90: 00000000 E9014F45 ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+0C90: 00000000 E9014F45 ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
 0C94: 00000000 9546EC44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 1D58EC44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 F92B1B44 ; 327: int GetRadioState( char* level, char* flag );
@@ -550,8 +550,8 @@
 0CC0: 00000000 35D72B45 ; 330: int w_remove( const wchar_t* dir );
 0CC4: 00000000 B93D2D45 ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: 00000000 052C1B44 ; 332: int GetSignalQuality( char* rssi, char* ber );
-0CCC: 00000000 F1881245 ; 333: int IsCameraBook( BOOK *bk );
-0CD0: 00000000 B5140645 ; 334: int IsSoundRecorderBook( BOOK *bk );
+0CCC: 00000000 F1881245 ; 333: int IsCameraBook( BOOK* bk );
+0CD0: 00000000 B5140645 ; 334: int IsSoundRecorderBook( BOOK* bk );
 0CD4: 00000000 95663F45 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 0CD8: 00000000 79BF0545 ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
 0CDC: 00000000 F5B50545 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
@@ -709,8 +709,8 @@
 0F3C: 00000000 EDEE3A45 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 01B14545 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 A1B04545 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
-;0F48: xxxxxxxx yyyyyyyy ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
-;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+0F48: 00000000 D9B34645 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
+0F4C: 00000000 E1D34745 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 
 
 

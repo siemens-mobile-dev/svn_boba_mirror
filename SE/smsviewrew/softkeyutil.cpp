@@ -1,4 +1,5 @@
 #include "softkeyutil.hpp"
+#include <stddef.h>
 
 static bool isallocatedstrid(STRID strid)
 {
@@ -32,31 +33,37 @@ int CSoftKeyDesc::getstructtype()
 	return structtype;
 }
 
+#define RETURNSOFTKEYPARAM( member ) \
+	if( offsetof( SOFTKEY_DESC, member ) == offsetof( SOFTKEY_DESC_A2, member ) ) \
+		return reinterpret_cast<SOFTKEY_DESC*>( this )->member; \
+	else if( getstructtype() == STRUCTTYPE_OLD ) \
+		return reinterpret_cast<SOFTKEY_DESC*>( this )->member; \
+	else return reinterpret_cast<SOFTKEY_DESC_A2*>( this )->member;
+
+#define RETURNIFZERO( arg ) if( !this ) return arg;
+
 bool CSoftKeyDesc::IsVisible()
 {
-	if( !this )
-		return false;
+	RETURNIFZERO( false );
+	RETURNSOFTKEYPARAM( visible );
+}
 
-	if( getstructtype() == STRUCTTYPE_OLD )
-		return reinterpret_cast<SOFTKEY_DESC*>( this )->visible;
-
-	return reinterpret_cast<SOFTKEY_DESC_A2*>( this )->visible;
+void (*CSoftKeyDesc::GetProc())(BOOK*,GUI*)
+{
+	RETURNIFZERO( NULL );
+	RETURNSOFTKEYPARAM( proc );
 }
 
 u16 CSoftKeyDesc::GetAction()
 {
-	if( !this )
-		return 0xFFFF;
-
-	return reinterpret_cast<SOFTKEY_DESC*>( this )->action;
+	RETURNIFZERO( 0xFFFF );
+	RETURNSOFTKEYPARAM( action );
 }
 
 STRID CSoftKeyDesc::GetButtonText()
 {
-	if( !this )
-		return EMPTY_SID;
-
-	return reinterpret_cast<SOFTKEY_DESC*>( this )->ButtonText;
+	RETURNIFZERO( EMPTY_SID );
+	RETURNSOFTKEYPARAM( ButtonText );
 }
 
 CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, STRID strid )

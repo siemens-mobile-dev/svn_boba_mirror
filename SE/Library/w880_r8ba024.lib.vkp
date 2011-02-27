@@ -52,7 +52,7 @@
 04F8: 00000000 915B4345 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: 00000000 E15B4345 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 0500: 00000000 6DA94745 ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
-0504: 00000000 B1B24A45 ; 141: int IsScreenSaverBook( BOOK *bk );
+0504: 00000000 B1B24A45 ; 141: int IsScreenSaverBook( BOOK* bk );
 0508: 00000000 C9C14845 ; 142: void StatusIndication_SetItemText( GUI*, int item, STRID );
 050C: 00000000 21BD3D45 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: 00000000 B1DC4045 ; 144: GUI* CreateStringInputVA( int, ... );
@@ -171,7 +171,7 @@
 06D4: 00000000 01EC3E45 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
 ;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 39AF4A45 ; 1B7: int isKeylocked( void );
-06E0: 00000000 7D690745 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
+06E0: 00000000 7D690745 ; 1B8: int IsMediaPlayerVideoBook( BOOK* bk );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
 ;06E8: xxxxxxxx yyyyyyyy ; 1BA:
 ;06EC: xxxxxxxx yyyyyyyy ; 1BB:
@@ -181,7 +181,7 @@
 06FC: 00000000 45293C45 ; 1BF: int Time2ID( TIME*, char TimeFormat, int isSec );
 0700: 00000000 75594345 ; 1C0: GUI_LIST* CreateListMenu( BOOK*, int display );
 0704: 00000000 A55B4345 ; 1C1: void ListMenu_SetItemCount( GUI_LIST*, int item_count );
-0708: 00000000 748A1620 ;81C2: LIST** ROOT_APP( void ); //Application session list
+0708: 00000000 748A1620 ;81C2: LIST** ROOT_APP( void );
 070C: 00000000 758F4945 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
 0710: 00000000 69904945 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
 0714: 00000000 9DCC3D45 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
@@ -381,8 +381,8 @@
 0A1C: 00000000 3D8CE644 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 0A20: 00000000 755D4345 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
-0A28: 00000000 798CFC44 ; 28A: int IsFmRadioBook( BOOK *bk ); //nullsub(ret 0)
-0A2C: 00000000 BDCC0545 ; 28B: int IsAudioPlayerBook( BOOK *bk);
+0A28: 00000000 798CFC44 ; 28A: int IsFmRadioBook( BOOK* bk ); //nullsub(ret 0)
+0A2C: 00000000 BDCC0545 ; 28B: int IsAudioPlayerBook( BOOK* bk);
 0A30: 00000000 F1130645 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: 00000000 FD172D44 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int ); //nullsub(void)
 0A38: 00000000 49674A45 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
@@ -535,7 +535,7 @@
 0C84: 00000000 1D9F4945 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 718A4945 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 35864945 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
 0C94: 00000000 19F0ED44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 292A0145 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 B5311B44 ; 327: int GetRadioState( char* level, char* flag );
@@ -543,15 +543,15 @@
 0CA4: 00000000 89AEEA44 ; 329: int Bluetooth_GetPhoneVisibility( void );
 0CA8: 00000000 49AFEA44 ; 32A: int Bluetooth_isBusy( void );
 0CAC: 00000000 492D2E45 ; 32B: int USB_isConnected( void );
-0CB0: 00000000 93480B45 ; 32C: void* w_diropen( const wchar_t* dir ); 91;
+0CB0: 00000000 91480B45 ; 32C: void* w_diropen( const wchar_t* dir );
 0CB4: 00000000 89D02B44 ; 32D: wchar_t* w_dirread( void* );
 0CB8: 00000000 FD4B0B45 ; 32E: int w_dirclose( void* );
 0CBC: 00000000 3DBBFD44 ; 32F: int w_rename( const wchar_t* dst, const wchar_t* src );
 0CC0: 00000000 19EA2C45 ; 330: int w_remove( const wchar_t* dir );
 0CC4: 00000000 814E2E45 ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: 00000000 C1311B44 ; 332: int GetSignalQuality( char* rssi, char* ber );
-0CCC: 00000000 85F11345 ; 333: int IsCameraBook( BOOK *bk );
-0CD0: 00000000 35DF0745 ; 334: int IsSoundRecorderBook( BOOK *bk );
+0CCC: 00000000 85F11345 ; 333: int IsCameraBook( BOOK* bk );
+0CD0: 00000000 35DF0745 ; 334: int IsSoundRecorderBook( BOOK* bk );
 0CD4: 00000000 ADE64045 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 0CD8: 00000000 B1890745 ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
 0CDC: 00000000 2D800745 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );

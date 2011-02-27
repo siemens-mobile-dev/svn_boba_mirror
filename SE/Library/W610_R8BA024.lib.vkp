@@ -52,7 +52,7 @@
 04F8: 00000000 EDA23145 ; 13E: int ListMenu_GetSelectedItem( GUI_LIST* );
 04FC: 00000000 3DA33145 ; 13F: void ListMenu_SetItemStyle( GUI_LIST*, int style );
 0500: 00000000 65EF3545 ; 140: void GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
-0504: 00000000 C5F83845 ; 141: int IsScreenSaverBook( BOOK *bk );
+0504: 00000000 C5F83845 ; 141: int IsScreenSaverBook( BOOK* bk );
 0508: 00000000 DD073745 ; 142: void StatusIndication_SetItemText( GUI*, int item, STRID );
 050C: 00000000 2D002C45 ; 143: void StatusIndication_ShowNotes( STRID );
 0510: 00000000 E1232F45 ; 144: GUI* CreateStringInputVA( int, ... );
@@ -171,7 +171,7 @@
 06D4: 00000000 F12E2D45 ; 1B5: int Profile_SetActive( int NUMprof, int set_in_gdfs_flag );
 ;06D8: xxxxxxxx yyyyyyyy ; 1B6:
 06DC: 00000000 4DF53845 ; 1B7: int isKeylocked( void );
-06E0: 00000000 11C6F544 ; 1B8: int IsMediaPlayerVideoBook( BOOK *bk );
+06E0: 00000000 11C6F544 ; 1B8: int IsMediaPlayerVideoBook( BOOK* bk );
 ;06E4: xxxxxxxx yyyyyyyy ; 1B9:
 ;06E8: xxxxxxxx yyyyyyyy ; 1BA:
 ;06EC: xxxxxxxx yyyyyyyy ; 1BB:
@@ -381,8 +381,8 @@
 0A1C: 00000000 C9ECD444 ; 287: int textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
 0A20: 00000000 D1A43145 ; 288: void ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 ;0A24: xxxxxxxx yyyyyyyy ; 289:
-0A28: 00000000 95991045 ; 28A: int IsFmRadioBook( BOOK *bk );
-0A2C: 00000000 F929F444 ; 28B: int IsAudioPlayerBook( BOOK *bk);
+0A28: 00000000 95991045 ; 28A: int IsFmRadioBook( BOOK* bk );
+0A2C: 00000000 F929F444 ; 28B: int IsAudioPlayerBook( BOOK* bk);
 0A30: 00000000 2D71F444 ; 28C: void PlayerControl( BOOK* AudioPlayerBook, int );
 0A34: 00000000 7D7B1045 ; 28D: void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
 0A38: 00000000 71AD3845 ; 28E: void Shortcut_Run( wchar_t* shortcut_name );
@@ -535,7 +535,7 @@
 0C84: 00000000 39E53745 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 85D03745 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 49CC3745 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
 0C94: 00000000 AD3ADC44 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 AD4BDC44 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 F98D1A44 ; 327: int GetRadioState( char* level, char* flag );
@@ -550,8 +550,8 @@
 0CC0: 00000000 A11F1B45 ; 330: int w_remove( const wchar_t* dir );
 0CC4: 00000000 69841C45 ; 331: int ConnectionManager_Connection_GetState( void );
 0CC8: 00000000 058E1A44 ; 332: int GetSignalQuality( char* rssi, char* ber );
-0CCC: 00000000 A5BE0145 ; 333: int IsCameraBook( BOOK *bk );
-0CD0: 00000000 C93BF644 ; 334: int IsSoundRecorderBook( BOOK *bk );
+0CCC: 00000000 A5BE0145 ; 333: int IsCameraBook( BOOK* bk );
+0CD0: 00000000 C93BF644 ; 334: int IsSoundRecorderBook( BOOK* bk );
 0CD4: 00000000 E12D2F45 ; 335: void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 0CD8: 00000000 4DE6F544 ; 336: void VideoPlayerControl( BOOK* VideoPlayerBook, int );
 0CDC: 00000000 CDDCF544 ; 337: void Video_ActionBack( BOOK* VideoPlayerBook, void* );
@@ -577,7 +577,7 @@
 0D2C: 00000000 CDD83745 ; 34B: void GUIObject_SoftKeys_RemoveBackground( GUI* );
 0D30: 00000000 D9D83745 ; 34C: void GUIObject_SoftKeys_RestoreBackground( GUI* );
 0D34: 00000000 0D022C45 ; 34D: void SetTrayIcon( IMAGEID, char mode );
-0D38: 00000000 452E0F65 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET( const int* sync, int unk, int null, int vol );
+0D38: 00000000 650F2E45 ; 34E: int REQUEST_SETTING_RINGVOLUME_SET( const int* sync, int unk, int null, int vol );
 0D3C: 00000000 55122E45 ; 34F: int REQUEST_SETTING_VIBRATOR_SET( const int* sync, int unk, int mode );
 0D40: 00000000 55112E45 ; 350: int REQUEST_SETTING_RINGTYPESOUNDFILE_SET( const int* sync, int null, wchar_t* path, wchar_t* name );
 0D44: 00000000 F1162E45 ; 351: int REQUEST_SETTING_ANSWERINGMODE_SET( const int* sync, int unk, int mode );

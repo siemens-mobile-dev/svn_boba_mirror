@@ -3,6 +3,8 @@
 	
 #include "Types.h"
 
+#define CFGVAR _Pragma("location=\"CONFIG_C\"") __root const
+
 #define CFG_UINT 1
 #define CFG_STR_UTF8 2
 #define CFG_INT 3

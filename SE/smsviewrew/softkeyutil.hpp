@@ -14,6 +14,7 @@ public:
 	bool IsVisible();
 	u16 GetAction();
 	STRID GetButtonText();
+	void (*GetProc())(BOOK*,GUI*);
 };
 
 CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, STRID strid );
