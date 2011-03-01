@@ -22,6 +22,7 @@ protected:
 	static int FindBookExCB_Book(BOOK* book ,int* param);
 
 	STRID strid_viewmsg;
+	STRID strid_view;
 	STRID strid_forward;
 	STRID strid_reply;
 	STRID strid_stop;

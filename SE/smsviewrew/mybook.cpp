@@ -30,6 +30,7 @@ CMyBook::CMyBook()  :CBook( MYBOOKNAME, &base_page )
 {
 	//софт в списке сообщений
 	textidname2id( _T("MSG_UI_VIEW_MESSAGE_SK"), SID_ANY_LEN, &strid_viewmsg );
+	textidname2id( _T("GUI_VIEW_SK"), SID_ANY_LEN, &strid_view );
 	//софт в просмотре входящих
 	textidname2id( _T("MSG_UI_REPLY_MESSAGE_SK"), SID_ANY_LEN, &strid_reply );
 	//софт в просмотре переданных
@@ -125,7 +126,8 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 
 	//не уверен, нужна ли эта проверка, для всех ли элементов в списке есть "показать"
 	//смотрим софты списка. если есть "Показать", значит наш лист
-	if( !FindSoftkey( dispmsglist, msguilistbook, strid_viewmsg ) )
+	if( !FindSoftkey( dispmsglist, msguilistbook, strid_viewmsg )
+		&& !FindSoftkey( dispmsglist, msguilistbook, strid_view ) )
 		return 0;
 
 	int cnt = ListMenu_GetItemCount( guimsglist );
@@ -149,7 +151,10 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 	ListMenu_SetCursorToItem( guimsglist, cur );
 
 	//вызываем экшн "view" нового выбранного элемента
-	DispObject_SoftKeys_ExecuteAction( dispmsglist, FindSoftkey( dispmsglist, msguilistbook, strid_viewmsg )->GetAction() );
+	CSoftKeyDesc* sk = FindSoftkey( dispmsglist, msguilistbook, strid_viewmsg );
+	if( !sk )
+		sk = FindSoftkey( dispmsglist, msguilistbook, strid_view );
+	DispObject_SoftKeys_ExecuteAction( dispmsglist, sk->GetAction() );
 
 	return -1;
 }
