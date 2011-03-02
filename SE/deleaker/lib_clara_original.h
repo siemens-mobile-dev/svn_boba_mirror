@@ -85,7 +85,7 @@ __swi __arm void* __original_LoadDLL( wchar_t* DllName );
 __swi __arm int __original_UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int __original_ModifyUIPageHook( int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
+__swi __arm int __original_ModifyUIPageHook( int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
 
 #pragma swi_number=0x112
 __swi __arm void* __original_memset( void* mem, char chr, int size );
@@ -236,7 +236,7 @@ __swi __arm void __original_ListMenu_SetItemStyle( GUI_LIST*, int style );
 __swi __arm void __original_GC_PutChar( GC* gc, int x, int y, int _zero, int zero1, wchar_t wchar );
 
 #pragma swi_number=0x141
-__swi __arm int __original_IsScreenSaverBook( BOOK *bk );
+__swi __arm int __original_IsScreenSaverBook( BOOK* bk );
 #pragma swi_number=0x8141
 __swi __arm IS_NEEDED_BOOK __original_get_IsScreenSaverBook( void );
 
@@ -516,7 +516,7 @@ __swi __arm int __original_Profile_SetActive( int NUMprof, int set_in_gdfs_flag 
 __swi __arm int __original_isKeylocked( void );
 
 #pragma swi_number=0x1B8
-__swi __arm int __original_IsMediaPlayerVideoBook( BOOK *bk );
+__swi __arm int __original_IsMediaPlayerVideoBook( BOOK* bk );
 #pragma swi_number=0x81B8
 __swi __arm IS_NEEDED_BOOK __original_get_IsMediaPlayerVideoBook( void );
 
@@ -971,12 +971,12 @@ __swi __arm int __original_textidname2id( const wchar_t* idname, int maxnamelen,
 __swi __arm void __original_ListMenu_SetNoItemText( GUI_LIST*, STRID str );
 
 #pragma swi_number=0x28A
-__swi __arm int __original_IsFmRadioBook( BOOK *bk );
+__swi __arm int __original_IsFmRadioBook( BOOK* bk );
 #pragma swi_number=0x828A
 __swi __arm IS_NEEDED_BOOK __original_get_IsFmRadioBook( void );
 
 #pragma swi_number=0x28B
-__swi __arm int __original_IsAudioPlayerBook( BOOK *bk);
+__swi __arm int __original_IsAudioPlayerBook( BOOK* bk);
 #pragma swi_number=0x828B
 __swi __arm IS_NEEDED_BOOK __original_get_IsAudioPlayerBook( void );
 
@@ -1348,7 +1348,7 @@ __swi __arm void __original_SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl,
 __swi __arm void __original_SoftKeys_Update( DISP_OBJ* softkeys );
 
 #pragma swi_number=0x324
-__swi __arm int __original_get_CellData( PLMN_LAC_DESC * desc1, RAT_CI_DESC * desc2, char * CSReg );
+__swi __arm int __original_get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
 
 #pragma swi_number=0x325
 __swi __arm void* __original_IncommingCall_Reject( BOOK* book );
@@ -1386,12 +1386,12 @@ __swi __arm int __original_ConnectionManager_Connection_GetState( void );
 __swi __arm int __original_GetSignalQuality( char* rssi, char* ber );
 
 #pragma swi_number=0x333
-__swi __arm int __original_IsCameraBook( BOOK *bk );
+__swi __arm int __original_IsCameraBook( BOOK* bk );
 #pragma swi_number=0x8333
 __swi __arm IS_NEEDED_BOOK __original_get_IsCameraBook( void );
 
 #pragma swi_number=0x334
-__swi __arm int __original_IsSoundRecorderBook( BOOK *bk );
+__swi __arm int __original_IsSoundRecorderBook( BOOK* bk );
 #pragma swi_number=0x8334
 __swi __arm IS_NEEDED_BOOK __original_get_IsSoundRecorderBook( void );
 

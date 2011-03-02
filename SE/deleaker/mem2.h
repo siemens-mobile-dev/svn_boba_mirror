@@ -228,7 +228,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
 #endif
 #define ModifyUIPageHook(event, PROC, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, PROC, ClientData, mode )
-int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
+int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
 #define ImageID_Get(fpath, fname, __unknwnargname3) __deleaker_ImageID_Get( __FILE__,  __LINE__, fpath, fname, __unknwnargname3 )
 int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, IMAGEID* __unknwnargname3 );
 #define ImageID_GetIndirect(buf_image, size, __NULL, image_type, __unknwnargname5) __deleaker_ImageID_GetIndirect( __FILE__,  __LINE__, buf_image, size, __NULL, image_type, __unknwnargname5 )

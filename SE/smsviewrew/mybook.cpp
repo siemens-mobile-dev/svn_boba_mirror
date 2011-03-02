@@ -121,8 +121,22 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 	//гуй списка сообщений
 	if( 0 == msguilistbook->xguilist->guilist->FirstFree )
 		return 0;
-	GUI_LIST* guimsglist = reinterpret_cast<GUI_LIST*>( List_Get( msguilistbook->xguilist->guilist, 0 ) );
-	DISP_OBJ* dispmsglist = GUIObject_GetDispObject( guimsglist );
+	GUI_LIST* guimsglist = NULL;
+	DISP_OBJ* dispmsglist;
+	
+	for( int i = 0; i < msguilistbook->xguilist->guilist->FirstFree; i++ )
+	{
+		GUI_LIST* tmpguimsglist = reinterpret_cast<GUI_LIST*>( List_Get( msguilistbook->xguilist->guilist, i ) );
+		dispmsglist = GUIObject_GetDispObject( tmpguimsglist );
+		if( !strcmp( "ListObject", DispObject_GetName( dispmsglist ) ) )
+		{
+			guimsglist = tmpguimsglist;
+			break;
+		}
+	}
+	//нет у книги листа - выход
+	if( !guimsglist )
+		return 0;
 
 	//не уверен, нужна ли эта проверка, для всех ли элементов в списке есть "показать"
 	//смотрим софты списка. если есть "Показать", значит наш лист

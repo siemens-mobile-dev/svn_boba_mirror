@@ -199,13 +199,13 @@ void __deleaker_mfree( const char* __file__, int __line__, void* p )
 
 int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* __unknwnargname6 )
 {
-	trace_free(trace_memory, pbook, __file__, __line__);
 	trace_alloc(trace_book, pbook, __file__, __line__);
 	return __original_CreateBook(pbook, onClose, bp, name, ParentBookID, __unknwnargname6);
 }
 
 void __deleaker_FreeBook( const char* __file__, int __line__, BOOK* book )
 {
+	trace_free(trace_memory, book, __file__, __line__);
 	trace_free(trace_book, book, __file__, __line__);
 	__original_FreeBook(book);
 }
@@ -630,7 +630,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 }
 #endif
 
-int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void *msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode )
+int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode )
 {
 	int  ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
 	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );

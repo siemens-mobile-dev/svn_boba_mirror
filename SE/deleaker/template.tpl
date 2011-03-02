@@ -494,13 +494,13 @@ __make mfree
 
 __make CreateBook
 {
-	trace_free(trace_memory, pbook, __file__, __line__);
 	trace_alloc(trace_book, pbook, __file__, __line__);
 	return __O__;
 }
 
 __make FreeBook
 {
+	trace_free(trace_memory, book, __file__, __line__);
 	trace_free(trace_book, book, __file__, __line__);
 	__O__;
 }
