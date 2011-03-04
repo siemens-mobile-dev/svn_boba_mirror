@@ -251,14 +251,13 @@ void __deleaker_DestroyDirHandle( const char* __file__, int __line__, DIR_HANDLE
 
 int __deleaker_GUIObject_Create( const char* __file__, int __line__, GUI* __unknwnargname1, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK* __unknwnargname4, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui )
 {
-	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_alloc(trace_gui, __unknwnargname1, __file__, __line__);
 	return __original_GUIObject_Create(__unknwnargname1, GuiDestroy, DispDescCreate, __unknwnargname4, DispObjCallBack, display, size_of_gui);
 }
 
 GUI* __deleaker_GUIObject_Destroy( const char* __file__, int __line__, GUI* __unknwnargname1 )
 {
-	//освобождает или просто возвращает?
+	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_free(trace_gui, __unknwnargname1, __file__, __line__);
 	return __original_GUIObject_Destroy(__unknwnargname1);
 }
@@ -641,7 +640,7 @@ int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, 
 int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, IMAGEID* __unknwnargname3 )
 {
 	int  ret = __original_ImageID_Get(fpath, fname, __unknwnargname3);
-	if(ret && isallocatediconid(*__unknwnargname3))
+	if(ret>=0 && isallocatediconid(*__unknwnargname3))
 		trace_alloc(trace_iconid, (void*)(*__unknwnargname3), __file__, __line__);
 	return ret;
 }

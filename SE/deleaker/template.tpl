@@ -546,14 +546,13 @@ __make DestroyDirHandle
 
 __make GUIObject_Create
 {
-	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_alloc(trace_gui, __unknwnargname1, __file__, __line__);
 	return __O__;
 }
 
 __make GUIObject_Destroy
 {
-	//освобождает или просто возвращает?
+	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_free(trace_gui, __unknwnargname1, __file__, __line__);
 	return __O__;
 }
@@ -919,7 +918,7 @@ __make ModifyUIPageHook
 __make ImageID_Get
 {
 	__R ret = __O__;
-	if(ret && isallocatediconid(*__unknwnargname3))
+	if(ret>=0 && isallocatediconid(*__unknwnargname3))
 		trace_alloc(trace_iconid, (void*)(*__unknwnargname3), __file__, __line__);
 	return ret;
 }
