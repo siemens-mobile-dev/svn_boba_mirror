@@ -153,6 +153,9 @@
           $rettype = $m[1];
           $name = $m[3];
 
+          if(isset($skipped[$name]))
+            echo "$name wrongly skipped!\n";
+
           $arglistsize=0;
 
           if(!preg_match("/\((.*)\)/",$m[4],$m2))
@@ -272,6 +275,7 @@
     if(preg_match("/^skip (.*)$/",$f[$i],$m))
     {
        unset($globalfn[$m[1]]);
+       $skipped[$m[1]]=true;
     }else
     if($f[$i]=="")
     {

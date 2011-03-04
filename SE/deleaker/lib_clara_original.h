@@ -15,11 +15,7 @@
 #pragma swi_number=0x100
 __swi __arm void __original_IMB ( void );
 
-#pragma swi_number=0x101
-__swi __arm void* __original_GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
 
-#pragma swi_number=0x102
-__swi __arm int __original_RemoveUserData( void (*constr)( void*, void* ) );
 
 #pragma swi_number=0x103
 __swi __arm void* __original_malloc( int size );
@@ -156,14 +152,14 @@ __swi __arm DB_FILE_FILTER __original_DataBrowser_isFileInListExt_adr( void );
 __swi __arm void __original_Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
 #ifdef __cplusplus
 #pragma swi_number=0x128
-__swi __arm void __original_Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* );
+__swi __arm void __original_Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam);
 #endif
 
 #pragma swi_number=0x129
 __swi __arm u16 __original_Timer_Set( int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
 #ifdef __cplusplus
 #pragma swi_number=0x129
-__swi __arm u16 __original_Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* );
+__swi __arm u16 __original_Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* lparam);
 #endif
 #pragma swi_number=0x12A
 __swi __arm void __original_Timer_Kill( u16* timerID );

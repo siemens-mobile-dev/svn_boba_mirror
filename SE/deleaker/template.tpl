@@ -40,18 +40,23 @@ skip CANVAS_Get_GviGC
 skip CHF_GetState
 skip chmod
 skip ConnectionManager_Connection_GetState
-skip CreateBook
 skip current_process
 skip DataBrowserDesc_Menu_AddFSFunctions
 skip DataBrowserDesc_Menu_AddMarkFiles
 skip DataBrowserDesc_Menu_AddNewFolder
+skip DataBrowserDesc_SetActions
 skip DataBrowserDesc_SetBookID
+skip DataBrowserDesc_SetFileExtList
 skip DataBrowserDesc_SetFocusToFILEITEM
+skip DataBrowserDesc_SetFolders
 skip DataBrowserDesc_SetFoldersNumber
+skip DataBrowserDesc_SetItemFilter
 skip DataBrowserDesc_SetItemStyle
 skip DataBrowserDesc_SetOpenEmptyFolder
+skip DataBrowserDesc_SetOption
 skip DataBrowserDesc_SetSelectAction
 skip DataBrowserDesc_SetSelectActionOnFolders
+skip DataBrowserDesc_SetViewModeAndSortOrder
 skip DataBrowser_isFileInListExt
 skip DataBrowser_isFileInListExt_adr
 skip datetime2unixtime
@@ -137,6 +142,10 @@ skip FileDelete
 skip FILEITEM_Destroy_adr
 skip FILEITEM_GetFname
 skip FILEITEM_GetPath
+skip FILEITEM_SetFname
+skip FILEITEM_SetFnameAndContentType
+skip FILEITEM_SetPath
+skip FILEITEM_SetPathAndContentType
 skip FileMove
 skip FindBook
 skip FindBookByID
@@ -169,6 +178,7 @@ skip GetChipID
 skip GetCurrentPID
 skip GetDir
 skip getFileExtention
+skip GetFname
 skip GetFontCount
 skip GetFontDesc
 skip GetFreeBytesOnHeap
@@ -204,7 +214,6 @@ skip get_system_langID
 skip get_VBUFFER
 skip GoMusic
 skip GPRS_GetLastSessionInfo
-skip GUIObject_Create
 skip GUIObject_GetBook
 skip GUIObject_GetDispObject
 skip GUIObject_SetBacklightTimeout
@@ -304,6 +313,7 @@ skip List_RemoveAt
 skip longjmp
 skip lseek
 skip MainInput_getCurPos
+skip MainInput_getPNUM
 skip MainInput_getVisible
 skip MainInput_Hide
 skip MainInput_isPlus
@@ -316,6 +326,7 @@ skip memcmp
 skip memcpy
 skip memset
 skip MenuBook_Desktop
+skip MetaData_Desc_GetTrackNum
 skip MissedEvents
 skip mkdir
 skip MMIPROC
@@ -338,6 +349,7 @@ skip PlayerControl
 skip PlayFile
 skip PlayFileV
 skip PlaySystemSound
+skip PNUM2str
 skip PNUM_len
 skip Profile_SetActive
 skip ProgressBar_SetBarDisabled
@@ -345,6 +357,9 @@ skip ProgressBar_SetPercentValue
 skip RedLED_Off
 skip RedLED_On
 skip rename
+skip REQUEST_ALARMCLOCKSTATUS_GET
+skip REQUEST_ALARMCLOCKTIME_GET
+skip REQUEST_ALARMDATEANDTIMESTATUS_GET
 skip REQUEST_DATEANDTIME_GET
 skip REQUEST_DATEFORMAT_GET
 skip Request_ICA_ShutdownAllConnections
@@ -379,6 +394,7 @@ skip SetTrayIcon
 skip set_envp
 skip Shortcut_Run
 skip snwprintf
+skip SoftKeys_GetLabel
 skip SoftKeys_GetSelectedAction
 skip SoftKeys_Update
 skip sprintf
@@ -456,6 +472,7 @@ skip wstrrchr
 skip wstrwstr
 skip wtoi
 skip w_chdir
+skip w_dirread
 skip w_fread
 skip w_fstat
 skip w_fwrite
@@ -1155,3 +1172,39 @@ __make MediaPlayer_SoftKeys_SetText
 	__O__;
 }
 
+__make MenuBook_Desktop_GetSelectedItemID
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make CreateURI
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make Timer_Kill
+{
+	trace_free(trace_timer, (void*)*timerID, __file__, __line__);
+	trace_timerkill(timerID);
+}
+
+__make Timer_Set
+{
+	__R ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make Timer_ReSet
+{
+	trace_free(trace_timer, (void*)*timer, __file__, __line__);
+	trace_timerkill(timer);
+
+	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	*timer=ret;
+}

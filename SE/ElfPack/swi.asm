@@ -103,8 +103,8 @@ clean_loop:
 pLIB_TOP:
         DC32  0
 
-        EXTERN  GetUserData
-        EXTERN  RemoveUserData
+//        EXTERN  GetUserData
+//        EXTERN  RemoveUserData
         EXTERN  malloc
         EXTERN  mfree
         EXTERN  GetDir
@@ -128,8 +128,8 @@ pLIB_TOP:
 	PUBLIC	Library
 Library:
         DC32    IMB
-        DC32    GetUserData
-        DC32    RemoveUserData
+        DC32    0//GetUserData
+        DC32    0//RemoveUserData
         DC32    malloc
 
         DC32    mfree

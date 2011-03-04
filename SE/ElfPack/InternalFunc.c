@@ -11,6 +11,7 @@
 
 #include "temp\target.h"
 
+/*
 typedef void (*USERDATACONSTRUCTOR)(void*, void*);
 
 typedef struct
@@ -18,6 +19,7 @@ typedef struct
 	USERDATACONSTRUCTOR constr;
 	void * data;
 }UDATA;
+*/
 
 void * malloc (int size)
 {
@@ -41,6 +43,7 @@ void mfree (void * mem)
 #endif
 }
 
+/*
 int CmpProc(UDATA* listitem, USERDATACONSTRUCTOR itemtofind)
 {
 	return listitem->constr != itemtofind;
@@ -114,6 +117,8 @@ int RemoveUserData(void (*constr)(void *, void *))
 	}
 
 }
+*/
+
 
 //============================================================================
 

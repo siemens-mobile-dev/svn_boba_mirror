@@ -299,6 +299,22 @@ void __deleaker_kill_proc( const char* __file__, int __line__, PROCESS pid );
 void __deleaker_MediaPlayer_SoftKeys_AddHelpStr( const char* __file__, int __line__, GUI* player_gui, int item, STRID __unknwnargname3 );
 #define MediaPlayer_SoftKeys_SetText(player_gui, actionID, __unknwnargname3) __deleaker_MediaPlayer_SoftKeys_SetText( __FILE__,  __LINE__, player_gui, actionID, __unknwnargname3 )
 void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__, GUI* player_gui, int actionID, STRID __unknwnargname3 );
+#define MenuBook_Desktop_GetSelectedItemID(MenuBook_Desktop) __deleaker_MenuBook_Desktop_GetSelectedItemID( __FILE__,  __LINE__, MenuBook_Desktop )
+wchar_t* __deleaker_MenuBook_Desktop_GetSelectedItemID( const char* __file__, int __line__, BOOK* MenuBook_Desktop );
+#define CreateURI(fpath, fname, URIScheme) __deleaker_CreateURI( __FILE__,  __LINE__, fpath, fname, URIScheme )
+char* __deleaker_CreateURI( const char* __file__, int __line__, wchar_t* fpath, wchar_t* fname, char* URIScheme );
+#define Timer_Kill(timerID) __deleaker_Timer_Kill( __FILE__,  __LINE__, timerID )
+void __deleaker_Timer_Kill( const char* __file__, int __line__, u16* timerID );
+#define Timer_Set(time, onTimer, lparam) __deleaker_Timer_Set( __FILE__,  __LINE__, time, onTimer, lparam )
+u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
+#ifdef __cplusplus
+u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, void* ), void* lparam );
+#endif
+#define Timer_ReSet(timer, time, onTimer, lparam) __deleaker_Timer_ReSet( __FILE__,  __LINE__, timer, time, onTimer, lparam )
+void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
+#ifdef __cplusplus
+void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam );
+#endif
 
 #endif
 #endif

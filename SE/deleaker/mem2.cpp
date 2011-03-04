@@ -47,12 +47,18 @@ static int iconid_start=0xE800;
 static int iconid_end=0xE8FF;
 
 
+static LIST* timerlist[2]; //u16, proc
+
+
 void trace_init()
 {
 	for(int i=0;i<trace_typescount;i++)
 		buffers[i]=__original_List_Create();
 	started=true;
 	__deleaker_skip=0;
+
+	timerlist[0]=__original_List_Create();
+	timerlist[1]=__original_List_Create();
 
 	int chipid = GetChipID() & CHIPID_MASK;
 
@@ -112,6 +118,15 @@ void trace_done()
 	}
 	if(f!=-1)
 		__original_w_fclose(f);
+
+	while(timerlist[0]->FirstFree)
+	{
+		u16 timerid=(u16)(int)__original_List_RemoveAt(timerlist[0],0);
+		__original_List_RemoveAt(timerlist[1],0);
+		__original_Timer_Kill(&timerid);//pervent reboots
+	}
+	__original_List_Destroy(timerlist[0]);
+	__original_List_Destroy(timerlist[1]);
 }
 
 void trace_alloc(int mt, void* ptr, const char* file, int line)
@@ -155,6 +170,45 @@ void trace_free(int mt,void* p, const char* file, int line)
 			__original_List_InsertLast(buffers[trace_unallocated],(void*)line);
 		}
 	}
+}
+
+
+static int findtimercb(void* listitem, void* itemtofind)
+{
+	return ! (listitem==itemtofind);
+}
+
+void trace_timerkill(u16* timerid)
+{
+	int idx=__original_List_Find(timerlist[0],(void*)*timerid,findtimercb);
+	if(idx!=LIST_ERROR)
+	{
+		__original_List_RemoveAt(timerlist[0],idx);
+		__original_List_RemoveAt(timerlist[1],idx);		
+	}
+	__original_Timer_Kill(timerid);
+}
+
+static void trace_onTimer(u16 timerID,LPARAM lparam)
+{
+	int idx=__original_List_Find(timerlist[0],(void*)timerID,findtimercb);
+	if(idx!=LIST_ERROR)
+	{
+		void(*onTimer)(u16,LPARAM)=(void(*)(u16,LPARAM))__original_List_Get(timerlist[1],idx);
+		onTimer(timerID,lparam);
+		trace_timerkill(&timerID);
+	}
+}
+
+u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM lparam)
+{
+	u16 ret=__original_Timer_Set(time,trace_onTimer,lparam);
+	if(ret)
+	{
+		__original_List_InsertLast(timerlist[0],(void*)ret);
+		__original_List_InsertLast(timerlist[1],(void*)onTimer);
+	}
+	return ret;
 }
 
 
@@ -877,16 +931,64 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 	__original_MediaPlayer_SoftKeys_SetText(player_gui, actionID, __unknwnargname3);
 }
 
+wchar_t* __deleaker_MenuBook_Desktop_GetSelectedItemID( const char* __file__, int __line__, BOOK* MenuBook_Desktop )
+{
+	wchar_t*  ret = __original_MenuBook_Desktop_GetSelectedItemID(MenuBook_Desktop);
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+char* __deleaker_CreateURI( const char* __file__, int __line__, wchar_t* fpath, wchar_t* fname, char* URIScheme )
+{
+	char*  ret = __original_CreateURI(fpath, fname, URIScheme);
+	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+void __deleaker_Timer_Kill( const char* __file__, int __line__, u16* timerID )
+{
+	trace_free(trace_timer, (void*)*timerID, __file__, __line__);
+	trace_timerkill(timerID);
+}
+
+u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam )
+{
+	u16  ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	return ret;
+}
+#ifdef __cplusplus
+u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, void* ), void* lparam )
+{
+	u16  ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	return ret;
+}
+#endif
+
+void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam )
+{
+	trace_free(trace_timer, (void*)*timer, __file__, __line__);
+	trace_timerkill(timer);
+
+	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	*timer=ret;
+}
+#ifdef __cplusplus
+void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam )
+{
+	trace_free(trace_timer, (void*)*timer, __file__, __line__);
+	trace_timerkill(timer);
+
+	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
+	*timer=ret;
+}
+#endif
 //__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 //__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 //__swi __arm void* CreateMessage( int size, int ev, char* name );
-//__swi __arm char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
-//__swi __arm void DataBrowserDesc_SetActions( void* DataBrowserDesc, char* actions );
-//__swi __arm void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
-//__swi __arm void DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
-//__swi __arm void DataBrowserDesc_SetItemFilter( void* DataBrowserDesc, DB_FILE_FILTER );
-//__swi __arm void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
-//__swi __arm void DataBrowserDesc_SetViewModeAndSortOrder( void* DataBrowserDesc, int view_sort_ID );
 //__swi __arm void DataBrowser_Create( void* DataBrowserDesc );
 //__swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 //__swi __arm int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
@@ -894,15 +996,9 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 //__swi __arm FILEITEM* FILEITEM_Create( void );
 //__swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 //__swi __arm void FILEITEM_Destroy( FILEITEM* );
-//__swi __arm int FILEITEM_SetFname( FILEITEM*, const wchar_t* fname );
-//__swi __arm int FILEITEM_SetFnameAndContentType( FILEITEM*, const wchar_t* fname );
-//__swi __arm int FILEITEM_SetPath( FILEITEM*, const wchar_t* fpath );
-//__swi __arm int FILEITEM_SetPathAndContentType( FILEITEM*, const wchar_t* fpath );
 //__swi __arm void Feedback_SetKeyHook( GUI_FEEDBACK*, void (*hook)( BOOK* book, int key, int unk, int unk2 ) );
 //__swi __arm int FreeMessage( void** Mess );
-//__swi __arm FILELISTITEM* GetFname( DIR_HANDLE*, FILELISTITEM* );
 //__swi __arm char* GetURIScheme( int schemeID );
-//__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
 //__swi __arm int JavaAppDesc_Get( int unk1, void** JavaDesc );
 //__swi __arm int JavaAppDesc_GetFirstApp( void* JavaDesc );
 //__swi __arm int JavaAppDesc_GetJavaAppFullpath( void* JavaDesc, JavaAppFullpath* );
@@ -917,29 +1013,20 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 //__swi __arm int MSG_SendMessage_CreateMessage( int, void* );
 //__swi __arm int MSG_SendMessage_DestroyMessage( void* );
 //__swi __arm int MSG_SendMessage_Start( int, void*, int );
-//__swi __arm char* MainInput_getPNUM( GUI* );
-//__swi __arm wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
 //__swi __arm void* MetaData_Desc_Create( wchar_t* path, wchar_t* name );
 //__swi __arm void MetaData_Desc_Destroy( void* MetaData_Desc );
 //__swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 //__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
-//__swi __arm int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
 //__swi __arm void OSE_GetShell( void** pInterface );
 //__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
-//__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
-//__swi __arm void REQUEST_ALARMCLOCKSTATUS_GET( const int* sync, char* alarm_status );
-//__swi __arm void REQUEST_ALARMCLOCKTIME_GET( const int* sync, TIME* t );
-//__swi __arm void REQUEST_ALARMDATEANDTIMESTATUS_GET( const int* sync, DATETIME* );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* ImageHandler, char* unk );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandler, wchar_t* path, wchar_t* fname, int unk, IMAGEID*, char* error );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandler, u16*, u16*, IMAGEID, int unk_1, char* error );
 //__swi __arm int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 //__swi __arm int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
-//__swi __arm int RemoveUserData( void (*constr)( void*, void* ) );
 //__swi __arm int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 //__swi __arm void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
 //__swi __arm void SendMessage( void** signal, int PID );
-//__swi __arm void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 //__swi __arm void* SoundRecorderDesc_Create( void );
 //__swi __arm void SoundRecorderDesc_Destroy( void* desc );
 //__swi __arm int SoundRecorderDesc_SetBookID( void* desc, int BookID );
@@ -950,9 +1037,6 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 //__swi __arm int SoundRecorder_Create( void* desc );
 //__swi __arm int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
 //__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
-//__swi __arm void Timer_Kill( u16* timerID );
-//__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* );
-//__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* );
 //__swi __arm void* WaitMessage( void* SIGSEL );
 //__swi __arm C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 //__swi __arm void free_buf( union SIGNAL** sig );
@@ -982,6 +1066,5 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 //__swi __arm int setjmp( jmp_buf jmpbuf );
 //__swi __arm int w_dirclose( void* );
 //__swi __arm void* w_diropen( const wchar_t* dir );
-//__swi __arm wchar_t* w_dirread( void* );
 
 #endif

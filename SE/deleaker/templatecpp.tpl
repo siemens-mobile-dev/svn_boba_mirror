@@ -47,12 +47,18 @@ static int iconid_start=0xE800;
 static int iconid_end=0xE8FF;
 
 
+static LIST* timerlist[2]; //u16, proc
+
+
 void trace_init()
 {
 	for(int i=0;i<trace_typescount;i++)
 		buffers[i]=__original_List_Create();
 	started=true;
 	__deleaker_skip=0;
+
+	timerlist[0]=__original_List_Create();
+	timerlist[1]=__original_List_Create();
 
 	int chipid = GetChipID() & CHIPID_MASK;
 
@@ -112,6 +118,15 @@ void trace_done()
 	}
 	if(f!=-1)
 		__original_w_fclose(f);
+
+	while(timerlist[0]->FirstFree)
+	{
+		u16 timerid=(u16)(int)__original_List_RemoveAt(timerlist[0],0);
+		__original_List_RemoveAt(timerlist[1],0);
+		__original_Timer_Kill(&timerid);//pervent reboots
+	}
+	__original_List_Destroy(timerlist[0]);
+	__original_List_Destroy(timerlist[1]);
 }
 
 void trace_alloc(int mt, void* ptr, const char* file, int line)
@@ -155,6 +170,45 @@ void trace_free(int mt,void* p, const char* file, int line)
 			__original_List_InsertLast(buffers[trace_unallocated],(void*)line);
 		}
 	}
+}
+
+
+static int findtimercb(void* listitem, void* itemtofind)
+{
+	return ! (listitem==itemtofind);
+}
+
+void trace_timerkill(u16* timerid)
+{
+	int idx=__original_List_Find(timerlist[0],(void*)*timerid,findtimercb);
+	if(idx!=LIST_ERROR)
+	{
+		__original_List_RemoveAt(timerlist[0],idx);
+		__original_List_RemoveAt(timerlist[1],idx);		
+	}
+	__original_Timer_Kill(timerid);
+}
+
+static void trace_onTimer(u16 timerID,LPARAM lparam)
+{
+	int idx=__original_List_Find(timerlist[0],(void*)timerID,findtimercb);
+	if(idx!=LIST_ERROR)
+	{
+		void(*onTimer)(u16,LPARAM)=(void(*)(u16,LPARAM))__original_List_Get(timerlist[1],idx);
+		onTimer(timerID,lparam);
+		trace_timerkill(&timerID);
+	}
+}
+
+u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM lparam)
+{
+	u16 ret=__original_Timer_Set(time,trace_onTimer,lparam);
+	if(ret)
+	{
+		__original_List_InsertLast(timerlist[0],(void*)ret);
+		__original_List_InsertLast(timerlist[1],(void*)onTimer);
+	}
+	return ret;
 }
 
 
