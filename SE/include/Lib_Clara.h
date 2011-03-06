@@ -881,7 +881,7 @@ __swi __arm DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 #pragma swi_number=0x240
 __swi __arm void JavaSession_Manager( int cmd );
 #pragma swi_number=0x241
-__swi __arm int JavaSession_GetName( void );
+__swi __arm STRID JavaSession_GetName( void );
 #pragma swi_number=0x242
 __swi __arm STRID TextCopyId( STRID );
 #pragma swi_number=0x243

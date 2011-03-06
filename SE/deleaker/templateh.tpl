@@ -5,7 +5,7 @@
 
 #ifdef NDEBUG
 
-#define trace_init()
+#define trace_init(f)
 #define trace_done()
 
 void* operator new(size_t sz);
@@ -22,8 +22,6 @@ void operator delete[] (void*, void*);
 
 #define DELEAKER
 
-extern int __deleaker_skip;
-
 enum trace_types
 {
 	trace_memory,
@@ -38,57 +36,36 @@ enum trace_types
 	trace_gui,
 	trace_book,
 	trace_process,
+	trace_osebuff,
+	trace_opabuff,
+	trace_metadatadesc,
+	trace_fileitemstruct,
+	trace_w_dir,
 
 	trace_unallocated,
 
 	trace_typescount
 };
 
-
-void trace_init();
+#ifndef __cplusplus
+void trace_init(wchar_t*);
+#else
+void trace_init(wchar_t* logname=NULL);
+#endif
 void trace_done();
-void trace_alloc(int mt, void* ptr, const char* file, int line);
-void* trace_alloc_ret(int mt, void* ptr, void* badvalue, const char* file, int line);
-void trace_free(int mt,void* p, const char* file, int line);
-void  __deleaker_mfree( const char* __file__, int __line__, void *p );
-#pragma swi_number=0x103
-__swi __arm void*  __original_malloc( int size );
+void __deleaker_pushfileline( const char* __file__, int __line__ );
 
-//delete из-за delete[] макросом не переопределить, поэтому только
-//включением оптимизации с галкой "function inlining"
-#pragma inline=forced
-inline void operator delete(void* p){ __deleaker_mfree( __FILE__, __LINE__, p ); }
-#pragma inline=forced
-inline void operator delete[](void* p){ __deleaker_mfree( __FILE__, __LINE__, p ); }
+void operator delete(void* p);
+void operator delete[](void* p);
 
+void* operator new(size_t sz);
+void* operator new[](size_t sz);
 
-inline void* operator new(size_t sz){return __original_malloc(sz);};
-inline void* operator new[](size_t sz){return __original_malloc(sz);};
+void operator delete (void*, void*);
+void operator delete[] (void*, void*);
 
-inline void operator delete (void*, void*) { }
-inline void operator delete[] (void*, void*) { }
+void* operator new(size_t size, void* p);
+void* operator new[](size_t size, void* p);
 
-inline void* operator new(size_t size, void* p){ __deleaker_skip=1; return p; }
-inline void* operator new[](size_t size, void* p){ __deleaker_skip=1; return p; }
-
-
-struct NewRecorder
-{
-	NewRecorder(const char* file, int lineNo)
-		: mFile(file), mLineNo(lineNo)
-		{
-		}
-
-		template <class T>
-			T * operator<<(T* t) const
-			{
-				if(t)trace_alloc(trace_memory, (void*)t, mFile, mLineNo);
-				return t;
-			}
-
-private:
-	const char* mFile;
-	const int mLineNo;
-};
-
-#define new NewRecorder(__FILE__,__LINE__) << new
+#define new (__deleaker_pushfileline(__FILE__, __LINE__),false) ? NULL : new
+#define delete __deleaker_pushfileline(__FILE__, __LINE__), delete

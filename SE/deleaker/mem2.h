@@ -5,7 +5,7 @@
 
 #ifdef NDEBUG
 
-#define trace_init()
+#define trace_init(f)
 #define trace_done()
 
 void* operator new(size_t sz);
@@ -22,8 +22,6 @@ void operator delete[] (void*, void*);
 
 #define DELEAKER
 
-extern int __deleaker_skip;
-
 enum trace_types
 {
 	trace_memory,
@@ -38,60 +36,39 @@ enum trace_types
 	trace_gui,
 	trace_book,
 	trace_process,
+	trace_osebuff,
+	trace_opabuff,
+	trace_metadatadesc,
+	trace_fileitemstruct,
+	trace_w_dir,
 
 	trace_unallocated,
 
 	trace_typescount
 };
 
-
-void trace_init();
+#ifndef __cplusplus
+void trace_init(wchar_t*);
+#else
+void trace_init(wchar_t* logname=NULL);
+#endif
 void trace_done();
-void trace_alloc(int mt, void* ptr, const char* file, int line);
-void* trace_alloc_ret(int mt, void* ptr, void* badvalue, const char* file, int line);
-void trace_free(int mt,void* p, const char* file, int line);
-void  __deleaker_mfree( const char* __file__, int __line__, void *p );
-#pragma swi_number=0x103
-__swi __arm void*  __original_malloc( int size );
+void __deleaker_pushfileline( const char* __file__, int __line__ );
 
-//delete из-за delete[] макросом не переопределить, поэтому только
-//включением оптимизации с галкой "function inlining"
-#pragma inline=forced
-inline void operator delete(void* p){ __deleaker_mfree( __FILE__, __LINE__, p ); }
-#pragma inline=forced
-inline void operator delete[](void* p){ __deleaker_mfree( __FILE__, __LINE__, p ); }
+void operator delete(void* p);
+void operator delete[](void* p);
 
+void* operator new(size_t sz);
+void* operator new[](size_t sz);
 
-inline void* operator new(size_t sz){return __original_malloc(sz);};
-inline void* operator new[](size_t sz){return __original_malloc(sz);};
+void operator delete (void*, void*);
+void operator delete[] (void*, void*);
 
-inline void operator delete (void*, void*) { }
-inline void operator delete[] (void*, void*) { }
+void* operator new(size_t size, void* p);
+void* operator new[](size_t size, void* p);
 
-inline void* operator new(size_t size, void* p){ __deleaker_skip=1; return p; }
-inline void* operator new[](size_t size, void* p){ __deleaker_skip=1; return p; }
-
-
-struct NewRecorder
-{
-	NewRecorder(const char* file, int lineNo)
-		: mFile(file), mLineNo(lineNo)
-		{
-		}
-
-		template <class T>
-			T * operator<<(T* t) const
-			{
-				if(t)trace_alloc(trace_memory, (void*)t, mFile, mLineNo);
-				return t;
-			}
-
-private:
-	const char* mFile;
-	const int mLineNo;
-};
-
-#define new NewRecorder(__FILE__,__LINE__) << new
+#define new (__deleaker_pushfileline(__FILE__, __LINE__),false) ? NULL : new
+#define delete __deleaker_pushfileline(__FILE__, __LINE__), delete
 #define malloc(size) __deleaker_malloc( __FILE__,  __LINE__, size )
 void* __deleaker_malloc( const char* __file__, int __line__, int size );
 #define mfree_adr() __deleaker_mfree_adr( __FILE__,  __LINE__ )
@@ -315,6 +292,44 @@ void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int
 #ifdef __cplusplus
 void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam );
 #endif
+#define alloc(size, signo) __deleaker_alloc( __FILE__,  __LINE__, size, signo )
+union SIGNAL* __deleaker_alloc( const char* __file__, int __line__, OSBUFSIZE size, SIGSELECT signo );
+#define receive(sigsel) __deleaker_receive( __FILE__,  __LINE__, sigsel )
+union SIGNAL* __deleaker_receive( const char* __file__, int __line__, const SIGSELECT* sigsel );
+#define receive_w_tmo(timeout, sel) __deleaker_receive_w_tmo( __FILE__,  __LINE__, timeout, sel )
+union SIGNAL* __deleaker_receive_w_tmo( const char* __file__, int __line__, OSTIME timeout, SIGSELECT* sel );
+#define free_buf(sig) __deleaker_free_buf( __FILE__,  __LINE__, sig )
+void __deleaker_free_buf( const char* __file__, int __line__, union SIGNAL** sig );
+#define send(sig, to) __deleaker_send( __FILE__,  __LINE__, sig, to )
+void __deleaker_send( const char* __file__, int __line__, union SIGNAL** sig, PROCESS to );
+#define JavaApp_LogoImageID_Get(fullpath, __unknwnargname2) __deleaker_JavaApp_LogoImageID_Get( __FILE__,  __LINE__, fullpath, __unknwnargname2 )
+int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wchar_t* fullpath, IMAGEID* __unknwnargname2 );
+#define ObexSendFile(__unknwnargname1) __deleaker_ObexSendFile( __FILE__,  __LINE__, __unknwnargname1 )
+void __deleaker_ObexSendFile( const char* __file__, int __line__, SEND_OBEX_STRUCT* __unknwnargname1 );
+#define JavaSession_GetName() __deleaker_JavaSession_GetName( __FILE__,  __LINE__ )
+STRID __deleaker_JavaSession_GetName( const char* __file__, int __line__ );
+#define CreateMessage(size, ev, name) __deleaker_CreateMessage( __FILE__,  __LINE__, size, ev, name )
+void* __deleaker_CreateMessage( const char* __file__, int __line__, int size, int ev, char* name );
+#define WaitMessage(SIGSEL) __deleaker_WaitMessage( __FILE__,  __LINE__, SIGSEL )
+void* __deleaker_WaitMessage( const char* __file__, int __line__, void* SIGSEL );
+#define FreeMessage(Mess) __deleaker_FreeMessage( __FILE__,  __LINE__, Mess )
+int __deleaker_FreeMessage( const char* __file__, int __line__, void** Mess );
+#define SendMessage(signal, PID) __deleaker_SendMessage( __FILE__,  __LINE__, signal, PID )
+void __deleaker_SendMessage( const char* __file__, int __line__, void** signal, int PID );
+#define MetaData_Desc_Create(path, name) __deleaker_MetaData_Desc_Create( __FILE__,  __LINE__, path, name )
+void* __deleaker_MetaData_Desc_Create( const char* __file__, int __line__, wchar_t* path, wchar_t* name );
+#define MetaData_Desc_Destroy(MetaData_Desc) __deleaker_MetaData_Desc_Destroy( __FILE__,  __LINE__, MetaData_Desc )
+void __deleaker_MetaData_Desc_Destroy( const char* __file__, int __line__, void* MetaData_Desc );
+#define FILEITEM_Create() __deleaker_FILEITEM_Create( __FILE__,  __LINE__ )
+FILEITEM* __deleaker_FILEITEM_Create( const char* __file__, int __line__ );
+#define FILEITEM_CreateCopy(__unknwnargname1) __deleaker_FILEITEM_CreateCopy( __FILE__,  __LINE__, __unknwnargname1 )
+FILEITEM* __deleaker_FILEITEM_CreateCopy( const char* __file__, int __line__, FILEITEM* __unknwnargname1 );
+#define FILEITEM_Destroy(__unknwnargname1) __deleaker_FILEITEM_Destroy( __FILE__,  __LINE__, __unknwnargname1 )
+void __deleaker_FILEITEM_Destroy( const char* __file__, int __line__, FILEITEM* __unknwnargname1 );
+#define w_dirclose(__unknwnargname1) __deleaker_w_dirclose( __FILE__,  __LINE__, __unknwnargname1 )
+int __deleaker_w_dirclose( const char* __file__, int __line__, void* __unknwnargname1 );
+#define w_diropen(dir) __deleaker_w_diropen( __FILE__,  __LINE__, dir )
+void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* dir );
 
 #endif
 #endif

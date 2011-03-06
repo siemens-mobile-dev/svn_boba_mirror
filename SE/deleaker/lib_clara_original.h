@@ -417,7 +417,9 @@ __swi __arm int __original_List_IndexOf( LIST* lst, void* item );
 
 
 #pragma swi_number=0x17C
-//__swi __arm union SIGNAL* alloc( OSBUFSIZE size, SIGSELECT signo );
+__swi __arm union SIGNAL* __original_alloc( OSBUFSIZE size, SIGSELECT signo );
+#pragma swi_number=0x17D
+__swi __arm union SIGNAL* __original_receive( const SIGSELECT* sigsel );
 #pragma swi_number=0x17E
 __swi __arm void __original_send( union SIGNAL** sig, PROCESS to );
 #pragma swi_number=0x17F
@@ -439,7 +441,7 @@ __swi __arm OSBOOLEAN __original_hunt( const char* name, OSUSER user, PROCESS* n
 #pragma swi_number=0x187
 __swi __arm void __original_kill_proc( PROCESS pid );
 #pragma swi_number=0x189
-//__swi __arm union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
+__swi __arm union SIGNAL* __original_receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 #pragma swi_number=0x18B
 __swi __arm void __original_stop( PROCESS pid );
 #pragma swi_number=0x18C
@@ -819,7 +821,7 @@ __swi __arm DISP_OBJ_METHOD __original_DispObject_GetMethod0C( DISP_OBJ* );
 #pragma swi_number=0x240
 __swi __arm void __original_JavaSession_Manager( int cmd );
 #pragma swi_number=0x241
-__swi __arm int __original_JavaSession_GetName( void );
+__swi __arm STRID __original_JavaSession_GetName( void );
 #pragma swi_number=0x242
 __swi __arm STRID __original_TextCopyId( STRID );
 #pragma swi_number=0x243
@@ -1094,9 +1096,11 @@ __swi __arm void __original_StringInput_SetCursorPosition( GUI*, u16 curs_pos, c
 __swi __arm void __original_BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
 
 #pragma swi_number=0x2B9
-//__swi __arm unsigned int DateInput_GetDateInt( GUI* );
+__swi __arm unsigned int __original_DateInput_GetDateInt( GUI* );
+
 #pragma swi_number=0x2BA
-//__swi __arm unsigned int TimeInput_GetTimeInt( GUI* );
+__swi __arm unsigned int __original_TimeInput_GetTimeInt( GUI* );
+
 #pragma swi_number=0x82BB
 __swi __arm FONT_DESC* __original_GetFontDesc( void );
 
@@ -1687,21 +1691,33 @@ __swi __arm void __original_MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, v
 
 
 #pragma swi_number=0x83AF
-//__swi __arm void (*getListMenuOnGuiDestroy())( GUI* );
+__swi __arm void (*__original_getListMenuOnGuiDestroy())( GUI* );
+#pragma swi_number=0x83B0
+__swi __arm void (*__original_getListMenuOnDescCreate())( DISP_DESC* );
 #pragma swi_number=0x83B1
-//__swi __arm void (*getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
+__swi __arm void (*__original_getListMenuOnDispMessage())( DISP_OBJ*, void*, GUI* );
+
 #pragma swi_number=0x83B2
-//__swi __arm void (*getTabMenuBarOnGuiDestroy())( GUI* );
+__swi __arm void (*__original_getTabMenuBarOnGuiDestroy())( GUI* );
+#pragma swi_number=0x83B3
+__swi __arm void (*__original_getTabMenuBarOnDescCreate())( DISP_DESC* );
 #pragma swi_number=0x83B4
-//__swi __arm void (*getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
+__swi __arm void (*__original_getTabMenuBarOnDispMessage())( DISP_OBJ*, void*, GUI* );
+
 #pragma swi_number=0x83B5
-//__swi __arm void (*getOneOfManyOnGuiDestroy())( GUI* );
+__swi __arm void (*__original_getOneOfManyOnGuiDestroy())( GUI* );
+#pragma swi_number=0x83B6
+__swi __arm void (*__original_getOneOfManyOnDescCreate())( DISP_DESC* );
 #pragma swi_number=0x83B7
-//__swi __arm void (*getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+__swi __arm void (*__original_getOneOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+
 #pragma swi_number=0x83B8
-//__swi __arm void (*getNOfManyOnGuiDestroy())( GUI* );
+__swi __arm void (*__original_getNOfManyOnGuiDestroy())( GUI* );
+#pragma swi_number=0x83B9
+__swi __arm void (*__original_getNOfManyOnDescCreate())( DISP_DESC* );
 #pragma swi_number=0x83BA
-//__swi __arm void (*getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+__swi __arm void (*__original_getNOfManyOnDispMessage())( DISP_OBJ*, void*, GUI* );
+
 #pragma swi_number=0x3BB
 __swi __arm void __original_ListMenu_DestroyItems( GUI_LIST* );
 

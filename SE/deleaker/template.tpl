@@ -32,6 +32,7 @@ skip BookObj_Show
 skip BookObj_SoftKeys_SetAction
 skip BookObj_StayOnTop
 skip BookObj_WindowSetWantsFocus
+skip BrowserItem_Get_SUB_EXECUTE
 skip Browser_OpenURI
 skip Cale_GetSettings
 skip CallID_GetCallStatusDesc
@@ -59,10 +60,12 @@ skip DataBrowserDesc_SetSelectActionOnFolders
 skip DataBrowserDesc_SetViewModeAndSortOrder
 skip DataBrowser_isFileInListExt
 skip DataBrowser_isFileInListExt_adr
+skip DateInput_GetDateInt
 skip datetime2unixtime
 skip DATE_GetWeekDay
 skip debug_printf
 skip delay
+skip DirHandle_SetFilterStr
 skip Display_GetBrightness
 skip Display_GetFocusedDispObject
 skip Display_GetHeight
@@ -134,6 +137,7 @@ skip elfload
 skip EqualizerGain_Get
 skip EqualizerGain_Set
 skip Feedback_DispObject_GetText
+skip Feedback_SetKeyHook
 skip Feedback_SetManualScrollingText
 skip Feedback_SetOnClose
 skip Feedback_SetTimeout
@@ -185,11 +189,24 @@ skip GetFreeBytesOnHeap
 skip GetImageHeight
 skip GetImageWidth
 skip GetIMSI
+skip getListMenuOnDescCreate
+skip getListMenuOnDispMessage
+skip getListMenuOnGuiDestroy
+skip getNOfManyOnDescCreate
+skip getNOfManyOnDispMessage
+skip getNOfManyOnGuiDestroy
+skip getOneOfManyOnDescCreate
+skip getOneOfManyOnDispMessage
+skip getOneOfManyOnGuiDestroy
 skip GetOtherExtMethods
 skip GetRadioState
 skip GetSignalQuality
 skip GetSilent
+skip getTabMenuBarOnDescCreate
+skip getTabMenuBarOnDispMessage
+skip getTabMenuBarOnGuiDestroy
 skip GetThemeColor
+skip GetURIScheme
 skip GetVibrator
 skip GetVolumeSize
 skip get_AB_ITEMS_DESC
@@ -279,7 +296,6 @@ skip IrDa_GetState
 skip IsAudioPlayerBook
 skip IsCameraBook
 skip IsDataBrowserBook
-skip isDirectory
 skip IsFmRadioBook
 skip isKeylocked
 skip IsMediaPlayerVideoBook
@@ -326,6 +342,8 @@ skip memcmp
 skip memcpy
 skip memset
 skip MenuBook_Desktop
+skip MetaData_Desc_GetCoverInfo
+skip MetaData_Desc_GetTags
 skip MetaData_Desc_GetTrackNum
 skip MissedEvents
 skip mkdir
@@ -387,6 +405,7 @@ skip SBY_GetStatusIndication
 skip sender
 skip SESSION_GetTopBook
 skip SetFont
+skip setjmp
 skip SetLampLevel
 skip SetTheme
 skip Settings_ShowNumber_Get
@@ -397,6 +416,7 @@ skip snwprintf
 skip SoftKeys_GetLabel
 skip SoftKeys_GetSelectedAction
 skip SoftKeys_Update
+skip SpeedDial_GetPNUM
 skip sprintf
 skip sscanf
 skip StandbyBackground_SetImage
@@ -428,6 +448,7 @@ skip TextGetLength
 skip TextID2wstr
 skip textidname2id
 skip Theme_DestroyMenuIcons
+skip TimeInput_GetTimeInt
 skip UIEventName
 skip UI_CONTROLLED_SHUTDOWN_RESPONSE
 skip UI_Event
@@ -455,6 +476,7 @@ skip Video_SetPermit
 skip Video_SetSkin
 skip Video_Stop
 skip Video_ZoomOn
+skip Window_GetComponentInterface
 skip wstr2strn
 skip wstrcat
 skip wstrchr
@@ -511,13 +533,13 @@ __make mfree
 
 __make CreateBook
 {
+	trace_free(trace_memory, pbook, __file__, __line__);
 	trace_alloc(trace_book, pbook, __file__, __line__);
 	return __O__;
 }
 
 __make FreeBook
 {
-	trace_free(trace_memory, book, __file__, __line__);
 	trace_free(trace_book, book, __file__, __line__);
 	__O__;
 }
@@ -563,13 +585,13 @@ __make DestroyDirHandle
 
 __make GUIObject_Create
 {
+	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_alloc(trace_gui, __unknwnargname1, __file__, __line__);
 	return __O__;
 }
 
 __make GUIObject_Destroy
 {
-	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_free(trace_gui, __unknwnargname1, __file__, __line__);
 	return __O__;
 }
@@ -950,7 +972,7 @@ __make ImageID_GetIndirect
 
 __make ImageID_Free
 {
-	trace_free(trace_iconid, (void*)__unknwnargname1, __file__, __line__);
+	if(isallocatediconid(__unknwnargname1))trace_free(trace_iconid, (void*)__unknwnargname1, __file__, __line__);
 	__O__;
 }
 
@@ -1034,6 +1056,7 @@ __make DataBrowserDesc_Destroy
 	return __O__;
 }
 
+//!!! обязательно проверять аргументы
 #define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
 #define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
@@ -1207,4 +1230,132 @@ __make Timer_ReSet
 	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
 	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
 	*timer=ret;
+}
+
+__make alloc
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+__make receive
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+__make receive_w_tmo
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+__make free_buf
+{
+	trace_free(trace_osebuff, *sig, __file__, __line__);
+	__O__;
+}
+
+__make send
+{
+	trace_free(trace_osebuff, *sig, __file__, __line__);
+	__O__;
+}
+
+__make JavaApp_LogoImageID_Get
+{
+	__R ret = __O__;
+	if(ret>=0 && isallocatediconid(*__unknwnargname2))
+		trace_alloc(trace_iconid, (void*)(*__unknwnargname2), __file__, __line__);
+	return ret;
+}
+
+__make ObexSendFile
+{
+	if(isallocatedstrid(__unknwnargname1->send))trace_free(trace_strid, (void*)__unknwnargname1->send, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1->sent) && __unknwnargname1->sent!=__unknwnargname1->send)trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
+	__O__;
+}
+
+__make JavaSession_GetName
+{
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make CreateMessage
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
+	return ret;
+}
+
+__make WaitMessage
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
+	return ret;
+}
+
+__make FreeMessage
+{
+	trace_free(trace_opabuff, *Mess, __file__, __line__);
+	return __O__;
+}
+
+__make SendMessage
+{
+	trace_free(trace_opabuff, *signal, __file__, __line__);
+	__O__;
+}
+
+__make MetaData_Desc_Create
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_metadatadesc, ret, __file__, __line__);
+	return ret;
+}
+
+__make MetaData_Desc_Destroy
+{
+	trace_free(trace_metadatadesc, MetaData_Desc, __file__, __line__);
+	__O__;
+}
+
+__make FILEITEM_Create
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_fileitemstruct, ret, __file__, __line__);
+	return ret;
+}
+
+__make FILEITEM_CreateCopy
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_fileitemstruct, ret, __file__, __line__);
+	return ret;
+}
+
+__make FILEITEM_Destroy
+{
+	trace_free(trace_fileitemstruct, __unknwnargname1, __file__, __line__);
+	__O__;
+}
+
+__make w_dirclose
+{
+	trace_free(trace_w_dir, __unknwnargname1, __file__, __line__);
+	return __O__;
+}
+
+__make w_diropen
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_w_dir, ret, __file__, __line__);
+	return ret;
 }

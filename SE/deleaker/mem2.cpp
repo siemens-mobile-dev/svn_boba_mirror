@@ -17,11 +17,12 @@ void operator delete[] (void*, void*) { }
 #include "mem2.h"
 #include "..\include\dir.h"
 #include "lib_clara_original.h"
+#undef new
+#undef delete
 
-int __deleaker_skip;
 
 static char* leaktypes[]={
-	"memory/book/gui/gc",
+	"memory",
 	"strid",
 	"iconid",
 	"timer",
@@ -33,6 +34,11 @@ static char* leaktypes[]={
 	"gui",
 	"book",
 	"process",
+	"ose buffer",
+	"opa buffer",
+	"metadatadesc",
+	"fileitemstruct",
+	"w_dir",
 
 	"unallocated"
 };
@@ -47,18 +53,31 @@ static int iconid_start=0xE800;
 static int iconid_end=0xE8FF;
 
 
-static LIST* timerlist[2]; //u16, proc
-
-
-void trace_init()
+enum
 {
+	trace_list_timers_id,
+	trace_list_timers_proc,
+	trace_list_file,
+	trace_list_line,
+
+	trace_list_size
+};
+static LIST* buffers2[trace_list_size];
+
+static wchar_t logname[64]=_T("memory.txt");
+
+
+void trace_init(wchar_t* arg_logname)
+{
+    if(arg_logname)
+		wstrncpy(logname,arg_logname,MAXELEMS(logname));
+
 	for(int i=0;i<trace_typescount;i++)
 		buffers[i]=__original_List_Create();
 	started=true;
-	__deleaker_skip=0;
 
-	timerlist[0]=__original_List_Create();
-	timerlist[1]=__original_List_Create();
+	for(int i=0;i<trace_list_size;i++)
+		buffers2[i]=__original_List_Create();
 
 	int chipid = GetChipID() & CHIPID_MASK;
 
@@ -87,20 +106,17 @@ void trace_init()
 
 void trace_done()
 {
+	char tmp[256];
+
 	started=false;
-	int f=-1;
+
+	__original_w_chdir(GetDir(DIR_OTHER|MEM_INTERNAL));
+	int f=__original_w_fopen(logname,WA_Write+WA_Create+WA_Truncate,0x1FF,0);
+
 	for(int memtype=0;memtype<trace_typescount;memtype++)
 	{
 		if(buffers[memtype]->FirstFree)
 		{
-			if(f==-1)
-			{
-				__original_w_chdir(GetDir(DIR_OTHER|MEM_INTERNAL));
-				f=__original_w_fopen(L"memory.txt",WA_Write+WA_Create+WA_Truncate,0x1FF,0);
-			}
-
-			char tmp[256];
-
 			__original_w_fwrite(f,tmp,__original_sprintf(tmp,"leak type \"%s\"\n",leaktypes[memtype]));
 
 			for(int j=0;j<buffers[memtype]->FirstFree;j+=LISTDATACOUNT)
@@ -116,28 +132,28 @@ void trace_done()
 		}
 		__original_List_Destroy(buffers[memtype]);
 	}
-	if(f!=-1)
-		__original_w_fclose(f);
 
-	while(timerlist[0]->FirstFree)
+	if(buffers2[trace_list_file]->FirstFree)
+		__original_w_fwrite(f,tmp, sprintf(tmp,"new/delete counter broken\n") );
+
+	__original_w_fclose(f);
+
+	while(buffers2[trace_list_timers_id]->FirstFree)
 	{
-		u16 timerid=(u16)(int)__original_List_RemoveAt(timerlist[0],0);
-		__original_List_RemoveAt(timerlist[1],0);
+		u16 timerid=(u16)(int)__original_List_RemoveAt(buffers2[trace_list_timers_id],0);
+		__original_List_RemoveAt(buffers2[trace_list_timers_proc],0);
 		__original_Timer_Kill(&timerid);//pervent reboots
 	}
-	__original_List_Destroy(timerlist[0]);
-	__original_List_Destroy(timerlist[1]);
+
+	for(int i=0;i<trace_list_size;i++)
+		__original_List_Destroy(buffers2[i]);
 }
 
 void trace_alloc(int mt, void* ptr, const char* file, int line)
 {
-	if(__deleaker_skip==0)
-	{
-		__original_List_InsertLast(buffers[mt],ptr);
-		__original_List_InsertLast(buffers[mt],(void*)file);
-		__original_List_InsertLast(buffers[mt],(void*)line);
-	}
-	__deleaker_skip=0;
+	__original_List_InsertLast(buffers[mt],ptr);
+	__original_List_InsertLast(buffers[mt],(void*)file);
+	__original_List_InsertLast(buffers[mt],(void*)line);
 }
 
 void* trace_alloc_ret(int mt, void* ptr, void* badvalue, const char* file, int line)
@@ -180,21 +196,21 @@ static int findtimercb(void* listitem, void* itemtofind)
 
 void trace_timerkill(u16* timerid)
 {
-	int idx=__original_List_Find(timerlist[0],(void*)*timerid,findtimercb);
+	int idx=__original_List_Find(buffers2[trace_list_timers_id],(void*)*timerid,findtimercb);
 	if(idx!=LIST_ERROR)
 	{
-		__original_List_RemoveAt(timerlist[0],idx);
-		__original_List_RemoveAt(timerlist[1],idx);		
+		__original_List_RemoveAt(buffers2[trace_list_timers_id],idx);
+		__original_List_RemoveAt(buffers2[trace_list_timers_proc],idx);		
 	}
 	__original_Timer_Kill(timerid);
 }
 
 static void trace_onTimer(u16 timerID,LPARAM lparam)
 {
-	int idx=__original_List_Find(timerlist[0],(void*)timerID,findtimercb);
+	int idx=__original_List_Find(buffers2[trace_list_timers_id],(void*)timerID,findtimercb);
 	if(idx!=LIST_ERROR)
 	{
-		void(*onTimer)(u16,LPARAM)=(void(*)(u16,LPARAM))__original_List_Get(timerlist[1],idx);
+		void(*onTimer)(u16,LPARAM)=(void(*)(u16,LPARAM))__original_List_Get(buffers2[trace_list_timers_proc],idx);
 		onTimer(timerID,lparam);
 		trace_timerkill(&timerID);
 	}
@@ -205,8 +221,8 @@ u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM l
 	u16 ret=__original_Timer_Set(time,trace_onTimer,lparam);
 	if(ret)
 	{
-		__original_List_InsertLast(timerlist[0],(void*)ret);
-		__original_List_InsertLast(timerlist[1],(void*)onTimer);
+		__original_List_InsertLast(buffers2[trace_list_timers_id],(void*)ret);
+		__original_List_InsertLast(buffers2[trace_list_timers_proc],(void*)onTimer);
 	}
 	return ret;
 }
@@ -222,6 +238,88 @@ bool isallocatediconid(IMAGEID iconid)
 	return iconid >= iconid_start && iconid <= iconid_end;
 }
 
+
+void __deleaker_pushfileline( const char* __file__, int __line__ )
+{
+	__original_List_InsertLast(buffers2[trace_list_file],(void*)__file__);
+	__original_List_InsertLast(buffers2[trace_list_line],(void*)__line__);
+}
+
+void __deleaker_popfileline( const char*& __file__, int& __line__ )
+{
+	if(0==buffers2[trace_list_file]->FirstFree)
+	{
+		__file__="internal error";
+		__line__=-1;
+	}else
+	{
+		__file__=(char const*)__original_List_RemoveAt(buffers2[trace_list_file],buffers2[trace_list_file]->FirstFree-1);
+		__line__=(int)__original_List_RemoveAt(buffers2[trace_list_line],buffers2[trace_list_line]->FirstFree-1);
+	}
+}
+
+void operator delete(void* p)
+{ 
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	__deleaker_mfree( file, line, p );
+}
+
+void operator delete[](void* p)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	__deleaker_mfree( file, line, p );
+}
+
+void* operator new(size_t sz)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	return __deleaker_malloc( file, line, sz);
+};
+
+void* operator new[](size_t sz)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	return __deleaker_malloc( file, line, sz);
+};
+
+void operator delete (void*, void*)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+}
+
+void operator delete[] (void*, void*)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+}
+
+void* operator new(size_t size, void* p)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	return p;
+}
+
+void* operator new[](size_t size, void* p)
+{
+	const char* file;
+	int line;
+	__deleaker_popfileline(file,line);
+	return p;
+}
+
 //---------------------------------------------------------------------------
 
 
@@ -230,7 +328,7 @@ bool isallocatediconid(IMAGEID iconid)
 
 void* __deleaker_malloc( const char* __file__, int __line__, int size )
 {
-	void*  ret = __original_malloc(size);
+	void* ret = __original_malloc(size);
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -253,13 +351,13 @@ void __deleaker_mfree( const char* __file__, int __line__, void* p )
 
 int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* __unknwnargname6 )
 {
+	trace_free(trace_memory, pbook, __file__, __line__);
 	trace_alloc(trace_book, pbook, __file__, __line__);
 	return __original_CreateBook(pbook, onClose, bp, name, ParentBookID, __unknwnargname6);
 }
 
 void __deleaker_FreeBook( const char* __file__, int __line__, BOOK* book )
 {
-	trace_free(trace_memory, book, __file__, __line__);
 	trace_free(trace_book, book, __file__, __line__);
 	__original_FreeBook(book);
 }
@@ -272,7 +370,7 @@ void __deleaker_BookObj_KillBook( const char* __file__, int __line__, BOOK* book
 
 LIST* __deleaker_List_Create( const char* __file__, int __line__ )
 {
-	LIST*  ret = __original_List_Create();
+	LIST* ret = __original_List_Create();
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -285,14 +383,14 @@ void __deleaker_List_Destroy( const char* __file__, int __line__, LIST* lst )
 
 char* __deleaker_manifest_GetParam( const char* __file__, int __line__, const char* buf, const char* param_name, int unk )
 {
-	char*  ret = __original_manifest_GetParam(buf, param_name, unk);
+	char* ret = __original_manifest_GetParam(buf, param_name, unk);
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 DIR_HANDLE* __deleaker_AllocDirHandle( const char* __file__, int __line__, const wchar_t* path )
 {
-	DIR_HANDLE*  ret = __original_AllocDirHandle(path);
+	DIR_HANDLE* ret = __original_AllocDirHandle(path);
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -305,27 +403,27 @@ void __deleaker_DestroyDirHandle( const char* __file__, int __line__, DIR_HANDLE
 
 int __deleaker_GUIObject_Create( const char* __file__, int __line__, GUI* __unknwnargname1, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK* __unknwnargname4, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui )
 {
+	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_alloc(trace_gui, __unknwnargname1, __file__, __line__);
 	return __original_GUIObject_Create(__unknwnargname1, GuiDestroy, DispDescCreate, __unknwnargname4, DispObjCallBack, display, size_of_gui);
 }
 
 GUI* __deleaker_GUIObject_Destroy( const char* __file__, int __line__, GUI* __unknwnargname1 )
 {
-	trace_free(trace_memory, __unknwnargname1, __file__, __line__);
 	trace_free(trace_gui, __unknwnargname1, __file__, __line__);
 	return __original_GUIObject_Destroy(__unknwnargname1);
 }
 
 int __deleaker__fopen( const char* __file__, int __line__, const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 )
 {
-	int  ret = __original__fopen(filpath, filname, mode, rights, __0);
+	int ret = __original__fopen(filpath, filname, mode, rights, __0);
 	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 int __deleaker_fopen( const char* __file__, int __line__, const wchar_t* fname, int mode, int rights )
 {
-	int  ret = __original_fopen(fname, mode, rights);
+	int ret = __original_fopen(fname, mode, rights);
 	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -339,7 +437,7 @@ int __deleaker_fclose( const char* __file__, int __line__, int file )
 int __deleaker_w_fopen( const char* __file__, int __line__, const wchar_t* name, int attr, int rights, int err )
 {
 	//тот же trace_file?
-	int  ret = __original_w_fopen(name, attr, rights, err);
+	int ret = __original_w_fopen(name, attr, rights, err);
 	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -359,42 +457,42 @@ void __deleaker_TabMenuBar_SetTabGui( const char* __file__, int __line__, GUI_TA
 
 GUI_LIST* __deleaker_CreateListMenu( const char* __file__, int __line__, BOOK* __unknwnargname1, int display )
 {
-	GUI_LIST*  ret = __original_CreateListMenu(__unknwnargname1, display);
+	GUI_LIST* ret = __original_CreateListMenu(__unknwnargname1, display);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GUI_NOFMANY* __deleaker_CreateNOfMany( const char* __file__, int __line__, BOOK* book )
 {
-	GUI_NOFMANY*  ret = __original_CreateNOfMany(book);
+	GUI_NOFMANY* ret = __original_CreateNOfMany(book);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GUI_ONEOFMANY* __deleaker_CreateOneOfMany( const char* __file__, int __line__, BOOK* book )
 {
-	GUI_ONEOFMANY*  ret = __original_CreateOneOfMany(book);
+	GUI_ONEOFMANY* ret = __original_CreateOneOfMany(book);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GUI_TABMENUBAR* __deleaker_CreateTabMenuBar( const char* __file__, int __line__, BOOK* book )
 {
-	GUI_TABMENUBAR*  ret = __original_CreateTabMenuBar(book);
+	GUI_TABMENUBAR* ret = __original_CreateTabMenuBar(book);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GUI* __deleaker_CreateProgressBar( const char* __file__, int __line__, BOOK* book, int display )
 {
-	GUI*  ret = __original_CreateProgressBar(book, display);
+	GUI* ret = __original_CreateProgressBar(book, display);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 STRID __deleaker_Str2ID( const char* __file__, int __line__, const void* wstr, int flag, int len )
 {
-	STRID  ret = __original_Str2ID(wstr, flag, len);
+	STRID ret = __original_Str2ID(wstr, flag, len);
 	if(isallocatedstrid(ret))
 	{
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
@@ -409,7 +507,7 @@ STRID __deleaker_Str2ID( const char* __file__, int __line__, const void* wstr, i
 
 STRID __deleaker_TextCopyId( const char* __file__, int __line__, STRID __unknwnargname1 )
 {
-	STRID  ret = __original_TextCopyId(__unknwnargname1);
+	STRID ret = __original_TextCopyId(__unknwnargname1);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -417,7 +515,7 @@ STRID __deleaker_TextCopyId( const char* __file__, int __line__, STRID __unknwna
 
 STRID __deleaker_int2strID( const char* __file__, int __line__, int num )
 {
-	STRID  ret = __original_int2strID(num);
+	STRID ret = __original_int2strID(num);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -566,7 +664,7 @@ void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__,
 
 STRID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag )
 {
-	STRID  ret = __original_PNUM2Name(pnum, isIconNeeded, only_full_number_flag);
+	STRID ret = __original_PNUM2Name(pnum, isIconNeeded, only_full_number_flag);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -574,7 +672,7 @@ STRID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int 
 
 int __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int TimeFormat, int __unknwnargname3 )
 {
-	int  ret = __original_Date2ID(__unknwnargname1, TimeFormat, __unknwnargname3);
+	int ret = __original_Date2ID(__unknwnargname1, TimeFormat, __unknwnargname3);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -582,7 +680,7 @@ int __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargnam
 
 int __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec )
 {
-	int  ret = __original_Time2ID(__unknwnargname1, TimeFormat, isSec);
+	int ret = __original_Time2ID(__unknwnargname1, TimeFormat, isSec);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -590,7 +688,7 @@ int __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargnam
 
 STRID __deleaker_KeyCode2Name( const char* __file__, int __line__, int key_code )
 {
-	STRID  ret = __original_KeyCode2Name(key_code);
+	STRID ret = __original_KeyCode2Name(key_code);
 	if(isallocatedstrid(ret))trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -617,7 +715,7 @@ void __deleaker_Feedback_SetText( const char* __file__, int __line__, GUI_FEEDBA
 
 int __deleaker_Gif2ID( const char* __file__, int __line__, u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, IMAGEID* __unknwnargname4 )
 {//проверить код ошибки
-	int  ret = __original_Gif2ID(IMAGEHANDLE, path, fname, __unknwnargname4);
+	int ret = __original_Gif2ID(IMAGEHANDLE, path, fname, __unknwnargname4);
 	if(ret)trace_alloc(trace_iconid, (void*)*__unknwnargname4, __file__, __line__);
 	return ret;
 }
@@ -661,14 +759,14 @@ void __deleaker_VCALL_SetNameIcon( const char* __file__, int __line__, void* vc,
 #ifdef __cplusplus
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, KEYHOOKPROC proc, int mode, LPARAM lparam )
 {
-	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
+	int ret = __original_ModifyKeyHook(proc, mode, lparam);
 	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
 	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam )
 {
-	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
+	int ret = __original_ModifyKeyHook(proc, mode, lparam);
 	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
 	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
@@ -676,7 +774,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 #else
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam )
 {
-	int  ret = __original_ModifyKeyHook(proc, mode, lparam);
+	int ret = __original_ModifyKeyHook(proc, mode, lparam);
 	if(mode==KEY_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
 	if(mode==KEY_HOOK_ADD)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
@@ -685,7 +783,7 @@ int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( i
 
 int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode )
 {
-	int  ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
+	int ret = __original_ModifyUIPageHook(event, PROC, ClientData, mode);
 	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
 	if(mode==PAGE_HOOK_ADD_BEFORE || mode==PAGE_HOOK_ADD_AFTER)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
 	return ret;
@@ -693,7 +791,7 @@ int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, 
 
 int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, IMAGEID* __unknwnargname3 )
 {
-	int  ret = __original_ImageID_Get(fpath, fname, __unknwnargname3);
+	int ret = __original_ImageID_Get(fpath, fname, __unknwnargname3);
 	if(ret>=0 && isallocatediconid(*__unknwnargname3))
 		trace_alloc(trace_iconid, (void*)(*__unknwnargname3), __file__, __line__);
 	return ret;
@@ -701,7 +799,7 @@ int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* f
 
 int __deleaker_ImageID_GetIndirect( const char* __file__, int __line__, void* buf_image, int size, int __NULL, wchar_t* image_type, IMAGEID* __unknwnargname5 )
 {//проверить возвращаемое значение
-	int  ret = __original_ImageID_GetIndirect(buf_image, size, __NULL, image_type, __unknwnargname5);
+	int ret = __original_ImageID_GetIndirect(buf_image, size, __NULL, image_type, __unknwnargname5);
 	trace_free(trace_memory, buf_image, __file__, __line__);
 	trace_alloc(trace_iconid, (void*)(*__unknwnargname5), __file__, __line__);
 	return ret;
@@ -709,13 +807,13 @@ int __deleaker_ImageID_GetIndirect( const char* __file__, int __line__, void* bu
 
 void __deleaker_ImageID_Free( const char* __file__, int __line__, IMAGEID __unknwnargname1 )
 {
-	trace_free(trace_iconid, (void*)__unknwnargname1, __file__, __line__);
+	if(isallocatediconid(__unknwnargname1))trace_free(trace_iconid, (void*)__unknwnargname1, __file__, __line__);
 	__original_ImageID_Free(__unknwnargname1);
 }
 
 GC* __deleaker_GC_CreateMemoryGC( const char* __file__, int __line__, int xsize, int ysize, int bpp, int unk, void* somefn, int unk2 )
 {
-	GC*  ret = __original_GC_CreateMemoryGC(xsize, ysize, bpp, unk, somefn, unk2);
+	GC* ret = __original_GC_CreateMemoryGC(xsize, ysize, bpp, unk, somefn, unk2);
 	if(ret)trace_alloc(trace_gc, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -728,35 +826,35 @@ void __deleaker_GC_FreeGC( const char* __file__, int __line__, GC* gc )
 
 GVI_PEN __deleaker_GVI_CreateDashedPen( const char* __file__, int __line__, char thikness, int color, int bitmask, int step, int offset )
 {
-	GVI_PEN  ret = __original_GVI_CreateDashedPen(thikness, color, bitmask, step, offset);
+	GVI_PEN ret = __original_GVI_CreateDashedPen(thikness, color, bitmask, step, offset);
 	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GVI_PEN __deleaker_GVI_CreatePen( const char* __file__, int __line__, char thikness, int color )
 {
-	GVI_PEN  ret = __original_GVI_CreatePen(thikness, color);
+	GVI_PEN ret = __original_GVI_CreatePen(thikness, color);
 	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GVI_BRUSH __deleaker_GVI_CreateSolidBrush( const char* __file__, int __line__, int color )
 {
-	GVI_BRUSH  ret = __original_GVI_CreateSolidBrush(color);
+	GVI_BRUSH ret = __original_GVI_CreateSolidBrush(color);
 	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GVI_BMP __deleaker_GVI_CreateBitmap( const char* __file__, int __line__, int xsize, int ysize, int bpp )
 {
-	GVI_BMP  ret = __original_GVI_CreateBitmap(xsize, ysize, bpp);
+	GVI_BMP ret = __original_GVI_CreateBitmap(xsize, ysize, bpp);
 	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 GVI_GC __deleaker_GVI_CreateMemoryGC( const char* __file__, int __line__, GVI_BMP bitmap )
 {
-	GVI_GC  ret = __original_GVI_CreateMemoryGC(bitmap);
+	GVI_GC ret = __original_GVI_CreateMemoryGC(bitmap);
 	if(ret)trace_alloc(trace_gvi, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -775,14 +873,14 @@ void __deleaker_GVI_DeleteMemoryGC( const char* __file__, int __line__, GVI_GC g
 
 GUI_FEEDBACK* __deleaker_TextFeedbackWindow( const char* __file__, int __line__, BOOK* book, int zero )
 {
-	GUI_FEEDBACK*  ret = __original_TextFeedbackWindow(book, zero);
+	GUI_FEEDBACK* ret = __original_TextFeedbackWindow(book, zero);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 void* __deleaker_DataBrowserDesc_Create( const char* __file__, int __line__ )
 {
-	void*  ret = __original_DataBrowserDesc_Create();
+	void* ret = __original_DataBrowserDesc_Create();
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -793,6 +891,7 @@ void __deleaker_DataBrowserDesc_Destroy( const char* __file__, int __line__, voi
 	return __original_DataBrowserDesc_Destroy(DataBrowserDesc);
 }
 
+//!!! обязательно проверять аргументы
 #define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
 #define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
@@ -807,14 +906,14 @@ void __deleaker_DataBrowserDesc_Destroy( const char* __file__, int __line__, voi
 
 GUI_FEEDBACK* __deleaker_CreateMonitorFeedback( const char* __file__, int __line__, STRID __unknwnargname1, BOOK* __unknwnargname2, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) )
 {
-	GUI_FEEDBACK*  ret = __original_CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete);
+	GUI_FEEDBACK* ret = __original_CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete);
 	if(ret)trace_alloc(trace_gui, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 void* __deleaker_LoadDLL( const char* __file__, int __line__, wchar_t* DllName )
 {
-	void*  ret = __original_LoadDLL(DllName);
+	void* ret = __original_LoadDLL(DllName);
 	if(ret)trace_alloc(trace_dll, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -881,7 +980,7 @@ void __deleaker_GUIObject_SetTitleBackgroundImage( const char* __file__, int __l
 
 STRID __deleaker_Shortcut_Get_MenuItemName( const char* __file__, int __line__, void* __unknwnargname1 )
 {
-	STRID  ret = __original_Shortcut_Get_MenuItemName(__unknwnargname1);
+	STRID ret = __original_Shortcut_Get_MenuItemName(__unknwnargname1);
 	trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -901,14 +1000,14 @@ int __deleaker_ListMenu_SetItemIcon( const char* __file__, int __line__, GUI_LIS
 
 IMAGEID __deleaker_Shortcut_Get_MenuItemIconID( const char* __file__, int __line__, void* __unknwnargname1 )
 {
-	IMAGEID  ret = __original_Shortcut_Get_MenuItemIconID(__unknwnargname1);
+	IMAGEID ret = __original_Shortcut_Get_MenuItemIconID(__unknwnargname1);
 	if(isallocatediconid(ret))trace_alloc(trace_iconid, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 PROCESS __deleaker_create_process( const char* __file__, int __line__, int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user )
 {
-	PROCESS  ret = __original_create_process(proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user);
+	PROCESS ret = __original_create_process(proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user);
 	trace_alloc(trace_process, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -933,14 +1032,14 @@ void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__
 
 wchar_t* __deleaker_MenuBook_Desktop_GetSelectedItemID( const char* __file__, int __line__, BOOK* MenuBook_Desktop )
 {
-	wchar_t*  ret = __original_MenuBook_Desktop_GetSelectedItemID(MenuBook_Desktop);
+	wchar_t* ret = __original_MenuBook_Desktop_GetSelectedItemID(MenuBook_Desktop);
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
 
 char* __deleaker_CreateURI( const char* __file__, int __line__, wchar_t* fpath, wchar_t* fname, char* URIScheme )
 {
-	char*  ret = __original_CreateURI(fpath, fname, URIScheme);
+	char* ret = __original_CreateURI(fpath, fname, URIScheme);
 	if(ret)trace_alloc(trace_memory, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -953,14 +1052,14 @@ void __deleaker_Timer_Kill( const char* __file__, int __line__, u16* timerID )
 
 u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam )
 {
-	u16  ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
 	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
 	return ret;
 }
 #ifdef __cplusplus
 u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, void* ), void* lparam )
 {
-	u16  ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
+	u16 ret = trace_timerset(time,(void(*)(u16,LPARAM))onTimer,(LPARAM)lparam);
 	if(ret)trace_alloc(trace_timer, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -986,39 +1085,151 @@ void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int
 	*timer=ret;
 }
 #endif
-//__swi __arm SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
+
+union SIGNAL* __deleaker_alloc( const char* __file__, int __line__, OSBUFSIZE size, SIGSELECT signo )
+{
+	union SIGNAL* ret = __original_alloc(size, signo);
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+union SIGNAL* __deleaker_receive( const char* __file__, int __line__, const SIGSELECT* sigsel )
+{
+	union SIGNAL* ret = __original_receive(sigsel);
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+union SIGNAL* __deleaker_receive_w_tmo( const char* __file__, int __line__, OSTIME timeout, SIGSELECT* sel )
+{
+	union SIGNAL* ret = __original_receive_w_tmo(timeout, sel);
+	if(ret)trace_alloc(trace_osebuff, ret, __file__, __line__);
+	return ret;
+}
+
+void __deleaker_free_buf( const char* __file__, int __line__, union SIGNAL** sig )
+{
+	trace_free(trace_osebuff, *sig, __file__, __line__);
+	__original_free_buf(sig);
+}
+
+void __deleaker_send( const char* __file__, int __line__, union SIGNAL** sig, PROCESS to )
+{
+	trace_free(trace_osebuff, *sig, __file__, __line__);
+	__original_send(sig, to);
+}
+
+int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wchar_t* fullpath, IMAGEID* __unknwnargname2 )
+{
+	int ret = __original_JavaApp_LogoImageID_Get(fullpath, __unknwnargname2);
+	if(ret>=0 && isallocatediconid(*__unknwnargname2))
+		trace_alloc(trace_iconid, (void*)(*__unknwnargname2), __file__, __line__);
+	return ret;
+}
+
+void __deleaker_ObexSendFile( const char* __file__, int __line__, SEND_OBEX_STRUCT* __unknwnargname1 )
+{
+	if(isallocatedstrid(__unknwnargname1->send))trace_free(trace_strid, (void*)__unknwnargname1->send, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1->sent) && __unknwnargname1->sent!=__unknwnargname1->send)trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
+	__original_ObexSendFile(__unknwnargname1);
+}
+
+STRID __deleaker_JavaSession_GetName( const char* __file__, int __line__ )
+{
+	STRID ret = __original_JavaSession_GetName();
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+void* __deleaker_CreateMessage( const char* __file__, int __line__, int size, int ev, char* name )
+{
+	void* ret = __original_CreateMessage(size, ev, name);
+	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
+	return ret;
+}
+
+void* __deleaker_WaitMessage( const char* __file__, int __line__, void* SIGSEL )
+{
+	void* ret = __original_WaitMessage(SIGSEL);
+	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
+	return ret;
+}
+
+int __deleaker_FreeMessage( const char* __file__, int __line__, void** Mess )
+{
+	trace_free(trace_opabuff, *Mess, __file__, __line__);
+	return __original_FreeMessage(Mess);
+}
+
+void __deleaker_SendMessage( const char* __file__, int __line__, void** signal, int PID )
+{
+	trace_free(trace_opabuff, *signal, __file__, __line__);
+	__original_SendMessage(signal, PID);
+}
+
+void* __deleaker_MetaData_Desc_Create( const char* __file__, int __line__, wchar_t* path, wchar_t* name )
+{
+	void* ret = __original_MetaData_Desc_Create(path, name);
+	if(ret)trace_alloc(trace_metadatadesc, ret, __file__, __line__);
+	return ret;
+}
+
+void __deleaker_MetaData_Desc_Destroy( const char* __file__, int __line__, void* MetaData_Desc )
+{
+	trace_free(trace_metadatadesc, MetaData_Desc, __file__, __line__);
+	__original_MetaData_Desc_Destroy(MetaData_Desc);
+}
+
+FILEITEM* __deleaker_FILEITEM_Create( const char* __file__, int __line__ )
+{
+	FILEITEM* ret = __original_FILEITEM_Create();
+	if(ret)trace_alloc(trace_fileitemstruct, ret, __file__, __line__);
+	return ret;
+}
+
+FILEITEM* __deleaker_FILEITEM_CreateCopy( const char* __file__, int __line__, FILEITEM* __unknwnargname1 )
+{
+	FILEITEM* ret = __original_FILEITEM_CreateCopy(__unknwnargname1);
+	if(ret)trace_alloc(trace_fileitemstruct, ret, __file__, __line__);
+	return ret;
+}
+
+void __deleaker_FILEITEM_Destroy( const char* __file__, int __line__, FILEITEM* __unknwnargname1 )
+{
+	trace_free(trace_fileitemstruct, __unknwnargname1, __file__, __line__);
+	__original_FILEITEM_Destroy(__unknwnargname1);
+}
+
+int __deleaker_w_dirclose( const char* __file__, int __line__, void* __unknwnargname1 )
+{
+	trace_free(trace_w_dir, __unknwnargname1, __file__, __line__);
+	return __original_w_dirclose(__unknwnargname1);
+}
+
+void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* dir )
+{
+	void* ret = __original_w_diropen(dir);
+	if(ret)trace_alloc(trace_w_dir, ret, __file__, __line__);
+	return ret;
+}
 //__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
-//__swi __arm void* CreateMessage( int size, int ev, char* name );
 //__swi __arm void DataBrowser_Create( void* DataBrowserDesc );
 //__swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 //__swi __arm int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
-//__swi __arm int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
-//__swi __arm FILEITEM* FILEITEM_Create( void );
-//__swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-//__swi __arm void FILEITEM_Destroy( FILEITEM* );
-//__swi __arm void Feedback_SetKeyHook( GUI_FEEDBACK*, void (*hook)( BOOK* book, int key, int unk, int unk2 ) );
-//__swi __arm int FreeMessage( void** Mess );
-//__swi __arm char* GetURIScheme( int schemeID );
 //__swi __arm int JavaAppDesc_Get( int unk1, void** JavaDesc );
 //__swi __arm int JavaAppDesc_GetFirstApp( void* JavaDesc );
 //__swi __arm int JavaAppDesc_GetJavaAppFullpath( void* JavaDesc, JavaAppFullpath* );
 //__swi __arm int JavaAppDesc_GetJavaAppID( void* JavaDesc );
 //__swi __arm int JavaAppDesc_GetJavaAppInfo( void* JavaDesc, int ID, wchar_t** wstr );
 //__swi __arm int JavaAppDesc_GetNextApp( void* JavaDesc );
-//__swi __arm int JavaApp_LogoImageID_Get( wchar_t* fullpath, IMAGEID* );
 //__swi __arm void JavaDialog_Close( int unk1 );
 //__swi __arm int JavaDialog_Open( int unk1, char* unk2, void** JavaDesc );
-//__swi __arm int JavaSession_GetName( void );
 //__swi __arm int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
 //__swi __arm int MSG_SendMessage_CreateMessage( int, void* );
 //__swi __arm int MSG_SendMessage_DestroyMessage( void* );
 //__swi __arm int MSG_SendMessage_Start( int, void*, int );
-//__swi __arm void* MetaData_Desc_Create( wchar_t* path, wchar_t* name );
-//__swi __arm void MetaData_Desc_Destroy( void* MetaData_Desc );
-//__swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
-//__swi __arm wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 //__swi __arm void OSE_GetShell( void** pInterface );
-//__swi __arm void ObexSendFile( SEND_OBEX_STRUCT* );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_GETHANDLE( const int* sync, u16* ImageHandler, char* unk );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_REGISTER( const int* sync, u16 ImageHandler, wchar_t* path, wchar_t* fname, int unk, IMAGEID*, char* error );
 //__swi __arm int REQUEST_IMAGEHANDLER_INTERNAL_UNREGISTER( const int* sync, u16 ImageHandler, u16*, u16*, IMAGEID, int unk_1, char* error );
@@ -1026,7 +1237,6 @@ void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int
 //__swi __arm int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 //__swi __arm int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 //__swi __arm void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
-//__swi __arm void SendMessage( void** signal, int PID );
 //__swi __arm void* SoundRecorderDesc_Create( void );
 //__swi __arm void SoundRecorderDesc_Destroy( void* desc );
 //__swi __arm int SoundRecorderDesc_SetBookID( void* desc, int BookID );
@@ -1036,10 +1246,6 @@ void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int
 //__swi __arm int SoundRecorderDesc_SetType( void* desc, const int type );
 //__swi __arm int SoundRecorder_Create( void* desc );
 //__swi __arm int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
-//__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
-//__swi __arm void* WaitMessage( void* SIGSEL );
-//__swi __arm C_INTERFACE* Window_GetComponentInterface( WINDOW* );
-//__swi __arm void free_buf( union SIGNAL** sig );
 //__swi __arm int inflate( z_streamp strm, int flush );
 //__swi __arm int inflateEnd( z_streamp strm );
 //__swi __arm int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
@@ -1062,9 +1268,5 @@ void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int
 //__swi __arm void png_set_strip_16( png_structp png_ptr );
 //__swi __arm void png_set_tRNS_to_alpha( png_structp png_ptr );
 //__swi __arm int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
-//__swi __arm void send( union SIGNAL** sig, PROCESS to );
-//__swi __arm int setjmp( jmp_buf jmpbuf );
-//__swi __arm int w_dirclose( void* );
-//__swi __arm void* w_diropen( const wchar_t* dir );
 
 #endif

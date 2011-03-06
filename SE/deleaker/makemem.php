@@ -101,11 +101,11 @@
          {
            fprintf($liborig,"%s\r\n",$lib[$i++]);
          }
-         if(preg_match("/^(__swi __arm\s+[^\s]+((\s*\*+\s*)|(\s+)))([^\s\(]+)(\s*\(.*)/",$lib[$i],$m))
+         if(preg_match("/^(__swi __arm\s+(((union)|(unsigned))\s+)?[^\s]+((\s*\*+\s*)|(\s+))(\(\s*\*\s*)?)([^\s\(]+)(\s*\(.*)/",$lib[$i],$m))
          {
-           fprintf($liborig,"%s__original_%s%s\r\n",$m[1],$m[5],$m[6]);
+           fprintf($liborig,"%s__original_%s%s\r\n",$m[1],$m[10],$m[11]);
   
-           $func=$m[5];
+           $func=$m[10];
 
            $globalfn[$func]=$lib[$i];
 
@@ -147,18 +147,18 @@
       //все запомненные определения функций (cpp)
       for($k=0;$k<sizeof($fnarray[$curfname]); $k++)
       {
-        if(preg_match("/^__swi __arm\s+([^\s]+\s+(\*\s*)?)([^\s\(]+)(\s*\(.*)$/",$fnarray[$curfname][$k],$m))
+        if(preg_match("/^__swi __arm\s+((((union)|(unsigned))\s+)?[^\s]+\s+(\*\s*)?)([^\s\(]+)(\s*\(.*)$/",$fnarray[$curfname][$k],$m))
         {
 
           $rettype = $m[1];
-          $name = $m[3];
+          $name = $m[7];
 
           if(isset($skipped[$name]))
             echo "$name wrongly skipped!\n";
 
           $arglistsize=0;
 
-          if(!preg_match("/\((.*)\)/",$m[4],$m2))
+          if(!preg_match("/\((.*)\)/",$m[8],$m2))
             die("args =(\r\n");
 
           $as=trim($m2[1]);
@@ -242,7 +242,7 @@
             }
             $orgcall.=")";
 
-            $tmp = ereg_replace("__R",$rettype,$tmp);
+            $tmp = ereg_replace("__R ",$rettype,$tmp);
             $tmp = ereg_replace("__O__",$orgcall,$tmp);
             $tmp = ereg_replace("__O","__original_".$curfname,$tmp);
 
@@ -274,6 +274,8 @@
     }else
     if(preg_match("/^skip (.*)$/",$f[$i],$m))
     {
+       if(!isset($globalfn[$m[1]]))
+         echo "unknown ".$m[1]." in skip\n";
        unset($globalfn[$m[1]]);
        $skipped[$m[1]]=true;
     }else
