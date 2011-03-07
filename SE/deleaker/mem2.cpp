@@ -1119,6 +1119,13 @@ void __deleaker_send( const char* __file__, int __line__, union SIGNAL** sig, PR
 	__original_send(sig, to);
 }
 
+OSBOOLEAN __deleaker_hunt( const char* __file__, int __line__, const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig )
+{
+    if(hunt_sig)
+		trace_free(trace_osebuff, *hunt_sig, __file__, __line__);
+	return __original_hunt(name, user, name_, hunt_sig);
+}
+
 int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wchar_t* fullpath, IMAGEID* __unknwnargname2 )
 {
 	int ret = __original_JavaApp_LogoImageID_Get(fullpath, __unknwnargname2);
@@ -1213,8 +1220,20 @@ void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* d
 	if(ret)trace_alloc(trace_w_dir, ret, __file__, __line__);
 	return ret;
 }
+
+void* __deleaker_SoundRecorderDesc_Create( const char* __file__, int __line__ )
+{
+	void* ret = __original_SoundRecorderDesc_Create();
+	if(ret)trace_alloc(trace_memory, ret, __file__, __line__);
+	return ret;
+}
+
+void __deleaker_SoundRecorderDesc_Destroy( const char* __file__, int __line__, void* desc )
+{
+	trace_free(trace_memory, desc, __file__, __line__);
+	__original_SoundRecorderDesc_Destroy(desc);
+}
 //__swi __arm void CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
-//__swi __arm void DataBrowser_Create( void* DataBrowserDesc );
 //__swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 //__swi __arm int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
 //__swi __arm int JavaAppDesc_Get( int unk1, void** JavaDesc );
@@ -1237,13 +1256,6 @@ void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* d
 //__swi __arm int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
 //__swi __arm int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 //__swi __arm void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
-//__swi __arm void* SoundRecorderDesc_Create( void );
-//__swi __arm void SoundRecorderDesc_Destroy( void* desc );
-//__swi __arm int SoundRecorderDesc_SetBookID( void* desc, int BookID );
-//__swi __arm int SoundRecorderDesc_SetFname( void* desc, const wchar_t* fname );
-//__swi __arm int SoundRecorderDesc_SetFolder( void* desc, const wchar_t* fpath );
-//__swi __arm int SoundRecorderDesc_SetRecordSize( void* desc, const int size );
-//__swi __arm int SoundRecorderDesc_SetType( void* desc, const int type );
 //__swi __arm int SoundRecorder_Create( void* desc );
 //__swi __arm int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
 //__swi __arm int inflate( z_streamp strm, int flush );
@@ -1254,19 +1266,11 @@ void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* d
 //__swi __arm void png_destroy_info_struct( png_structp png_ptr, png_infopp info_ptr_ptr );
 //__swi __arm void png_destroy_read_struct( png_structpp png_ptr_ptr, png_infopp info_ptr_ptr, png_infopp end_info_ptr_ptr );
 //__swi __arm png_uint_32 png_get_IHDR( png_structp png_ptr, png_infop info_ptr, png_uint_32* width, png_uint_32* height, int* bit_depth, int* color_type, int* interlace_method, int* compression_method, int* filter_method );
-//__swi __arm png_voidp png_get_progressive_ptr( png_structp png_ptr );
-//__swi __arm png_uint_32 png_get_rowbytes( png_structp png_ptr, png_infop info_ptr );
-//__swi __arm png_uint_32 png_get_valid( png_structp png_ptr, png_infop info_ptr, png_uint_32 flag );
 //__swi __arm void png_process_data( png_structp png_ptr, png_infop info_ptr, png_bytep buffer, png_size_t buffer_size );
 //__swi __arm void png_progressive_combine_row( png_structp png_ptr, png_bytep old_row, png_bytep new_row );
 //__swi __arm void png_read_update_info( png_structp png_ptr, png_infop info_ptr );
 //__swi __arm void png_set_filler( png_structp png_ptr, png_uint_32 filler, int flags );
-//__swi __arm void png_set_gray_1_2_4_to_8( png_structp png_ptr );
-//__swi __arm void png_set_gray_to_rgb( png_structp png_ptr );
-//__swi __arm void png_set_palette_to_rgb( png_structp png_ptr );
 //__swi __arm void png_set_progressive_read_fn( png_structp png_ptr, png_voidp progressive_ptr, png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn, png_progressive_end_ptr end_fn );
-//__swi __arm void png_set_strip_16( png_structp png_ptr );
-//__swi __arm void png_set_tRNS_to_alpha( png_structp png_ptr );
 //__swi __arm int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
 
 #endif

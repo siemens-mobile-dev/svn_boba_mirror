@@ -33,7 +33,7 @@ public:
 
   static void deallocate(void *_Ptr, size_t)
   {     // delete object at _Ptr, ignoring size
-    operator delete(_Ptr);
+    delete(_Ptr);
   }
 
   static size_t max_size()

@@ -58,6 +58,7 @@ skip DataBrowserDesc_SetOption
 skip DataBrowserDesc_SetSelectAction
 skip DataBrowserDesc_SetSelectActionOnFolders
 skip DataBrowserDesc_SetViewModeAndSortOrder
+skip DataBrowser_Create
 skip DataBrowser_isFileInListExt
 skip DataBrowser_isFileInListExt_adr
 skip DateInput_GetDateInt
@@ -285,7 +286,6 @@ skip GVI_FillSolidRoundRect
 skip GVI_FillSolidTriangle
 skip GVI_StretchBlt
 skip GVI_TransformBlt
-skip hunt
 skip iconidname2id
 skip IMB
 skip IncommingCall_Accept
@@ -367,6 +367,14 @@ skip PlayerControl
 skip PlayFile
 skip PlayFileV
 skip PlaySystemSound
+skip png_get_progressive_ptr
+skip png_get_rowbytes
+skip png_get_valid
+skip png_set_gray_1_2_4_to_8
+skip png_set_gray_to_rgb
+skip png_set_palette_to_rgb
+skip png_set_strip_16
+skip png_set_tRNS_to_alpha
 skip PNUM2str
 skip PNUM_len
 skip Profile_SetActive
@@ -416,6 +424,11 @@ skip snwprintf
 skip SoftKeys_GetLabel
 skip SoftKeys_GetSelectedAction
 skip SoftKeys_Update
+skip SoundRecorderDesc_SetBookID
+skip SoundRecorderDesc_SetFname
+skip SoundRecorderDesc_SetFolder
+skip SoundRecorderDesc_SetRecordSize
+skip SoundRecorderDesc_SetType
 skip SpeedDial_GetPNUM
 skip sprintf
 skip sscanf
@@ -1265,6 +1278,13 @@ __make send
 	__O__;
 }
 
+__make hunt
+{
+    if(hunt_sig)
+		trace_free(trace_osebuff, *hunt_sig, __file__, __line__);
+	return __O__;
+}
+
 __make JavaApp_LogoImageID_Get
 {
 	__R ret = __O__;
@@ -1358,4 +1378,17 @@ __make w_diropen
 	__R ret = __O__;
 	if(ret)trace_alloc(trace_w_dir, ret, __file__, __line__);
 	return ret;
+}
+
+__make SoundRecorderDesc_Create
+{
+	__R ret = __O__;
+	if(ret)trace_alloc(trace_memory, ret, __file__, __line__);
+	return ret;
+}
+
+__make SoundRecorderDesc_Destroy
+{
+	trace_free(trace_memory, desc, __file__, __line__);
+	__O__;
 }

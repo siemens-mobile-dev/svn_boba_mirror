@@ -302,6 +302,8 @@ union SIGNAL* __deleaker_receive_w_tmo( const char* __file__, int __line__, OSTI
 void __deleaker_free_buf( const char* __file__, int __line__, union SIGNAL** sig );
 #define send(sig, to) __deleaker_send( __FILE__,  __LINE__, sig, to )
 void __deleaker_send( const char* __file__, int __line__, union SIGNAL** sig, PROCESS to );
+#define hunt(name, user, name_, hunt_sig) __deleaker_hunt( __FILE__,  __LINE__, name, user, name_, hunt_sig )
+OSBOOLEAN __deleaker_hunt( const char* __file__, int __line__, const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig );
 #define JavaApp_LogoImageID_Get(fullpath, __unknwnargname2) __deleaker_JavaApp_LogoImageID_Get( __FILE__,  __LINE__, fullpath, __unknwnargname2 )
 int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wchar_t* fullpath, IMAGEID* __unknwnargname2 );
 #define ObexSendFile(__unknwnargname1) __deleaker_ObexSendFile( __FILE__,  __LINE__, __unknwnargname1 )
@@ -330,6 +332,10 @@ void __deleaker_FILEITEM_Destroy( const char* __file__, int __line__, FILEITEM* 
 int __deleaker_w_dirclose( const char* __file__, int __line__, void* __unknwnargname1 );
 #define w_diropen(dir) __deleaker_w_diropen( __FILE__,  __LINE__, dir )
 void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* dir );
+#define SoundRecorderDesc_Create() __deleaker_SoundRecorderDesc_Create( __FILE__,  __LINE__ )
+void* __deleaker_SoundRecorderDesc_Create( const char* __file__, int __line__ );
+#define SoundRecorderDesc_Destroy(desc) __deleaker_SoundRecorderDesc_Destroy( __FILE__,  __LINE__, desc )
+void __deleaker_SoundRecorderDesc_Destroy( const char* __file__, int __line__, void* desc );
 
 #endif
 #endif

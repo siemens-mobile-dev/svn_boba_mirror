@@ -54,7 +54,7 @@ template<> struct _Allocator<void>
   }
   static void deallocate(void * _Ptr)
   {
-    operator delete(_Ptr);
+    delete(_Ptr);
   }
 };
 

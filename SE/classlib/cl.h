@@ -469,7 +469,7 @@ public:
 
 #define DECLARE_PAGE_DESC_BEGIN( objname, name ) \
 	const PAGE_DESC objname = {name, 0, objname##__PAGE_MSG__}; \
-	const PAGE_MSG objname##__PAGE_MSG__[]@ "DYN_PAGE" = {
+		const PAGE_MSG objname##__PAGE_MSG__[]@ "DYN_PAGE" = {
 
 #define DECLARE_PAGE_DESC_END NIL_EVENT_TAG, 0 };
 

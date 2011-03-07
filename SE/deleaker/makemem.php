@@ -129,6 +129,7 @@
   $tmp = file("templateh.tpl");
   for($i=0;$i<sizeof($tmp);$i++)fputs($fh,$tmp[$i]);
 
+  $fskipped = fopen("skipped.log","w");
 
   $f=file("template.tpl");
   //обрезаем лишнее
@@ -275,7 +276,9 @@
     if(preg_match("/^skip (.*)$/",$f[$i],$m))
     {
        if(!isset($globalfn[$m[1]]))
-         echo "unknown ".$m[1]." in skip\n";
+         echo "unknown ".$m[1]." is skip\n";
+       else
+         fputs($fskipped,$globalfn[$m[1]]."\n");
        unset($globalfn[$m[1]]);
        $skipped[$m[1]]=true;
     }else
@@ -298,6 +301,8 @@
 
   fputs($fcpp,"\r\n#endif\r\n");
   fputs($fh,"\r\n#endif\r\n#endif\r\n");
+
+  fclose($fskipped);
   fclose($fcpp);
   fclose($fh);
 
