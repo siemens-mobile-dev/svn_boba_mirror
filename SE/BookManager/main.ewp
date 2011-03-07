@@ -202,12 +202,12 @@
         <option>
           <name>CCOptimization</name>
           <version>0</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>0000000</state>
+          <state>0010000</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -296,7 +296,7 @@
         <option>
           <name>CCOptimizationSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCCodeFunctions</name>
@@ -308,7 +308,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state></state>
+          <state>..\deleaker\mem2.h</state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1131,7 +1131,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state></state>
+          <state>..\deleaker\mem2.h</state>
         </option>
         <option>
           <name>CompilerMisraRules</name>
@@ -1649,9 +1649,6 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\..\C++\_cpp2.cpp</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\book_names.c</name>
   </file>
   <file>
@@ -2131,6 +2128,12 @@
   </file>
   <file>
     <name>$PROJ_DIR$\main.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\deleaker\mem2.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\deleaker\mem2.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\shortcuts.c</name>

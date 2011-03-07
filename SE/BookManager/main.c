@@ -79,6 +79,7 @@ const PAGE_DESC BookManager_Base_Page = { "BookManager_Base_Page", 0, bk_base_ms
 
 void elf_exit( void )
 {
+  trace_done();
   kill_data( &ELF_BEGIN, ( void(*)(void*) )mfree_adr() );
 }
 
@@ -241,7 +242,7 @@ int GetJavaName( BOOK* bk )
     return JavaSession_GetName();
   }
   
-  return 0;
+  return EMPTY_SID;
 }
 
 int isRSSTickerBook( BOOK* book )
@@ -298,14 +299,15 @@ void CreateBookLst( MyBOOK* myBook )
             }
             elem->isGuiBook = fgui;
             
-            int tmp = GetJavaName( book );
-            if ( tmp )
+            STRID tmp = GetJavaName( book );
+            if ( tmp != EMPTY_SID )
             {
               delete(elem->book_name);
               StrID2Str( tmp, s, MAXELEMS(s), 0 );
               char * java_name =new char[strlen(s)+1];
               strcpy(java_name,s);
               elem->book_name = java_name;
+              TextFree( tmp );
             }
             if ( ElfInBookListEnabled && ( ((int)book->onClose)&0xF8000000 ) != mask )
             {
@@ -495,9 +497,11 @@ void onDelPressed( BOOK* book, void* lt )
   BOOK* bk = GetBook( BOOKLIST, book );
   if ( bk )
   {
-    if ( GetJavaName( bk ) )
+    STRID tmp = GetJavaName( bk );
+    if ( tmp != EMPTY_SID )
     {
       JavaSession_Manager( 0x0E );
+      TextFree( tmp );
     }
     else
     {
@@ -1044,7 +1048,7 @@ void TerminateManager( BOOK* Book, GUI* )
   MessageBox( EMPTY_SID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
   FreeBook( Book );
   DestroyDaemon();
-  ModifyKeyHook( NewKey, KEY_HOOK_REMOVE );
+  ModifyKeyHook( NewKey, KEY_HOOK_REMOVE, NULL );
   SUBPROC( elf_exit );
 };
 
@@ -1237,9 +1241,10 @@ int main ( void )
 {
   if ( !FindBook( isBookmanDaemonBook ) )
   {
+	trace_init(L"bookmanmem.txt");
     CreateDaemon();
     InitConfig();
-    ModifyKeyHook( NewKey, KEY_HOOK_ADD );
+    ModifyKeyHook( NewKey, KEY_HOOK_ADD, NULL );
   }
   else
   {
