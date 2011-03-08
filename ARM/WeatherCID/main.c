@@ -2,7 +2,6 @@
 #include "conf_loader.h"
 #include "string_works.h"
 #include "WeatherD.h"
-#include "CFontWork.h"
 
 #define BUFFSIZE 0x200
 //=============================================================================
@@ -14,9 +13,6 @@ char *buf=0;
 int pbuf;
 int scr_w;
 int scr_h;
-
-static IMGHDR TextIMG;
-unsigned* TextIMG_bmp;
 
 void create_connect(void);
 void do_start_connection(void)
@@ -157,12 +153,6 @@ void GenerateString(){
          );
 //    utf82win(sss,(const char *)sss);
     ascii2ws(ews, sss);
-    for(int i = 0; i < TextIMG.h*TextIMG.w; i++)
-      ((unsigned*)TextIMG.bitmap)[i] = 0;
-    unsigned fc, bc;
-    fc = ((((unsigned)FONT_COLOR[3])*255/100)<<24) | (((unsigned)FONT_COLOR[0]) << 16) | (((unsigned)FONT_COLOR[1]) << 8) | ((unsigned)FONT_COLOR[2]);
-    bc = ((((unsigned)BORDER_COLOR[3])*255/100)<<24) | (((unsigned)BORDER_COLOR[0]) << 16) | (((unsigned)BORDER_COLOR[1]) << 8) | ((unsigned)BORDER_COLOR[2]);
-    RenderString(&TextIMG, 0, 0, ews, 1, fc, bc);
 };
 
 char *valuetag(char *src,char *dst, int maxlen){
@@ -331,36 +321,24 @@ void CountTime(void){
   GetDateTime(&date, &time);
   int h=(time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180;
 
-  if (h >= 1230) //20.30 мск
-      min_before_update = 1590-h+10; //10 минут запаса
+  if (h >= 1230/*20.30 мск*/)
+      min_before_update = 1590-h+10/*10 минут запаса*/;
    else
-  if (h < 150) //2.30 мск
-      min_before_update = 150-h+10; //10 минут запаса
+  if (h < 150/*2.30 мск*/)
+      min_before_update = 150-h+10/*10 минут запаса*/;
    else  
-  if (h >= 870) //14.30 мск
-      min_before_update = 1230-h+10; //10 минут запаса
+  if (h >= 870/*14.30 мск*/)
+      min_before_update = 1230-h+10/*10 минут запаса*/;
    else
-  if (h >= 510) //8.30 мск
-      min_before_update = 870-h+10; //10 минут запаса
+  if (h >= 510/*8.30 мск*/)
+      min_before_update = 870-h+10/*10 минут запаса*/;
    else  
-  if (h >= 150) //2.30 мск
-      min_before_update = 510-h+10; //10 минут запаса
+  if (h >= 150/*2.30 мск*/)
+      min_before_update = 510-h+10/*10 минут запаса*/;
 
   GBS_DelTimer(&update_tmr);
   GBS_StartTimerProc(&update_tmr, (216*60)*min_before_update, do_start_connection); 
 }
-//==============================================================================
-
-static DrwImg(IMGHDR *img, int x, int y, const char *pen, const char *brush)
-{
-  RECT rc;
-  DRWOBJ drwobj;
-  StoreXYWHtoRECT(&rc, x, y, img->w, img->h);
-  SetPropTo_Obj5(&drwobj, &rc, 0, img);
-  SetColor(&drwobj, pen, brush);
-  DrawObject(&drwobj);
-}
-//==============================================================================
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
@@ -370,19 +348,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
     {
       InitConfig();
-      UnloadFont();
-      LoadFont(FONT_FILE);  
-
-      int uiWidth  = scr_w - DATA_X + 1;
-      int uiHeight = scr_h - DATA_Y + 1;
-
-      mfree(TextIMG_bmp);
-      TextIMG_bmp = malloc(4 * uiWidth * uiHeight);
-      TextIMG.w = uiWidth;
-      TextIMG.h = uiHeight;
-      TextIMG.bpnum = 10;
-      TextIMG.bitmap = (char*) TextIMG_bmp;
-    
       GenerateString();
       ShowMSG(1,(int)"WeatherCID config updated!");
     }
@@ -414,10 +379,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y, (int)weath.WindPic.path);
           //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
-          DrwImg(&TextIMG, DATA_X, DATA_Y, FONT_COLOR, BORDER_COLOR);
-        
-//        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
-//	         FONT_SIZE,0x20,FONT_COLOR,BORDER_COLOR);
+        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
+	         FONT_SIZE,0x20,FONT_COLOR,BORDER_COLOR);
       }
    }}    
   
@@ -473,20 +436,6 @@ static void maincsm_oncreate(CSM_RAM *data)
   scr_w=ScreenW();
   scr_h=ScreenH();
   ews=AllocWS(128);
-
-  int uiWidth  = scr_w - DATA_X + 1;
-  int uiHeight = scr_h - DATA_Y + 1;
-
-  mfree(TextIMG_bmp);
-  TextIMG_bmp = malloc(4 * uiWidth * uiHeight);
-  TextIMG.w = uiWidth;
-  TextIMG.h = uiHeight;
-  TextIMG.bpnum = 10;
-  TextIMG.bitmap = (char*) TextIMG_bmp;
-  for(int i = 0; i < TextIMG.h*TextIMG.w; i++)
-  ((unsigned*)TextIMG.bitmap)[i] = 0;
-
-  LoadFont(FONT_FILE);
   do_start_connection();
 }
 
@@ -498,8 +447,6 @@ static void Killer(void)
 
 static void maincsm_onclose(CSM_RAM *csm)
 {
-  mfree(TextIMG_bmp);
-  UnloadFont();
   mfree(buf);
   FreeWS(ews);
   GBS_DelTimer(&update_tmr);

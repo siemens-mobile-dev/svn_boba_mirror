@@ -1894,7 +1894,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state>--separate_cluster_for_initialized_variables</state>
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -2472,9 +2472,6 @@
       <data/>
     </settings>
   </configuration>
-  <file>
-    <name>$PROJ_DIR$\CFontWork.c</name>
-  </file>
   <file>
     <name>$PROJ_DIR$\conf_loader.c</name>
   </file>

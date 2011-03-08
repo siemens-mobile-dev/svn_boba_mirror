@@ -49,11 +49,8 @@ __root const int SHOW_PIC = 1;
 
 __root const CFG_HDR cfghdr5={CFG_COORDINATES,"Data position",0,0};
 __root const unsigned int DATA_X=0;
-__root const unsigned int DATA_Y=150;
+__root const unsigned int DATA_Y=98;
 
 __root const CFG_HDR cfghdr6={CFG_COORDINATES,"Picture pos",0,0};
-__root const unsigned int PICT_X=0;
-__root const unsigned int PICT_Y=110;
-
-__root const CFG_HDR cfghdr8={CFG_STR_UTF8,"CFont file",0,127};
-__root const char FONT_FILE[128]=DEFAULT_DISK ":\\ZBin\\Weather\\Weather.cfnt";
+__root const unsigned int PICT_X=10;
+__root const unsigned int PICT_Y=64;
