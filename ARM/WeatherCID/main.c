@@ -4,6 +4,10 @@
 #include "WeatherD.h"
 
 #define BUFFSIZE 0x200
+#define MINTIMEOUT 1
+#define NEGTIMEOUT 15
+#define DEFTIMEOUT 24*60
+
 //=============================================================================
 
 WSHDR *ews;
@@ -13,21 +17,97 @@ char *buf=0;
 int pbuf;
 int scr_w;
 int scr_h;
+int ncell=0;
+int oldlac=0;
+int mnc;
+int mcc;
+int lac;
+int ci;
+
+void log_data(char *data){
+  int hFile;
+  unsigned int io_error = 0;
+  char fullname[256];
+  
+  TTime time;
+  TDate date;
+  GetDateTime(&date, &time);
+  
+  sprintf(fullname, "%s%i%i%i%i%i", DATA_PATH, date.year, date.month, date.day, time.hour, time.min);
+  hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
+  if(!io_error)
+  {
+    fwrite(hFile, data, strlen(data)-1, &io_error);
+    fclose(hFile, &io_error);
+  }  
+}
+
+//=============================================================================
 
 void create_connect(void);
-void do_start_connection(void)
-{
+
+void do_start_connection(void){
   SUBPROC((void *)create_connect);
 }
 
-void StartGPRS(void)
-{
+void CountTime(int m){
+  TDate date;
+  TTime time;
+  unsigned int min_before_update;
+
+  GetDateTime(&date, &time);
+  int h=(time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180;
+
+  if (h >= 1230/*20.30 мск*/)
+      min_before_update = 1590-h+10/*10 минут запаса*/;
+   else
+  if (h < 150/*2.30 мск*/)
+      min_before_update = 150-h+10/*10 минут запаса*/;
+   else  
+  if (h >= 870/*14.30 мск*/)
+      min_before_update = 1230-h+10/*10 минут запаса*/;
+   else
+  if (h >= 510/*8.30 мск*/)
+      min_before_update = 870-h+10/*10 минут запаса*/;
+   else  
+  if (h >= 150/*2.30 мск*/)
+      min_before_update = 510-h+10/*10 минут запаса*/;
+  
+  if (m>min_before_update){
+     m=min_before_update;
+     oldlac=0;
+  }
+   
+  if (m<MINTIMEOUT) m=MINTIMEOUT;
+  
+  GBS_DelTimer(&update_tmr);
+  GBS_StartTimerProc(&update_tmr, (216*60)*m, do_start_connection); 
+}
+
+void StartGPRS(void){
   GPRS_OnOff(1,1);
   GBS_StartTimerProc(&reconnect_tmr,216*30,do_start_connection);
 }
 
-void create_connect(void)
-{
+RAMNET * ramnet;
+void create_connect(void){
+  ramnet=RamNet();
+  char *p=((char*)ramnet)-11;
+  char cc1=*p;
+  char cc2=*(p+1);
+  mcc=(cc1&0x0F)*100+(cc1>>4)*10+(cc2&0x0F);
+  char nc=*(p+2);
+  mnc=(nc&0x0F)*10+(nc>>4);
+  do{
+    if (ncell>6){
+      ncell=0;
+      CountTime(NEGTIMEOUT);
+      return;
+    }
+    lac=ramnet[ncell++].lac;
+  }while ((oldlac==lac)||(!lac));
+  ci=ramnet[ncell-1].ci;
+
   SOCK_ADDR sa;
   //Устанавливаем соединение
   weath.Temp[0]=0;  
@@ -82,44 +162,12 @@ void create_connect(void)
   }
 }
 
-void log_data(char *data){
-  int hFile;
-  unsigned int io_error = 0;
-  char fullname[256];
-  
-  TTime time;
-  TDate date;
-  GetDateTime(&date, &time);
-  
-  sprintf(fullname, "%s%i%i%i%i%i", DATA_PATH, date.year, date.month, date.day, time.hour, time.min);
-  hFile = fopen(fullname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE, &io_error);
-  if(!io_error)
-  {
-    fwrite(hFile, data, strlen(data)-1, &io_error);
-    fclose(hFile, &io_error);
-  }  
-}
-
 char req_buf[100];
 void send_req(void){
-
-  RAMNET * ramnet=RamNet();
-  char *p=((char*)ramnet)-11;
-  char cc1=*p;
-  char cc2=*(p+1);
-  char nc=*(p+2);
-
-  snprintf(req_buf,99, "GET /w/w.php?mcc=%i&mnc=%i&lac=%i&ci=%i"
-    " HTTP/1.0\r\nHost: igps.boba.su\r\n\r\n",
-    (cc1&0x0F)*100+(cc1>>4)*10+(cc2&0x0F),
-    (nc&0x0F)*10+(nc>>4),
-    ramnet[0].lac,
-    ramnet[0].ci
-  );  
- 
+  snprintf(req_buf,99, "GET /w/w.php?mcc=%i&mnc=%i&lac=%i&ci=%i&n=%i HTTP/1.0\r\nHost: igps.boba.su\r\n\r\n",
+    mcc, mnc, lac, ci, ncell);  
   send(sock,req_buf,strlen(req_buf),0);
   connect_state=2;
-
   if (!buf) buf=malloc(BUFFSIZE);
 }
 
@@ -142,6 +190,7 @@ void get_answer(void){
 }
 
 //==============================================================================
+
 void GenerateString(){
     char sss[128];
     snprintf(sss, 127, "%s%s%s%s%s", 
@@ -151,7 +200,6 @@ void GenerateString(){
                 SHOW_REWLET   ? weath.Rewlet     : "",
                 SHOW_CITY     ? weath.City       : ""
          );
-//    utf82win(sss,(const char *)sss);
     ascii2ws(ews, sss);
 };
 
@@ -188,10 +236,12 @@ int valuemid(char *min,char *max){
 }
 
 void Parsing(){
-    if ((!buf)||(!pbuf)) return; 
-    if (!strstr(buf,"200 OK")) return;
+  oldlac=lac;
+  if ((!buf)||(!pbuf)||(!strstr(buf,"HTTP/1.1 200 OK"))){
+    do_start_connection();
+    return;
+  }
     
-    int vmid;
     //главная картинка
     char *tod=findtag(buf,"TOD:");
     if (*tod=='1'||*tod=='2')
@@ -242,13 +292,12 @@ void Parsing(){
     //Температура
     char *tempmin=findtag(buf,"TEMPMIN:");
     char *tempmax=findtag(buf,"TEMPMAX:");
-    vmid = valuemid(tempmin,tempmax);
-    snprintf(weath.Temp, 16, "%c%d \xB0\x43\n", (vmid>0)?'+':' ', vmid);
+    snprintf(weath.Temp, 16, "%+d\xB0\x43\n", valuemid(tempmin,tempmax));
 
     //Давление
     char *pressmin=findtag(buf,"PRESSMIN:");
     char *pressmax=findtag(buf,"PRESSMAX:");
-    snprintf(weath.Pressure, 16, "%d мм\n", valuemid(pressmin,pressmax));    
+    snprintf(weath.Pressure, 16, "%dмм\n", valuemid(pressmin,pressmax));    
     
     //Ветер
     char *windmin=findtag(buf,"WINDMIN:");
@@ -269,7 +318,7 @@ void Parsing(){
     //Влажность
     char *rewletmin=findtag(buf,"WETMIN:");
     char *rewletmax=findtag(buf,"WETMAX:");
-    snprintf(weath.Rewlet, 16, "%d %%\n", valuemid(rewletmin,rewletmax));        
+    snprintf(weath.Rewlet, 16, "%d%%\n", valuemid(rewletmin,rewletmax));        
 
     mfree(buf);
     buf=0;
@@ -300,6 +349,7 @@ void Parsing(){
     strcat(weath.st.path, "st.png");
     
     GenerateString();
+    CountTime(DEFTIMEOUT);
 }
 
 //==============================================================================
@@ -312,33 +362,6 @@ typedef struct
 }MAIN_CSM;
 
 extern void kill_data(void *p, void (*func_p)(void *));
-
-void CountTime(void){
-  TDate date;
-  TTime time;
-  unsigned int min_before_update;
-
-  GetDateTime(&date, &time);
-  int h=(time.hour*60+time.min)-GetTimeZoneShift(&date, &time, RamDateTimeSettings()->timeZone)+180;
-
-  if (h >= 1230/*20.30 мск*/)
-      min_before_update = 1590-h+10/*10 минут запаса*/;
-   else
-  if (h < 150/*2.30 мск*/)
-      min_before_update = 150-h+10/*10 минут запаса*/;
-   else  
-  if (h >= 870/*14.30 мск*/)
-      min_before_update = 1230-h+10/*10 минут запаса*/;
-   else
-  if (h >= 510/*8.30 мск*/)
-      min_before_update = 870-h+10/*10 минут запаса*/;
-   else  
-  if (h >= 150/*2.30 мск*/)
-      min_before_update = 510-h+10/*10 минут запаса*/;
-
-  GBS_DelTimer(&update_tmr);
-  GBS_StartTimerProc(&update_tmr, (216*60)*min_before_update, do_start_connection); 
-}
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
@@ -379,8 +402,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
           DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y, (int)weath.WindPic.path);
           //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
         }
-        DrawString(ews, DATA_X, DATA_Y ,scr_w, scr_h,
-	         FONT_SIZE,0x20,FONT_COLOR,BORDER_COLOR);
+        DrawString(ews, TEXTRECT.x, TEXTRECT.y , TEXTRECT.x2, TEXTRECT.y2,
+	         FONT_SIZE,TEXT_OUTLINE+TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(122),GetPaletteAdrByColorIndex(123));
       }
    }}    
   
@@ -420,7 +443,6 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       case ENIP_SOCK_CLOSED:
         //Закрыт вызовом closesocket
         SUBPROC((void *)Parsing);
-        CountTime();
         old_gprs_state[1] = 0;
         connect_state=0;
         sock=-1;
@@ -493,7 +515,6 @@ static void UpdateCSMname(void)
 int main()
 {
   InitConfig();
-  
   CSM_RAM *save_cmpc;
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();  

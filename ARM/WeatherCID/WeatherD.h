@@ -7,8 +7,7 @@ extern const unsigned int FONT_SIZE;
 extern const char FONT_COLOR[];
 extern const char BORDER_COLOR[];
 
-extern const unsigned int DATA_X;
-extern const unsigned int DATA_Y;
+extern const RECT TEXTRECT;
 
 extern const unsigned int PICT_X;
 extern const unsigned int PICT_Y;

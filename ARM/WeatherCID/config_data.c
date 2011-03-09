@@ -1,4 +1,5 @@
 #include "..\inc\cfg_items.h"
+#include "..\inc\swilib.h"
 
 #ifdef NEWSGOLD
 #define DEFAULT_DISK "4"
@@ -23,12 +24,6 @@ __root const unsigned int FONT_SIZE=11; //NEWSGOLD
 __root const unsigned int FONT_SIZE=7; //SGOLD
 #endif
 
-__root const CFG_HDR cfghdr4={CFG_COLOR,"Font color",0,0};
-__root const char FONT_COLOR[4]={0x00,0x00,0x00,0x64};
-
-__root const CFG_HDR cfghdr7={CFG_COLOR,"Border color",0,0};
-__root const char BORDER_COLOR[4]={0xFF,0xFF,0xFF,0x64};
-
 __root const CFG_HDR cfghdr66={CFG_CHECKBOX,"Show City",0,0};
 __root const int SHOW_CITY = 1;
 
@@ -47,10 +42,10 @@ __root const int SHOW_REWLET = 1;
 __root const CFG_HDR cfghdr65={CFG_CHECKBOX,"Show Pic",0,0};
 __root const int SHOW_PIC = 1;
 
-__root const CFG_HDR cfghdr5={CFG_COORDINATES,"Data position",0,0};
-__root const unsigned int DATA_X=0;
-__root const unsigned int DATA_Y=98;
-
 __root const CFG_HDR cfghdr6={CFG_COORDINATES,"Picture pos",0,0};
 __root const unsigned int PICT_X=10;
-__root const unsigned int PICT_Y=64;
+__root const unsigned int PICT_Y=57;
+
+__root const CFG_HDR cfghdr45 = {CFG_RECT, "Text Area", 0, 0};
+__root const RECT TEXTRECT = {0,98,65,162};
+
