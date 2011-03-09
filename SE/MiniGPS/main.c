@@ -951,7 +951,7 @@ void BackPressed(BOOK * bk, u16 *string, int len)
   return;
 }
 
-int NewKey(int key, int r1, int mode)
+int NewKey(int key, int r1, int mode, LPARAM, DISP_OBJ*)
 {
   if(!isKeylocked() || cfg_ignore_keylock)
   {
@@ -1034,7 +1034,7 @@ void onCloseMiniGPSBook(BOOK * book)
     if(timer_disable) Timer_Kill(&timer_disable);
     if(timer) Timer_Kill(&timer);
     if(timerNewAction) Timer_Kill(&timerNewAction);
-    ModifyKeyHook(NewKey, 0);
+    ModifyKeyHook(NewKey, KEY_HOOK_REMOVE, NULL);
 
     StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, empty);
 
@@ -1084,7 +1084,7 @@ int MainPageEnter(void *, BOOK *bk)
   Display_desc = DispObject_GetDESC (GUI_display);
   DISP_DESC_SetOnRedraw(Display_desc, Display_ReDraw);
   
-  ModifyKeyHook(NewKey, 1);
+  ModifyKeyHook(NewKey, KEY_HOOK_ADD, NULL);
   Timer_ReSet(&timer, 1000, onTimer, 0);
   Timer_ReSet(&timerNewAction, NewActionTimeout, onTimerNewAction, 0);
   return(0);

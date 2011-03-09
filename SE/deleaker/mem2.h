@@ -2,6 +2,7 @@
 #define __INCLUDE_MEM__
 
 #include "..\include\Lib_Clara.h"
+#include "Lib_Clara_original.h"
 
 #ifdef NDEBUG
 
@@ -37,7 +38,6 @@ enum trace_types
 	trace_book,
 	trace_process,
 	trace_osebuff,
-	trace_opabuff,
 	trace_metadatadesc,
 	trace_fileitemstruct,
 	trace_w_dir,
@@ -53,6 +53,7 @@ void trace_init(wchar_t*);
 void trace_init(wchar_t* logname=NULL);
 #endif
 void trace_done();
+void* trace_alloc_ret(int mt, void* ptr, void* badvalue, const char* file, int line);
 void __deleaker_pushfileline( const char* __file__, int __line__ );
 
 void operator delete(void* p);
@@ -69,6 +70,18 @@ void* operator new[](size_t size, void* p);
 
 #define new (__deleaker_pushfileline(__FILE__, __LINE__),false) ? NULL : new
 #define delete __deleaker_pushfileline(__FILE__, __LINE__), delete
+
+
+
+
+//!!! обязательно проверять аргументы
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __FILE__, __LINE__ )
+
 #define malloc(size) __deleaker_malloc( __FILE__,  __LINE__, size )
 void* __deleaker_malloc( const char* __file__, int __line__, int size );
 #define mfree_adr() __deleaker_mfree_adr( __FILE__,  __LINE__ )
@@ -105,8 +118,6 @@ int __deleaker_fclose( const char* __file__, int __line__, int file );
 int __deleaker_w_fopen( const char* __file__, int __line__, const wchar_t* name, int attr, int rights, int err );
 #define w_fclose(f) __deleaker_w_fclose( __FILE__,  __LINE__, f )
 int __deleaker_w_fclose( const char* __file__, int __line__, int f );
-#define TabMenuBar_SetTabGui(__unknwnargname1, tab, __unknwnargname3) __deleaker_TabMenuBar_SetTabGui( __FILE__,  __LINE__, __unknwnargname1, tab, __unknwnargname3 )
-void __deleaker_TabMenuBar_SetTabGui( const char* __file__, int __line__, GUI_TABMENUBAR* __unknwnargname1, int tab, GUI* __unknwnargname3 );
 #define CreateListMenu(__unknwnargname1, display) __deleaker_CreateListMenu( __FILE__,  __LINE__, __unknwnargname1, display )
 GUI_LIST* __deleaker_CreateListMenu( const char* __file__, int __line__, BOOK* __unknwnargname1, int display );
 #define CreateNOfMany(book) __deleaker_CreateNOfMany( __FILE__,  __LINE__, book )
@@ -197,15 +208,10 @@ void __deleaker_GUIonMessage_SetMenuItemIcon( const char* __file__, int __line__
 void __deleaker_TabMenuBar_SetTabIcon( const char* __file__, int __line__, GUI_TABMENUBAR* __unknwnargname1, int tab, IMAGEID __unknwnargname3, int for_state );
 #define VCALL_SetNameIcon(vc, __unknwnargname2) __deleaker_VCALL_SetNameIcon( __FILE__,  __LINE__, vc, __unknwnargname2 )
 void __deleaker_VCALL_SetNameIcon( const char* __file__, int __line__, void* vc, IMAGEID __unknwnargname2 );
-#ifdef __cplusplus
 #define ModifyKeyHook(proc, mode, lparam) __deleaker_ModifyKeyHook( __FILE__,  __LINE__, proc, mode, lparam )
 int __deleaker_ModifyKeyHook( const char* __file__, int __line__, KEYHOOKPROC proc, int mode, LPARAM lparam );
-int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam );
-#else
-int __deleaker_ModifyKeyHook( const char* __file__, int __line__, int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
-#endif
-#define ModifyUIPageHook(event, PROC, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, PROC, ClientData, mode )
-int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
+#define ModifyUIPageHook(event, proc, ClientData, mode) __deleaker_ModifyUIPageHook( __FILE__,  __LINE__, event, proc, ClientData, mode )
+int __deleaker_ModifyUIPageHook( const char* __file__, int __line__, int event, PAGEHOOKPROC proc, LPARAM ClientData, int mode );
 #define ImageID_Get(fpath, fname, __unknwnargname3) __deleaker_ImageID_Get( __FILE__,  __LINE__, fpath, fname, __unknwnargname3 )
 int __deleaker_ImageID_Get( const char* __file__, int __line__, const wchar_t* fpath, const wchar_t* fname, IMAGEID* __unknwnargname3 );
 #define ImageID_GetIndirect(buf_image, size, __NULL, image_type, __unknwnargname5) __deleaker_ImageID_GetIndirect( __FILE__,  __LINE__, buf_image, size, __NULL, image_type, __unknwnargname5 )
@@ -283,15 +289,9 @@ char* __deleaker_CreateURI( const char* __file__, int __line__, wchar_t* fpath, 
 #define Timer_Kill(timerID) __deleaker_Timer_Kill( __FILE__,  __LINE__, timerID )
 void __deleaker_Timer_Kill( const char* __file__, int __line__, u16* timerID );
 #define Timer_Set(time, onTimer, lparam) __deleaker_Timer_Set( __FILE__,  __LINE__, time, onTimer, lparam )
-u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
-#ifdef __cplusplus
-u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, void (*onTimer)( u16 timerID, void* ), void* lparam );
-#endif
+u16 __deleaker_Timer_Set( const char* __file__, int __line__, int time, TIMERPROC onTimer, LPARAM lparam );
 #define Timer_ReSet(timer, time, onTimer, lparam) __deleaker_Timer_ReSet( __FILE__,  __LINE__, timer, time, onTimer, lparam )
-void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
-#ifdef __cplusplus
-void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam );
-#endif
+void __deleaker_Timer_ReSet( const char* __file__, int __line__, u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 #define alloc(size, signo) __deleaker_alloc( __FILE__,  __LINE__, size, signo )
 union SIGNAL* __deleaker_alloc( const char* __file__, int __line__, OSBUFSIZE size, SIGSELECT signo );
 #define receive(sigsel) __deleaker_receive( __FILE__,  __LINE__, sigsel )
@@ -310,14 +310,6 @@ int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wcha
 void __deleaker_ObexSendFile( const char* __file__, int __line__, SEND_OBEX_STRUCT* __unknwnargname1 );
 #define JavaSession_GetName() __deleaker_JavaSession_GetName( __FILE__,  __LINE__ )
 STRID __deleaker_JavaSession_GetName( const char* __file__, int __line__ );
-#define CreateMessage(size, ev, name) __deleaker_CreateMessage( __FILE__,  __LINE__, size, ev, name )
-void* __deleaker_CreateMessage( const char* __file__, int __line__, int size, int ev, char* name );
-#define WaitMessage(SIGSEL) __deleaker_WaitMessage( __FILE__,  __LINE__, SIGSEL )
-void* __deleaker_WaitMessage( const char* __file__, int __line__, void* SIGSEL );
-#define FreeMessage(Mess) __deleaker_FreeMessage( __FILE__,  __LINE__, Mess )
-int __deleaker_FreeMessage( const char* __file__, int __line__, void** Mess );
-#define SendMessage(signal, PID) __deleaker_SendMessage( __FILE__,  __LINE__, signal, PID )
-void __deleaker_SendMessage( const char* __file__, int __line__, void** signal, int PID );
 #define MetaData_Desc_Create(path, name) __deleaker_MetaData_Desc_Create( __FILE__,  __LINE__, path, name )
 void* __deleaker_MetaData_Desc_Create( const char* __file__, int __line__, wchar_t* path, wchar_t* name );
 #define MetaData_Desc_Destroy(MetaData_Desc) __deleaker_MetaData_Desc_Destroy( __FILE__,  __LINE__, MetaData_Desc )

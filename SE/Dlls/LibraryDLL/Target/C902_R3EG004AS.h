@@ -28,3 +28,4 @@ int (*get_imsi_const)()=(int(*)())0x111E4E61;
 int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * error_cause)=(int(*)(const int* sync,char * level,char * flag,char * error_cause))0x4BB44415;
 int (*GetChipID_int)()=(int(*)())0x125DDDD5;
 int (*ConnectionManager_Connection_GetState_int)(char * buf)=(int(*)(char * buf))0x10C0631D;
+void (*StrID2Str_int)(STRID, char* str, int maxlen, int null)=(void(*)(STRID, char* str, int maxlen, int null))0x10F4684D;

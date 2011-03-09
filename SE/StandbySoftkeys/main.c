@@ -277,7 +277,7 @@ void elf_exit(void)
     kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 };
 
-int SoftKeys_OnKey(int Key, int r1, int Mode)
+int SoftKeys_OnKey(int Key, int r1, int Mode, LPARAM, DISP_OBJ*)
 {
     if (IsInStandby() && IsShowWhenMusic())
     {
@@ -323,7 +323,7 @@ void OnCloseMyBook(BOOK *Book)
     if (Book)
     {
         Release_SoftKeys();
-        ModifyKeyHook(SoftKeys_OnKey, 0);
+        ModifyKeyHook(SoftKeys_OnKey, KEY_HOOK_REMOVE, NULL);
         DISP_DESC_SetOnRedraw(SoftKeys_DispDesc, SoftKeys_DefaultRedraw);
         FreeDataList();
         ModifyUIHookEx(STANDBY_IDLE_EVENT, PHONE_IN_STBY_EVENT, RefreshSoftKeys, 0);
@@ -370,6 +370,6 @@ int main(void)
     ElfFolder = GetElfFolder(); 
     FillSoftKeysData(); 
     SoftKeys_SetOnRedraw();
-    ModifyKeyHook(SoftKeys_OnKey, 1); 
+    ModifyKeyHook(SoftKeys_OnKey, KEY_HOOK_ADD, NULL); 
     return(0);
 };

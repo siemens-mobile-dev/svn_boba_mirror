@@ -11,16 +11,6 @@
 
 #include "temp\target.h"
 
-/*
-typedef void (*USERDATACONSTRUCTOR)(void*, void*);
-
-typedef struct
-{
-	USERDATACONSTRUCTOR constr;
-	void * data;
-}UDATA;
-*/
-
 void * malloc (int size)
 {
 #if defined(DB2020)
@@ -42,83 +32,6 @@ void mfree (void * mem)
 	memfree(mem,"SwiLib",0);
 #endif
 }
-
-/*
-int CmpProc(UDATA* listitem, USERDATACONSTRUCTOR itemtofind)
-{
-	return listitem->constr != itemtofind;
-}
-
-void* GetUserData (int size, USERDATACONSTRUCTOR constr, void* param)
-{
-
-	UDATA * ud;
-	int index;
-
-	_printf("GetUserData(0x%X,0x%X,0x%X)",size,constr,param);
-	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
-	if (index!=LIST_ERROR)
-	{
-		ud=List_Get(elfpackdata->UserDataList,index);
-		_printf("UserData  @0x%X",ud->data);
-	}
-	else
-	{
-		if (constr)
-		{
-			ud=malloc(sizeof(UDATA));
-			ud->constr=constr;
-			ud->data=malloc(size);
-			List_InsertFirst(elfpackdata->UserDataList,ud);
-			constr(ud->data,param);
-
-			_printf("New UserData  @0x%X",ud->data);
-			_printf("Total Used Bloks  0x%%X",elfpackdata->UserDataList->FirstFree);
-		}
-		else
-		{
-			_printf("Error. GetUserData() without Constructor!!");
-			// нет конструктора
-			return(0);
-		}
-	}
-	return(ud->data);
-
-};
-
-
-
-int RemoveUserData(void (*constr)(void *, void *))
-{
-	UDATA * ud;
-	int index;
-
-	_printf("RemoveUserData(0x%X)",constr);
-
-	index = LIST_FIND(elfpackdata->UserDataList, constr, CmpProc);
-	if (index!=LIST_ERROR)
-	{
-		ud=List_RemoveAt(elfpackdata->UserDataList,index);
-		{
-			mfree(ud->data);
-			mfree(ud);
-
-			_printf("Removed OK...");
-
-			return(0);
-		}
-	}
-	else
-	{
-		_printf("0x%X Not in List!!",constr);
-
-		// нет элемента в списке
-		return(1);
-	}
-
-}
-*/
-
 
 //============================================================================
 
@@ -169,7 +82,7 @@ int fopen (const wchar_t* fname, int mode, int rights)
 typedef struct
 {
 	KEYHOOKPROC proc;
-	void *data;
+	LPARAM data;
 }KEY_HOOK_ELEM;
 
 int KeyHookCmpProc(KEY_HOOK_ELEM* listitem, KEYHOOKPROC itemtofind)
@@ -177,7 +90,7 @@ int KeyHookCmpProc(KEY_HOOK_ELEM* listitem, KEYHOOKPROC itemtofind)
 	return listitem->proc != itemtofind;
 }
 
-int ModifyKeyHook( KEYHOOKPROC proc, int mode , void *data )
+int ModifyKeyHook( KEYHOOKPROC proc, int mode , LPARAM data )
 {
 	int i=0;
 
@@ -244,53 +157,23 @@ int Keyhandler_Hook(int key,int mode,int repeat_count, DISP_OBJ* disp)
 	}
 	return key;
 }
-//===============  OSE_HOOK  ================
-/*int OSEHookCmpProc(OSE_HOOK_ITEM* ud, void (*e2)(void*))
-{
-	return ud->HOOK != e2;
-}
-
-int ModifyOSEHook(int event , void (*proc)(void*),int mode)
-{
-	int n = LIST_FIND(elfpackdata->OseHookList, proc, OSEHookCmpProc);
-
-	switch (mode)
-	{
-	case 0: //remove
-		if (n!=LIST_ERROR)
-		{
-			mfree(List_RemoveAt(elfpackdata->OseHookList, n));
-			return(0);
-		}
-		else
-		{
-			return(-2);
-		}
-
-	case 1:
-		if (n==LIST_ERROR)
-		{
-			OSE_HOOK_ITEM *item=malloc(sizeof(OSE_HOOK_ITEM));
-			item->signo=event;
-			item->HOOK = proc;
-			List_InsertFirst(elfpackdata->OseHookList,(void*)item);
-			return(0);
-		}
-		else
-		{
-			return(-3);
-		}
-	default: return(-4);
-	}
-}*/
 
 //===============  UI_HOOK  ================
 
 typedef struct {
-	int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event);
+	int (*PROC)(void *msg, BOOK * book, struct PAGE_DESC * page_desc, LPARAM ClientData, u16 event);
 	int event;
 	LPARAM ClientData;
 } PAGE_HOOK_ELEM;
+
+typedef struct
+{
+	int (*PROC)(void* msg, BOOK*);
+	int BookID;
+	u16 event;
+	struct APP_DESC* app_desc;
+	struct PAGE_DESC* page_desc;
+}ACTION;
 
 
 int UIHook1CmpProc(void * e1, void * e2)
@@ -315,7 +198,7 @@ int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
 		{
 			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_Before,n_before);
 
-			if (!my_act->event || my_act->event==act->event) res=my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData,act->event);
+			if (!my_act->event || my_act->event==act->event) res=my_act->PROC(msg,book,act->page_desc,my_act->ClientData,act->event);
 			if (res==BLOCK_EVENT_GLOBALLY) return res;
 			if (res==BLOCK_EVENT_IN_THIS_SESSION) return res;
 		}
@@ -325,14 +208,14 @@ int PageAction_Hook2(ACTION *act,void *msg,BOOK * book)
 			PAGE_HOOK_ELEM *my_act=(PAGE_HOOK_ELEM *)List_Get(UIPageHook_After,n_after);
 
 			if (!my_act->event || my_act->event==act->event)
-				my_act->PROC(msg,book,act->PAGE_DESC,my_act->ClientData,act->event);
+				my_act->PROC(msg,book,act->page_desc,my_act->ClientData,act->event);
 		}
 	}
 	return res;
 }
 
 
-int ModifyUIHook1(int event, int (*PROC)(void *msg, BOOK * book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event), LPARAM ClientData ,int mode)
+int ModifyUIHook1(int event, int (*PROC)(void *msg, BOOK * book, struct PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData ,int mode)
 {
 	LIST * UIPageHook_Before = elfpackdata->UIPageHook_Before;
 	LIST * UIPageHook_After = elfpackdata->UIPageHook_After;
@@ -404,10 +287,8 @@ void CreateLists(void)
 
 	_printf("EP_DATA @%x",elfpackdata)  ;
 
-	elfpackdata->UserDataList=List_Create();
 	elfpackdata->gKbdHookList=List_Create();
 	elfpackdata->UIHookList=List_Create();
-	//elfpackdata->OseHookList=List_Create();
 	elfpackdata->DLLList=List_Create();
 	elfpackdata->UIPageHook_Before=List_Create();
 	elfpackdata->UIPageHook_After=List_Create();
@@ -416,8 +297,6 @@ void CreateLists(void)
 	_printf("   epd->UserDataList @%x",elfpackdata->UserDataList)  ;
 	_printf("   epd->gKbdHookList @%x",elfpackdata->gKbdHookList)  ;
 	_printf("   epd->UIHookList @%x",elfpackdata->UIHookList)  ;
-	//_printf("   epd->OseHookList @%x",elfpackdata->OseHookList)  ;
-	//  _printf("   epd->elflist @%x",elfpackdata->elflist)  ;
 
 	elfpackdata->DBExtList=CreateDBExtList();
 	elfpackdata->CreateDbExt = CreateDbExt;

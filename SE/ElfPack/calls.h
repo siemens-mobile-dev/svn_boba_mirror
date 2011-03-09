@@ -4,8 +4,6 @@
 #include "..\include\Types.h"
 #include "temp\target.h"
 
-#define NULL    0
-
 #if defined(DB2020)
 //DB2020
 extern void *memalloc(int zero, int size,int f1,int f2,const char *fname,int fline);
@@ -28,7 +26,6 @@ extern int wstrlen( const wchar_t* wstr );
 extern wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
 extern wchar_t* wstrcat( wchar_t* wstr, const wchar_t* subwstr );
 extern int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
-#define LIST_FIND(lst, itemtofind, cmp_proc) List_Find( lst, (void*) itemtofind, (LISTFINDCALLBACK) cmp_proc )
 extern void* List_RemoveAt( LIST* lst, int index );
 extern void* List_Get( LIST* lst, int index );
 extern int List_InsertFirst( LIST* lst, void* item );

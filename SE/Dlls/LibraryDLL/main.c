@@ -442,6 +442,14 @@ STRID dll_TextCopyId_0( STRID strid )
 #endif
 
 #ifdef A2
+#define USE_dll_StrID2Str_0
+void dll_StrID2Str_0( STRID strid, char* str, int maxlen )
+{
+  return StrID2Str_int( strid, str, maxlen, NULL );
+}
+#endif
+
+#ifdef A2
 #define USE_dll_MainInput_getVisible_0
 int dll_MainInput_getVisible_0( GUI * gui )
 {
@@ -719,6 +727,10 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     0x242, (void*) dll_TextCopyId_0,
     #endif
     
+    #ifdef USE_dll_StrID2Str_0
+    0x15E, (void*) dll_StrID2Str_0,
+    #endif
+
     #ifdef USE_dll_MainInput_getVisible_0
     0x1F6, (void*) dll_MainInput_getVisible_0,
     #endif

@@ -87,7 +87,7 @@ void elf_exit(void)
   kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 }
 
-void onfTimer (u16 tmr , void *)
+void onfTimer (u16 tmr , LPARAM)
 {
   DispObject_InvalidateRect(StatusIndication,0);
   Timer_ReSet(&ftimer,20,onfTimer,0);

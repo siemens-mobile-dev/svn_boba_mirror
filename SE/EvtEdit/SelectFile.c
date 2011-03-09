@@ -85,7 +85,7 @@ int DB_Filter(const wchar_t * ext_table,const wchar_t * path ,const wchar_t * na
   if (isSupportable(path,name,mbk->fType)) return 1;
   FSTAT _fstat;
   fstat(path,name,&_fstat);
-  if ((_fstat.unk1&0x10000)) return(1);
+  if ((_fstat.st_mode&0x10000)) return(1);
   return(0);
 };
 

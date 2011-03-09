@@ -181,7 +181,7 @@ int isOngoingCallBook(BOOK * book)
   return(0);
 }
 
-int NewKey(int key,int r1,int mode)
+int NewKey(int key,int r1,int mode,LPARAM,DISP_OBJ*)
 {
   if(!isKeylocked())
   {
@@ -204,7 +204,7 @@ int NewKey(int key,int r1,int mode)
 static void onMyBookClose(BOOK * book)
 {
   UnsetHook();
-  ModifyKeyHook(NewKey,0);
+  ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
   SUBPROC(elf_exit);
 }
 
@@ -225,6 +225,6 @@ int main()
   memset(myBook,0,sizeof(myBook));
   CreateBook(myBook,onMyBookClose,&bk_base,"ASR",-1,0);
   InitConfig();
-  ModifyKeyHook(NewKey,1);
+  ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
   return 0;
 }

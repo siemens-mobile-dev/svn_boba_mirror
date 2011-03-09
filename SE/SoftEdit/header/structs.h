@@ -46,7 +46,7 @@
     SET_STATE SetWorkState;
     int version;
   }SKBOOK;
-  typedef GUI_type GUI_SKIN;
+  typedef GUI GUI_SKIN;
   
   typedef struct 
   {

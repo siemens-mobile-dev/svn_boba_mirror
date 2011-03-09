@@ -10,7 +10,7 @@
     bool checked;
   }REMIND;
   
-  typedef GUI_type GUI_REMIND;
+  typedef GUI GUI_REMIND;
   
   typedef struct 
   {

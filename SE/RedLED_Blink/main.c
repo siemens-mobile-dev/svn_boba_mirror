@@ -5,10 +5,6 @@
 #include "config_data.h"
 
 
-void onTimer(u16 unk,void *);
-void BeginTimer(u16 unk,void *);
-
-
 typedef enum
 {
   Start=0,
@@ -37,6 +33,10 @@ typedef struct _MYBOOK : BOOK
 }RL_Book;
 
 
+void onTimer(u16 unk,RL_Book * RLBook);
+void BeginTimer(u16 unk,RL_Book * RLBook);
+
+
 typedef struct
 {
   BOOK * book;
@@ -62,7 +62,7 @@ int BeginTimer_event(void *,BOOK * book)
 {
   RL_Book * RLBook = (RL_Book*)book;
   
-  BeginTimer(RLBook->timer,book);
+  BeginTimer(RLBook->timer, RLBook);
   return(1);
 }
 
@@ -81,17 +81,15 @@ int KillTimer_event(void *,BOOK * book)
 }
 
 
-void BeginTimer(u16 timerID,void * book)
+void BeginTimer(u16 timerID, RL_Book * RLBook)
 {
-  RL_Book * RLBook = (RL_Book*)book;
-  
   BATT bat_struct;
   GetBatteryState(SYNC,&bat_struct);
   
   if ((bat_struct.ChargingState!=Handheld)&&(bat_struct.ChargingState!=Completed))
   {
     RedLED_On(0);
-    Timer_ReSet(&RLBook->timer,OnTime,onTimer,RLBook);
+    Timer_ReSet(&RLBook->timer,OnTime,MKTIMERPROC(onTimer),RLBook);
   }
   else
   {
@@ -100,12 +98,10 @@ void BeginTimer(u16 timerID,void * book)
 }
 
 
-void onTimer (u16 unk,void * book)
-{
-  RL_Book * RLBook = (RL_Book*)book;
-  
+void onTimer (u16 unk, RL_Book * RLBook)
+{ 
   RedLED_Off(0);
-  Timer_ReSet(&RLBook->timer,OffTime,BeginTimer,RLBook);
+  Timer_ReSet(&RLBook->timer,OffTime,MKTIMERPROC(BeginTimer),RLBook);
 }
 
 

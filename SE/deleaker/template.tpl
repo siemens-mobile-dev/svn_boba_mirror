@@ -40,6 +40,7 @@ skip CallStatusDesc_GetName
 skip CANVAS_Get_GviGC
 skip CHF_GetState
 skip chmod
+skip CoCreateInstance
 skip ConnectionManager_Connection_GetState
 skip current_process
 skip DataBrowserDesc_Menu_AddFSFunctions
@@ -94,7 +95,6 @@ skip DispObject_GetOnRedraw
 skip DispObject_GetonRefresh
 skip DispObject_GetRect
 skip DispObject_GetVisible
-skip DispObject_GetWindow
 skip DispObject_GetWindowHeight
 skip DispObject_GetWindowWidth
 skip DispObject_InvalidateRect
@@ -360,6 +360,7 @@ skip OneOfMany_SetFocused
 skip OneOfMany_SetItemCount
 skip OneOfMany_SetOnMessage
 skip OrangeLED_Control
+skip OSE_GetShell
 skip PercentInput_GetPercent
 skip PHF_GetState
 skip PID_MMI
@@ -457,6 +458,7 @@ skip TabMenuBar_GetFocusedTab
 skip TabMenuBar_SetFocusedTab
 skip TabMenuBar_SetOnTabSwitch
 skip TabMenuBar_SetTabCount
+skip TabMenuBar_SetTabGui
 skip TextGetLength
 skip TextID2wstr
 skip textidname2id
@@ -489,7 +491,6 @@ skip Video_SetPermit
 skip Video_SetSkin
 skip Video_Stop
 skip Video_ZoomOn
-skip Window_GetComponentInterface
 skip wstr2strn
 skip wstrcat
 skip wstrchr
@@ -640,13 +641,6 @@ __make w_fopen
 __make w_fclose
 {
 	trace_free(trace_file, (void*)f, __file__, __line__);
-	return __O__;
-}
-
-
-__make TabMenuBar_SetTabGui
-{
-	trace_free(trace_gui, (void*)__unknwnargname3, __file__, __line__);
 	return __O__;
 }
 
@@ -962,8 +956,8 @@ __make ModifyKeyHook
 __make ModifyUIPageHook
 {
 	__R ret = __O__;
-	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)PROC, __file__, __line__ );
-	if(mode==PAGE_HOOK_ADD_BEFORE || mode==PAGE_HOOK_ADD_AFTER)trace_alloc(trace_hook, (void*)PROC, __file__, __line__);
+	if(mode==PAGE_HOOK_REMOVE)trace_free(trace_hook, (void*)proc, __file__, __line__ );
+	if(mode==PAGE_HOOK_ADD_BEFORE || mode==PAGE_HOOK_ADD_AFTER)trace_alloc(trace_hook, (void*)proc, __file__, __line__);
 	return ret;
 }
 
@@ -1068,19 +1062,6 @@ __make DataBrowserDesc_Destroy
 	trace_free(trace_memory, DataBrowserDesc, __file__, __line__);
 	return __O__;
 }
-
-//!!! обязательно проверять аргументы
-#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
-
-#define CreateDateInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateDateInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
-
-#define CreatePercentInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreatePercentInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
-
-#define CreateStringInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateStringInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
-
-#define CreateTimeInputVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateTimeInputVA( a, __VA_ARGS__), NULL, __file__, __line__ )
-
-#define CreateYesNoQuestionVA( a, ... ) (GUI*) trace_alloc_ret( trace_gui, __original_CreateYesNoQuestionVA( a, __VA_ARGS__), NULL, __file__, __line__ )
 
 __make CreateMonitorFeedback
 {
@@ -1306,32 +1287,6 @@ __make JavaSession_GetName
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
-}
-
-__make CreateMessage
-{
-	__R ret = __O__;
-	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
-	return ret;
-}
-
-__make WaitMessage
-{
-	__R ret = __O__;
-	if(ret)trace_alloc(trace_opabuff, ret, __file__, __line__);
-	return ret;
-}
-
-__make FreeMessage
-{
-	trace_free(trace_opabuff, *Mess, __file__, __line__);
-	return __O__;
-}
-
-__make SendMessage
-{
-	trace_free(trace_opabuff, *signal, __file__, __line__);
-	__O__;
 }
 
 __make MetaData_Desc_Create

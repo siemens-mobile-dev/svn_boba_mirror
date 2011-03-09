@@ -32,14 +32,6 @@ extern "C" void kill_data( void* p, void (*func_p)( void* ) );
 extern void kill_data( void* p, void (*func_p)( void* ) );
 #endif
 
-#ifndef _NULL
-#define _NULL 0
-#endif
-
-#ifndef NULL
-#define NULL   _NULL
-#endif /* NULL */
-
 
 #pragma diag_suppress=Ta035
 #pragma diag_suppress=Ta036
@@ -48,11 +40,6 @@ extern void kill_data( void* p, void (*func_p)( void* ) );
 #pragma swi_number=0x100
 __swi __arm void IMB ( void );
 
-//#pragma swi_number=0x101
-//__swi __arm void* GetUserData( int size, void (*constr)( void*, void* ), void* constr_param );
-
-//#pragma swi_number=0x102
-//__swi __arm int RemoveUserData( void (*constr)( void*, void* ) );
 
 #pragma swi_number=0x103
 __swi __arm void* malloc( int size );
@@ -69,17 +56,8 @@ __swi __arm wchar_t* GetDir( int DirIndex );
 #pragma swi_number=0x106
 __swi __arm int fopen( const wchar_t* fname, int mode, int rights );
 
-#ifdef __cplusplus
 #pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam = NULL );
-
-//устаревший вариант, пока для совместимости
-#pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode ), int mode, LPARAM lparam = NULL );
-#else
-#pragma swi_number=0x107
-__swi __arm int ModifyKeyHook( int (*proc)( int key, int repeat_count, int mode, void*, DISP_OBJ* ), int mode, void* lparam );
-#endif
+__swi __arm int ModifyKeyHook( KEYHOOKPROC proc, int mode, LPARAM lparam );
 
 #pragma swi_number=0x108
 __swi __arm void SUBPROC( void*, ... );
@@ -106,15 +84,6 @@ __swi __arm void MMIPROC( void (*PROC)( int ), int p1 );
 __swi __arm void MMIPROC( void (*PROC)( int, void* ), int p1, void* p2 );
 #endif
 
-//#pragma swi_number=0x10A
-//__swi __arm int ModifyOSEHook( int msg, void (*proc)( void* msg ), int mode );
-
-//#pragma swi_number=0x10B
-//__swi __arm void ELF_RemoveFromList( void* elf_begin );
-
-//#pragma swi_number=0x10C
-//__swi __arm int ModifyUIHook( int event, int (*PROC)( UI_MESSAGE* ), int mode );
-
 #pragma swi_number=0x10D
 __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
 
@@ -125,7 +94,7 @@ __swi __arm void* LoadDLL( wchar_t* DllName );
 __swi __arm int UnLoadDLL( void* DllData );
 
 #pragma swi_number=0x110
-__swi __arm int ModifyUIPageHook( int event, int (*PROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event), LPARAM ClientData, int mode );
+__swi __arm int ModifyUIPageHook( int event, PAGEHOOKPROC proc, LPARAM ClientData, int mode );
 //-------------------------------------------------------------------------------------------
 
 #pragma swi_number=0x112
@@ -141,8 +110,6 @@ __swi __arm int sprintf( char* buf, const char* fmt, ... );
 __swi __arm int snwprintf( wchar_t* buffer, int size, const wchar_t* fmt, ... );
 
 #pragma swi_number=0x116
-//0x204 - append
-//0x004 - write begin
 __swi __arm int _fopen( const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 );
 
 #pragma swi_number=0x117
@@ -194,18 +161,9 @@ __swi __arm int DataBrowser_isFileInListExt( const wchar_t* ext_table, const wch
 __swi __arm DB_FILE_FILTER DataBrowser_isFileInListExt_adr( void );
 
 #pragma swi_number=0x128
-__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
-#ifdef __cplusplus
-#pragma swi_number=0x128
-__swi __arm void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, void* ), void* lparam);
-#endif
-
+__swi __arm void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 #pragma swi_number=0x129
-__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
-#ifdef __cplusplus
-#pragma swi_number=0x129
-__swi __arm u16 Timer_Set( int time, void (*onTimer)( u16 timerID, void* ), void* lparam);
-#endif
+__swi __arm u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 #pragma swi_number=0x12A
 __swi __arm void Timer_Kill( u16* timerID );
 
@@ -309,7 +267,7 @@ __swi __arm int OneOfMany_GetSelected( GUI_ONEOFMANY* );
 __swi __arm void StatusIndication_Item8_SetText( STRID );
 
 #pragma swi_number=0x14B
-__swi __arm void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)( BOOK*, GUI* ) );
+__swi __arm void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, SKACTIONPROC proc );
 
 #pragma swi_number=0x14C
 __swi __arm void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
@@ -365,13 +323,8 @@ __swi __arm STRID int2strID( int num );
 #pragma swi_number=0x15D
 __swi __arm STRID Str2ID( const void* wstr, int flag, int len );
 
-#ifdef __cplusplus
 #pragma swi_number=0x15E
-__swi __arm void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
-#else
-#pragma swi_number=0x15E
-__swi __arm void StrID2Str( STRID, char* str, int maxlen, int null );
-#endif
+__swi __arm void StrID2Str( STRID, char* str, int maxlen );
 
 #pragma swi_number=0x15F
 __swi __arm int TextID2wstr( STRID, wchar_t* dest, int maxlen );
@@ -485,16 +438,10 @@ __swi __arm void delay( OSTIME timeout );
 __swi __arm OSBOOLEAN hunt( const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig );
 #pragma swi_number=0x187
 __swi __arm void kill_proc( PROCESS pid );
-//#pragma swi_number=0x188
-//__swi __arm OSBOOLEAN set_bp( PROCESS pid, OSADDRESS address, OSADDRESS attribute, union SIGNAL** trapsig );
-//#pragma swi_number=0x8188
-//__swi __arm int set_bp_adr( void );
+
 #pragma swi_number=0x189
 __swi __arm union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
-//#pragma swi_number=0x18A
-//__swi __arm OSBOOLEAN clear_bp( PROCESS pid, OSADDRESS addr );
-//#pragma swi_number=0x818A
-//__swi __arm int clear_bp_adr( void );
+
 #pragma swi_number=0x18B
 __swi __arm void stop( PROCESS pid );
 #pragma swi_number=0x18C
@@ -512,23 +459,12 @@ __swi __arm int datetime2unixtime( DATETIME* dt );
 #pragma swi_number=0x1A0
 __swi __arm char* strcpy( char* dest, const char* source );
 
-#pragma swi_number=0x1A1
-__swi __arm void* CreateMessage( int size, int ev, char* name );
-#pragma swi_number=0x1A2
-__swi __arm void SendMessage( void** signal, int PID );
-#pragma swi_number=0x1A3
-__swi __arm void* WaitMessage( void* SIGSEL );
-#pragma swi_number=0x1A4
-__swi __arm int FreeMessage( void** Mess );
-#pragma swi_number=0x1A5
-__swi __arm void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
 
 #pragma swi_number=0x1A6
 __swi __arm char* UIEventName( int event );
 
 #pragma swi_number=0x81A7
 __swi __arm char* MissedEvents( void );
-
 #pragma swi_number=0x1A8
 __swi __arm void UI_Event( int event );
 #pragma swi_number=0x1A9
@@ -540,8 +476,6 @@ __swi __arm void UI_Event_toBookIDwData( int event, int BookID, void* message, v
 
 #pragma swi_number=0x1AC
 __swi __arm int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
-
-#define LIST_FIND(lst, itemtofind, cmp_proc) List_Find( lst, (void*) itemtofind, (LISTFINDCALLBACK) cmp_proc )
 
 #pragma swi_number=0x1AD
 __swi __arm void* List_Get( LIST* lst, int index );
@@ -709,7 +643,6 @@ __swi __arm UI_APP_SESSION* root_list_get_session( int num_session );
 #pragma swi_number=0x1F5
 __swi __arm BOOK* SESSION_GetTopBook( UI_APP_SESSION* );
 
-//15.11.07
 #pragma swi_number=0x1F6
 __swi __arm int MainInput_getVisible( GUI* );
 #pragma swi_number=0x1F7
@@ -727,8 +660,7 @@ __swi __arm int wstrncmp( const wchar_t*, const wchar_t*, int );
 __swi __arm int DispObject_GetAbsoluteXPos( DISP_OBJ* );
 #pragma swi_number=0x1FD
 __swi __arm int DispObject_GetAbsoluteYPos( DISP_OBJ* );
-#pragma swi_number=0x1FE
-__swi __arm WINDOW* DispObject_GetWindow( DISP_OBJ* );
+
 #pragma swi_number=0x1FF
 __swi __arm int GetThemeColor( int, int );
 #pragma swi_number=0x200
@@ -736,7 +668,6 @@ __swi __arm int REQUEST_SETTING_SILENCE_SET( const int* sync, u16 profile, u16 v
 #pragma swi_number=0x201
 __swi __arm int REQUEST_SETTING_SILENCE_GET( const int* sync, u16 profile, char* silence_mode );
 
-//
 #pragma swi_number=0x202
 __swi __arm void VCALL_Init( void* vc );
 #pragma swi_number=0x203
@@ -752,8 +683,6 @@ __swi __arm void VCALL_SetHZ2( void* vc, u16 );
 #pragma swi_number=0x208
 __swi __arm void MakeVoiceCall( int SessioID, void* vc, int flag );
 
-//#pragma swi_number=0x209
-//__swi __arm int isDirectory( wchar_t* path, wchar_t* filename, int* error );
 #pragma swi_number=0x20A
 __swi __arm void FileDelete( wchar_t* path, wchar_t* filename, int* error );
 #pragma swi_number=0x20B
@@ -769,10 +698,6 @@ __swi __arm int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, in
 __swi __arm int MSG_SendMessage_Start( int, void*, int );
 #pragma swi_number=0x8210
 __swi __arm void* get_APP_DESC_TABLE( void );
-
-
-#pragma swi_number=0x211
-__swi __arm C_INTERFACE* Window_GetComponentInterface( WINDOW* );
 
 #pragma swi_number=0x212
 __swi __arm int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
@@ -816,8 +741,6 @@ __swi __arm char* DispObject_GetName( DISP_OBJ* );
 __swi __arm void DISP_DESC_SetSize( DISP_DESC*, u16 size );
 #pragma swi_number=0x223
 __swi __arm u16 DISP_DESC_GetSize( DISP_OBJ* );
-//
-//
 #pragma swi_number=0x224
 __swi __arm void DISP_DESC_SetOnCreate( DISP_DESC*, DISP_OBJ_ONCREATE_METHOD );
 #pragma swi_number=0x225
@@ -1179,7 +1102,7 @@ __swi __arm BOOK* MenuBook_Desktop( int mode, int BookID );
 #pragma swi_number=0x2C1
 __swi __arm wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
 #pragma swi_number=0x2C2
-__swi __arm void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, GUI* ) );
+__swi __arm void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, SKACTIONPROC proc );
 #pragma swi_number=0x2C3
 __swi __arm void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
 #pragma swi_number=0x2C4
@@ -1581,7 +1504,7 @@ __swi __arm void* IncommingCall_Accept( BOOK* book );
 #pragma swi_number=0x369
 __swi __arm void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
 #pragma swi_number=0x36A
-__swi __arm void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
+__swi __arm void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, SKACTIONPROC proc );
 #pragma swi_number=0x36B
 __swi __arm void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 #pragma swi_number=0x36C
@@ -1845,6 +1768,9 @@ __swi __arm STRID Feedback_DispObject_GetText( DISP_OBJ* );
 
 #pragma swi_number=0x3D3
 __swi __arm void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+
+#pragma swi_number=0x3D4
+__swi __arm LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 
 #ifdef LIBCLARANS
 }

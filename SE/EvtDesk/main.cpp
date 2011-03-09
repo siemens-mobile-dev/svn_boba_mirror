@@ -83,7 +83,7 @@ void elf_exit(void)
   kill_data(&ELF_BEGIN, (void(*)(void*))mfree_adr());
 };
 
-void onTimer (u16 tmr , void *)
+void onTimer (u16 tmr , LPARAM)
 {
   DispObject_InvalidateRect(GUI_display,0);
   Timer_ReSet(&timer,1000,onTimer,0);

@@ -12,8 +12,8 @@ class CMyBook: public CBook
 protected:
 	~CMyBook();
 
-	static int _HookCBKey( int key, int repeat_count, int mode, LPARAM lparam, DISP_OBJ* disp );
-	static int _HookAction(void *msg, BOOK* book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event);
+	static int _HookCBKey( int key, int repeat_count, int mode, CMyBook* book, DISP_OBJ* disp );
+	static int _HookAction(void *msg, BOOK* book, PAGE_DESC * page_desc, CMyBook* mybook, u16 event);
 
 	int HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* disp );
 	int HookAction( void *msg, BOOK* book, PAGE_DESC * page_desc, u16 event);

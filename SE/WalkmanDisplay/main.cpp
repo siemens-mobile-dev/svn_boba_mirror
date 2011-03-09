@@ -82,7 +82,7 @@ TRACK_DESC * TrackDesc_Get(BOOK *bk);
 void onAccel(void*,int,int);
 void init_resources(wchar_t*);
 void deinit_resources();
-int NewKey(int key,int,int mode);
+int NewKey(int key,int,int mode, LPARAM, DISP_OBJ*);
 GUI *FindGuiInBook(BOOK *bk, char *name);
 void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c);
 void set_vertical();
@@ -218,7 +218,7 @@ __EVENT( onPlayerClosed )
 {
   if (ELF_KILL_RECEIVED)
     return 0;
-  ModifyKeyHook(NewKey, 0);
+  ModifyKeyHook(NewKey, KEY_HOOK_REMOVE, NULL);
   if (RedrawUsed)
   {
     Send_REDRAW_RELEASE();
@@ -1452,7 +1452,7 @@ void GetRedraw(DISP_OBJ_ONREDRAW_METHOD draw)
   oldredr=draw;
   debug_printf("\nWalkmanDisplay: old redraw: %X\n", oldredr);
   Softkey_SetOnRedraw();
-  ModifyKeyHook(NewKey, 1);
+  ModifyKeyHook(NewKey, KEY_HOOK_ADD, NULL);
 };
 
 int isBrowserItemBook(BOOK *bk)
@@ -1539,7 +1539,7 @@ void CMyBook::onClose()
   }
   #define IDFREE(a) if (a!=NOIMAGE && a!=0) {ImageID_Free(a);} a=NOIMAGE
   IDFREE(nowmusic.meta.ImageID);
-  ModifyKeyHook(NewKey, 0);
+  ModifyKeyHook(NewKey, KEY_HOOK_REMOVE, NULL);
   if (RedrawUsed)
   {
     Send_REDRAW_RELEASE();
@@ -1557,7 +1557,7 @@ void CMyBook::onClose()
   SUBPROC(elf_exit);
 };
 
-__ONKEY_METHOD( NewKey )
+int NewKey(int key,int,int mode, LPARAM, DISP_OBJ*)
 {
   BOOK *bk;
   if (key==key_rotation && mode==key_rotation_mode)

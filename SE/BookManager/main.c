@@ -199,10 +199,9 @@ int CheckEv( BOOK* bk, int ev )
 }
 
 // взять значение из ини-файла
-int GetParam( char* name )
+STRID GetParam( char* name )
 {
   wchar_t ws[50];
-  int sID = 0;
   
   MyBOOK* myBook = (MyBOOK*) FindBook( isBookManager );
   
@@ -212,17 +211,13 @@ int GetParam( char* name )
     if ( param )
     {
       win12512unicode( ws, param, MAXELEMS(ws)-1 );
-      sID = Str2ID( ws, 0, SID_ANY_LEN );
+      STRID sID = Str2ID( ws, 0, SID_ANY_LEN );
       mfree( param );
       return sID;
     }
   }
   
-  if( !sID )
-  {
-    sID = Str2ID( name, 6, strlen(name) );
-  }
-  return sID;
+  return Str2ID( name, 6, strlen(name) );
 }
 
 // получить имя жавы
@@ -292,7 +287,7 @@ void CreateBookLst( MyBOOK* myBook )
             }
             else
             {
-              StrID2Str( BookObj_GetSession(book)->name, s, MAXELEMS(s), 0 );
+              StrID2Str( BookObj_GetSession(book)->name, s, MAXELEMS(s) );
               char * bn =new char[strlen(s)+1];
               strcpy(bn,s);
               elem->book_name = bn;
@@ -303,7 +298,7 @@ void CreateBookLst( MyBOOK* myBook )
             if ( tmp != EMPTY_SID )
             {
               delete(elem->book_name);
-              StrID2Str( tmp, s, MAXELEMS(s), 0 );
+              StrID2Str( tmp, s, MAXELEMS(s) );
               char * java_name =new char[strlen(s)+1];
               strcpy(java_name,s);
               elem->book_name = java_name;
@@ -962,43 +957,27 @@ void onMyBookClose( BOOK* book )
   MyBOOK* myBook = (MyBOOK*) book;
   DaemonBook * dbk = (DaemonBook*)FindBook(isBookmanDaemonBook);
   dbk->ActiveTAB = GetActiveTab( myBook );
+  
   // выгрузили файло
-  if ( myBook->ini_buf )
-  {
-    mfree( myBook->ini_buf );
-    myBook->ini_buf = 0;
-  }
-  if ( myBook->java_list_menu )
-  {
-    GUIObject_Destroy( myBook->java_list_menu );
-    myBook->java_list_menu = 0;
-  }
+  if ( myBook->ini_buf ) delete myBook->ini_buf;
+
+  if ( myBook->java_list_menu ) GUIObject_Destroy( myBook->java_list_menu );
+
   if ( myBook->java_list )
   {
     List_DestroyElements( myBook->java_list, elem_filter, elem_free );
     List_Destroy( myBook->java_list );
     myBook->java_list = 0;
   }
-  if ( myBook->mode_list )
-  {
-    GUIObject_Destroy( myBook->mode_list );
-    myBook->mode_list = 0;
-  }
-  if ( myBook->but_list )
-  {
-    GUIObject_Destroy( myBook->but_list );
-    myBook->but_list = 0;
-  }
-  /* if ( str_inp )
-  {
-  GUIObject_Destroy( str_inp );
-  str_inp = 0;
-}*/
-  if ( myBook->shortcuts_buf )
-  {
-    delete( myBook->shortcuts_buf );
-    myBook->shortcuts_buf = 0;
-  }
+  
+  if ( myBook->mode_list ) GUIObject_Destroy( myBook->mode_list );
+
+  if ( myBook->but_list ) GUIObject_Destroy( myBook->but_list );
+
+  if ( myBook->YesNoQuestion ) GUIObject_Destroy( myBook->YesNoQuestion );
+
+  if ( myBook->shortcuts_buf ) delete( myBook->shortcuts_buf );
+
   if ( myBook->MainMenuID != -1 )
   {
     BOOK* MainMenu = FindBookByID( myBook->MainMenuID );
@@ -1012,6 +991,8 @@ void onMyBookClose( BOOK* book )
   SessoinListsFree( myBook );
   
   //убили гуи
+  if ( myBook->blist ) GUIObject_Destroy( myBook->blist );
+  if ( myBook->elist ) GUIObject_Destroy( myBook->elist );
   if ( myBook->gui ) GUIObject_Destroy( myBook->gui );
   
   // выгрузили иконки
@@ -1175,7 +1156,7 @@ __root int CreateBookList( void* r0, BOOK* bk )
 }
 
 
-int NewKey( int key, int r1, int mode )
+int NewKey( int key, int r1, int mode, LPARAM, DISP_OBJ* )
 {
   BOOK* bk = FindBook( isBookManager );
   MyBOOK* mbk = (MyBOOK*) bk;

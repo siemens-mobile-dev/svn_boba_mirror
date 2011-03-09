@@ -40,7 +40,6 @@ public:
 	void SetRefreshTimer( int time ); //DispObject_SetRefreshTimer
 	void SetTitleText( int StrID ); //DispObject_SetTitleText
 	void Show( int mode ); //DispObject_Show
-	WINDOW* GetWindow(); //DispObject_GetWindow
 	void GetRect( RECT* retrect ); //DispObject_GetRect
 	void WindowSetPosition( int x, int y ); //DispObject_WindowSetPosition
 	void WindowSetSize( int w, int h ); //DispObject_WindowSetSize

@@ -27,8 +27,8 @@
 0494: 00000000 1116ED44 ; 125: void DataBrowserDesc_Destroy( void* DataBrowserDesc );
 0498: 00000000 0969E944 ; 126: wchar_t* getFileExtention( wchar_t* fname );
 049C: 00000000 051CE944 ; 127: int DataBrowser_isFileInListExt( const wchar_t* ext_table, const wchar_t* path, const wchar_t* fname );
-04A0: 00000000 F17D2A45 ; 128: void Timer_ReSet( u16* timer, int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
-04A4: 00000000 BD7D2A45 ; 129: u16 Timer_Set( int time, void (*onTimer)( u16 timerID, LPARAM lparam ), LPARAM lparam );
+04A0: 00000000 F17D2A45 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
+04A4: 00000000 BD7D2A45 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 497E2A45 ; 12A: void Timer_Kill( u16* timerID );
 04AC: 00000000 09B02A45 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 04B0: 00000000 31B12A45 ; 12C: void BookObj_KillBook( BOOK* book );
@@ -62,7 +62,7 @@
 0520: 00000000 A5C43145 ; 148: void OneOfMany_SetTexts( GUI_ONEOFMANY*, STRID* strids, int Count );
 0524: 00000000 81C43145 ; 149: int OneOfMany_GetSelected( GUI_ONEOFMANY* );
 0528: 00000000 5DFF2B45 ; 14A: void StatusIndication_Item8_SetText( STRID );
-052C: 00000000 25D53745 ; 14B: void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, void (*proc)( BOOK*, GUI* ) );
+052C: 00000000 25D53745 ; 14B: void GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, SKACTIONPROC proc );
 ;0530: xxxxxxxx yyyyyyyy ; 14C: void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
 ;0534: xxxxxxxx yyyyyyyy ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 0538: 00000000 11D63745 ; 14E: void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
@@ -81,7 +81,7 @@
 056C: 00000000 C13CE544 ; 15B: char* wstr2strn( char* str, const wchar_t* wstr, int maxlen );
 0570: 00000000 FD2F3445 ; 15C: STRID int2strID( int num );
 0574: 00000000 B1323445 ; 15D: STRID Str2ID( const void* wstr, int flag, int len );
-0578: 00000000 45373445 ; 15E: void StrID2Str( STRID, char* str, int maxlen, int null = 0 );
+0578: 00000000 45373445 ; 15E: void StrID2Str( STRID, char* str, int maxlen );
 057C: 00000000 35363445 ; 15F: int TextID2wstr( STRID, wchar_t* dest, int maxlen );
 0580: 00000000 15353445 ; 160: int TextGetLength( STRID );
 0584: 00000000 79343445 ; 161: void TextFree( STRID );
@@ -148,11 +148,11 @@
 ;0678: xxxxxxxx yyyyyyyy ; 19E:
 ;067C: xxxxxxxx yyyyyyyy ; 19F:
 0680: 00000000 55D05544 ; 1A0: char* strcpy( char* dest, const char* source );
-0684: 00000000 252E0045 ; 1A1: void* CreateMessage( int size, int ev, char* name );
-0688: 00000000 792E0045 ; 1A2: void SendMessage( void** signal, int PID );
-068C: 00000000 012F0045 ; 1A3: void* WaitMessage( void* SIGSEL );
-0690: 00000000 152F0045 ; 1A4: int FreeMessage( void** Mess );
-0694: 00000000 BD99FD44 ; 1A5: void SendDispatchMessage( int id, int unk_zero, int size, void* mess );
+;0684: xxxxxxxx yyyyyyyy ; 1A1:
+;0688: xxxxxxxx yyyyyyyy ; 1A2:
+;068C: xxxxxxxx yyyyyyyy ; 1A3:
+;0690: xxxxxxxx yyyyyyyy ; 1A4:
+;0694: xxxxxxxx yyyyyyyy ; 1A5:
 0698: 00000000 ED852A45 ; 1A6: char* UIEventName( int event );
 069C: 00000000 D89C1820 ;81A7: char* MissedEvents( void );
 06A0: 00000000 919A2A45 ; 1A8: void UI_Event( int event );
@@ -241,7 +241,7 @@
 07EC: 00000000 CDD95544 ; 1FB: int wstrncmp( const wchar_t*, const wchar_t*, int );
 07F0: 00000000 317F3545 ; 1FC: int DispObject_GetAbsoluteXPos( DISP_OBJ* );
 07F4: 00000000 657F3545 ; 1FD: int DispObject_GetAbsoluteYPos( DISP_OBJ* );
-07F8: 00000000 01723545 ; 1FE: WINDOW* DispObject_GetWindow( DISP_OBJ* );
+;07F8: xxxxxxxx yyyyyyyy ; 1FE:
 07FC: 00000000 AD013845 ; 1FF: int GetThemeColor( int, int );
 0800: 00000000 B5132E45 ; 200: int REQUEST_SETTING_SILENCE_SET( const int* sync, u16 profile, u16 value );
 0804: 00000000 5D132E45 ; 201: int REQUEST_SETTING_SILENCE_GET( const int* sync, u16 profile, char* silence_mode );
@@ -260,7 +260,7 @@
 0838: 00000000 E9700345 ; 20E: int MSG_SendMessage_AddRecipient( void*, wchar_t*, wchar_t*, int, int );
 083C: 00000000 11750345 ; 20F: int MSG_SendMessage_Start( int, void*, int );
 0840: 00000000 FCF09945 ;8210: void* get_APP_DESC_TABLE( void );
-0844: 00000000 C1DB3545 ; 211: C_INTERFACE* Window_GetComponentInterface( WINDOW* );
+;0844: xxxxxxxx yyyyyyyy ; 211:
 0848: 00000000 D588DF44 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 084C: 00000000 FD87DF44 ; 213: STRID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
 0850: 00000000 4588DF44 ; 214: STRID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
@@ -308,7 +308,7 @@
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 FF34DE44 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
-0904: 00000000 FD34DE44 ; 241: int JavaSession_GetName( void ); //nullsub(ret 0)
+0904: 00000000 FD34DE44 ; 241: STRID JavaSession_GetName( void ); //nullsub(ret 0)
 0908: 00000000 E1333445 ; 242: STRID TextCopyId( STRID );
 090C: 00000000 85B62A45 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 ;0910: xxxxxxxx yyyyyyyy ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
@@ -437,7 +437,7 @@
 0AFC: 00000000 C1F63545 ; 2BF: void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
 0B00: 00000000 11263845 ; 2C0: BOOK* MenuBook_Desktop( int mode, int BookID );
 0B04: 00000000 A5273845 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
-0B08: 00000000 09873745 ; 2C2: void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, void (*proc)( BOOK*, GUI* ) );
+0B08: 00000000 09873745 ; 2C2: void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, SKACTIONPROC proc );
 0B0C: 00000000 41873745 ; 2C3: void BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
 0B10: 00000000 95962A45 ; 2C4: BOOK* FindBookByID( int BookID );
 0B14: 00000000 DD0A3745 ; 2C5: GUI_FEEDBACK* TextFeedbackWindow( BOOK* book, int zero );
@@ -605,7 +605,7 @@
 0D9C: 00000000 69142E45 ; 367: void REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync, int ProfileNum, char* state );
 0DA0: 00000000 6D39DC44 ; 368: void* IncommingCall_Accept( BOOK* book );
 0DA4: 00000000 390FF444 ; 369: void MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
-0DA8: 00000000 050FF444 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, void (*proc)( BOOK*, GUI* ) );
+0DA8: 00000000 050FF444 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, SKACTIONPROC proc );
 0DAC: 00000000 C50FF444 ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 0DB0: 00000000 550FF444 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
 0DB4: 00000000 8D04F444 ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
@@ -711,6 +711,7 @@
 ;0F44: xxxxxxxx yyyyyyyy ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 ;0F48: xxxxxxxx yyyyyyyy ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
 ;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 
 
 

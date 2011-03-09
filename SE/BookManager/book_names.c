@@ -133,7 +133,7 @@ void onAccept_SI( BOOK* book, wchar_t* string, int len )
 int CreateSI( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  int editable_strID = GetParam(GetCurrentName(mbk));
+  STRID editable_strID = GetParam(GetCurrentName(mbk));
   
   mbk->StringInput = CreateStringInputVA( 0,
                                          VAR_PREV_ACTION_PROC( onPrevious_SI ),

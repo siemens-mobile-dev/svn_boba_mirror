@@ -35,7 +35,6 @@ wchar_t * CreateFD (FILE_DIALOG* fd,
                     ...  // folders list
                       )
 {
-  int args;
   wchar_t * res;
   va_list ap;
   va_start(ap, filters);

@@ -31,7 +31,7 @@ void Send_REDRAW_RELEASE();
 void csofts_destroy();
 void destroy_all_images();
 void Init();
-int NewKey(int key, int r1 , int mode);
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*);
 int onkey(int key);
 int ourredraw(DISP_OBJ *DO, int a, int b, int c);
 int isSoftkeysBook(BOOK *bk);
@@ -94,7 +94,7 @@ void MyBook_OnClose(BOOK * book)
   {
     destroy_all_images();
     csofts_destroy();
-    ModifyKeyHook(NewKey,0);
+    ModifyKeyHook(NewKey,KEY_HOOK_REMOVE, NULL);
     DISP_OBJ *soft=DispObject_SoftKeys_Get();
     DISP_DESC_SetOnRedraw(DispObject_GetDESC(soft), DREDRAW);
     DISP_DESC_SetOnRefresh(DispObject_GetDESC(soft), DREFRESH);

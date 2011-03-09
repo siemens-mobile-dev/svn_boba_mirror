@@ -35,7 +35,6 @@ static char* leaktypes[]={
 	"book",
 	"process",
 	"ose buffer",
-	"opa buffer",
 	"metadatadesc",
 	"fileitemstruct",
 	"w_dir",
@@ -110,6 +109,8 @@ void trace_done()
 
 	started=false;
 
+	BOOL detected=FALSE;
+
 	__original_w_chdir(GetDir(DIR_OTHER|MEM_INTERNAL));
 	int f=__original_w_fopen(logname,WA_Write+WA_Create+WA_Truncate,0x1FF,0);
 
@@ -117,6 +118,8 @@ void trace_done()
 	{
 		if(buffers[memtype]->FirstFree)
 		{
+			detected=TRUE;
+
 			__original_w_fwrite(f,tmp,__original_sprintf(tmp,"leak type \"%s\"\n",leaktypes[memtype]));
 
 			for(int j=0;j<buffers[memtype]->FirstFree;j+=LISTDATACOUNT)
@@ -132,6 +135,9 @@ void trace_done()
 		}
 		__original_List_Destroy(buffers[memtype]);
 	}
+
+	if(!detected)
+		__original_w_fwrite(f,tmp, sprintf(tmp,"no leaks detected\n") );
 
 	if(buffers2[trace_list_file]->FirstFree)
 		__original_w_fwrite(f,tmp, sprintf(tmp,"new/delete counter broken\n") );

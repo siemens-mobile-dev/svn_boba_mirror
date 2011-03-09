@@ -146,13 +146,13 @@ void EndUSSDtimer(void)
   ussdreq_sended=0;
 }
 
-static void ussd_timeout(u16 timer, void *)
+static void ussd_timeout(u16 timer, LPARAM)
 {FUNCTION
   ussdreq_sended=0;
   StartHoursTimer();
 }
 
-static void ussd_send(u16 timer, void *)
+static void ussd_send(u16 timer, LPARAM)
 {FUNCTION
   if ( Display_GetFocusedDispObject(0) == GUIObject_GetDispObject(SBY_GetMainInput(Find_StandbyBook()))
       || FindBook(get_IsAudioPlayerBook()) || FindBook(get_IsFmRadioBook()) || FindBook(get_IsScreenSaverBook()))
@@ -179,7 +179,7 @@ void SendCashReq(void)
 }
 
 
-static void HoursTimerProc(u16 timer, void *)
+static void HoursTimerProc(u16 timer, LPARAM)
 {FUNCTION
   SendCashReq();
 }

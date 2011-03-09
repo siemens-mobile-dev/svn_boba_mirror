@@ -4,6 +4,8 @@
   $lib = file("..\\include\\Lib_Clara.h");
 
   $liborig = fopen("lib_clara_original.h","w");
+  fprintf($liborig,"#ifndef __LIB_CLARA_ORIGINAL_H_\r\n#define __LIB_CLARA_ORIGINAL_H_\r\n");
+
   $doendif = false;
   $func="__none";
 
@@ -119,6 +121,10 @@
          fprintf($liborig,"%s\r\n",$lib[$i]);
     }
   }
+
+  fprintf($liborig,"#endif\r\n");
+  fclose($liborig);
+
 
   $fh = fopen("mem2.h","w");
   $fcpp = fopen("mem2.cpp","w");
@@ -276,7 +282,7 @@
     if(preg_match("/^skip (.*)$/",$f[$i],$m))
     {
        if(!isset($globalfn[$m[1]]))
-         echo "unknown ".$m[1]." is skip\n";
+         echo "unknown ".$m[1]." in skip\n";
        else
          fputs($fskipped,$globalfn[$m[1]]."\n");
        unset($globalfn[$m[1]]);

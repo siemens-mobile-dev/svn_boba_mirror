@@ -38,16 +38,16 @@ CMyBook::CMyBook()  :CBook( MYBOOKNAME, &base_page )
 	//софт при проигрывании ммс
 	textidname2id( _T("SMIL_VIEWER_STOP_SK"), SID_ANY_LEN, &strid_stop );
 
-	ModifyKeyHook( (KEYHOOKPROC)_HookCBKey, KEY_HOOK_ADD, (LPARAM)this );
+	MODIFYKEYHOOK( _HookCBKey, KEY_HOOK_ADD, this );
 }
 
 
 CMyBook::~CMyBook()
 {
-	ModifyKeyHook( (KEYHOOKPROC)_HookCBKey, KEY_HOOK_REMOVE, NULL );
+	MODIFYKEYHOOK( _HookCBKey, KEY_HOOK_REMOVE, NULL );
 
 	if( !blockbooks.empty() )
-		ModifyUIPageHook( CANCEL_EVENT, _HookAction, (LPARAM)this, PAGE_HOOK_REMOVE );
+		MODIFYUIPAGEHOOK( CANCEL_EVENT, _HookAction, this, PAGE_HOOK_REMOVE );
 
 	SUBPROC( mfree_adr(), &ELF_BEGIN );
 }
@@ -70,9 +70,9 @@ CMyBook* CMyBook::GetExisting()
 }
 
 
-int CMyBook::_HookCBKey( int key, int repeat_count, int mode, LPARAM lparam, DISP_OBJ* hooked_disp )
+int CMyBook::_HookCBKey( int key, int repeat_count, int mode, CMyBook* book, DISP_OBJ* hooked_disp )
 {
-	return reinterpret_cast<CMyBook*>( lparam )->HookCBKey( key, repeat_count, mode, hooked_disp );
+	return book->HookCBKey( key, repeat_count, mode, hooked_disp );
 }
 
 int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_disp )
@@ -157,7 +157,7 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 
 	//сохраняем книгу в списке, в хуке для одной страницы этой книги запретим эвент
 	if( blockbooks.empty() )
-		ModifyUIPageHook(CANCEL_EVENT, _HookAction, (LPARAM)this, PAGE_HOOK_ADD_BEFORE);
+		MODIFYUIPAGEHOOK(CANCEL_EVENT, _HookAction, this, PAGE_HOOK_ADD_BEFORE);
 	blockbooks.insert( msguilistbook );
 
 	BookObj_ReturnPage( topbook, CANCEL_EVENT );
@@ -174,9 +174,9 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 }
 
 
-int CMyBook::_HookAction(void *msg, BOOK* book, PAGE_DESC * page_desc, LPARAM ClientData, u16 event)
+int CMyBook::_HookAction(void *msg, BOOK* book, PAGE_DESC * page_desc, CMyBook* mybook, u16 event)
 {
-	return reinterpret_cast<CMyBook*>( ClientData )->HookAction(msg, book, page_desc, event);
+	return mybook->HookAction(msg, book, page_desc, event);
 }
 
 int CMyBook::HookAction( void *msg, BOOK* book, PAGE_DESC * page_desc, u16 event)
@@ -189,7 +189,7 @@ int CMyBook::HookAction( void *msg, BOOK* book, PAGE_DESC * page_desc, u16 event
 		{
 			blockbooks.erase( i );
 			if( blockbooks.empty() )
-				ModifyUIPageHook(CANCEL_EVENT, _HookAction, (LPARAM)this, PAGE_HOOK_REMOVE);
+				MODIFYUIPAGEHOOK(CANCEL_EVENT, _HookAction, this, PAGE_HOOK_REMOVE);
 
 			//блокируем CANCEL_EVENT для одной страницы, чтоб не пересоздавался лист
 			return BLOCK_EVENT_IN_THIS_SESSION;

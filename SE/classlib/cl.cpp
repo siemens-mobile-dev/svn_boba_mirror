@@ -30,11 +30,6 @@ DISP_DESC* CDispObjBase::GetDESC()
 	return DispObject_GetDESC( this );
 }
 
-WINDOW* CDispObjBase::GetWindow()
-{
-	return DispObject_GetWindow( this );
-}
-
 int CDispObjBase::GetAbsoluteXPos()
 {
 	return DispObject_GetAbsoluteXPos( this );

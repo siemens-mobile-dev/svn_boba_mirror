@@ -11,7 +11,7 @@
 
 #define COLOR_RGBA(r,g,b,a) (((unsigned int)r<<16)|((unsigned int)g<<8)|((unsigned int)b)|((unsigned int)a<<24))
 
-typedef struct GUI_type GUI_COLOR;
+typedef struct GUI GUI_COLOR;
 
 typedef struct _DISP_OBJ_COLOR : DISP_OBJ
 {
@@ -28,7 +28,7 @@ typedef union {
 	char *char_color;
 } COLOR_TYPE;
 
-typedef struct GUI_type GUI_COORDINATES;
+typedef struct GUI GUI_COORDINATES;
 
 typedef struct _DISP_OBJ_COORD : DISP_OBJ
 {
@@ -48,7 +48,7 @@ typedef union {
 } COORD_TYPE;
 
 
-typedef struct GUI_type GUI_FONT_SEL;
+typedef struct GUI GUI_FONT_SEL;
 
 typedef struct _DISP_OBJ_FONT_SEL : DISP_OBJ
 {

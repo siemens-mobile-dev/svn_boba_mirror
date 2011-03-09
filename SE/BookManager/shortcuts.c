@@ -180,7 +180,7 @@ int DB_Filter( const wchar_t* ext_table, const wchar_t* path , const wchar_t* na
   
   fstat( path, name, &_fstat );
   
-  return 0 != ( _fstat.unk1 & 0x10000 );
+  return 0 != ( _fstat.st_mode & 0x10000 );
 }
 
 

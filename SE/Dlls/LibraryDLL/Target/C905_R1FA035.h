@@ -33,3 +33,4 @@ int (*Network_INetworkConnection_GetConnectionInfo)(CONNECTION_INFO_DESC * desc)
 int (*GetChipID_int)()=(int(*)())0x1099AB01;
 OSBOOLEAN (*get_mem_int)(int,int,void*)=(OSBOOLEAN(*)(int,int,void*))0x101E7124;
 int (*ConnectionManager_Connection_GetState_int)(char * buf)=(int(*)(char * buf))0x141C4349;
+void (*StrID2Str_int)(STRID, char* str, int maxlen, int null)=(void(*)(STRID, char* str, int maxlen, int null))0x142BC741;

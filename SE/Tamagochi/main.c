@@ -191,7 +191,7 @@ void InitStatus(int indx, int age, int sex);
 void InitPetVar(int indx);
 int SaveStatus(int indx);
 void LoadAllPets();
-int NewKey(int key, int r1 , int mode);
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*);
 int isTamagochiBook(BOOK * book);
 void onTimer_save (u16 timerID, LPARAM lparam);
 void onTimer_refresh (u16 timerID, LPARAM lparam);
@@ -1381,7 +1381,7 @@ void onTimer_life (u16 timerID, LPARAM lparam)
 
 // ----------------------------------------------------------------------------
 
-int NewKey(int key, int r1 , int mode)
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*)
 {
   if(!isKeylocked())
   {
@@ -1809,7 +1809,7 @@ int TerminateElf(void *, BOOK* book)
 {
   Send_REDRAW_RELEASE();
   FreeBook(book);
-  ModifyKeyHook(NewKey,0);
+  ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
   return(1);
 }
 
@@ -2034,7 +2034,7 @@ int main (void)
     SUBPROC(elf_exit);
     return 0;
   }
-  ModifyKeyHook(NewKey,1);
+  ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
   if(ENA_HELLO_MSG) MessageBox(EMPTY_SID, Str2ID(LG_LOADING,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   BookObj_GotoPage((BOOK *)TamagochiBook,&main_page);
   return 0;

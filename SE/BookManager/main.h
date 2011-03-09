@@ -83,7 +83,7 @@ void onMyBookClose( BOOK* );
 void CloseMyBook( BOOK* Book, GUI* );
 int CreateMenu( int r0, BOOK* bk );
 void PreTerminateManager( BOOK* Book, GUI* );
-int NewKey( int key, int r1, int mode );
+int NewKey( int key, int r1, int mode, LPARAM, DISP_OBJ* );
 void SessoinListsFree( MyBOOK* book );
 int get_file( wchar_t* fname, char** buf_set );
 void RefreshElfSoftkeys( MyBOOK* mbk, int item );

@@ -27,15 +27,15 @@ int CMyBook::ShowAuthorInfo(CBook** bm_book,CMyBook* mbk)
   MESSAGE(L"Snake\n\n(c)mmcorp");
   return 0;
 };
-int CMyBook::OnMyKey(int key,int r,int mode,void*data, DISP_OBJ*)
+int CMyBook::OnMyKey(int key,int r,int mode,CMyBook* mybook, DISP_OBJ*)
 {
-  if(key==KEY_ESC || key==KEY_DEL) if(!strcmp("Snake",Display_GetTopBook(0)->xbook->name)) ((CMyBook*)data)->Free();
+  if(key==KEY_ESC || key==KEY_DEL) if(mybook==Display_GetTopBook(0)) mybook->Free();
   return 0;
 };
 CMyBook::~CMyBook()
 {
   DEBUG;
-  ModifyKeyHook(OnMyKey,0,0);
+  ModifyKeyHook(MKKEYHOOKPROC(OnMyKey),KEY_HOOK_REMOVE,0);
   gui->Free();
   elf_exit();
 };
@@ -43,7 +43,7 @@ CMyBook::CMyBook()
 :CBook("Snake",&base_page)
 {
   DEBUG;
-  ModifyKeyHook(OnMyKey,1,(LPARAM)this);
+  ModifyKeyHook(MKKEYHOOKPROC(OnMyKey),KEY_HOOK_ADD,this);
   GotoPage(&main_page);
 };
 

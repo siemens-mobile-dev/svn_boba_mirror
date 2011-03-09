@@ -23,8 +23,8 @@ u16 timer = 0;
 u16 timer_call_off = 0;
 int Connect = 0;
 
-int NewKey(int key, int r1 , int mode);
-int ControlKey(int key, int r1 , int mode);
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*);
+int ControlKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*);
 
 int isMTCallBook(BOOK *bk)
 {
@@ -94,7 +94,7 @@ int ShowAuthorInfo(void *mess ,BOOK* book)
 
 void onTimer_Call (u16 timerID, LPARAM lparam)
 {
-    ModifyKeyHook(NewKey,1);
+    ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
 }
 
 enum
@@ -129,14 +129,14 @@ int OnCallManagerEvent(void* r0,BOOK* b)
          /*Поднятие трубки*/
          case CALLMANAGER_CALL_CONNECTED:
          {
-           ModifyKeyHook(ControlKey,0);
+           ModifyKeyHook(ControlKey,KEY_HOOK_REMOVE,NULL);
          }
          break;
          /*Входящий вызов*/
          case CALLMANAGER_CALL_ALERT:
          {
-          ModifyKeyHook(NewKey,0);
-          ModifyKeyHook(ControlKey,1);
+          ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
+          ModifyKeyHook(ControlKey,KEY_HOOK_ADD,NULL);
           if(timer)
           {
            Timer_Kill(&timer);
@@ -148,7 +148,7 @@ int OnCallManagerEvent(void* r0,BOOK* b)
          /*Нажатие вызвать*/
          case CALLMANAGER_CALL_SETUP:
          {
-          ModifyKeyHook(NewKey,0);
+          ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
           if(timer)
           {
            Timer_Kill(&timer);
@@ -160,7 +160,7 @@ int OnCallManagerEvent(void* r0,BOOK* b)
          /*Завершение соединения*/
          case CALLMANAGER_CALL_TERMINATED:
          {
-          ModifyKeyHook(ControlKey,0);
+          ModifyKeyHook(ControlKey,KEY_HOOK_REMOVE,NULL);
           timer_call_off=Timer_Set(2000,onTimer_Call,0);
          }
       break;
@@ -326,7 +326,7 @@ void onTimer(u16 timerID, LPARAM lparam)
   dbl=0;
 }
 
-int NewKey(int key, int r1 , int mode)
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*)
 {
   AP = FindBook(get_IsAudioPlayerBook());
   FM = FindBook(get_IsFmRadioBook());
@@ -346,7 +346,7 @@ int NewKey(int key, int r1 , int mode)
   return(0);
 }
 
-int ControlKey(int key, int r1 , int mode)
+int ControlKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*)
 {
   BOOK *bk = FindBook(isMTCallBook);
   if (key==KeyControl)
@@ -365,8 +365,8 @@ int ControlKey(int key, int r1 , int mode)
 }
 void onCloseManagementBook(BOOK * book)
 {
-  ModifyKeyHook(NewKey,0);
-  ModifyKeyHook(ControlKey,0);
+  ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
+  ModifyKeyHook(ControlKey,KEY_HOOK_REMOVE,NULL);
   if(timer) Timer_Kill(&timer);
   if(timer_call_off) Timer_Kill(&timer_call_off);
   SUBPROC(elf_exit);
@@ -396,7 +396,7 @@ int main (void)
       SUBPROC(elf_exit);
       return 0;
     }
-    ModifyKeyHook(NewKey,1);
+    ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
   }
   return(0);
 }

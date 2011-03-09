@@ -42,8 +42,8 @@ int CABook_ShowAuthorInfo(void *mess ,BOOK* book)
   MessageBox( SID_NULL, Str2ID(text,0,SID_ANY_LEN), NOIMAGE, 1, 5000, msg->book ); 
   return(1);
 };
-int CABook_StandbyUnfocused(UI_MESSAGE *);
-int CABook_StandbyFocused(UI_MESSAGE *);
+//int CABook_StandbyUnfocused(UI_MESSAGE *);
+//int CABook_StandbyFocused(UI_MESSAGE *);
 
 void CABook_OnClose(BOOK * book)
 {

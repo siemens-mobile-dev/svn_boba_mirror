@@ -159,7 +159,7 @@ void Snap(void)
 
 }
 
-int NewKey(int key, int r1 , int mode)
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*)
 {
   if (key==KeyActiv)
   {
@@ -193,7 +193,7 @@ void onCloseSSBook(BOOK * book)
 {
   if (book)
   {
-    ModifyKeyHook(NewKey,0);
+    ModifyKeyHook(NewKey,KEY_HOOK_REMOVE,NULL);
     delete(hdr);
     delete(path);
     SUBPROC(elf_exit);
@@ -257,6 +257,6 @@ int main (void)
   xsize=Display_GetWidth(0);
   ysize=Display_GetHeight(0);
   CreateHeader(xsize,ysize);
-  ModifyKeyHook(NewKey,1);
+  ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
   return(0);
 }

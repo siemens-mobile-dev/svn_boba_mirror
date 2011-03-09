@@ -9,7 +9,7 @@
 #include "NewRecord.h"
 u16 ftimer;
 
-typedef GUI_type GUI_CUSTOM;
+typedef GUI GUI_CUSTOM;
 
 DISP_DESC *dd;
 GUI_CUSTOM* np;
@@ -278,7 +278,7 @@ void myOnKey(DISP_OBJ *db,int key,int a,int b,int type)
   }
 }
 
-void onfTimer (u16 tmr , void *)
+void onfTimer (u16 tmr , LPARAM)
 {
   if(!MyBK()->pause)
   {

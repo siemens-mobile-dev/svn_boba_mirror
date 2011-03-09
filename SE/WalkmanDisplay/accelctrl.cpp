@@ -8,9 +8,8 @@
 */
 
 #pragma optimize = z 9
-void onAccTimer(u16 timerID, void *CAccCtrl)
+void onAccTimer(u16 timerID, CAccelCtrl *cac)
 {
-  CAccelCtrl *cac=(CAccelCtrl*)CAccCtrl;
   if (cac->getstatus()==ACC_ACTIVE)
   {
     LIST *acc_lst=cac->gethooks();
@@ -27,7 +26,7 @@ void onAccTimer(u16 timerID, void *CAccCtrl)
       }
     }
   }
-  Timer_ReSet(cac->gettimer(),1000,onAccTimer,CAccCtrl);
+  Timer_ReSet(cac->gettimer(),1000,MKTIMERPROC(onAccTimer),cac);
 };
 
 CAccelCtrl::CAccelCtrl()
@@ -35,7 +34,7 @@ CAccelCtrl::CAccelCtrl()
   hooks=List_Create();
   if (identify_phone())
   {
-    timer=Timer_Set(1000, onAccTimer, (void*)this);
+    timer=Timer_Set(1000, MKTIMERPROC(onAccTimer), this);
     status=ACC_ACTIVE;
   }
   else

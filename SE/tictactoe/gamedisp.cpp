@@ -407,7 +407,6 @@ void CGameDisp::onDraw(int a, int b, int c)
 	GC_FreeGC( _gc );
 
 	if(gameptr->GetGameState() != CGame::GAMEINPROGRESS)
-//		if(IsDrawString()!=0 && IsDrawString()!=0xFFFFFFFF)
 		{
 			int font=FONT_E_16R;
 			if(font==0xFFFFFFFF)
@@ -434,8 +433,6 @@ void CGameDisp::onDraw(int a, int b, int c)
 			SetFont( font_old );
 		}
 
-	//      if(!m_timer)
-	//              m_timer=Timer_Set( TIMEINTERVAL, (void(*)(u16,void*))onTimer, this );
 	isondraw = false;
 }
 

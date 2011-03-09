@@ -15,7 +15,7 @@
 extern wchar_t myelfpath[512];
 extern RECT rect;
 
-int NewKey(int key, int r1 , int mode);
+int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*);
 int redraw_init();
 
 void elf_exit()
@@ -85,7 +85,7 @@ int main(wchar_t *elfpath)
   if (MyBook_Create())
   {
     Init();
-    ModifyKeyHook(NewKey,1);
+    ModifyKeyHook(NewKey,KEY_HOOK_ADD,NULL);
     redraw_init();
   }
   else

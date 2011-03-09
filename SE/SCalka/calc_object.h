@@ -85,7 +85,7 @@ enum MATH_OP
   TOTAL_OPS
 };
 
-typedef GUI_type GUI_CALC;
+typedef GUI GUI_CALC;
 
 typedef struct {
   DISP_OBJ dsp_obj;

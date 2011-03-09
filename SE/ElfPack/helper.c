@@ -2,6 +2,7 @@
 #include "vars.h"
 
 #include "temp\target.h"
+#include "helper.h"
 
 union SIGNAL
 {

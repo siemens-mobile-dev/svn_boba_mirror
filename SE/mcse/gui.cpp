@@ -164,7 +164,7 @@ u16 sctm=0;
 int max_scroll_disp;
 int scroll_disp;
 
-void ScrollTimerProc (u16 tmr , void *)
+void ScrollTimerProc (u16 tmr , LPARAM)
 {
   int time=CONFIG_SCROLL_TEXT_SPEED;
   int i=max_scroll_disp;
