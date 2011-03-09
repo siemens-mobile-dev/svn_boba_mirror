@@ -125,9 +125,9 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
     }
     if ((si==IS_ANY)||(GetIconIndex(t)==si))
     {
-      s=ContactT9Key;
       if ((!Is_Show_Groups)&&(t->isgroup)) goto L_NOT9;
       
+      s=ContactT9Key;
       if ((!t->isgroup)&&(t->group==grp_id)&&(grp_dis)&&(!(*s))) goto L_NOT9;
       
       if (!Is_Show_Offline) // by Seklth 13.06.2007
@@ -149,7 +149,6 @@ CLIST *FindContactByNS(int *i, int si, int act_flag, CLIST *search_contact)
   return(t);
 }
 
-
 int CountContacts(void)
 {
   int l=-1;
@@ -164,7 +163,8 @@ CLIST *FindContactByN(int i)
   int f=Is_Active_Up;
   if (f)
   {
-    t=FindContactByNS(&i,IS_ANY,1,NULL); if ((!i)&&(t)) return (t);
+    t=FindContactByNS(&i,IS_ANY,1,NULL);
+    if ((!i)&&(t)) return (t);
     f=0;
   }
   else f=2;
@@ -232,7 +232,10 @@ int CompareContacts(CLIST *t, CLIST *p)
       return(c);
     }
   }
-  
+  if ((Is_Active_Up==2)&&p->isactive&&t->isactive){
+    if (c=p->isactive-t->isactive)
+      return(c);
+  }
   extern const int SORT_CLIST;
   int ip=GetIconIndex(p);
   int it=GetIconIndex(t);

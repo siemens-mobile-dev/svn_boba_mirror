@@ -1085,8 +1085,9 @@ int contactlist_menu_onkey(void *data, GUI_MSG *msg)
     }
     if (key==GREEN_BUTTON)
     {
-      Is_Active_Up=!Is_Active_Up;
+      if (++Is_Active_Up>2) Is_Active_Up=0;
       SUBPROC((void*)WriteDefSettings);
+      ResortCL();
       RecountMenu(NULL, 1);
       return(-1);
     }

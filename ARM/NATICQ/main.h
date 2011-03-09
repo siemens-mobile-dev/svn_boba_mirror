@@ -38,7 +38,7 @@ typedef struct{
   char def_status;
   char def_xstatus;
   unsigned char
-  active_up:1;
+  active_up:2;
 }DEF_SETTINGS;
 #pragma pack(pop)
 
