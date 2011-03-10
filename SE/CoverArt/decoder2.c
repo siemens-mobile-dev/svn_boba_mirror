@@ -54,7 +54,7 @@ HEADER_INFO ReadMP3Information(wchar_t *path, wchar_t *name)
   fstat(path,name,&stat);
   lngFileSize = stat.fsize;
   int file;
-  file=_fopen(path,name,0x001,0x180,0);
+  file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
   
   char BUF[100+1];
   fread(file,BUF,100);

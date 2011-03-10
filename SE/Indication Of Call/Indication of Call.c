@@ -288,8 +288,8 @@ void bookOnDestroy(BOOK * book)
     if(rejectTimer) Timer_Kill(&rejectTimer);
     if(muteTimer) Timer_Kill(&muteTimer);
 
-    ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,0);
-    ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,0);
+    ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,PAGE_HOOK_REMOVE);
+    ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,PAGE_HOOK_REMOVE);
     StatusIndication_ShowNotes(EMPTY_SID);
     SUBPROC(elf_exit);
 }
@@ -575,8 +575,8 @@ int main(wchar_t* filename)
         {
             InitConfig();
 
-            ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,1);
-            ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,1);		
+            ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,PAGE_HOOK_ADD_BEFORE);
+            ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,PAGE_HOOK_ADD_BEFORE);		
             BOOK *myBook = (BOOK*)malloc(sizeof(BOOK));
             memset(myBook,0,sizeof(BOOK));
             if(!CreateBook(myBook,bookOnDestroy,&defaultpage,myappname,-1,0))

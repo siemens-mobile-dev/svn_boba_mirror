@@ -251,7 +251,7 @@ void WriteLog(char *buf)
   REQUEST_DATEANDTIME_GET(SYNC,&dt);
 
   wstrcpy(path,GetDir(DIR_OTHER|MEM_EXTERNAL));
-  if ((flog=_fopen(path,L"TamagochiLog.txt",0x10C,0x180,0)) < 0) { return; }
+  if ((flog=_fopen(path,L"TamagochiLog.txt",FSX_O_CREAT|FSX_O_APPEND|FSX_O_RDWR,FSX_S_IREAD|FSX_S_IWRITE,0)) < 0) { return; }
 
   sprintf(msg, "%02d:%02d:%02d %s\n", dt.time.hour, dt.time.min, dt.time.sec, buf);
   fwrite(flog,msg,strlen(msg));
@@ -1490,7 +1490,7 @@ int LoadStatus(int indx)
 
   if (fstat(path,name,&_fstat) != -1)
   {
-    if ((f=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       InitStatus(indx, 0, 2);
       l = fread(f,&inp, sizeof(TStatusPet));
@@ -1542,7 +1542,7 @@ int SaveStatus(int indx)
   {
     snwprintf(name,MAXELEMS(name)-1,CFG_NAME_FORMAT,indx);
   }
-  if ((f=_fopen(path,name,0x204,0x180,0))>=0)
+  if ((f=_fopen(path,name,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     unsigned int len = sizeof(TStatusPet) - sizeof(unsigned int);
     Pets[indx].Status.crc = myCrc32((unsigned char *)&Pets[indx].Status, len);
@@ -1585,7 +1585,7 @@ void CreateTestFile()
   FSTAT _fstat;
   int f;
   if (fstat(TESTPATH,TESTFILE,&_fstat) != -1) return;
-  if ((f=_fopen(TESTPATH,TESTFILE,0x204,0x180,0))>=0) fclose(f);
+  if ((f=_fopen(TESTPATH,TESTFILE,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0) fclose(f);
 }
 
 void LoadAllPets()
@@ -1652,7 +1652,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   game_list[0] = 0;
   if(fstat(path,name,&_fstat)!= -1)
   {
-    if ((f=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       sz = fread(f,game_list, GAME_PLAYER_LIST_LEN - 1);
       fclose(f);
@@ -1665,7 +1665,7 @@ static int MainPageOnCreate(void *, BOOK *bk)
   player_list[0] = 0;
   if(fstat(path,name,&_fstat)!= -1)
   {
-    if ((f=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       sz = fread(f,player_list, GAME_PLAYER_LIST_LEN - 1);
       fclose(f);

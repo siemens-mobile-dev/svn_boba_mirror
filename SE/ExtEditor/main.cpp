@@ -283,7 +283,7 @@ int SelFileFilterElf(const wchar_t *ExtList, const wchar_t *ItemPath, const wcha
   if (DataBrowser_isFileInListExt(ExtList,ItemPath,ItemName)) return(1);
   FSTAT fs;
   fstat(ItemPath,ItemName,&fs);
-  if ((fs.st_mode&0x10000)) return(1);
+  if ((fs.st_mode&FSX_S_IFDIR)) return(1);
   return(0);
 }
 

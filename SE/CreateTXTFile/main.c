@@ -118,7 +118,7 @@ int onAccept(void * data, BOOK *)
   {
     int f;
     int len;
-    if ( (f=_fopen( FILEITEM_GetPath((FILEITEM*)data), CreateFileBook->FileName, 0x2, 0x180, 0)) >=0 )
+    if ( (f=_fopen( FILEITEM_GetPath((FILEITEM*)data), CreateFileBook->FileName, FSX_O_WRONLY, FSX_S_IREAD|FSX_S_IWRITE, 0)) >=0 )
     {
       void * str_buf;
       if (CreateFileBook->coding)

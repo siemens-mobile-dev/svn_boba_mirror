@@ -711,7 +711,7 @@
 0F44: 00000000 5D741114 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 D9227015 ; 3D2: STRID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 CDC03914 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F50: 00000000 39992D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 
 
 

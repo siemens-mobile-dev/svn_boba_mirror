@@ -38,7 +38,7 @@ int LoadSkinData(const wchar_t *path,const wchar_t *fname)
   {
     if (_fstat.fsize==len)
     {
-      if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
+      if ((f=_fopen(path,fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
       {
         rlen=fread(f, cfg, len);
         fclose(f);
@@ -50,7 +50,7 @@ int LoadSkinData(const wchar_t *path,const wchar_t *fname)
       char *buf=new char[_fstat.fsize];
       if (buf)
       {
-        if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
+        if ((f=_fopen(path,fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
         {
           rlen=fread(f, buf, _fstat.fsize);
           fclose(f);
@@ -95,7 +95,7 @@ int SaveSkinData(const wchar_t *path,const wchar_t *fname)
   unsigned int len=(char *)__segment_end("SKIN_C")-(char *)__segment_begin("SKIN_C");
   int f;
   int result=BCFGLOADER_UNKNOWN_ERROR;
-  if ((f=_fopen(path,fname,0x204,0x180,0))>=0)
+  if ((f=_fopen(path,fname,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     if (fwrite(f,cfg,len)==len) result=BCFGLOADER_COMPLETE;
     fclose(f);

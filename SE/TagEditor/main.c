@@ -381,7 +381,7 @@ char * GetGenre(int num)
 
 void FileWrite()
 {
-  int f=_fopen(TagBook->path,TagBook->name,0x2,0x180,0);
+  int f=_fopen(TagBook->path,TagBook->name,FSX_O_WRONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
   for(int i=10; i<=TagBook->size_id3-1; i++)
   {
     TagBook->buffer2[i]=0;
@@ -1929,7 +1929,7 @@ void FileRead(wchar_t*path,wchar_t*name)
   TagBook->PlayMode=0;
   wstrcpy(TagBook->PlayText,SOFTKEY_STATUS_PLAY);
   int file;
-  file=_fopen(path,name, 0x001, 0x180, 0);
+  file=_fopen(path,name, FSX_O_RDONLY, FSX_S_IREAD|FSX_S_IWRITE, 0);
   TagBook->buffer=(char*)malloc(128+1);
   lseek(file, TagBook->size-128, 0);
   fread(file, TagBook->buffer, 128);

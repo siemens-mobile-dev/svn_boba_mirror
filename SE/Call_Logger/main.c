@@ -220,7 +220,7 @@ void sum_traf_cost(DATETIME * cur_date)
     char * buffer_gprs=new char[_fstat.fsize+2];
     wchar_t * w_buffer_gprs=(wchar_t*)buffer_gprs;
     memset(buffer_gprs,0,_fstat.fsize+2);
-    int f=_fopen(fpath,L"gprs.txt",0x1,0x180,0);
+    int f=_fopen(fpath,L"gprs.txt",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
     fread(f,buffer_gprs,_fstat.fsize);
     fclose(f);
     wchar_t buffer_str[200];
@@ -268,7 +268,7 @@ void sum_traf_cost(DATETIME * cur_date)
           snwprintf(buffer_str,400,L"\r\nTotal cost - %d.%02d %ls\r\nTotal traffic - %d b\r\n",rub,kop,Money,traf_whole);
         }
       }
-      f=_fopen(fpath,L"gprs.txt",0x108,0x180,0);
+      f=_fopen(fpath,L"gprs.txt",FSX_O_CREAT|FSX_O_APPEND,FSX_S_IREAD|FSX_S_IWRITE,0);
       fwrite(f,buffer_str,wstrlen(buffer_str)*2);
       fclose(f);
     }
@@ -464,13 +464,13 @@ void delayed_save_gprs_info(u16 unk,LPARAM term_ID)
     FSTAT _fstat;
     if ((fstat(fpath_gprs,L"gprs.txt",&_fstat)<0)||(!sort_order))
     {
-      f=_fopen(fpath_gprs,L"gprs.txt",0x108,0x180,0);
+      f=_fopen(fpath_gprs,L"gprs.txt",FSX_O_CREAT|FSX_O_APPEND,FSX_S_IREAD|FSX_S_IWRITE,0);
       fwrite(f,buffer_gprs,str_len);
     }
     else
     {
       char * new_buff=new char[_fstat.fsize+str_len];
-      f=_fopen(fpath_gprs,L"gprs.txt",0x4,0x180,0);
+      f=_fopen(fpath_gprs,L"gprs.txt",FSX_O_RDWR,FSX_S_IREAD|FSX_S_IWRITE,0);
       fread(f,new_buff,2);
       lseek(f,2,0);
       memcpy(new_buff+2,buffer_gprs,str_len);
@@ -544,7 +544,7 @@ char * get_region(wchar_t * w_PNUM)
     int w_PNUM_len=wstrlen(w_PNUM);
     char * PNUM_str=new char[w_PNUM_len+1];
     
-    int f=_fopen(fpath_ini,L"regions.ini",0x1,0x180,0);
+    int f=_fopen(fpath_ini,L"regions.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
     
     while (readen_size<_fstat.fsize)
     {
@@ -775,13 +775,13 @@ int OnCallManager(void * CallManStruct, BOOK *)
         FSTAT _fstat;
         if ((fstat(fpath,fname,&_fstat)<0)||(!sort_order))
         {
-          f=_fopen(fpath,fname,0x108,0x180,0);
+          f=_fopen(fpath,fname,FSX_O_CREAT|FSX_O_APPEND,FSX_S_IREAD|FSX_S_IWRITE,0);
           fwrite(f,buffer,str_len);
         }
         else
         {
           char * new_buff=new char[_fstat.fsize+str_len];
-          f=_fopen(fpath,fname,0x104,0x180,0);
+          f=_fopen(fpath,fname,FSX_O_CREAT|FSX_O_RDWR,FSX_S_IREAD|FSX_S_IWRITE,0);
           fread(f,new_buff,2);
           lseek(f,2,0);
           memcpy(new_buff+2,buffer,str_len);

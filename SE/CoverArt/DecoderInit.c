@@ -40,7 +40,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
     if (MetaData_Desc_GetCoverInfo(TagStructure,&cover_type,&size,&cover_offset)!=0)
     {
       int f;
-      if (f=_fopen(path,name,0x001,0x180,0x0)>=0)
+      if (f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0x0)>=0)
       {
         if (lseek(f,cover_offset,0)>=0)
         {
@@ -190,7 +190,7 @@ IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
 
   int error;
   FileDelete(GetDir(DIR_INI),L"album.png",&error);
-  int inf=_fopen(path,name,0x001,0x180,0);
+  int inf=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
   char CHUCK[100+1];
   fread(inf,CHUCK,100);
   if (CHUCK[0]=='I' && CHUCK[1]=='D' && CHUCK[2]=='3') //Присутствуют ли тэги версии 2.x?
@@ -201,7 +201,7 @@ IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
 	tagSize[2]=CHUCK[8];
 	tagSize[3]=CHUCK[9];
 	int size=synchsafeToNormal(tagSize);
-        int file=_fopen(path,name,0x001,0x180,0);
+        int file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
 	char cm[4];
 	bool HasPic=false;
 	bool isMid=false;
@@ -258,7 +258,7 @@ IMG_DESC GetBitmap(wchar_t *path, wchar_t *name)
             char *picture=new char[psize+1];
             fread(file,picture,psize);
             int f2;
-            f2 = _fopen(GetDir(DIR_INI),L"album.png",0x004,0,0);
+            f2 = _fopen(GetDir(DIR_INI),L"album.png",FSX_O_RDWR,FSX_S_IREAD|FSX_S_IWRITE,0);
             fwrite(f2,picture,psize);
             fclose(f2);
             delete(picture);

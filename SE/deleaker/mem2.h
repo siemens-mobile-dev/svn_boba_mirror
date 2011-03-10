@@ -108,8 +108,8 @@ void __deleaker_DestroyDirHandle( const char* __file__, int __line__, DIR_HANDLE
 int __deleaker_GUIObject_Create( const char* __file__, int __line__, GUI* __unknwnargname1, void (*GuiDestroy)( GUI* ), void (*DispDescCreate)( DISP_DESC* ), BOOK* __unknwnargname4, void (*DispObjCallBack)( DISP_OBJ*, void* msg, GUI* ), int display, int size_of_gui );
 #define GUIObject_Destroy(__unknwnargname1) __deleaker_GUIObject_Destroy( __FILE__,  __LINE__, __unknwnargname1 )
 GUI* __deleaker_GUIObject_Destroy( const char* __file__, int __line__, GUI* __unknwnargname1 );
-#define _fopen(filpath, filname, mode, rights, __0) __deleaker__fopen( __FILE__,  __LINE__, filpath, filname, mode, rights, __0 )
-int __deleaker__fopen( const char* __file__, int __line__, const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 );
+#define _fopen(filpath, filname, mode, rights, destfname) __deleaker__fopen( __FILE__,  __LINE__, filpath, filname, mode, rights, destfname )
+int __deleaker__fopen( const char* __file__, int __line__, const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, FILELISTITEM* destfname );
 #define fopen(fname, mode, rights) __deleaker_fopen( __FILE__,  __LINE__, fname, mode, rights )
 int __deleaker_fopen( const char* __file__, int __line__, const wchar_t* fname, int mode, int rights );
 #define fclose(file) __deleaker_fclose( __FILE__,  __LINE__, file )

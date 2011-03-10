@@ -236,7 +236,7 @@ u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM l
 
 bool isallocatedstrid(STRID strid)
 {
-	return strid!=EMPTY_SID && (strid&0xFFFF0000)!=0;
+	return (strid!=EMPTY_SID) && ((strid&0xFFFF0000)!=0);
 }
 
 bool isallocatediconid(IMAGEID iconid)
@@ -420,9 +420,9 @@ GUI* __deleaker_GUIObject_Destroy( const char* __file__, int __line__, GUI* __un
 	return __original_GUIObject_Destroy(__unknwnargname1);
 }
 
-int __deleaker__fopen( const char* __file__, int __line__, const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 )
+int __deleaker__fopen( const char* __file__, int __line__, const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, FILELISTITEM* destfname )
 {
-	int ret = __original__fopen(filpath, filname, mode, rights, __0);
+	int ret = __original__fopen(filpath, filname, mode, rights, destfname);
 	if(ret!=-1)trace_alloc(trace_file, (void*)ret, __file__, __line__);
 	return ret;
 }
@@ -565,7 +565,7 @@ char __deleaker_GUIonMessage_SetMenuItemUnavailableText( const char* __file__, i
 int __deleaker_MessageBox( const char* __file__, int __line__, STRID header_text, STRID message_text, IMAGEID __unknwnargname3, int style, int time, BOOK* book )
 {
 	if(isallocatedstrid(header_text))trace_free(trace_strid, (void*)header_text, __file__, __line__ );
-	if(isallocatedstrid(message_text) && message_text!=header_text)trace_free(trace_strid, (void*)message_text, __file__, __line__ );
+	if(isallocatedstrid(message_text))trace_free(trace_strid, (void*)message_text, __file__, __line__ );
 	if(isallocatediconid(__unknwnargname3))trace_free(trace_iconid, (void*)__unknwnargname3, __file__, __line__ );
 	return __original_MessageBox(header_text, message_text, __unknwnargname3, style, time, book);
 }
@@ -657,7 +657,7 @@ void __deleaker_Feedback_SetTextExtended( const char* __file__, int __line__, GU
 void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID short_text, STRID full_text )
 {
 	if(isallocatedstrid(short_text))trace_free(trace_strid, (void*)short_text, __file__, __line__ );
-	if(isallocatedstrid(full_text) /*&& StrID1!=StrID*/)trace_free(trace_strid, (void*)full_text, __file__, __line__ );
+	if(isallocatedstrid(full_text))trace_free(trace_strid, (void*)full_text, __file__, __line__ );
 	return __original_GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text);
 }
 
@@ -1087,7 +1087,7 @@ int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wcha
 void __deleaker_ObexSendFile( const char* __file__, int __line__, SEND_OBEX_STRUCT* __unknwnargname1 )
 {
 	if(isallocatedstrid(__unknwnargname1->send))trace_free(trace_strid, (void*)__unknwnargname1->send, __file__, __line__ );
-	if(isallocatedstrid(__unknwnargname1->sent) && __unknwnargname1->sent!=__unknwnargname1->send)trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1->sent))trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
 	__original_ObexSendFile(__unknwnargname1);
 }
 

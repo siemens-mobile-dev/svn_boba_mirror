@@ -658,7 +658,7 @@ void CheckCellName()
     snwprintf(logFile, 11, _T("%04d-%02d-%02d."), dt.date.year, dt.date.mon, dt.date.day);
   wstrcat(logFile, (cfg_log_ext ? _T("ini"):_T("txt")));
 
-  if ((file = _fopen(logFolder, logFile, 0x10C, 0x180, 0)) >= 0)
+  if ((file = _fopen(logFolder, logFile, FSX_O_CREAT|FSX_O_APPEND|FSX_O_RDWR, FSX_S_IREAD|FSX_S_IWRITE, 0)) >= 0)
   {
     char * newlog = new char[strlen(logCellName) + 32];
     if(cfg_cellidmode == 0){

@@ -110,7 +110,7 @@ __swi __arm int sprintf( char* buf, const char* fmt, ... );
 __swi __arm int snwprintf( wchar_t* buffer, int size, const wchar_t* fmt, ... );
 
 #pragma swi_number=0x116
-__swi __arm int _fopen( const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, unsigned int __0 );
+__swi __arm int _fopen( const wchar_t* filpath, const wchar_t* filname, unsigned int mode, unsigned int rights, FILELISTITEM* destfname);
 
 #pragma swi_number=0x117
 __swi __arm int fclose( int file );

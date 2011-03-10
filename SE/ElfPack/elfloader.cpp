@@ -1,8 +1,3 @@
-#define S_SET 0
-#define A_ReadOnly 1
-#define A_BIN 0
-#define P_READ 0x100
-
 //#define wintel		//компелим под винду
 
 #define MAX_PHNUM	10	//максимальное количество програмных сегментов
@@ -378,7 +373,7 @@ __arm int PatchDynConst (int * p)
 //  if (elfldr_FStat(elfldr_GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL),(u16*)L"DYN_CONST.bin",&fstat)==0)
   if (fstat( GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL), L"DYN_CONST.bin", &_fstat)==0)
   {
-    if ((file=_elfldr_fopen( GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL), L"DYN_CONST.bin", A_ReadOnly+A_BIN, P_READ, &iError))<0) return (-101);	//не открывается DYN_CONST.
+    if ((file=_elfldr_fopen( GetDir(DIR_ELFS_CONFIG | MEM_INTERNAL), L"DYN_CONST.bin", FSX_O_RDONLY, FSX_S_IREAD, &iError))<0) return (-101);	//не открывается DYN_CONST.
 
     DynConst=elfldr_malloc(_fstat.fsize);
     if (elfldr_fread(file, DynConst, _fstat.fsize, &iError) != _fstat.fsize)
@@ -450,7 +445,7 @@ long elfload_int(FILENAME filename, void *param1, void *param2, void *param3){
 #ifndef wintel
   int fin;
   unsigned int iError, iError2;
-  if ((fin=elfldr_fopen(filename, A_ReadOnly+A_BIN, P_READ, &iError))<0) return -1;	//не открывается ельф
+  if ((fin=elfldr_fopen(filename, FSX_O_RDONLY, FSX_S_IREAD, &iError))<0) return -1;	//не открывается ельф
   if (elfldr_fread(fin, &ehdr, sizeof(Elf32_Ehdr), &iError)!=sizeof(Elf32_Ehdr))	//не читается ельф
   {elfldr_fclose(fin, &iError); return -2;}
 #endif
@@ -481,7 +476,7 @@ long elfload_int(FILENAME filename, void *param1, void *param2, void *param3){
 
     //ARM
 #ifndef wintel
-    if (elfldr_lseek(fin, ehdr.e_phoff+n*ehdr.e_phentsize, S_SET, &iError, &iError2)!=ehdr.e_phoff+n*ehdr.e_phentsize)
+    if (elfldr_lseek(fin, ehdr.e_phoff+n*ehdr.e_phentsize, SEEK_SET, &iError, &iError2)!=ehdr.e_phoff+n*ehdr.e_phentsize)
     {elfldr_fclose(fin, &iError); return -4;}				//не сикается програмный заголовок
     if (elfldr_fread(fin, &phdrs[n], sizeof(Elf32_Phdr), &iError)!=sizeof(Elf32_Phdr))
     {elfldr_fclose(fin, &iError); return -5;}				//не читается програмный заголовок
@@ -548,7 +543,7 @@ long elfload_int(FILENAME filename, void *param1, void *param2, void *param3){
 
     //ARM
 #ifndef wintel
-    if (elfldr_lseek(fin, phdrs[n].p_offset, S_SET, &iError, &iError)!=phdrs[n].p_offset)
+    if (elfldr_lseek(fin, phdrs[n].p_offset, SEEK_SET, &iError, &iError)!=phdrs[n].p_offset)
     {elfldr_fclose(fin, &iError); elfldr_mfree(base); return -6;}		//не сикается динамический сегмент
 #endif
     /////////////////////////////////////////////////////////////////////

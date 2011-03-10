@@ -147,7 +147,7 @@ void Snap(void)
   wstrcat(fpath,fname);
   snwprintf(fname,25,L"scr%02d-%02d-%02d.bmp",dt.time.hour,dt.time.min,dt.time.sec);
 
-  if ((f=_fopen(fpath,fname,0x204,0x180,0))>=0)
+  if ((f=_fopen(fpath,fname,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     fwrite(f,bmp,(xsize*ysize*3)+54);
     fclose(f);
@@ -214,7 +214,7 @@ char * get_ini_key()
   FSTAT _fstat;
   if (fstat(GetDir(DIR_INI),L"sshoot.ini",&_fstat)==0)
   {
-    if ((file=_fopen(GetDir(DIR_INI),L"sshoot.ini",0x001,0x180,0))>=0)
+    if ((file=_fopen(GetDir(DIR_INI),L"sshoot.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       buf=new char[_fstat.fsize+1];
       buf[fread(file,buf,_fstat.fsize)]=0;

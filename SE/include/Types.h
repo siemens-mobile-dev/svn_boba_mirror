@@ -141,13 +141,26 @@ typedef unsigned long OSSEGMENT;
 
 typedef signed long OSFSEMVAL;
 typedef signed long OSSEMVAL;
-
-
-#define OS_PROCESS( x ) __interwork void x( void ) 
-
+  
 typedef void ( OSENTRYPOINT )( void );
 
 typedef OSADDRESS( OSERRH )( OSBOOLEAN, OSERRCODE, OSERRCODE );
+
+
+enum PROCESS_TYPE
+{
+	OS_PRI_PROC = 0,
+	OS_BG_PROC  = 64,
+	OS_INT_PROC = 128,
+	OS_TI_PROC  = 256,
+	OS_PHANTOM  = 512,
+	OS_BLOCK    = 1024,
+	OS_ZOOMBIE  = 2048,
+	OS_ILLEGAL  = 4096
+};
+
+
+#define OS_PROCESS( x ) __interwork void x( void ) 
 
 // list ------------------------------------------------------------------------
 
@@ -509,18 +522,21 @@ typedef struct VOLUMESIZE_A2
 }VOLUMESIZE_A2; //FSX_freespace
 
 
+//lseek
 enum _SEEK_SET {
 	SEEK_SET=0, 
 	SEEK_CUR, 
 	SEEK_END
 };
 
+//w_lseek
 enum W_SEEK_SET {
 	WSEEK_CUR=0, 
 	WSEEK_END=1, 
 	WSEEK_SET=2
 };
 
+//w_fopen
 enum W_OPEN_ATTR {
 	WA_Read=1, 
 	WA_Write=2, 
@@ -528,6 +544,40 @@ enum W_OPEN_ATTR {
 	WA_Create=8, 
 	WA_Truncate=0x40
 };
+
+//fopen/_fopen (mode)
+#define FSX_O_RDONLY     0x0001 /// Open for reading only.
+#define FSX_O_WRONLY     0x0002 /// Open for writing only.
+#define FSX_O_RDWR       0x0004 /// Open for reading and writing.
+
+#define FSX_O_APPEND     0x0008 /// Writes done at eof.
+#define FSX_O_SINGLEUSER 0x0010 /// Set file locking mechanism on
+#define FSX_O_CREAT      0x0100 /// Create and open file.
+#define FSX_O_TRUNC      0x0200 /// Open and truncate.
+#define FSX_O_EXCL       0x0400 /// Open only if file doesn't already exist.
+#define FSX_O_MULT       0x0800 /// Open for reading or writing the already opened file.
+#define FSX_O_ENCRYPT    0x1000 /// Secure Storage flag.
+#define FSX_O_DECRYPT    0x2000 /// Secure Storage flag.
+#define FSX_O_CHKPATH    0x4000 /// Check the path length considering its subfolders.
+#define FSX_O_NOROLLBACK 0x8000 /// Prevent rollback if write fails due to ENOSPC.
+
+#define FSX_O_FS_MASK (0xF70F) /* MASK for normal file's open mode*/
+
+//fopen/_fopen (mode), FSTAT.st_mode
+#define FSX_S_IRUSR   0x00000100 /// Read access, owner.
+#define FSX_S_IWUSR   0x00000080 /// Write access, owner.
+#define FSX_S_IXUSR   0x00000040 /// Execute/search access, owner. 
+#define FSX_S_IREAD   FSX_S_IRUSR
+#define FSX_S_IWRITE  FSX_S_IWUSR
+#define FSX_S_IEXEC   FSX_S_IXUSR
+#define FSX_FILE_MODE_MASK (FSX_S_IRUSR | FSX_S_IWUSR | FSX_S_IXUSR)
+
+//FSTAT.st_mode
+#define FSX_S_IFUNKNOWN 0x00000000
+#define FSX_S_IFREG     0x00001000
+#define FSX_S_IFVOL     0x00002000
+#define FSX_S_IFDIR     0x00010000
+#define FSX_S_IFLINK    0x00040000
 
 // hooks -----------------------------------------------------------------------
 

@@ -88,7 +88,7 @@ int SaveCash(void)
   int res=0;
   if (*cashpath && *cashfname)
   {
-    if ((f=_fopen(cashpath,cashfname,0x204,0x180,0))!=-1)
+    if ((f=_fopen(cashpath,cashfname,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))!=-1)
     {
       fwrite(f,CurrentCASH,sizeof(CurrentCASH));
       fwrite(f,MaxCASH,sizeof(MaxCASH));
@@ -106,7 +106,7 @@ int LoadCash(void)
   CASH_SIZE=0;
   memset(CurrentCASH,0,sizeof(CurrentCASH));
   memset(MaxCASH,0,sizeof(MaxCASH));
-  int f=_fopen(cashpath,cashfname,0x001,0x180,0);
+  int f=_fopen(cashpath,cashfname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
   if (f!=-1)
   {
     s=fread(f,CurrentCASH,sizeof(CurrentCASH));     //by BoBa 4.07.07
@@ -432,7 +432,7 @@ void SetGetTextFunc()
 static void WriteLog(char *text, int len)
 {
   int f;
-  if ((f=_fopen(cashpath, L"LiveBalance_cash.txt", 0x108, 0x180, 0)) != -1) {
+  if ((f=_fopen(cashpath, L"LiveBalance_cash.txt", FSX_O_CREAT|FSX_O_APPEND, FSX_S_IREAD|FSX_S_IWRITE, 0)) != -1) {
     DATETIME dt;
     REQUEST_DATEANDTIME_GET(SYNC, &dt);
 

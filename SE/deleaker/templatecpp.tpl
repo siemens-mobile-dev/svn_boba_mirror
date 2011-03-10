@@ -236,7 +236,7 @@ u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM l
 
 bool isallocatedstrid(STRID strid)
 {
-	return strid!=EMPTY_SID && (strid&0xFFFF0000)!=0;
+	return (strid!=EMPTY_SID) && ((strid&0xFFFF0000)!=0);
 }
 
 bool isallocatediconid(IMAGEID iconid)

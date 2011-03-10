@@ -10,9 +10,6 @@
 #include "header\string.h"
 
 extern MyBOOK *ECBook;
-#define F_READ 0x001
-#define F_RIGHTS 0x180
-#define F_WRITE 0x204
 
 void SortList(LIST *lst);
 void InitializeFolders();
@@ -354,7 +351,7 @@ int readConfig(MyBOOK *mbk, wchar_t *myFolder, wchar_t *fname)
   FSTAT fst;
   if (fstat(myFolder,fname,&fst)==0)
   {
-    if ((file=_fopen(myFolder,fname,0x001,0x180,0))>=0)
+    if ((file=_fopen(myFolder,fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       char * buf;
       char * param;

@@ -169,7 +169,7 @@ void metadata_Read(wchar_t *path, wchar_t *name, METADATA *meta, TAG_REQUEST tr)
   if (fstat(path,name,&fst)==0)
   {
     int file;
-    if ((file=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       if (fst.fsize>128)
       {

@@ -22,7 +22,7 @@ int ReadCsvFile(TOWN *town)
   snwprintf(dir,63,L"%ls/GpsMAP/%s",GetDir(DIR_ELFS),town->name);
   if (fstat(dir,L"bs_dat.csv",&stat)>=0)
   {
-    if ((f=_fopen(dir,L"bs_dat.csv",1,0x180,NULL))>=0)
+    if ((f=_fopen(dir,L"bs_dat.csv",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,NULL))>=0)
     {
       int fsize=stat.fsize;
       s=buf=new char[fsize+1];

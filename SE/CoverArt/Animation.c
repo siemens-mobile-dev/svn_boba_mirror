@@ -47,7 +47,7 @@ void Anim_Init()
     wstrcat(name,L".cas");
     if (fstat(checkfile(name),name,&fst)==0)
     {
-        if ((file=_fopen(checkfile(name),name,0x001,0x180,0))>=0)
+        if ((file=_fopen(checkfile(name),name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
         {
           char * buf;
           char * param;

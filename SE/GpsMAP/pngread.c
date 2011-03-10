@@ -137,7 +137,7 @@ int get_png_info(const wchar_t *path, const wchar_t *name, int *width, int *heig
   unsigned char tmp[128];
   const char IHDR[]={ 73,  72,  68,  82, '\0'};
   unsigned int length;
-  if ((f=_fopen(path,name,1,0x180,NULL))>=0)
+  if ((f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,NULL))>=0)
   {
     if (fread(f,tmp,8)==8)
     {

@@ -99,7 +99,7 @@ void ReadMainIni(MAIN_INI *ini)
   if (fstat(GetDir(DIR_ELFS_CONFIG),L"GpsMAP.ini",&stat)<0) return;
   if ((fsize=stat.fsize)>0)
   {
-    if ((f=_fopen(GetDir(DIR_ELFS_CONFIG),L"GpsMAP.ini",1,0x180,NULL))>=0)
+    if ((f=_fopen(GetDir(DIR_ELFS_CONFIG),L"GpsMAP.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,NULL))>=0)
     {
       buf=new char[fsize+1];
       if ((s=buf))

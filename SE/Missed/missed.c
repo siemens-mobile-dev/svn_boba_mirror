@@ -60,7 +60,7 @@ int getcfg()
 	int fcfg;
 	char* pcfg=NULL;
 
-	if( (fcfg=_fopen(GetDir(DIR_INI), LINIFILENAME ,0x001,0x180,0))>=0)
+	if( (fcfg=_fopen(GetDir(DIR_INI), LINIFILENAME , FSX_O_RDONLY, FSX_S_IREAD|FSX_S_IWRITE, 0))>=0)
 	{
 		FSTAT _fstat;
 		if (fstat(GetDir(DIR_INI), LINIFILENAME ,&_fstat)==0)

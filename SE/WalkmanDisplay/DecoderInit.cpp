@@ -43,7 +43,7 @@ wchar_t GetCover(void *TagStructure, wchar_t *path, wchar_t *name, METADATA *met
     if (cover_offset>0 && size>0)
     {
       int f;
-      if (f=_fopen(path,name,0x001,0x180,0x0)>=0)
+      if (f=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0x0)>=0)
       {
         if (lseek(f,cover_offset,0)>=0)
         {

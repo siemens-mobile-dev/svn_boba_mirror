@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define COPYRIGHT_STRING STR( "\nBookManager v3.0\nbuild 030310\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
+#define COPYRIGHT_STRING STR( "\nBookManager v3.1\nbuild 030310\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
 #define ICONS_COUNT 4
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -14,6 +14,12 @@
 #define IDN_ELFS_DEACT_ICON _T( "RN_TAB_BOOKMARKS_DESELECTED_ICN" )
 #define IDN_ELFS_ACT_ICON _T( "RN_TAB_BOOKMARKS_SELECTED_ICN" )
 
+#define MAX_BOOK_NAME_LEN 50
+
+#define JAVA_BOOK_NAME "CUIDisplayableBook"
+
+#define FLASH_MASK 0xF8000000
+
 
 typedef struct
 {
@@ -23,7 +29,7 @@ typedef struct
 typedef struct _MYBOOK : BOOK
 {
   GUI_TABMENUBAR* gui;
-  char* ini_buf;
+  wchar_t* ini_buf;
   int ini_buf_size;
   char* shortcuts_buf;
   int shortcuts_buf_size;
@@ -74,6 +80,12 @@ typedef struct
 }DESTROYBOOK_DATA;
 
 
+typedef struct
+{
+  BOOK* book;
+}MSG;
+
+
 int CreateBookList( void* r0, BOOK* bk );
 int RecreateBookList( void* r0, BOOK* bk );
 int isBookManager( BOOK* struc );
@@ -85,11 +97,12 @@ int CreateMenu( int r0, BOOK* bk );
 void PreTerminateManager( BOOK* Book, GUI* );
 int NewKey( int key, int r1, int mode, LPARAM, DISP_OBJ* );
 void SessoinListsFree( MyBOOK* book );
-int get_file( wchar_t* fname, char** buf_set );
+int get_file( wchar_t* fname, void** buf_set );
 void RefreshElfSoftkeys( MyBOOK* mbk, int item );
-char* unicode2win1251(char* s, wchar_t* ws, int len);
 int GetActiveTab(MyBOOK*);
-int GetParam( char* name);
-char* unicode2win1251(char* s, wchar_t* ws, int len);
+int GetBookNameStrID( char* name);
+wchar_t * GetUserBookName(wchar_t * ini,wchar_t * orig_name,wchar_t * cur_name);
+wchar_t* get_path();
+
 
 #endif

@@ -820,7 +820,7 @@ void tryvkp(int dirplace, Vkp& vkp)
                 {
                     int f;
                     
-                    if ((f=_fopen(patchesdir,fli->fname,0x001,0x180,0))>=0)
+                    if ((f=_fopen(patchesdir,fli->fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
                     {
                         char* vkpf = new char[st.fsize];
                         fread(f,vkpf,st.fsize);

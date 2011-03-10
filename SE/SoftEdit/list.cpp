@@ -108,7 +108,7 @@ void savecustomcfg(wchar_t *path, wchar_t *name)
   char lf=0x0A;
   char endstr=0xFE;
   char between=0xFF;
-  if ((file=_fopen(path,name,0x204,0x180,0))>=0)
+  if ((file=_fopen(path,name,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     int x=0;
     if (customsofts)

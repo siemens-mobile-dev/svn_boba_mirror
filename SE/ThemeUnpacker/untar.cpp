@@ -57,7 +57,7 @@ TAR_HEADER *tar_getnextheader(int file)
 int tar_savefile(int file, int size, wchar_t *path, wchar_t *fname)
 {
   int sfile;
-  if ((sfile=_fopen(path,fname,0x204,0x180,0))>=0)
+  if ((sfile=_fopen(path,fname,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     int x=0;
     for (x=0;x<size;x=x+30)
@@ -88,7 +88,7 @@ int tar_uncompress(wchar_t *path, wchar_t *name)
   FSTAT fst;
   if (fstat(path,name,&fst)==0)
   {
-    if ((file=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       wchar_t folder[512];
       wstrcpy(folder,GetDir(MEM_EXTERNAL+DIR_THEME));

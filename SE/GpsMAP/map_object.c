@@ -51,7 +51,7 @@ int ReadPngFile(LIST *png_lst, char *town, int index_x, int index_y)
   snwprintf(name,63,L"%s_%02u_%02u.png",town,index_y,index_x);
   if (fstat(dir,name,&stat)>=0)
   {
-    if ((f=_fopen(dir,name,1,0x180,NULL))>=0)
+    if ((f=_fopen(dir,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,NULL))>=0)
     {
       if ((buf=new char[stat.fsize]))
       {

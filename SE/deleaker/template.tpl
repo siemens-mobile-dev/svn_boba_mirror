@@ -755,7 +755,7 @@ __make GUIonMessage_SetMenuItemUnavailableText
 __make MessageBox
 {
 	if(isallocatedstrid(header_text))trace_free(trace_strid, (void*)header_text, __file__, __line__ );
-	if(isallocatedstrid(message_text) && message_text!=header_text)trace_free(trace_strid, (void*)message_text, __file__, __line__ );
+	if(isallocatedstrid(message_text))trace_free(trace_strid, (void*)message_text, __file__, __line__ );
 	if(isallocatediconid(__unknwnargname3))trace_free(trace_iconid, (void*)__unknwnargname3, __file__, __line__ );
 	return __O__;
 }
@@ -847,7 +847,7 @@ __make Feedback_SetTextExtended
 __make GUIObject_SoftKeys_SetTexts
 {
 	if(isallocatedstrid(short_text))trace_free(trace_strid, (void*)short_text, __file__, __line__ );
-	if(isallocatedstrid(full_text) /*&& StrID1!=StrID*/)trace_free(trace_strid, (void*)full_text, __file__, __line__ );
+	if(isallocatedstrid(full_text))trace_free(trace_strid, (void*)full_text, __file__, __line__ );
 	return __O__;
 }
 
@@ -1277,7 +1277,7 @@ __make JavaApp_LogoImageID_Get
 __make ObexSendFile
 {
 	if(isallocatedstrid(__unknwnargname1->send))trace_free(trace_strid, (void*)__unknwnargname1->send, __file__, __line__ );
-	if(isallocatedstrid(__unknwnargname1->sent) && __unknwnargname1->sent!=__unknwnargname1->send)trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1->sent))trace_free(trace_strid, (void*)__unknwnargname1->sent, __file__, __line__ );
 	__O__;
 }
 

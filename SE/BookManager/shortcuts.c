@@ -5,25 +5,67 @@
 #include "shortcuts.h"
 #include "main.h"
 
-typedef struct
-{
-  int str_id;
-  int icon_id;
-}SC_DATA;
 
-wchar_t* get_path()
-{
-  wchar_t* path = new wchar_t[wstrlen( GetDir( DIR_INI ) ) + 8 + 1];
-  wstrcpy( path, GetDir( DIR_INI ) );
-  wstrcat( path, L"/bookman" );
-  return path;
-}
+//============= pages start ======================
+
+const PAGE_MSG ChangeShortcuts_PageEvents[]@ "DYN_PAGE" = {
+  PAGE_ENTER_EVENT_TAG, CreateModeList,
+  CANCEL_EVENT_TAG, ModeList_CancelEvent_Action,
+  PAGE_EXIT_EVENT_TAG, ExitShortcutsSet,
+  NIL_EVENT_TAG, 0
+};
+
+PAGE_DESC ChangeShortcuts_page = { "BookManager_ChangeShortcuts_Main_Page", 0, ChangeShortcuts_PageEvents };
+
+
+const PAGE_MSG ChangeShortcuts_Buttons_PageEvents[]@ "DYN_PAGE" = {
+  PAGE_ENTER_EVENT_TAG, CreateButtonList,
+  ACCEPT_EVENT_TAG, CreateButtonList,
+  CANCEL_EVENT_TAG, ButtonList_Cancel_Event_Action,
+  PAGE_EXIT_EVENT_TAG, ExitButtonList,
+  NIL_EVENT_TAG, 0
+};
+
+PAGE_DESC ChangeShortcuts_Buttons_page = { "BookManager_ChangeShortcuts_Buttons_Page", 0, ChangeShortcuts_Buttons_PageEvents };
+
+
+const PAGE_MSG SetJava_PageEvents[]@ "DYN_PAGE" = {
+  PAGE_ENTER_EVENT_TAG, CreateJavaList,
+  PAGE_EXIT_EVENT_TAG, onExit_JavaList,
+  NIL_EVENT_TAG, 0
+};
+
+PAGE_DESC ChangeShortcuts_SetJava_page = { "BookManager_ChangeShortcuts_SetJava_Page", 0, SetJava_PageEvents };
+
+
+const PAGE_MSG SelectElf_PageEvents[]@ "DYN_PAGE" = {
+  PAGE_ENTER_EVENT_TAG, CreateDB,
+  ACCEPT_EVENT_TAG, onAccept_DB,
+  PREVIOUS_EVENT_TAG, onPrevious_MainMenu_DB,
+  CANCEL_EVENT_TAG, onCancel_MainMenu_DB,
+  NIL_EVENT_TAG, 0
+};
+
+PAGE_DESC SelectElf_page = { "BookManager_ChangeShortcuts_SelectElf_Page", 0, SelectElf_PageEvents };
+
+
+const PAGE_MSG SelectShortcut_PageEvents[]@ "DYN_PAGE" = {
+  PAGE_ENTER_EVENT_TAG, CreateMainMenu,
+  PREVIOUS_EVENT_TAG, onPrevious_MainMenu_DB,
+  CANCEL_EVENT_TAG, onCancel_MainMenu_DB,
+  NIL_EVENT_TAG, 0
+};
+
+PAGE_DESC SelectShortcut_page = { "BookManager_ChangeShortcuts_SelectShortcut_Page", 0, SelectShortcut_PageEvents };
+
+//============= pages end ======================
+
 
 
 void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
 {
   int f;
-  if ( ( f = _fopen( path, L"shortcuts.ini", 0x108, 0x180, 0 ) ) >= 0 )
+  if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_CREAT|FSX_O_APPEND, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
   {
     char* temp_buf = new char[strlen( mask_buf ) + wstrlen( name_buf ) + 4];
     strcpy( temp_buf, mask_buf );
@@ -45,18 +87,19 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
 {
   int f;
   char* pos;
+  
   if ( mbk->shortcuts_buf )
   {
     char* param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 );
     
     int len = wstrlen( name_buf );      //длина старого €рлыка
     char* str_buf = new char[len + 1];
-    unicode2win1251( str_buf, name_buf, len );
+    wstr2strn( str_buf, name_buf, len );
     int len_prefix = strlen(mask_buf)+1;      //длина префикса с пробелом
     if ( param )
     {
       pos = strstr( mbk->shortcuts_buf, mask_buf );
-      if ( ( f = _fopen( path, L"shortcuts.ini", 0x204, 0x180, 0 ) ) >= 0 )
+      if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
       {
         int len_minus = strlen( param );    //длина старого €рлыка
         fwrite( f, mbk->shortcuts_buf, pos - mbk->shortcuts_buf + len_prefix );     //пишем начало файла
@@ -74,7 +117,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
     {
       if ( pos = strstr( mbk->shortcuts_buf, mask_buf ) )
       {
-        if ( ( f = _fopen( path, L"shortcuts.ini", 0x204, 0x180, 0 ) ) >= 0 )
+        if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
         {
           fwrite( f, mbk->shortcuts_buf, pos - mbk->shortcuts_buf + len_prefix );
           fwrite( f, str_buf, len );
@@ -180,7 +223,7 @@ int DB_Filter( const wchar_t* ext_table, const wchar_t* path , const wchar_t* na
   
   fstat( path, name, &_fstat );
   
-  return 0 != ( _fstat.st_mode & 0x10000 );
+  return 0 != ( _fstat.st_mode & FSX_S_IFDIR );
 }
 
 
@@ -373,45 +416,6 @@ int CreateJavaList( void* data, BOOK* book )
 }
 
 
-const PAGE_MSG SelectShortcut_PageEvents[]@ "DYN_PAGE" = {
-  PAGE_ENTER_EVENT_TAG, CreateMainMenu,
-  PREVIOUS_EVENT_TAG, onPrevious_MainMenu_DB,
-  CANCEL_EVENT_TAG, onCancel_MainMenu_DB,
-  NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC SelectShortcut_page = { "BookManager_ChangeShortcuts_SelectShortcut_Page", 0, SelectShortcut_PageEvents };
-
-
-const PAGE_MSG SelectElf_PageEvents[]@ "DYN_PAGE" = {
-  PAGE_ENTER_EVENT_TAG, CreateDB,
-  ACCEPT_EVENT_TAG, onAccept_DB,
-  PREVIOUS_EVENT_TAG, onPrevious_MainMenu_DB,
-  CANCEL_EVENT_TAG, onCancel_MainMenu_DB,
-  NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC SelectElf_page = { "BookManager_ChangeShortcuts_SelectElf_Page", 0, SelectElf_PageEvents };
-
-/*
-const PAGE_MSG EditShortcut_PageEvents[]@ "DYN_PAGE" = {
-PAGE_ENTER_EVENT_TAG, CreateSI,
-PAGE_EXIT_EVENT_TAG, onExit_SI,
-NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC ChangeShortcuts_Edit_page = { "BookManager_ChangeShortcuts_Edit_Page", 0, EditShortcut_PageEvents };
-*/
-
-const PAGE_MSG SetJava_PageEvents[]@ "DYN_PAGE" = {
-  PAGE_ENTER_EVENT_TAG, CreateJavaList,
-  PAGE_EXIT_EVENT_TAG, onExit_JavaList,
-  NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC ChangeShortcuts_SetJava_page = { "BookManager_ChangeShortcuts_SetJava_Page", 0, SetJava_PageEvents };
-
-
 void But_SetJava( BOOK* book, GUI* )
 {
   BookObj_CallPage( book, &ChangeShortcuts_SetJava_page );
@@ -586,7 +590,7 @@ void CancelButtonList( BOOK* book, GUI* )
 }
 
 
-int DeleteShortcut( MyBOOK* mbk, char* mask_buf, int f )
+int DeleteShortcut( MyBOOK * mbk, char * mask_buf, int f )
 {
   char* pos;
   char* param = 0;
@@ -621,7 +625,7 @@ void But_onDelete( BOOK* book, GUI* )
   if (!GetShortcutName(mbk,dig_num,0)) return;
   
   wchar_t* path = get_path();
-  if ( ( f = _fopen( path, L"shortcuts.ini", 0x204, 0x180, 0 ) ) >= 0 )
+  if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
   {
     char mask_buf[10];
     
@@ -645,6 +649,7 @@ void But_onDelete( BOOK* book, GUI* )
     }
     
     fclose( f );
+    
     if ( res )
       CreateButtonList( 0, book );
   }
@@ -660,13 +665,13 @@ int CreateButtonList( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   int str_id;
-  char* sp;
+  void* sp;
   mbk->shortcuts_buf_size = get_file( L"shortcuts.ini", &sp );
   
   if ( mbk->shortcuts_buf )
     delete mbk->shortcuts_buf;
   
-  mbk->shortcuts_buf = sp;
+  mbk->shortcuts_buf = (char*)sp;
   int but_pos = 0;
   
   if ( mbk->but_list )
@@ -710,17 +715,6 @@ int ButtonList_Cancel_Event_Action( void* data, BOOK* book )
 }
 
 
-const PAGE_MSG ChangeShortcuts_Buttons_PageEvents[]@ "DYN_PAGE" = {
-  PAGE_ENTER_EVENT_TAG, CreateButtonList,
-  ACCEPT_EVENT_TAG, CreateButtonList,
-  CANCEL_EVENT_TAG, ButtonList_Cancel_Event_Action,
-  PAGE_EXIT_EVENT_TAG, ExitButtonList,
-  NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC ChangeShortcuts_Buttons_page = { "BookManager_ChangeShortcuts_Buttons_Page", 0, ChangeShortcuts_Buttons_PageEvents };
-
-
 void ModeList_Cancel_Action( BOOK* book, GUI* )
 {
   BookObj_ReturnPage( book, ACCEPT_EVENT );
@@ -741,17 +735,20 @@ void onEnter_ModeList( BOOK* book, GUI* )
 
 int list_callback( GUI_MESSAGE* msg )
 {
+  char * item_name;
   switch( GUIonMessage_GetMsg( msg ) )
   {
   case LISTMSG_GetItem:
-    if ( GUIonMessage_GetCreatedItemIndex( msg ) )
+    switch ( GUIonMessage_GetCreatedItemIndex( msg ) )
     {
-      GUIonMessage_SetMenuItemText( msg, STR( "Long" ) );
+    case 0:
+      item_name="Short";
+      break;
+    case 1:
+      item_name="Long";
+      break;
     }
-    else
-    {
-      GUIonMessage_SetMenuItemText( msg, STR( "Short" ) );
-    }
+    GUIonMessage_SetMenuItemText( msg, Str2ID( item_name, 6, SID_ANY_LEN ) );
   }
   return 1;
 }
@@ -809,16 +806,6 @@ int ExitShortcutsSet( void* data, BOOK* bk )
   }
   return 0;
 }
-
-
-const PAGE_MSG ChangeShortcuts_PageEvents[]@ "DYN_PAGE" = {
-  PAGE_ENTER_EVENT_TAG, CreateModeList,
-  CANCEL_EVENT_TAG, ModeList_CancelEvent_Action,
-  PAGE_EXIT_EVENT_TAG, ExitShortcutsSet,
-  NIL_EVENT_TAG, 0
-};
-
-PAGE_DESC ChangeShortcuts_page = { "BookManager_ChangeShortcuts_Main_Page", 0, ChangeShortcuts_PageEvents };
 
 
 void Shortcuts( BOOK* book, GUI* )

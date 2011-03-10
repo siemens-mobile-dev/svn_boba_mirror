@@ -5,9 +5,6 @@
 #include "header\externals.h"
 #include "header\string.h"
 #include "header\lng.h"
-#define F_READ 0x001
-#define F_RIGHTS 0x180
-#define F_WRITE 0x204
 
 extern MyBOOK *myBook;
 extern wchar_t *defPath;
@@ -268,7 +265,7 @@ int readConfig(BOOK *myBook, wchar_t *myFolder, wchar_t *name)
   FSTAT fst;
   if (fstat(myFolder,name,&fst)==0)
   {
-    if ((file=_fopen(myFolder,name,0x001,0x180,0))>=0)
+    if ((file=_fopen(myFolder,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       char * buf;
       char * param;
@@ -378,7 +375,7 @@ void saveevents(wchar_t *folder, wchar_t *name)
     char endline=0xFF;
     char endstr=0xFE;
     char idle2=':';
-    if ((file=_fopen(folder,name,0x204,0x180,0))>=0)
+    if ((file=_fopen(folder,name,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       if (fstat(folder,name,&fst)==0)
       {

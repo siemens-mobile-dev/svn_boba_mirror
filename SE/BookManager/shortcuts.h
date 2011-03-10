@@ -12,6 +12,14 @@
 #define IDN_DIGIT_8_ICON _T( "FM_RADIO_MHZ_DIGIT_8_ICN" )
 #define IDN_DIGIT_9_ICON _T( "FM_RADIO_MHZ_DIGIT_9_ICN" )
 
+
+typedef struct
+{
+  int str_id;
+  int icon_id;
+}SC_DATA;
+
+
 typedef struct
 {
 	wchar_t* name;
@@ -21,12 +29,22 @@ typedef struct
 }java_list_elem;
 
 
+int CreateModeList( void* data, BOOK* book );
+int ModeList_CancelEvent_Action( void* data, BOOK* bk );
+int ExitShortcutsSet( void* data, BOOK* bk );
+int CreateButtonList( void* data, BOOK* book );
+int ButtonList_Cancel_Event_Action( void* data, BOOK* book );
+int ExitButtonList( void* data, BOOK* book );
+int CreateJavaList( void* data, BOOK* book );
+int onExit_JavaList( void* data, BOOK* book );
+int CreateDB( void* data, BOOK* book );
+int onAccept_DB( void* data, BOOK* book );
+int onPrevious_MainMenu_DB( void* data, BOOK* book );
+int onCancel_MainMenu_DB( void* data, BOOK* book );
+int CreateMainMenu( void* data, BOOK* book );
 
 void Shortcuts( BOOK* book, GUI* );
-wchar_t* get_path();
 int elem_filter(void* elem);
 void elem_free(void* elem);
-int get_file( wchar_t* fname, char** buf_set );
-int CreateButtonList( void* data, BOOK* book );
 
 #endif

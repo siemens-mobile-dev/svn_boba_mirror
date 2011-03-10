@@ -114,7 +114,7 @@ int lng_load(wchar_t *path, wchar_t *name)
   if (fstat(path,name,&fst)==0)
   {
     res=0;
-    if ((file=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       char * buf;
       char * param;
@@ -247,7 +247,7 @@ void Lang_Initialize()
   FSTAT fst;
   if(fstat(checkfile(L"encoding.bin"), L"encoding.bin", &fst) == 0)
   {
-    if( ((file = _fopen(checkfile(L"encoding.bin"), L"encoding.bin", 0x001, 0x180, 0)) >= 0) && fst.fsize == 512 )
+    if( ((file = _fopen(checkfile(L"encoding.bin"), L"encoding.bin", FSX_O_RDONLY, FSX_S_IREAD|FSX_S_IWRITE, 0)) >= 0) && fst.fsize == 512 )
     {
       fbuf = new char[512];
       fread(file, fbuf, 512);

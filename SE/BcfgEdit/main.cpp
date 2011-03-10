@@ -128,7 +128,7 @@ int SaveCfg( BCFG_DATA* bdata )
 {
 	int f;
 	int result = 0;
-	if( ( f = _fopen( bdata->path, bdata->name, 0x204, 0x180, 0 ) ) >= 0 )
+	if( ( f = _fopen( bdata->path, bdata->name, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
 	{
 		if( fwrite( f, bdata->cfg, bdata->size_cfg ) == bdata->size_cfg )
 			result = 1;
@@ -151,7 +151,7 @@ int LoadCfg( BCFG_DATA* bdata )
 	{
 		if( fstat( bdata->path, bdata->name, &_fstat ) != - 1 )
 		{
-			if( ( f = _fopen( bdata->path, bdata->name, 0x001, 0x180, 0 ) ) >= 0 )
+			if( ( f = _fopen( bdata->path, bdata->name, FSX_O_RDONLY, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
 			{
 				bdata->size_cfg = _fstat.fsize;
 				if( bdata->size_cfg <= 0 )

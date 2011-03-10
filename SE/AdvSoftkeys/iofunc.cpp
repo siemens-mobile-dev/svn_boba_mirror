@@ -1,10 +1,6 @@
 #include "..\\include\Lib_Clara.h" 
 #include "..\\include\Dir.h" 
 #define COPYSIZE 500
-#define F_READ 0x001
-#define F_RIGHTS 0x180
-#define F_WRITE 0x204
-#define F_APPEND 0x108
 
 char *file_read(wchar_t *path, wchar_t *name, int *len)
 {
@@ -12,7 +8,7 @@ char *file_read(wchar_t *path, wchar_t *name, int *len)
   FSTAT fst;
   if (fstat(path,name,&fst)==0)
   {
-    if ((file=_fopen(path,name,F_READ,F_RIGHTS,0))>=0)
+    if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       char *buf=0;
       buf=new char[fst.fsize+1];
@@ -35,10 +31,10 @@ void copyfile(wchar_t *path, wchar_t *name, wchar_t *path2, wchar_t *name2)
   int file;
   if (fstat(path,name,&fst)==0)
   {
-    if ((file=_fopen(path,name,0x001,0x180,0))>=0)
+    if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
     {
       int sfile;
-      if ((sfile=_fopen(path2,name2,0x204,0x180,0))>=0)
+      if ((sfile=_fopen(path2,name2,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
       {
         int size=fst.fsize;
         int x=0;
@@ -82,10 +78,10 @@ int cmpfile(wchar_t *path, wchar_t *name, wchar_t *path2, wchar_t *name2)
       }
       else
       {
-        if ((file=_fopen(path,name,0x001,0x180,0))>=0)
+        if ((file=_fopen(path,name,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
         {
           int sfile;
-          if ((sfile=_fopen(path2,name2,0x001,0x180,0))>=0)
+          if ((sfile=_fopen(path2,name2,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
           {
             int size=fst.fsize;
             int x=0;

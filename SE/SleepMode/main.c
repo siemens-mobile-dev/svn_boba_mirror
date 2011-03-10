@@ -153,7 +153,7 @@ int onSleepModeActivate (void * ,BOOK * book)
 {
   // после создания SleepMode заменяем onRedraw
   BOOK * ScreenSaverBook = FindBook(get_IsScreenSaverBook());
-  if (ScreenSaverBook)
+  if (ScreenSaverBook && ((ScrSavBook*)ScreenSaverBook)->SleepMode )
   {
     DISP_OBJ * g=GUIObject_GetDispObject(((ScrSavBook*)ScreenSaverBook)->SleepMode);
     OldonRedraw=DispObject_GetOnRedraw(g);
@@ -248,7 +248,7 @@ void CreateSleepModeBook()
   {
     char buf[20];
     
-    int f=_fopen(path,L"sleepmode.ini",0x1,0x180,0);
+    int f=_fopen(path,L"sleepmode.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
     fread(f,&buf,fstat_struct.fsize);
     buf[fstat_struct.fsize]=0;
     fclose(f);

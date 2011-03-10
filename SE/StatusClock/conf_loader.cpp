@@ -15,7 +15,7 @@ int SaveConfigData(const wchar_t *path,const wchar_t *fname)
   void *cfg=(char *)__segment_begin("CONFIG_C");
   unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
   int f;
-  if ((f=_fopen(path,fname,0x204,0x180,0))>=0)
+  if ((f=_fopen(path,fname,FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     if (fwrite(f,cfg,len)==len) result=0;
     fclose(f);
@@ -39,7 +39,7 @@ int LoadConfigData(const wchar_t *path,const wchar_t *fname)
   {
     if (fstat(path,fname,&_fstat)!=-1)
     {
-      if ((f=_fopen(path,fname,0x001,0x180,0))>=0)
+      if ((f=_fopen(path,fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
       {
         rlen=fread(f,buf,len);
         fclose(f);

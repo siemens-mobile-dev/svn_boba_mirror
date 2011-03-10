@@ -326,7 +326,7 @@ void OnCloseMyBook(BOOK *Book)
         ModifyKeyHook(SoftKeys_OnKey, KEY_HOOK_REMOVE, NULL);
         DISP_DESC_SetOnRedraw(SoftKeys_DispDesc, SoftKeys_DefaultRedraw);
         FreeDataList();
-        ModifyUIHookEx(STANDBY_IDLE_EVENT, PHONE_IN_STBY_EVENT, RefreshSoftKeys, 0);
+        ModifyUIHookEx(STANDBY_IDLE_EVENT, PHONE_IN_STBY_EVENT, RefreshSoftKeys, PAGE_HOOK_REMOVE);
         DELETE(ElfFolder);
         SUBPROC(elf_exit);
     }
@@ -365,7 +365,7 @@ int main(void)
         SUBPROC(elf_exit);
         return(0);
     }
-    ModifyUIHookEx(STANDBY_IDLE_EVENT, PHONE_IN_STBY_EVENT, RefreshSoftKeys, 1);
+    ModifyUIHookEx(STANDBY_IDLE_EVENT, PHONE_IN_STBY_EVENT, RefreshSoftKeys, PAGE_HOOK_ADD_BEFORE);
     InitConfig();
     ElfFolder = GetElfFolder(); 
     FillSoftKeysData(); 

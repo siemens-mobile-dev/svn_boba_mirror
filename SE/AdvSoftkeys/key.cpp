@@ -157,7 +157,7 @@ void save()
   char cr=0x0D;
   char lf=0x0A;
   char idle=';';
-  if ((file=_fopen(GetDir(MEM_EXTERNAL+DIR_OTHER),L"Softs.txt",0x204,0x180,0))>=0)
+  if ((file=_fopen(GetDir(MEM_EXTERNAL+DIR_OTHER),L"Softs.txt",FSX_O_RDWR|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
   {
     if (fstat(GetDir(MEM_EXTERNAL+DIR_OTHER),L"Softs.txt",&fst)==0)
     {
