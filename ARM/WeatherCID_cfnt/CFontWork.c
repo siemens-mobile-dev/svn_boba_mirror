@@ -101,6 +101,7 @@ int RenderString(IMGHDR *img, int x, int y, WSHDR * str, int flag, unsigned colo
 {
   unsigned short *s = str->wsbody+1;
   unsigned short n = *str->wsbody;
+  x+=flag&1;
   int xx = x;
   while(n)
   {
