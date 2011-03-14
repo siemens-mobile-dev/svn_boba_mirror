@@ -11,5 +11,5 @@ const string tostring( TEXTID strid )
 
 TEXTID tostrid( const string& str )
 {
-	return TextID_Create( str.c_str(), 6, str.size() );
+	return TextID_Create( str.c_str(), ENC_LAT1, str.size() );
 }
