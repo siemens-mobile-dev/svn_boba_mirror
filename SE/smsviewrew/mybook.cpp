@@ -15,7 +15,7 @@ int CMyBook::TerminateElf( CBook** pbookmanbook, CMyBook* book )
 
 int CMyBook::ShowAuthorInfo( CBook** pbookmanbook, CMyBook* book )
 {
-	MessageBox( EMPTY_SID, STR(ABOUTTEXT), NOIMAGE, 1 , 5000, *pbookmanbook );
+	MessageBox( EMPTY_TEXTID, STR(ABOUTTEXT), NOIMAGE, 1 , 5000, *pbookmanbook );
 	return 1;
 }
 
@@ -29,14 +29,14 @@ DECLARE_PAGE_DESC_END
 CMyBook::CMyBook()  :CBook( MYBOOKNAME, &base_page )
 {
 	//софт в списке сообщений
-	textidname2id( _T("MSG_UI_VIEW_MESSAGE_SK"), SID_ANY_LEN, &strid_viewmsg );
-	textidname2id( _T("GUI_VIEW_SK"), SID_ANY_LEN, &strid_view );
+	textidname2id( _T("MSG_UI_VIEW_MESSAGE_SK"), TEXTID_ANY_LEN, &strid_viewmsg );
+	textidname2id( _T("GUI_VIEW_SK"), TEXTID_ANY_LEN, &strid_view );
 	//софт в просмотре входящих
-	textidname2id( _T("MSG_UI_REPLY_MESSAGE_SK"), SID_ANY_LEN, &strid_reply );
+	textidname2id( _T("MSG_UI_REPLY_MESSAGE_SK"), TEXTID_ANY_LEN, &strid_reply );
 	//софт в просмотре переданных
-	textidname2id( _T("MSG_UI_FORWARD_MESSAGE_SK"), SID_ANY_LEN, &strid_forward );
+	textidname2id( _T("MSG_UI_FORWARD_MESSAGE_SK"), TEXTID_ANY_LEN, &strid_forward );
 	//софт при проигрывании ммс
-	textidname2id( _T("SMIL_VIEWER_STOP_SK"), SID_ANY_LEN, &strid_stop );
+	textidname2id( _T("SMIL_VIEWER_STOP_SK"), TEXTID_ANY_LEN, &strid_stop );
 
 	MODIFYKEYHOOK( _HookCBKey, KEY_HOOK_ADD, this );
 }

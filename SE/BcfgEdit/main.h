@@ -59,10 +59,10 @@ typedef struct _MyBOOK : BOOK
 	} cur_hp;
 
 	unsigned long old_crc;
-	STRID check_box_unchecked;
-	STRID check_box_checked;
-	STRID changes_have_been_made;
-	STRID save_before_exit;
+	TEXTID check_box_unchecked;
+	TEXTID check_box_checked;
+	TEXTID changes_have_been_made;
+	TEXTID save_before_exit;
 	BCFG_DATA bdata;
 }MyBOOK;
 

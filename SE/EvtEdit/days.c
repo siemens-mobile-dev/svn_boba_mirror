@@ -95,7 +95,7 @@ int Days_onLBMessage(GUI_MESSAGE * msg)
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     int strid;
-    GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_WEEK+item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_WEEK+item],ENC_UCS2,TEXTID_ANY_LEN));
     if (mbk->curdays[item])
     {
        strid=mbk->check_box_checked;
@@ -120,31 +120,31 @@ int Days_onLBMessage2(GUI_MESSAGE * msg)
     {
       if (mbk->selev->isMinusInBefore==true)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_BEFORE],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_BEFORE],ENC_UCS2,TEXTID_ANY_LEN));
       }
       else
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_AFTER],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_AFTER],ENC_UCS2,TEXTID_ANY_LEN));
       }
     }
     else if (item==1)
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_MINUTES],0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_MINUTES],ENC_UCS2,TEXTID_ANY_LEN));
     }
     else if (item==2)
     {
       if (mbk->selev->isMinusInAfter==true)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_BEFOREEND],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_BEFOREEND],ENC_UCS2,TEXTID_ANY_LEN));
       }
       else
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_AFTEREND],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_AFTEREND],ENC_UCS2,TEXTID_ANY_LEN));
       }
     }
     else if (item==3)
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_REMINDS + REM_MINUTES],0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_REMINDS + REM_MINUTES],ENC_UCS2,TEXTID_ANY_LEN));
     }
   }
   return(1);
@@ -234,7 +234,7 @@ GUI_LIST * Days_CreateGuiList(BOOK * book)
     MyBOOK *mbk=(MyBOOK*)book;
     if (mbk->daystype==0)
     {
-      GUIObject_SetTitleText(lo,Str2ID(lng[DAYS],0,SID_ANY_LEN));
+      GUIObject_SetTitleText(lo,TextID_Create(lng[DAYS],ENC_UCS2,TEXTID_ANY_LEN));
       ListMenu_SetItemCount(lo,7);
       ListMenu_SetCursorToItem(lo,0);
       ListMenu_SetOnMessage(lo,Days_onLBMessage);
@@ -242,15 +242,15 @@ GUI_LIST * Days_CreateGuiList(BOOK * book)
       GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Days_OnBack);
       GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Days_OnSelect);
       GUIObject_SoftKeys_SetAction(lo,0, Days_OnWorkdays);
-      GUIObject_SoftKeys_SetText(lo,0,Str2ID(lng[LNG_WORKDAYS],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(lo,0,TextID_Create(lng[LNG_WORKDAYS],ENC_UCS2,TEXTID_ANY_LEN));
       GUIObject_SoftKeys_SetAction(lo,1, Days_OnWeekend);
-      GUIObject_SoftKeys_SetText(lo,1,Str2ID(lng[LNG_WEEKEND],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(lo,1,TextID_Create(lng[LNG_WEEKEND],ENC_UCS2,TEXTID_ANY_LEN));
       GUIObject_SoftKeys_SetAction(lo,2, Days_OnEveryday);
-      GUIObject_SoftKeys_SetText(lo,2,Str2ID(lng[LNG_ALLDAYS],0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(lo,2,TextID_Create(lng[LNG_ALLDAYS],ENC_UCS2,TEXTID_ANY_LEN));
     }
     else
     {
-      GUIObject_SetTitleText(lo,Str2ID(lng[LNG_REMINDS],0,SID_ANY_LEN));
+      GUIObject_SetTitleText(lo,TextID_Create(lng[LNG_REMINDS],ENC_UCS2,TEXTID_ANY_LEN));
       ListMenu_SetItemCount(lo,4);
       ListMenu_SetCursorToItem(lo,LastIndex);
       ListMenu_SetOnMessage(lo,Days_onLBMessage2);

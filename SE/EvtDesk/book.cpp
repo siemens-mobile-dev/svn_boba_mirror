@@ -39,7 +39,7 @@ int TerminateSBDraw(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("EvtDesk\n(C) UltraShot"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("EvtDesk\n(C) UltraShot"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 };
 

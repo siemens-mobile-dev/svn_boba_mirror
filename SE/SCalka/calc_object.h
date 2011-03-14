@@ -92,11 +92,11 @@ typedef struct {
   int current_tab;
   int cursor_pos;
   int curx_pos;
-  STRID answer_sid;
+  TEXTID answer_sid;
   int x1, x2, y1, y2;
   int cur_base;
   int maxintab;
-  STRID yx[TOTAL_OPS];
+  TEXTID yx[TOTAL_OPS];
   int names_len[TOTAL_OPS];
 } DISP_OBJ_CALC;
 

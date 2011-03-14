@@ -38,7 +38,7 @@ int TerminateSBDraw(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("StandBy Draw test..."), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("StandBy Draw test..."), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 

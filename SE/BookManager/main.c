@@ -156,7 +156,7 @@ wchar_t * GetUserBookName(wchar_t * ini,wchar_t * orig_name,wchar_t * cur_name)
 
 
 // взять имя книги из ини-файла
-STRID GetBookNameStrID( char* name )
+TEXTID GetBookNameStrID( char* name )
 {
   wchar_t cur_name[MAX_BOOK_NAME_LEN+1];
   wchar_t orig_name[MAX_BOOK_NAME_LEN+1];
@@ -167,7 +167,7 @@ STRID GetBookNameStrID( char* name )
   
   GetUserBookName(mbk->ini_buf, orig_name, cur_name);
   
-  return Str2ID(cur_name, 0, SID_ANY_LEN);
+  return TextID_Create(cur_name, ENC_UCS2, TEXTID_ANY_LEN);
 }
 
 
@@ -176,7 +176,7 @@ int GetJavaName( BOOK* bk )
 {
   wchar_t ws[100];
   
-  TextID2wstr( BookObj_GetSession( bk )->name, ws, MAXELEMS(ws) );
+  TextID_GetWString( BookObj_GetSession( bk )->name, ws, MAXELEMS(ws) );
   
   if ( !wstrncmp( ws, L"Foreign app", 11 ) )
   {
@@ -188,7 +188,7 @@ int GetJavaName( BOOK* bk )
     return JavaSession_GetName();
   }
   
-  return EMPTY_SID;
+  return EMPTY_TEXTID;
 }
 
 
@@ -297,7 +297,7 @@ void CreateBookLists( MyBOOK* myBook )
             }
             else
             {
-              StrID2Str( BookObj_GetSession(book)->name, s, MAXELEMS(s) );
+              TextID_GetString( BookObj_GetSession(book)->name, s, MAXELEMS(s) );
               char * bn =new char[strlen(s)+1];
               strcpy(bn,s);
               elem->book_name = bn;
@@ -305,16 +305,16 @@ void CreateBookLists( MyBOOK* myBook )
             
             elem->isGuiBook = fgui;
             
-            STRID tmp = GetJavaName( book );
+            TEXTID tmp = GetJavaName( book );
             
-            if ( tmp != EMPTY_SID )
+            if ( tmp != EMPTY_TEXTID )
             {
               delete(elem->book_name);
-              StrID2Str( tmp, s, MAXELEMS(s) );
+              TextID_GetString( tmp, s, MAXELEMS(s) );
               char * java_name =new char[strlen(s)+1];
               strcpy(java_name,s);
               elem->book_name = java_name;
-              TextFree( tmp );
+              TextID_Destroy( tmp );
             }
             
             if ( ElfInBookListEnabled && ( ((int)book->onClose)&FLASH_MASK ) != mask )
@@ -426,12 +426,12 @@ void get_iconsID( MyBOOK* mbk )
   
   for ( i = 0;i < ICONS_COUNT;i++ )
   {
-    iconidname2id(id_names[i],SID_ANY_LEN,&_imgID);
+    iconidname2id(id_names[i],TEXTID_ANY_LEN,&_imgID);
     mbk->tabs_image[i].ImageID = _imgID;
   }
   for ( i = 0;i < DIGITS_COUNT;i++ )
   {
-    iconidname2id(id_digits[i],SID_ANY_LEN,&_imgID);
+    iconidname2id(id_digits[i],TEXTID_ANY_LEN,&_imgID);
     mbk->digs_image[i].ImageID = _imgID;
   }
   for ( i = 0;i < ICONS_COUNT;i++ )
@@ -567,11 +567,11 @@ void onDelPressed_Books( BOOK* book, void* lt )
   BOOK* bk = GetBook( BOOKLIST, book );
   if ( bk )
   {
-    STRID tmp = GetJavaName( bk );
-    if ( tmp != EMPTY_SID )
+    TEXTID tmp = GetJavaName( bk );
+    if ( tmp != EMPTY_TEXTID )
     {
       JavaSession_Manager( 0x0E );
-      TextFree( tmp );
+      TextID_Destroy( tmp );
     }
     else
     {
@@ -603,7 +603,7 @@ void onDelPressed_Elfs( BOOK* book, void* lt )
       }
       else
       {
-        MessageBox(EMPTY_SID,STR("TerminateEvent not supported by elf..."),NOIMAGE,1,3000,book);
+        MessageBox(EMPTY_TEXTID,STR("TerminateEvent not supported by elf..."),NOIMAGE,1,3000,book);
       }
     }
   }
@@ -624,7 +624,7 @@ void Author( BOOK* book, GUI* lt )
     }
     else
     {
-      MessageBox(EMPTY_SID,STR("Author unknown"),NOIMAGE,1,3000,book);
+      MessageBox(EMPTY_TEXTID,STR("Author unknown"),NOIMAGE,1,3000,book);
     }
   }
 }
@@ -634,7 +634,7 @@ void Copyright( BOOK* book, GUI* lt )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   mbk->blistpos = ListMenu_GetSelectedItem( mbk->blist );
-  MessageBox(EMPTY_SID,COPYRIGHT_STRING,NOIMAGE,1,3000,book);
+  MessageBox(EMPTY_TEXTID,COPYRIGHT_STRING,NOIMAGE,1,3000,book);
 }
 
 
@@ -774,9 +774,9 @@ void myOnKey_Elfs( DISP_OBJ* p, int keyID, int i2, int i3, int press_mode )
           {
             int ms[3];
             ms[0] = STR( "ZBin" );
-            ms[1] = Str2ID( param, 1, strlen( param ) );
+            ms[1] = TextID_Create( param, ENC_LAT1, strlen( param ) );
             ms[2] = STR( "\n\nnot found.." );
-            MessageBox( EMPTY_SID,Str2ID(ms,5,3),NOIMAGE,1,3000,FindBook(isBookManager));
+            MessageBox( EMPTY_TEXTID,TextID_Create(ms,ENC_TEXTID,3),NOIMAGE,1,3000,FindBook(isBookManager));
           }
         
         mfree( param );
@@ -859,10 +859,10 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_SELECT1, onEnterPressed_Books );
     
     GUIObject_SoftKeys_SetAction( mbk->blist, 0, Shortcuts );
-    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
+    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->blist, 0, str_id );
     GUIObject_SoftKeys_SetAction( mbk->blist, 1, BookNames );
-    textidname2id( L"DB_RENAME_TXT", SID_ANY_LEN, &str_id );
+    textidname2id( L"DB_RENAME_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->blist, 1, str_id );
     GUIObject_SoftKeys_SetAction( mbk->blist, 2, Copyright );
     GUIObject_SoftKeys_SetText( mbk->blist, 2, STR( "About" ) );
@@ -873,8 +873,8 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     
     TabMenuBar_SetTabGui( mbk->gui, 0, mbk->blist );
 
-    STRID p[2] = { Str2ID ( L"Heap : ", 0, 7 ), int2strID ( GetFreeBytesOnHeap() ) };
-    TabMenuBar_SetTabTitle( mbk->gui, 0, Str2ID( p, 5, 2 ) );	
+    TEXTID p[2] = { TextID_Create ( L"Heap : ", ENC_UCS2, 7 ), TextID_CreateIntegerID ( GetFreeBytesOnHeap() ) };
+    TabMenuBar_SetTabTitle( mbk->gui, 0, TextID_Create( p, ENC_TEXTID, 2 ) );	
   }
   //---------------
   
@@ -904,11 +904,11 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_BACK, CloseMyBook );
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_LONG_BACK, PreTerminateManager );
     GUIObject_SoftKeys_SetAction( mbk->elist, 0, Shortcuts );
-    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", SID_ANY_LEN, &str_id );
+    textidname2id( L"SHC_EDIT_SHORTCUT_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->elist, 0, str_id );
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_SELECT1, onEnterPressed_Elfs );
     GUIObject_SoftKeys_SetAction( mbk->elist, 1, BookNames );
-    textidname2id( L"DB_RENAME_TXT", SID_ANY_LEN, &str_id );
+    textidname2id( L"DB_RENAME_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->elist, 1, str_id );
     GUIObject_SoftKeys_SetAction( mbk->elist, 2, Author );
     GUIObject_SoftKeys_SetText( mbk->elist, 2, STR( "Author" ) );
@@ -1037,7 +1037,7 @@ void CloseMyBook( BOOK* Book, GUI* )
 
 void TerminateManager( BOOK* Book, GUI* )
 {
-  MessageBox( EMPTY_SID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
+  MessageBox( EMPTY_TEXTID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
   FreeBook( Book );
   DestroyDaemon();
   ModifyKeyHook( NewKey, KEY_HOOK_REMOVE, NULL );
@@ -1051,8 +1051,8 @@ void PreTerminateManager( BOOK* bk, GUI* )
 
   mbk->YesNoQuestion = CreateYesNoQuestionVA( 0,
                                              VAR_BOOK( mbk ),
-                                             VAR_YESNO_PRE_QUESTION( Str2ID( "Exit command selected", 6, SID_ANY_LEN ) ),
-                                             VAR_YESNO_QUESTION( Str2ID( "Unload?", 6, SID_ANY_LEN ) ),
+                                             VAR_YESNO_PRE_QUESTION( TextID_Create( "Exit command selected", ENC_LAT1, TEXTID_ANY_LEN ) ),
+                                             VAR_YESNO_QUESTION( TextID_Create( "Unload?", ENC_LAT1, TEXTID_ANY_LEN ) ),
                                              0 );
   GUIObject_SoftKeys_SetAction( mbk->YesNoQuestion, ACTION_YES, TerminateManager );
   GUIObject_SoftKeys_SetAction( mbk->YesNoQuestion, ACTION_NO, CloseMyBook );
@@ -1163,7 +1163,7 @@ int main ( void )
   }
   else
   {
-    MessageBox( EMPTY_SID, STR( "BookManager is already runed" ), NOIMAGE, 1, 5000, 0 );
+    MessageBox( EMPTY_TEXTID, STR( "BookManager is already runed" ), NOIMAGE, 1, 5000, 0 );
     SUBPROC( elf_exit );
   }
   return 0;

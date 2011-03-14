@@ -80,7 +80,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
       }
       else
       {
-        MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
+        MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
       }
     }
   }
@@ -103,7 +103,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
         }
         else
         {
-          MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
+          MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
         }
         
       }
@@ -121,7 +121,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
         }
         else
         {
-          MessageBox( EMPTY_SID, STR( "Can't open bookman.ini when append" ), NOIMAGE, 1 , 5000, mbk );
+          MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when append" ), NOIMAGE, 1 , 5000, mbk );
         }
       }
     }
@@ -137,7 +137,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
 int CreateSI( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  STRID editable_strID = GetBookNameStrID(GetCurrentName(mbk));
+  TEXTID editable_strID = GetBookNameStrID(GetCurrentName(mbk));
   
   mbk->StringInput = CreateStringInputVA( 0,
                                          VAR_PREV_ACTION_PROC( onPrevious_SI ),

@@ -54,7 +54,7 @@ static int TI_OnEnter(void *,BOOK * bk)
   t.sec=time->sec;
   if (!REQUEST_TIMEFORMAT_GET(SYNC,&time_f)) time_format=time_f;
   mbk->tinput=CreateTimeInputVA(0,
-                                VAR_HEADER_TEXT(Str2ID(lng[LNG_TIME],0,SID_ANY_LEN)),
+                                VAR_HEADER_TEXT(TextID_Create(lng[LNG_TIME],ENC_UCS2,TEXTID_ANY_LEN)),
                                 VAR_TIMEINP_TIMEFORMAT_SEC(time_format),
                                 VAR_TIMEINP_TIMEFORMAT(time_format),
                                 VAR_TIMEINP_TIME(&t),

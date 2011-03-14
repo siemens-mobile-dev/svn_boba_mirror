@@ -129,7 +129,7 @@ int dll_SetFont_0( int font_size )
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
 #define USE_dll_DrawString_0
-void dll_DrawString_0( STRID strid, TUITextAlignment align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
+void dll_DrawString_0( TEXTID strid, TUITextAlignment align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
 {
   TUIRectangle rect;
   
@@ -369,7 +369,7 @@ void dll_Display_SetBrightness_0( int display, int brightness )
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
 #define USE_dll_Disp_GetStrIdWidth_0
-int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
+int dll_Disp_GetStrIdWidth_0( TEXTID strid, int len )
 {
   ITextRenderingManager * pTextRenderingManager=0;
   ITextRenderingFactory * pTextRenderingFactory=0;
@@ -394,58 +394,58 @@ int dll_Disp_GetStrIdWidth_0( STRID strid, int len )
 #endif
 
 #ifdef A2
-#define USE_dll_int2strID_0
-STRID dll_int2strID_0( int num )
+#define USE_dll_TextID_CreateIntegerID_0
+TEXTID dll_TextID_CreateIntegerID_0( int num )
 {
-  return int2strID_int( num, 0, 0 );
+  return TextID_CreateIntegerID_int( num, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_Str2ID_0
-STRID dll_Str2ID_0( const void* wstr,int flag,int len )
+#define USE_dll_TextID_Create_0
+TEXTID dll_TextID_Create_0( const void* wstr,int flag,int len )
 {
-  return Str2ID_int( wstr, flag, len, 0, 0 );
+  return TextID_Create_int( wstr, flag, len, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_TextID2wstr_0
-int dll_TextID2wstr_0( STRID strid,wchar_t * dest,int maxlen )
+#define USE_dll_TextID_GetWString_0
+int dll_TextID_GetWString_0( TEXTID strid,wchar_t * dest,int maxlen )
 {
-  return TextID2wstr_int( strid, dest, maxlen, 0, 0 );
+  return TextID_GetWString_int( strid, dest, maxlen, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_TextGetLength_0
-int dll_TextGetLength_0( STRID strid )
+#define USE_dll_TextID_GetLength_0
+int dll_TextID_GetLength_0( TEXTID strid )
 {
-  return TextGetLength_int( strid, 0, 0 );
+  return TextID_GetLength_int( strid, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_TextFree_0
-void dll_TextFree_0( STRID strid )
+#define USE_dll_TextID_Destroy_0
+void dll_TextID_Destroy_0( TEXTID strid )
 {
-  TextFree_int( strid, 0, 0 );
+  TextID_Destroy_int( strid, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_TextCopyId_0
-STRID dll_TextCopyId_0( STRID strid )
+#define USE_dll_TextID_Copy_0
+TEXTID dll_TextID_Copy_0( TEXTID strid )
 {
-  return TextCopyId_int( strid, 0, 0 );
+  return TextID_Copy_int( strid, 0, 0 );
 }
 #endif
 
 #ifdef A2
-#define USE_dll_StrID2Str_0
-void dll_StrID2Str_0( STRID strid, char* str, int maxlen )
+#define USE_dll_TextID_GetString_0
+void dll_TextID_GetString_0( TEXTID strid, char* str, int maxlen )
 {
-  return StrID2Str_int( strid, str, maxlen, NULL );
+  return TextID_GetString_int( strid, str, maxlen, NULL );
 }
 #endif
 
@@ -582,8 +582,8 @@ int dll_get_CellData_0( PLMN_LAC_DESC * plmn_lac, RAT_CI_DESC * rat_ci, char * C
   plmn_lac->MNC[0]=con_info.MNC[0];
   plmn_lac->MNC[1]=con_info.MNC[1];
   plmn_lac->PLMN_x=con_info.PLMN_x;
-  plmn_lac->LAC[0]=con_info.LAC[0];
-  plmn_lac->LAC[1]=con_info.LAC[1];
+  plmn_lac->LAC[0]=con_info.LAC<<16>>24;
+  plmn_lac->LAC[1]=con_info.LAC<<24>>24;
   rat_ci->RAT=con_info.RAT;
   rat_ci->CI=con_info.CI;
   CSReg[0]=con_info.CSReg;
@@ -703,32 +703,32 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     0x300, (void*) dll_Disp_GetStrIdWidth_0,
     #endif
     
-    #ifdef USE_dll_int2strID_0
-    0x15C, (void*) dll_int2strID_0,
+    #ifdef USE_dll_TextID_CreateIntegerID_0
+    0x15C, (void*) dll_TextID_CreateIntegerID_0,
     #endif
     
-    #ifdef USE_dll_Str2ID_0
-    0x15D, (void*) dll_Str2ID_0,
+    #ifdef USE_dll_TextID_Create_0
+    0x15D, (void*) dll_TextID_Create_0,
     #endif
     
-    #ifdef USE_dll_TextID2wstr_0
-    0x15F, (void*) dll_TextID2wstr_0,
+    #ifdef USE_dll_TextID_GetWString_0
+    0x15F, (void*) dll_TextID_GetWString_0,
     #endif
     
-    #ifdef USE_dll_TextGetLength_0
-    0x160, (void*) dll_TextGetLength_0,
+    #ifdef USE_dll_TextID_GetLength_0
+    0x160, (void*) dll_TextID_GetLength_0,
     #endif
     
-    #ifdef USE_dll_TextFree_0
-    0x161, (void*) dll_TextFree_0,
+    #ifdef USE_dll_TextID_Destroy_0
+    0x161, (void*) dll_TextID_Destroy_0,
     #endif
     
-    #ifdef USE_dll_TextCopyId_0
-    0x242, (void*) dll_TextCopyId_0,
+    #ifdef USE_dll_TextID_Copy_0
+    0x242, (void*) dll_TextID_Copy_0,
     #endif
     
-    #ifdef USE_dll_StrID2Str_0
-    0x15E, (void*) dll_StrID2Str_0,
+    #ifdef USE_dll_TextID_GetString_0
+    0x15E, (void*) dll_TextID_GetString_0,
     #endif
 
     #ifdef USE_dll_MainInput_getVisible_0

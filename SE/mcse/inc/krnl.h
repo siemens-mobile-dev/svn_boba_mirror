@@ -18,12 +18,12 @@ typedef struct
 	wchar_t* ws_name;
 	wchar_t* ws_showname;
         wchar_t icon;
-	STRID ws_attr;
-	STRID ws_size;
-	STRID ws_time;
-	STRID ws_ratio;
-	STRID ws_short;
-        STRID sid_name;
+	TEXTID ws_attr;
+	TEXTID ws_size;
+	TEXTID ws_time;
+	TEXTID ws_ratio;
+	TEXTID ws_short;
+        TEXTID sid_name;
 	void* next;
 } FILEINF;
 

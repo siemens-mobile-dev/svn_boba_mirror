@@ -76,7 +76,7 @@ int java_list_callback(GUI_MESSAGE * msg)
   {
   case 1:
     java_list_elem * elem=(java_list_elem*)List_Get(java_list,GUIonMessage_GetCreatedItemIndex(msg));
-    GUIonMessage_SetMenuItemText(msg,Str2ID(elem->name,0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(elem->name,ENC_UCS2,TEXTID_ANY_LEN));
     JavaApp_LogoImageID_Get(elem->fullpath,&elem->imageID);
     GUIonMessage_SetMenuItemIcon(msg,0,elem->imageID);
   }

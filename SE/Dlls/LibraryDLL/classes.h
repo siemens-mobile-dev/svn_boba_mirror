@@ -103,7 +103,7 @@ typedef struct
   char MCC[3];
   char MNC[2];
   char PLMN_x;
-  char LAC[2];
+  wchar_t LAC;
   char ValidRAC;
   char ValidCI;
 #if defined (DB3200) || defined (DB3210) || defined (DB3350)

@@ -69,7 +69,7 @@ int onLBMessage(GUI_MESSAGE * msg)
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     EVENT* evt=(EVENT *)List_Get(events,item);
-    GUIonMessage_SetMenuItemText(msg,Str2ID(items[evt->type],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(items[evt->type],ENC_UCS2,TEXTID_ANY_LEN));
     break;
   }
   return(1);
@@ -88,7 +88,7 @@ void OnSelect2Gui(BOOK *bk, GUI* )
   wchar_t text[1024];
   EVENT *ev=(EVENT*)List_Get(events,item);
   snwprintf(text, 1023, L"%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n\n%d-%d-%d-%d-%d-%d-%d\n%d:%d:%d", ev->days[0], ev->days[1], ev->days[2], ev->days[3], ev->days[4], ev->days[5], ev->days[6], ev->remdays[0], ev->remdays[1], ev->remdays[2], ev->remdays[3], ev->remdays[4], ev->remdays[5], ev->remdays[6], ev->remdays2[0], ev->remdays2[1], ev->remdays2[2], ev->remdays2[3], ev->remdays2[4], ev->remdays2[5], ev->remdays2[6], ev->tm_start, ev->ask_before, ev->ask_after);
-  MessageBox(EMPTY_SID,Str2ID(text,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+  MessageBox(EMPTY_TEXTID,TextID_Create(text,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
 };
 void OnBackGui(BOOK * bk, GUI* )
 {
@@ -108,11 +108,11 @@ GUI_LIST * CreateGuiList(BOOK * book)
     ListMenu_SetCursorToItem(lo,0);
     ListMenu_SetOnMessage(lo,onLBMessage);
     ListMenu_SetItemStyle(lo,3);
-    GUIObject_SetTitleText(lo,Str2ID(lng[LNG_EVENTS_TEST],0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,TextID_Create(lng[LNG_EVENTS_TEST],ENC_UCS2,TEXTID_ANY_LEN));
     GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, OnBackGui);
     GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,OnSelect1Gui);
     GUIObject_SoftKeys_SetAction(lo,0,OnSelect2Gui);
-    GUIObject_SoftKeys_SetText(lo,0,Str2ID(lng[LNG_INFO],0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(lo,0,TextID_Create(lng[LNG_INFO],ENC_UCS2,TEXTID_ANY_LEN));
   }
   return(lo);
 };

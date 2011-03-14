@@ -131,18 +131,18 @@ int main()
   TRACK_DESC *ntrack=TrackDesc_Get(FindBook(get_IsAudioPlayerBook()));
   wchar_t hz[500];
   snwprintf(hz,499,L"%ls/%ls\n\n%d:%d:%d",ntrack->path, ntrack->name, ntrack->fulltime, ntrack->pos, ntrack->tracks_count);
-  MessageBox(SID_NULL,Str2ID(hz,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+  MessageBox(SID_NULL,TextID_Create(hz,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
   return 0;
 #else
   if (!checkevents())
   {
-    MessageBox(SID_NULL,Str2ID(lngAbsentConsts,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(SID_NULL,TextID_Create(lngAbsentConsts,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(CA_Kill);
   }
   if (FindBook(isCoverArtBook))
   {
     // Уже запущен кавер
-    MessageBox(SID_NULL,Str2ID(lngRunned,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(SID_NULL,TextID_Create(lngRunned,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(CA_Kill);
   }
   else

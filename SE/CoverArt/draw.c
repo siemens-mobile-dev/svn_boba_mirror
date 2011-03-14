@@ -13,20 +13,20 @@ void DrawLine(bool MustDraw,int Font,int SIDtime/*wchar_t *NAME*/,int CEN, int X
       // Анимированному тексту обязательно надо указывать все координаты.
       //int SIDtime;
       SetFont(Font);
-      //SIDtime=Str2ID(NAME,0,len);
+      //SIDtime=TextID_Create(NAME,ENC_UCS2,len);
       DrawString(SIDtime,CEN,XPos-1,YPos-1,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos-1,YPos+1,MaxXPos-1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos-1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos,YPos,MaxXPos,MaxYPos,60,0x05,NormalColor,NormalColor);
-      //TextFree(SIDtime);
+      //TextID_Destroy(SIDtime);
     }
     else
     {
       // Текст неанимированный, значит надо подобрать ему второстепенные координаты правильно :-)
       //int SIDtime;
       SetFont(Font);
-      //SIDtime=Str2ID(NAME,0,len);
+      //SIDtime=TextID_Create(NAME,ENC_UCS2,len);
       int dist=lbl->FONT_SIZE;
       if (lbl->LINE_ON)
       {
@@ -90,7 +90,7 @@ void DrawLine(bool MustDraw,int Font,int SIDtime/*wchar_t *NAME*/,int CEN, int X
       DrawString(SIDtime,CEN,XPos+1,YPos-1,MaxXPos+1,MaxYPos,dist,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos+1,YPos+1,MaxXPos+1,MaxYPos,dist,0x05,borderColor,borderColor);
       DrawString(SIDtime,CEN,XPos,YPos,MaxXPos,MaxYPos,dist,0x05,NormalColor,NormalColor);
-      //TextFree(SIDtime);
+      //TextID_Destroy(SIDtime);
     }
   }
 };

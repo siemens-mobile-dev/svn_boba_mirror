@@ -28,7 +28,7 @@ int Profiles_onLBMessage(GUI_MESSAGE * msg)
   case 1:
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    int id=EMPTY_SID;
+    int id=EMPTY_TEXTID;
     textidname2id(profiles[item],0xFFFFFFFF,&id);
     GUIonMessage_SetMenuItemText(msg,id);
     int ic=NOIMAGE;
@@ -52,7 +52,7 @@ GUI_LIST * Profiles_CreateGuiList(BOOK * book)
   GUI_LIST * lo=0;
   if (lo=CreateListMenu(book,0))
   {
-    GUIObject_SetTitleText(lo,Str2ID(lng[CHOOSE_PROF],0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,TextID_Create(lng[CHOOSE_PROF],ENC_UCS2,TEXTID_ANY_LEN));
     ListMenu_SetItemCount(lo,8);
     ListMenu_SetCursorToItem(lo,0);
     ListMenu_SetOnMessage(lo,Profiles_onLBMessage);

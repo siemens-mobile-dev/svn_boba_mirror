@@ -21,11 +21,11 @@ protected:
 	static int FindBookExCB_Name(BOOK* book ,int* param);
 	static int FindBookExCB_Book(BOOK* book ,int* param);
 
-	STRID strid_viewmsg;
-	STRID strid_view;
-	STRID strid_forward;
-	STRID strid_reply;
-	STRID strid_stop;
+	TEXTID strid_viewmsg;
+	TEXTID strid_view;
+	TEXTID strid_forward;
+	TEXTID strid_reply;
+	TEXTID strid_stop;
 
 	set<BOOK*> blockbooks;
 public:

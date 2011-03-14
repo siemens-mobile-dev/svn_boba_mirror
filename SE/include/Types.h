@@ -95,23 +95,35 @@ void INHERITANCECHECK(){ if(static_cast<BASETYPE*>(0)==static_cast<CHILDTYPE*>(0
 
 // text ------------------------------------------------------------------------
 
-typedef int STRID;
+typedef int TEXTID;
 
-typedef struct STRID_DATA
+typedef struct TEXTID_DATA
 {
 	wchar_t lenght;
 	char encoding;
 	void* ptr;
-}STRID_DATA;
+}TEXTID_DATA;
 
 
-#define SID_ANY_LEN 0xFFFF
-#define EMPTY_SID 0x6FFFFFFF
+typedef enum TEXT_ENCODING
+{
+	ENC_UCS2   = 0,
+	ENC_GSM    = 1,
+	ENC_BCD    = 2,
+	ENC_FILE   = 3,
+	ENC_TEXTID = 5,
+	ENC_LAT1   = 6,
+	ENC_UT     = 8,
+	ENC_UTTF   = 9,
+}TEXT_ENCODING;
+
+#define TEXTID_ANY_LEN 0xFFFF
+#define EMPTY_TEXTID 0x6FFFFFFF
 
 
 #define TEXT( __STR__ ) L##__STR__
 #define _T( __STR__ ) L##__STR__
-#define STR( __STR__ ) Str2ID( _T( __STR__ ), 0, SID_ANY_LEN ) 
+#define STR( __STR__ ) TextID_Create( _T( __STR__ ), ENC_UCS2, TEXTID_ANY_LEN ) 
 
 // images ----------------------------------------------------------------------
 
@@ -147,7 +159,7 @@ typedef void ( OSENTRYPOINT )( void );
 typedef OSADDRESS( OSERRH )( OSBOOLEAN, OSERRCODE, OSERRCODE );
 
 
-enum PROCESS_TYPE
+typedef enum PROCESS_TYPE
 {
 	OS_PRI_PROC = 0,
 	OS_BG_PROC  = 64,
@@ -157,7 +169,7 @@ enum PROCESS_TYPE
 	OS_BLOCK    = 1024,
 	OS_ZOOMBIE  = 2048,
 	OS_ILLEGAL  = 4096
-};
+}PROCESS_TYPE;
 
 
 #define OS_PROCESS( x ) __interwork void x( void ) 
@@ -242,7 +254,7 @@ typedef struct GUI GUI_NOFMANY;
 typedef struct GUI GUI_FEEDBACK;
 
 
-typedef enum
+typedef enum UI_OverlayStyle_t
 {
 	UI_OverlayStyle_NotDefined = 0, 
 	UI_OverlayStyle_Default, // Use original frame settings
@@ -258,7 +270,7 @@ typedef enum
 	UI_OverlayStyle_Last
 } UI_OverlayStyle_t;
 
-typedef enum
+typedef enum UI_TitleMode_t
 {
 	UI_TitleMode_Uninitated = 0, // Uninitiated
 	UI_TitleMode_None, // Show no title
@@ -348,7 +360,7 @@ typedef struct GUI_MESSAGE
 }GUI_MESSAGE;
 
 
-enum LISTMSGS
+typedef enum LISTMSGS
 {
 	LISTMSG_HighlightChanged=0, 
 	LISTMSG_GetItem=1, 
@@ -366,7 +378,7 @@ enum LISTMSGS
 	LISTMSG_StringInputCharProtYesCB = 13, 
 	LISTMSG_StringInputCharProtNoCB = 14, 
 	LISTMSG_Minipopup = 15
-};
+}LISTMSGS;
 
 typedef enum LISTMENU_HOTKEY_MODE
 {
@@ -374,7 +386,7 @@ typedef enum LISTMENU_HOTKEY_MODE
 	LKHM_SHORTCUT = 1, 
 	LKHM_FOCUS = 2, 
 	LKHM_PRESS = 3
-} LISTMENU_HOTKEY_MODE;
+}LISTMENU_HOTKEY_MODE;
 
 // stringinput -----------------------------------------------------------------
 
@@ -523,27 +535,27 @@ typedef struct VOLUMESIZE_A2
 
 
 //lseek
-enum _SEEK_SET {
+typedef enum _SEEK_SET {
 	SEEK_SET=0, 
 	SEEK_CUR, 
 	SEEK_END
-};
+}_SEEK_SET;
 
 //w_lseek
-enum W_SEEK_SET {
+typedef enum W_SEEK_SET {
 	WSEEK_CUR=0, 
 	WSEEK_END=1, 
 	WSEEK_SET=2
-};
+}W_SEEK_SET;
 
 //w_fopen
-enum W_OPEN_ATTR {
+typedef enum W_OPEN_ATTR {
 	WA_Read=1, 
 	WA_Write=2, 
 	WA_Append=4, 
 	WA_Create=8, 
 	WA_Truncate=0x40
-};
+}W_OPEN_ATTR;
 
 //fopen/_fopen (mode)
 #define FSX_O_RDONLY     0x0001 /// Open for reading only.
@@ -584,18 +596,18 @@ enum W_OPEN_ATTR {
 typedef int (*KEYHOOKPROC)(int key, int repeat_count, int mode, LPARAM lparam, DISP_OBJ* disp);
 typedef int (*PAGEHOOKPROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM ClientData, u16 event);
 
-enum PAGE_HOOK_MODE 
+typedef enum PAGE_HOOK_MODE
 {
 	PAGE_HOOK_REMOVE=0, 
 	PAGE_HOOK_ADD_BEFORE, 
 	PAGE_HOOK_ADD_AFTER
-};
+}PAGE_HOOK_MODE;
 
-enum KEY_HOOK_MODE 
+typedef enum KEY_HOOK_MODE
 {
 	KEY_HOOK_REMOVE=0, 
 	KEY_HOOK_ADD
-};
+}KEY_HOOK_MODE;
 
 #define BLOCK_EVENT_GLOBALLY 666
 #define BLOCK_EVENT_IN_THIS_SESSION 667
@@ -691,7 +703,7 @@ typedef void (*SKACTIONPROC)( BOOK*, GUI* );
 
 typedef struct SKLABEL
 {
-	STRID text;
+	TEXTID text;
 	wchar_t unk1;
 	char unk2;
 }SKLABEL;
@@ -703,11 +715,11 @@ typedef struct SOFTKEY_DESC_A2
 	BOOK* book;
 	DISP_OBJ* disp_object;
 	void* IUIImage;
-	STRID ButtonText;
-	STRID MenuText;
-	STRID DisabledMessage;
-	STRID HelpText;
-	STRID LongSKButtonText;
+	TEXTID ButtonText;
+	TEXTID MenuText;
+	TEXTID DisabledMessage;
+	TEXTID HelpText;
+	TEXTID LongSKButtonText;
 	u16 parent_action;
 	u16 SubItemHighlight_action;
 	LIST* subitems_list;
@@ -728,10 +740,10 @@ typedef struct SOFTKEY_DESC
 	DISP_OBJ* disp_object;
 	IMAGEID Icon;
 	u16 unk2;
-	STRID ButtonText;
-	STRID MenuText;
-	STRID DisabledMessage;
-	STRID HelpText;
+	TEXTID ButtonText;
+	TEXTID MenuText;
+	TEXTID DisabledMessage;
+	TEXTID HelpText;
 	u16 parent_action;
 	u16 SubItemHighlight_action;
 	LIST* subitems_list;
@@ -873,8 +885,8 @@ typedef struct SEND_OBEX_STRUCT
 {
 	char is_multiple;
 	int Book_ID;
-	STRID send;
-	STRID sent;
+	TEXTID send;
+	TEXTID sent;
 	u16 obex_flag;
 	union 
 	{
@@ -1012,19 +1024,19 @@ typedef struct SHORTCUT_DESC_A2
 }SHORTCUT_DESC_A2;
 
 
-enum shortcut_state {
+typedef enum shortcut_state {
 	SC_State_Absent=0, 
 	SC_State_Inactive=1, 
 	SC_State_Present=2, 
 	SC_State_MainMenu=3
-};
+}shortcut_state;
 
-enum name_type {
+typedef enum shortcut_name_type {
 	SC_Name_StandName=0, 
 	SC_Name_NameAbsent=1, 
 	SC_Name_MainMenu=2, 
 	SC_Name_AddShortcut=3
-};
+}shortcut_name_type;
 
 // databrowser/associations ----------------------------------------------------
 
@@ -1038,9 +1050,9 @@ typedef struct FILESUBROUTINE
 		int (*ON_CMD)(struct SUB_EXECUTE*);
 		int (*ON_CMD_RUN)(struct SUB_EXECUTE*);
 		int (*ON_CMD_ICON)(struct SUB_EXECUTE*, IMAGEID* iconid);
-		int (*ON_CMD_STRID)(struct SUB_EXECUTE*, STRID* strid);
+		int (*ON_CMD_TEXTID)(struct SUB_EXECUTE*, TEXTID* strid);
 	};
-	STRID StrID;
+	TEXTID StrID;
 	union
 	{
 		int (*ON_CHECK)(struct SUB_EXECUTE*, void*);
@@ -1061,8 +1073,8 @@ typedef struct FILEITEM
 
 typedef struct DB_EXT_FOLDERS
 {
-	STRID StrID_FolderName;
-	STRID StrID_SavedTo;
+	TEXTID StrID_FolderName;
+	TEXTID StrID_SavedTo;
 	wchar_t* Path;
 	int isInternal;
 }DB_EXT_FOLDERS;
@@ -1147,7 +1159,7 @@ template<typename T> TIMERPROC MKTIMERPROC( void(*param)(u16,T*) )
 
 // other -----------------------------------------------------------------------
 
-enum URISchemeID {
+typedef enum URISchemeID {
 	file=0, 
 	http=1, 
 	https=2, 
@@ -1161,7 +1173,7 @@ enum URISchemeID {
 	vcard=10, 
 	vnote=11, 
 	vcal=12
-};
+}URISchemeID;
 
 // obsolete --------------------------------------------------------------------
 
@@ -1193,7 +1205,7 @@ typedef struct
 	int flag;
 	int unk_NULL1;
 	int unk_NULL2;
-	STRID HeaderStrID;
+	TEXTID HeaderStrID;
 	int unk_NULL3;
 	int (*onMessage)(void*);
 }PAGE_MENU_ITEMS_DESC;
@@ -1203,7 +1215,7 @@ typedef struct
 	int flag;
 	int unk_NULL1;
 	int unk_NULL2;
-	STRID HeaderStrID;
+	TEXTID HeaderStrID;
 	int unk_NULL3;
 	int (*onMessage)(void*);
 	const PAGE_MENU_ITEMS_DESC* const* items;

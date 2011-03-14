@@ -39,7 +39,7 @@ int CABook_ShowAuthorInfo(void *mess ,BOOK* book)
   MSG * msg = (MSG*)mess;
   wchar_t text[512];
   snwprintf( text, 512, L"CoverArt in Standby v3.56\r\n\r\n© UltraShot\n® IronMaster,\nJoker XT,\n2007KrasH\n\r\nbuild %d\n", BUILD);
-  MessageBox( SID_NULL, Str2ID(text,0,SID_ANY_LEN), NOIMAGE, 1, 5000, msg->book ); 
+  MessageBox( SID_NULL, TextID_Create(text,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, msg->book ); 
   return(1);
 };
 //int CABook_StandbyUnfocused(UI_MESSAGE *);
@@ -202,7 +202,7 @@ int CABook_onPlay(void * ,BOOK* bk)
   ReInit();
   PlayerRunned=true;
 #ifdef DEBUG
-  MessageBox(SID_NULL,Str2ID(L"PlayEvent",0,SID_ANY_LEN),NOIMAGE,1,0,0);
+  MessageBox(SID_NULL,TextID_Create(L"PlayEvent",ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
 #endif
   return 0;
 };
@@ -213,7 +213,7 @@ int CABook_onCreate(void *, BOOK *bk)
   {
     //PlayerRunned=true;
 #ifdef DEBUG
-    MessageBox(SID_NULL,Str2ID(L"CreatedEvent",0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(SID_NULL,TextID_Create(L"CreatedEvent",ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
 #endif
   }
   return 0;
@@ -223,7 +223,7 @@ int CABook_onDestroy(void *, BOOK *bk)
 {
   PlayerRunned=false;
 #ifdef DEBUG
-  MessageBox(SID_NULL,Str2ID(L"DestroyedEvent",0,SID_ANY_LEN),NOIMAGE,1,0,0);
+  MessageBox(SID_NULL,TextID_Create(L"DestroyedEvent",ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
 #endif
   return 0;
 };

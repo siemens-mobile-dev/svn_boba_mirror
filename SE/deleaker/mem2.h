@@ -128,72 +128,72 @@ GUI_ONEOFMANY* __deleaker_CreateOneOfMany( const char* __file__, int __line__, B
 GUI_TABMENUBAR* __deleaker_CreateTabMenuBar( const char* __file__, int __line__, BOOK* book );
 #define CreateProgressBar(book, display) __deleaker_CreateProgressBar( __FILE__,  __LINE__, book, display )
 GUI* __deleaker_CreateProgressBar( const char* __file__, int __line__, BOOK* book, int display );
-#define Str2ID(wstr, flag, len) __deleaker_Str2ID( __FILE__,  __LINE__, wstr, flag, len )
-STRID __deleaker_Str2ID( const char* __file__, int __line__, const void* wstr, int flag, int len );
-#define TextCopyId(__unknwnargname1) __deleaker_TextCopyId( __FILE__,  __LINE__, __unknwnargname1 )
-STRID __deleaker_TextCopyId( const char* __file__, int __line__, STRID __unknwnargname1 );
-#define int2strID(num) __deleaker_int2strID( __FILE__,  __LINE__, num )
-STRID __deleaker_int2strID( const char* __file__, int __line__, int num );
-#define TextFree(__unknwnargname1) __deleaker_TextFree( __FILE__,  __LINE__, __unknwnargname1 )
-void __deleaker_TextFree( const char* __file__, int __line__, STRID __unknwnargname1 );
+#define TextID_Create(wstr, flag, len) __deleaker_TextID_Create( __FILE__,  __LINE__, wstr, flag, len )
+TEXTID __deleaker_TextID_Create( const char* __file__, int __line__, const void* wstr, TEXT_ENCODING flag, int len );
+#define TextID_Copy(__unknwnargname1) __deleaker_TextID_Copy( __FILE__,  __LINE__, __unknwnargname1 )
+TEXTID __deleaker_TextID_Copy( const char* __file__, int __line__, TEXTID __unknwnargname1 );
+#define TextID_CreateIntegerID(num) __deleaker_TextID_CreateIntegerID( __FILE__,  __LINE__, num )
+TEXTID __deleaker_TextID_CreateIntegerID( const char* __file__, int __line__, int num );
+#define TextID_Destroy(__unknwnargname1) __deleaker_TextID_Destroy( __FILE__,  __LINE__, __unknwnargname1 )
+void __deleaker_TextID_Destroy( const char* __file__, int __line__, TEXTID __unknwnargname1 );
 #define GUIObject_SetTitleText(__unknwnargname1, __unknwnargname2) __deleaker_GUIObject_SetTitleText( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
-void __deleaker_GUIObject_SetTitleText( const char* __file__, int __line__, GUI* __unknwnargname1, STRID __unknwnargname2 );
+void __deleaker_GUIObject_SetTitleText( const char* __file__, int __line__, GUI* __unknwnargname1, TEXTID __unknwnargname2 );
 #define GUIObject_SoftKeys_SetText(__unknwnargname1, actionID, __unknwnargname3) __deleaker_GUIObject_SoftKeys_SetText( __FILE__,  __LINE__, __unknwnargname1, actionID, __unknwnargname3 )
-void __deleaker_GUIObject_SoftKeys_SetText( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID __unknwnargname3 );
+void __deleaker_GUIObject_SoftKeys_SetText( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID __unknwnargname3 );
 #define GUIonMessage_SetMenuItemText(msg, __unknwnargname2) __deleaker_GUIonMessage_SetMenuItemText( __FILE__,  __LINE__, msg, __unknwnargname2 )
-char __deleaker_GUIonMessage_SetMenuItemText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
+char __deleaker_GUIonMessage_SetMenuItemText( const char* __file__, int __line__, GUI_MESSAGE* msg, TEXTID __unknwnargname2 );
 #define GUIonMessage_SetMenuItemSecondLineText(msg, __unknwnargname2) __deleaker_GUIonMessage_SetMenuItemSecondLineText( __FILE__,  __LINE__, msg, __unknwnargname2 )
-char __deleaker_GUIonMessage_SetMenuItemSecondLineText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
+char __deleaker_GUIonMessage_SetMenuItemSecondLineText( const char* __file__, int __line__, GUI_MESSAGE* msg, TEXTID __unknwnargname2 );
 #define GUIonMessage_SetMenuItemInfoText(msg, __unknwnargname2) __deleaker_GUIonMessage_SetMenuItemInfoText( __FILE__,  __LINE__, msg, __unknwnargname2 )
-char __deleaker_GUIonMessage_SetMenuItemInfoText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
+char __deleaker_GUIonMessage_SetMenuItemInfoText( const char* __file__, int __line__, GUI_MESSAGE* msg, TEXTID __unknwnargname2 );
 #define GUIonMessage_SetMenuItemUnavailableText(msg, __unknwnargname2) __deleaker_GUIonMessage_SetMenuItemUnavailableText( __FILE__,  __LINE__, msg, __unknwnargname2 )
-char __deleaker_GUIonMessage_SetMenuItemUnavailableText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
+char __deleaker_GUIonMessage_SetMenuItemUnavailableText( const char* __file__, int __line__, GUI_MESSAGE* msg, TEXTID __unknwnargname2 );
 #define MessageBox(header_text, message_text, __unknwnargname3, style, time, book) __deleaker_MessageBox( __FILE__,  __LINE__, header_text, message_text, __unknwnargname3, style, time, book )
-int __deleaker_MessageBox( const char* __file__, int __line__, STRID header_text, STRID message_text, IMAGEID __unknwnargname3, int style, int time, BOOK* book );
+int __deleaker_MessageBox( const char* __file__, int __line__, TEXTID header_text, TEXTID message_text, IMAGEID __unknwnargname3, int style, int time, BOOK* book );
 #define BookObj_SoftKeys_SetText(book, actionID, __unknwnargname3) __deleaker_BookObj_SoftKeys_SetText( __FILE__,  __LINE__, book, actionID, __unknwnargname3 )
-void __deleaker_BookObj_SoftKeys_SetText( const char* __file__, int __line__, BOOK* book, int actionID, STRID __unknwnargname3 );
+void __deleaker_BookObj_SoftKeys_SetText( const char* __file__, int __line__, BOOK* book, int actionID, TEXTID __unknwnargname3 );
 #define DataBrowserDesc_SetHeaderText(DataBrowserDesc, __unknwnargname2) __deleaker_DataBrowserDesc_SetHeaderText( __FILE__,  __LINE__, DataBrowserDesc, __unknwnargname2 )
-void __deleaker_DataBrowserDesc_SetHeaderText( const char* __file__, int __line__, void* DataBrowserDesc, STRID __unknwnargname2 );
+void __deleaker_DataBrowserDesc_SetHeaderText( const char* __file__, int __line__, void* DataBrowserDesc, TEXTID __unknwnargname2 );
 #define DataBrowserDesc_SetOKSoftKeyText(DataBrowserDesc, __unknwnargname2) __deleaker_DataBrowserDesc_SetOKSoftKeyText( __FILE__,  __LINE__, DataBrowserDesc, __unknwnargname2 )
-void __deleaker_DataBrowserDesc_SetOKSoftKeyText( const char* __file__, int __line__, void* DataBrowserDesc, STRID __unknwnargname2 );
+void __deleaker_DataBrowserDesc_SetOKSoftKeyText( const char* __file__, int __line__, void* DataBrowserDesc, TEXTID __unknwnargname2 );
 #define DispObject_SetTitleText(__unknwnargname1, __unknwnargname2) __deleaker_DispObject_SetTitleText( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
-void __deleaker_DispObject_SetTitleText( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, STRID __unknwnargname2 );
+void __deleaker_DispObject_SetTitleText( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, TEXTID __unknwnargname2 );
 #define GUIObject_SoftKeys_AddErrorStr(__unknwnargname1, actionID, __unknwnargname3) __deleaker_GUIObject_SoftKeys_AddErrorStr( __FILE__,  __LINE__, __unknwnargname1, actionID, __unknwnargname3 )
-void __deleaker_GUIObject_SoftKeys_AddErrorStr( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID __unknwnargname3 );
+void __deleaker_GUIObject_SoftKeys_AddErrorStr( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID __unknwnargname3 );
 #define ProgressBar_SetText(__unknwnargname1, text) __deleaker_ProgressBar_SetText( __FILE__,  __LINE__, __unknwnargname1, text )
-void __deleaker_ProgressBar_SetText( const char* __file__, int __line__, GUI* __unknwnargname1, STRID text );
+void __deleaker_ProgressBar_SetText( const char* __file__, int __line__, GUI* __unknwnargname1, TEXTID text );
 #define StatusIndication_Item8_SetText(__unknwnargname1) __deleaker_StatusIndication_Item8_SetText( __FILE__,  __LINE__, __unknwnargname1 )
-void __deleaker_StatusIndication_Item8_SetText( const char* __file__, int __line__, STRID __unknwnargname1 );
+void __deleaker_StatusIndication_Item8_SetText( const char* __file__, int __line__, TEXTID __unknwnargname1 );
 #define StatusIndication_SetItemText(__unknwnargname1, item, __unknwnargname3) __deleaker_StatusIndication_SetItemText( __FILE__,  __LINE__, __unknwnargname1, item, __unknwnargname3 )
-void __deleaker_StatusIndication_SetItemText( const char* __file__, int __line__, GUI* __unknwnargname1, int item, STRID __unknwnargname3 );
+void __deleaker_StatusIndication_SetItemText( const char* __file__, int __line__, GUI* __unknwnargname1, int item, TEXTID __unknwnargname3 );
 #define StatusIndication_ShowNotes(__unknwnargname1) __deleaker_StatusIndication_ShowNotes( __FILE__,  __LINE__, __unknwnargname1 )
-void __deleaker_StatusIndication_ShowNotes( const char* __file__, int __line__, STRID __unknwnargname1 );
+void __deleaker_StatusIndication_ShowNotes( const char* __file__, int __line__, TEXTID __unknwnargname1 );
 #define StringInput_DispObject_SetText(__unknwnargname1, __unknwnargname2) __deleaker_StringInput_DispObject_SetText( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
-void __deleaker_StringInput_DispObject_SetText( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, STRID __unknwnargname2 );
+void __deleaker_StringInput_DispObject_SetText( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, TEXTID __unknwnargname2 );
 #define GUIObject_SoftKeys_SetInfoText(__unknwnargname1, actionID, __unknwnargname3) __deleaker_GUIObject_SoftKeys_SetInfoText( __FILE__,  __LINE__, __unknwnargname1, actionID, __unknwnargname3 )
-void __deleaker_GUIObject_SoftKeys_SetInfoText( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID __unknwnargname3 );
+void __deleaker_GUIObject_SoftKeys_SetInfoText( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID __unknwnargname3 );
 #define ListMenu_SetItemSecondLineText(__unknwnargname1, elem_num, __unknwnargname3) __deleaker_ListMenu_SetItemSecondLineText( __FILE__,  __LINE__, __unknwnargname1, elem_num, __unknwnargname3 )
-void __deleaker_ListMenu_SetItemSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, STRID __unknwnargname3 );
+void __deleaker_ListMenu_SetItemSecondLineText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, int elem_num, TEXTID __unknwnargname3 );
 #define GUIonMessage_SubItem_SetText(msg, __unknwnargname2) __deleaker_GUIonMessage_SubItem_SetText( __FILE__,  __LINE__, msg, __unknwnargname2 )
-void __deleaker_GUIonMessage_SubItem_SetText( const char* __file__, int __line__, GUI_MESSAGE* msg, STRID __unknwnargname2 );
+void __deleaker_GUIonMessage_SubItem_SetText( const char* __file__, int __line__, GUI_MESSAGE* msg, TEXTID __unknwnargname2 );
 #define Feedback_SetTextExtended(__unknwnargname1, text, where) __deleaker_Feedback_SetTextExtended( __FILE__,  __LINE__, __unknwnargname1, text, where )
-void __deleaker_Feedback_SetTextExtended( const char* __file__, int __line__, GUI_FEEDBACK* __unknwnargname1, STRID text, int where );
+void __deleaker_Feedback_SetTextExtended( const char* __file__, int __line__, GUI_FEEDBACK* __unknwnargname1, TEXTID text, int where );
 #define GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text) __deleaker_GUIObject_SoftKeys_SetTexts( __FILE__,  __LINE__, __unknwnargname1, actionID, short_text, full_text )
-void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, STRID short_text, STRID full_text );
+void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID short_text, TEXTID full_text );
 #define PNUM2Name(pnum, isIconNeeded, only_full_number_flag) __deleaker_PNUM2Name( __FILE__,  __LINE__, pnum, isIconNeeded, only_full_number_flag )
-STRID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag );
+TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag );
 #define Date2ID(__unknwnargname1, TimeFormat, __unknwnargname3) __deleaker_Date2ID( __FILE__,  __LINE__, __unknwnargname1, TimeFormat, __unknwnargname3 )
 int __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int TimeFormat, int __unknwnargname3 );
 #define Time2ID(__unknwnargname1, TimeFormat, isSec) __deleaker_Time2ID( __FILE__,  __LINE__, __unknwnargname1, TimeFormat, isSec )
 int __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec );
 #define KeyCode2Name(key_code) __deleaker_KeyCode2Name( __FILE__,  __LINE__, key_code )
-STRID __deleaker_KeyCode2Name( const char* __file__, int __line__, int key_code );
+TEXTID __deleaker_KeyCode2Name( const char* __file__, int __line__, int key_code );
 #define NOfMany_SetTexts(__unknwnargname1, strids, items_count) __deleaker_NOfMany_SetTexts( __FILE__,  __LINE__, __unknwnargname1, strids, items_count )
-void __deleaker_NOfMany_SetTexts( const char* __file__, int __line__, GUI_NOFMANY* __unknwnargname1, STRID* strids, int items_count );
+void __deleaker_NOfMany_SetTexts( const char* __file__, int __line__, GUI_NOFMANY* __unknwnargname1, TEXTID* strids, int items_count );
 #define OneOfMany_SetTexts(__unknwnargname1, strids, Count) __deleaker_OneOfMany_SetTexts( __FILE__,  __LINE__, __unknwnargname1, strids, Count )
-void __deleaker_OneOfMany_SetTexts( const char* __file__, int __line__, GUI_ONEOFMANY* __unknwnargname1, STRID* strids, int Count );
+void __deleaker_OneOfMany_SetTexts( const char* __file__, int __line__, GUI_ONEOFMANY* __unknwnargname1, TEXTID* strids, int Count );
 #define Feedback_SetText(__unknwnargname1, __unknwnargname2) __deleaker_Feedback_SetText( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
-void __deleaker_Feedback_SetText( const char* __file__, int __line__, GUI_FEEDBACK* __unknwnargname1, STRID __unknwnargname2 );
+void __deleaker_Feedback_SetText( const char* __file__, int __line__, GUI_FEEDBACK* __unknwnargname1, TEXTID __unknwnargname2 );
 #define Gif2ID(IMAGEHANDLE, path, fname, __unknwnargname4) __deleaker_Gif2ID( __FILE__,  __LINE__, IMAGEHANDLE, path, fname, __unknwnargname4 )
 int __deleaker_Gif2ID( const char* __file__, int __line__, u16 IMAGEHANDLE, const wchar_t* path, const wchar_t* fname, IMAGEID* __unknwnargname4 );
 #define GUIObject_SetTitleIcon(__unknwnargname1, __unknwnargname2) __deleaker_GUIObject_SetTitleIcon( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
@@ -243,17 +243,17 @@ void* __deleaker_DataBrowserDesc_Create( const char* __file__, int __line__ );
 #define DataBrowserDesc_Destroy(DataBrowserDesc) __deleaker_DataBrowserDesc_Destroy( __FILE__,  __LINE__, DataBrowserDesc )
 void __deleaker_DataBrowserDesc_Destroy( const char* __file__, int __line__, void* DataBrowserDesc );
 #define CreateMonitorFeedback(__unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete) __deleaker_CreateMonitorFeedback( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2, onbusy, onedit, ondelete )
-GUI_FEEDBACK* __deleaker_CreateMonitorFeedback( const char* __file__, int __line__, STRID __unknwnargname1, BOOK* __unknwnargname2, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
+GUI_FEEDBACK* __deleaker_CreateMonitorFeedback( const char* __file__, int __line__, TEXTID __unknwnargname1, BOOK* __unknwnargname2, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 #define LoadDLL(DllName) __deleaker_LoadDLL( __FILE__,  __LINE__, DllName )
 void* __deleaker_LoadDLL( const char* __file__, int __line__, wchar_t* DllName );
 #define UnLoadDLL(DllData) __deleaker_UnLoadDLL( __FILE__,  __LINE__, DllData )
 int __deleaker_UnLoadDLL( const char* __file__, int __line__, void* DllData );
 #define GUIObject_SetSecondRowTitleText(__unknwnargname1, __unknwnargname2) __deleaker_GUIObject_SetSecondRowTitleText( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
-void __deleaker_GUIObject_SetSecondRowTitleText( const char* __file__, int __line__, GUI* __unknwnargname1, STRID __unknwnargname2 );
+void __deleaker_GUIObject_SetSecondRowTitleText( const char* __file__, int __line__, GUI* __unknwnargname1, TEXTID __unknwnargname2 );
 #define ListMenu_SetNoItemText(__unknwnargname1, str) __deleaker_ListMenu_SetNoItemText( __FILE__,  __LINE__, __unknwnargname1, str )
-void __deleaker_ListMenu_SetNoItemText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, STRID str );
+void __deleaker_ListMenu_SetNoItemText( const char* __file__, int __line__, GUI_LIST* __unknwnargname1, TEXTID str );
 #define TabMenuBar_SetTabTitle(__unknwnargname1, tab_num, __unknwnargname3) __deleaker_TabMenuBar_SetTabTitle( __FILE__,  __LINE__, __unknwnargname1, tab_num, __unknwnargname3 )
-void __deleaker_TabMenuBar_SetTabTitle( const char* __file__, int __line__, GUI_TABMENUBAR* __unknwnargname1, int tab_num, STRID __unknwnargname3 );
+void __deleaker_TabMenuBar_SetTabTitle( const char* __file__, int __line__, GUI_TABMENUBAR* __unknwnargname1, int tab_num, TEXTID __unknwnargname3 );
 #define DispObject_SetBackgroundImage(__unknwnargname1, __unknwnargname2) __deleaker_DispObject_SetBackgroundImage( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
 void __deleaker_DispObject_SetBackgroundImage( const char* __file__, int __line__, DISP_OBJ* __unknwnargname1, IMAGEID __unknwnargname2 );
 #define DispObject_SetCursorImage(__unknwnargname1, __unknwnargname2) __deleaker_DispObject_SetCursorImage( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
@@ -267,7 +267,7 @@ void __deleaker_GUIObject_SetCursorImage( const char* __file__, int __line__, GU
 #define GUIObject_SetTitleBackgroundImage(__unknwnargname1, __unknwnargname2) __deleaker_GUIObject_SetTitleBackgroundImage( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
 void __deleaker_GUIObject_SetTitleBackgroundImage( const char* __file__, int __line__, GUI* __unknwnargname1, IMAGEID __unknwnargname2 );
 #define Shortcut_Get_MenuItemName(__unknwnargname1) __deleaker_Shortcut_Get_MenuItemName( __FILE__,  __LINE__, __unknwnargname1 )
-STRID __deleaker_Shortcut_Get_MenuItemName( const char* __file__, int __line__, void* __unknwnargname1 );
+TEXTID __deleaker_Shortcut_Get_MenuItemName( const char* __file__, int __line__, void* __unknwnargname1 );
 #define YesNoQuestion_SetIcon(__unknwnargname1, __unknwnargname2) __deleaker_YesNoQuestion_SetIcon( __FILE__,  __LINE__, __unknwnargname1, __unknwnargname2 )
 void __deleaker_YesNoQuestion_SetIcon( const char* __file__, int __line__, GUI* __unknwnargname1, IMAGEID __unknwnargname2 );
 #define ListMenu_SetItemIcon(__unknwnargname1, Item, unk_FFFF, mode, __unknwnargname5) __deleaker_ListMenu_SetItemIcon( __FILE__,  __LINE__, __unknwnargname1, Item, unk_FFFF, mode, __unknwnargname5 )
@@ -275,13 +275,13 @@ int __deleaker_ListMenu_SetItemIcon( const char* __file__, int __line__, GUI_LIS
 #define Shortcut_Get_MenuItemIconID(__unknwnargname1) __deleaker_Shortcut_Get_MenuItemIconID( __FILE__,  __LINE__, __unknwnargname1 )
 IMAGEID __deleaker_Shortcut_Get_MenuItemIconID( const char* __file__, int __line__, void* __unknwnargname1 );
 #define create_process(proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user) __deleaker_create_process( __FILE__,  __LINE__, proc_type, name, entrypoint, stack_size, priority, timeslice, pid_block, redir_table, vector, user )
-PROCESS __deleaker_create_process( const char* __file__, int __line__, int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
+PROCESS __deleaker_create_process( const char* __file__, int __line__, PROCESS_TYPE proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
 #define kill_proc(pid) __deleaker_kill_proc( __FILE__,  __LINE__, pid )
 void __deleaker_kill_proc( const char* __file__, int __line__, PROCESS pid );
 #define MediaPlayer_SoftKeys_AddHelpStr(player_gui, item, __unknwnargname3) __deleaker_MediaPlayer_SoftKeys_AddHelpStr( __FILE__,  __LINE__, player_gui, item, __unknwnargname3 )
-void __deleaker_MediaPlayer_SoftKeys_AddHelpStr( const char* __file__, int __line__, GUI* player_gui, int item, STRID __unknwnargname3 );
+void __deleaker_MediaPlayer_SoftKeys_AddHelpStr( const char* __file__, int __line__, GUI* player_gui, int item, TEXTID __unknwnargname3 );
 #define MediaPlayer_SoftKeys_SetText(player_gui, actionID, __unknwnargname3) __deleaker_MediaPlayer_SoftKeys_SetText( __FILE__,  __LINE__, player_gui, actionID, __unknwnargname3 )
-void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__, GUI* player_gui, int actionID, STRID __unknwnargname3 );
+void __deleaker_MediaPlayer_SoftKeys_SetText( const char* __file__, int __line__, GUI* player_gui, int actionID, TEXTID __unknwnargname3 );
 #define MenuBook_Desktop_GetSelectedItemID(MenuBook_Desktop) __deleaker_MenuBook_Desktop_GetSelectedItemID( __FILE__,  __LINE__, MenuBook_Desktop )
 wchar_t* __deleaker_MenuBook_Desktop_GetSelectedItemID( const char* __file__, int __line__, BOOK* MenuBook_Desktop );
 #define CreateURI(fpath, fname, URIScheme) __deleaker_CreateURI( __FILE__,  __LINE__, fpath, fname, URIScheme )
@@ -309,7 +309,7 @@ int __deleaker_JavaApp_LogoImageID_Get( const char* __file__, int __line__, wcha
 #define ObexSendFile(__unknwnargname1) __deleaker_ObexSendFile( __FILE__,  __LINE__, __unknwnargname1 )
 void __deleaker_ObexSendFile( const char* __file__, int __line__, SEND_OBEX_STRUCT* __unknwnargname1 );
 #define JavaSession_GetName() __deleaker_JavaSession_GetName( __FILE__,  __LINE__ )
-STRID __deleaker_JavaSession_GetName( const char* __file__, int __line__ );
+TEXTID __deleaker_JavaSession_GetName( const char* __file__, int __line__ );
 #define MetaData_Desc_Create(path, name) __deleaker_MetaData_Desc_Create( __FILE__,  __LINE__, path, name )
 void* __deleaker_MetaData_Desc_Create( const char* __file__, int __line__, wchar_t* path, wchar_t* name );
 #define MetaData_Desc_Destroy(MetaData_Desc) __deleaker_MetaData_Desc_Destroy( __FILE__,  __LINE__, MetaData_Desc )

@@ -32,7 +32,7 @@ void EditConfig(int indx, BOOK * book, int snd)
   }
   else
   {
-    MessageBox(EMPTY_SID, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(LG_GFGBCFGEDITNOTFOUND,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
   }
   wstrcat(path,L"/");
   wstrcat(path,name);
@@ -52,9 +52,9 @@ int isAnyDeath()
 static void AboutDlg(int indx, BOOK * book, int snd)
 {
 #if (!defined(LANG_RU) && !defined(LANG_EN))
-  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
+  MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,TEXTID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
 #else
-  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
+  MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000*msgShowTime, 0);
 #endif
 }
 
@@ -68,7 +68,7 @@ void RoomCommand(int indx, BOOK * book, int snd)
   int folders_cnt = 1;
 
   void * DB_Desc=DataBrowserDesc_Create();
-  DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(LG_ROOM,0,SID_ANY_LEN));
+  DataBrowserDesc_SetHeaderText(DB_Desc,TextID_Create(LG_ROOM,ENC_UCS2,TEXTID_ANY_LEN));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,folders_cnt);
   DataBrowserDesc_SetSelectAction(DB_Desc,0);
@@ -148,23 +148,23 @@ int menu_list_callback(GUI_MESSAGE * msg)
     int indx = TabMenuBar_GetFocusedTab(bk->gui);
     icon_id = img_menu[menuiconsnum[curitem]];
     if (curitem!= SLEEP_CMD){
-      str_id  = Str2ID(menutexts[curitem],0,SID_ANY_LEN);
+      str_id  = TextID_Create(menutexts[curitem],ENC_UCS2,TEXTID_ANY_LEN);
     }
     else
     {
       if (Pets[indx].Sleep==0){
-        str_id  = Str2ID(LG_SLEEP,0,SID_ANY_LEN);
+        str_id  = TextID_Create(LG_SLEEP,ENC_UCS2,TEXTID_ANY_LEN);
       }
       else
       {
-        str_id  = Str2ID(LG_NOTSLEEP,0,SID_ANY_LEN);
+        str_id  = TextID_Create(LG_NOTSLEEP,ENC_UCS2,TEXTID_ANY_LEN);
       }
     }
     int strID_array[3];
     strID_array[0]=icon_id+0x78000000;
     strID_array[1]=0x78000020;
     strID_array[2]=str_id;
-    GUIonMessage_SetMenuItemText(msg,Str2ID(strID_array,5,3));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(strID_array,ENC_TEXTID,3));
   }
   return(1);
 }
@@ -237,7 +237,7 @@ int CreateMenuList(void *data, BOOK * book)
   {
     if (bk->menu_list[indx]) GUIObject_Destroy( bk->menu_list[indx]);
     bk->menu_list[indx]=CreateListMenu(book,0);
-    GUIObject_SetTitleText(bk->menu_list[indx],Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
+    GUIObject_SetTitleText(bk->menu_list[indx],TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN));
 
     ListMenu_SetItemCount(bk->menu_list[indx],MENU_ITEMS_COUNT);
     OneOfMany_SetOnMessage((GUI_ONEOFMANY*)bk->menu_list[indx],menu_list_callback);

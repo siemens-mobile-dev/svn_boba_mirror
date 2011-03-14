@@ -36,39 +36,39 @@ void elf_exit(void){
   kill_data(__segment_begin("ELFBEGIN"), (void(*)(void*))mfree_adr());
 }
 
-#define MESSAGE(__STR__) MessageBox(EMPTY_SID,__STR__,NOIMAGE, 1 ,11000,NULL);
+#define MESSAGE(__STR__) MessageBox(EMPTY_TEXTID,__STR__,NOIMAGE, 1 ,11000,NULL);
 
 void MsgBoxError(int lgind, char* str)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
-  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(msgbuf,ENC_UCS2,TEXTID_ANY_LEN);
   MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(int lgind, wchar_t* str)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), muitxt(lgind), str);
-  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(msgbuf,ENC_UCS2,TEXTID_ANY_LEN);
   MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(char *err)
 {
   win12512unicode(msgbuf,err,MAXELEMS(msgbuf)-1);
-  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(msgbuf,ENC_UCS2,TEXTID_ANY_LEN);
   MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(wchar_t *err, int a)
 {
   snwprintf(msgbuf,MAXELEMS(msgbuf), err, a);
-  STRID q=Str2ID(msgbuf,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(msgbuf,ENC_UCS2,TEXTID_ANY_LEN);
   MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
 void MsgBoxError(wchar_t *err)
 {
-  STRID q=Str2ID(err,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(err,ENC_UCS2,TEXTID_ANY_LEN);
   MessageBox(LGP_NULL,q, NOIMAGE, 1 ,11000,(BOOK*)MCBook);
 }
 
@@ -88,7 +88,7 @@ static void YSNo (BOOK * bk, void *)
 
 void MsgBoxYesNo(wchar_t *qv, void(*f)(int))
 {
-  STRID q=Str2ID(qv,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(qv,ENC_UCS2,TEXTID_ANY_LEN);
   MCBook->YesNoFunc=f;
   MCBook->yes_no=CreateYesNoQuestionVA(0,
                                        VAR_BOOK(MCBook),
@@ -303,7 +303,7 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
   {
     if (key==KEY_LEFT_SOFT || key==KEY_RIGHT_SOFT)
     {
-      STRID q=Str2ID(muitxt(ind_pmt_stop),0,SID_ANY_LEN);
+      TEXTID q=TextID_Create(muitxt(ind_pmt_stop),ENC_UCS2,TEXTID_ANY_LEN);
       MCBook->stop_progr=CreateYesNoQuestionVA(0,
                                                VAR_BOOK(MCBook),
                                                VAR_YESNO_QUESTION(q),
@@ -467,7 +467,7 @@ int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
   if (!CheckConst())
   {
-    MESSAGE(Str2ID(L"Go smoke bamboo or update dynconst",0,SID_ANY_LEN));
+    MESSAGE(TextID_Create(L"Go smoke bamboo or update dynconst",ENC_UCS2,TEXTID_ANY_LEN));
     SUBPROC(elf_exit);
     return 0;
   }

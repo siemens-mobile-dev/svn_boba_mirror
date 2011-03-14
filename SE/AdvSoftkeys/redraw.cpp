@@ -166,7 +166,7 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
   if (DB==2010)goto L_draw2;
   if (lastitem)
   {
-    if (lastitem->style==0 && pressed[1]==true && lbl->strids[1]==EMPTY_SID)
+    if (lastitem->style==0 && pressed[1]==true && lbl->strids[1]==EMPTY_TEXTID)
     {
       pressed[1]=false;
       pressed[0]=true;
@@ -174,15 +174,15 @@ void DrawSofts(DISP_OBJ *DO,BOOK *bk, LABELS *lbl)
     if (xls->background==0 && !FindBook(isMMBrowserBook) && bk!=FindBook(get_IsAudioPlayerBook()) && bk!=FindBook(get_IsMediaPlayerVideoBook()))//bk!=FindBook(isImageViewerBook) && ) ) && NotSupported(bk)==false && xls->background==0 && stat==0)
     {
     L_draw2:
-      if (pressed[0] && images[LEFT_PRESSED]!=NOIMAGE && lbl->strids[0]!=EMPTY_SID && lastitem->type>T_STANDBY)
+      if (pressed[0] && images[LEFT_PRESSED]!=NOIMAGE && lbl->strids[0]!=EMPTY_TEXTID && lastitem->type>T_STANDBY)
       {
         GC_PutChar(gc,0,0,0,0,images[LEFT_PRESSED]);
       }
-      else if (pressed[1] && images[MIDDLE_PRESSED]!=NOIMAGE && lbl->strids[1]!=EMPTY_SID)
+      else if (pressed[1] && images[MIDDLE_PRESSED]!=NOIMAGE && lbl->strids[1]!=EMPTY_TEXTID)
       {
         GC_PutChar(gc,0,0,0,0,images[MIDDLE_PRESSED]);
       }
-      else if (pressed[2] && images[RIGHT_PRESSED]!=NOIMAGE && lbl->strids[2]!=EMPTY_SID && lastitem->type>T_STANDBY)
+      else if (pressed[2] && images[RIGHT_PRESSED]!=NOIMAGE && lbl->strids[2]!=EMPTY_TEXTID && lastitem->type>T_STANDBY)
       {
         GC_PutChar(gc,0,0,0,0,images[RIGHT_PRESSED]);
       }
@@ -313,7 +313,7 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
       int x;
       for (x=0;x<3;x++)
       {
-        if (lastitem->strids[x]!=EMPTY_SID)
+        if (lastitem->strids[x]!=EMPTY_TEXTID)
         {
           lbl->strids[x]=lastitem->strids[x];
           lbl->enable[x]=true;

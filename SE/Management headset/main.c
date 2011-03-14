@@ -88,7 +88,7 @@ typedef struct
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
          MSG * msg = (MSG*)mess;
-         MessageBox(EMPTY_SID, Str2ID(ABOUT, 0, SID_ANY_LEN), NOIMAGE, 1, 5000, msg->book);
+         MessageBox(EMPTY_TEXTID, TextID_Create(ABOUT, ENC_UCS2, TEXTID_ANY_LEN), NOIMAGE, 1, 5000, msg->book);
          return(1);
 }
 
@@ -252,7 +252,7 @@ int CheckConfig()
   if(err)
   {
     snwprintf(temp, MAXELEMS(temp), _T("Error!\n%s"),err);
-    MessageBox(EMPTY_SID,Str2ID(temp,0,MAXELEMS(temp)),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(temp,ENC_UCS2,MAXELEMS(temp)),NOIMAGE,1,0,0);
     return 1;
   }
   return 0;
@@ -377,7 +377,7 @@ int main (void)
   BOOK* alreadyrunned=FindBook(isManagementBook);
   if(alreadyrunned)
   {
-    MessageBox(EMPTY_SID, STR("Management headset\nуже запущен"), NOIMAGE, 1 ,5000, 0);
+    MessageBox(EMPTY_TEXTID, STR("Management headset\nуже запущен"), NOIMAGE, 1 ,5000, 0);
     SUBPROC(elf_exit);
   }
   else

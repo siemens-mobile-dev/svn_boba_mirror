@@ -64,7 +64,7 @@ static int DI_OnEnter(void *, BOOK * bk)
   }
   if (!REQUEST_DATEFORMAT_GET(SYNC,&date_f)) date_format=date_f;
   mbk->dinput=CreateDateInputVA(0,
-                                VAR_HEADER_TEXT(Str2ID(lng[LNG_DATE],0,SID_ANY_LEN)),
+                                VAR_HEADER_TEXT(TextID_Create(lng[LNG_DATE],ENC_UCS2,TEXTID_ANY_LEN)),
                                 VAR_DATEINP_DATEFORMAT(date_format),
                                 VAR_DATEINP_DATE(&d),
                                 VAR_BOOK(&mbk->book),

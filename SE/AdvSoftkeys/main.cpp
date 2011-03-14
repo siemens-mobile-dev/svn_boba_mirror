@@ -73,8 +73,8 @@ int main(wchar_t *elfpath)
     BookObj_Show(bk, 0);
     help=CreateYesNoQuestionVA(0,
                                      VAR_BOOK(bk),
-                                     VAR_YESNO_PRE_QUESTION(Str2ID(L"AdvSoftkeys is already runned",0,SID_ANY_LEN)),
-                                     VAR_YESNO_QUESTION(Str2ID(L"Do you want to close it now?",0,SID_ANY_LEN)),
+                                     VAR_YESNO_PRE_QUESTION(TextID_Create(L"AdvSoftkeys is already runned",ENC_UCS2,TEXTID_ANY_LEN)),
+                                     VAR_YESNO_QUESTION(TextID_Create(L"Do you want to close it now?",ENC_UCS2,TEXTID_ANY_LEN)),
                                      0);
     GUIObject_SoftKeys_SetAction(help,ACTION_YES,OnYesExitGui);
     GUIObject_SoftKeys_SetAction(help,ACTION_NO,OnBackExitGui);

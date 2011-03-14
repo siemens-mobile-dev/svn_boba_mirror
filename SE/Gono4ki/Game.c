@@ -105,33 +105,33 @@ void DrawText(MyBook*bk, int FSize, int x, int y, int cub)
   SetFont(FSize);
   int o[2];
   o[0]=STR("Очки:");
-  o[1]=int2strID(bk->point);
+  o[1]=TextID_CreateIntegerID(bk->point);
   DrawString(o[0],0, cub*12+5, y-20*cub, cub*12+5+GetFSize(FSize)*5, y-20*cub+GetFSize(FSize), 1, 0x01,0xFFFF0000,0xFFFFFFFF);
   DrawString(o[1],0, cub*12+5, y-20*cub+GetFSize(FSize)+1, cub*12+5+GetFSize(FSize)*4, y-20*cub+2*GetFSize(FSize)+1, 1, 0x01,0xFFFF0000,0xFFFFFFFF);
-  TextFree(o[0]);
-  TextFree(o[1]);
+  TextID_Destroy(o[0]);
+  TextID_Destroy(o[1]);
   int met[3];
   int ID;
   DATETIME dt;
   REQUEST_DATEANDTIME_GET(SYNC, &dt);
   ID=STR("Время:\n");
   DrawString(ID,0, cub*12+5, y-20*cub+2*GetFSize(FSize)+6, cub*12+5+GetFSize(FSize)*6, y-20*cub+3*GetFSize(FSize)+6, 1, 0x01,0xFFFF0000,0xFFFFFFFF);
-  TextFree(ID);
-  met[0]=int2strID(dt.time.hour);
+  TextID_Destroy(ID);
+  met[0]=TextID_CreateIntegerID(dt.time.hour);
   met[1]=STR(":");
-  met[2]=int2strID(dt.time.min);
-  ID=Str2ID(met, 5, 3);
+  met[2]=TextID_CreateIntegerID(dt.time.min);
+  ID=TextID_Create(met, ENC_TEXTID, 3);
   DrawString(ID,0, cub*12+5, y-20*cub+3*GetFSize(FSize)+7, cub*12+5+GetFSize(FSize)*5, y-20*cub+4*GetFSize(FSize)+6, 1, 0x01,0xFFFF0000,0xFFFFFFFF);
-  TextFree(ID);
-  TextFree(met[0]);
-  TextFree(met[1]);
-  TextFree(met[2]);
+  TextID_Destroy(ID);
+  TextID_Destroy(met[0]);
+  TextID_Destroy(met[1]);
+  TextID_Destroy(met[2]);
   ID=STR("Уровень:");
   DrawString(ID, 0, cub*12+5, y-20*cub+4*GetFSize(FSize)+9, cub*12+5+GetFSize(FSize)*8, y-20*cub+5*GetFSize(FSize)+9, 1, 0x01, 0xFFFF0000,0xFFFFFFFF);
-  TextFree(ID);
-  ID=int2strID(MyBK()->palka/10);
+  TextID_Destroy(ID);
+  ID=TextID_CreateIntegerID(MyBK()->palka/10);
   DrawString(ID, 0, cub*12+5, y-20*cub+5*GetFSize(FSize)+10, cub*12+5+GetFSize(FSize)*3, y-20*cub+6*GetFSize(FSize)+10, 1, 0x01, 0xFFFF0000,0xFFFFFFFF);
-  TextFree(ID);
+  TextID_Destroy(ID);
 }
 
 void DrawPause(int FSize, int x, int y)

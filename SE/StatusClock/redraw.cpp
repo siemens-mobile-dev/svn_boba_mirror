@@ -6,7 +6,7 @@ DISP_OBJ_ONREDRAW_METHOD DREDRAW;
 
 void DrawHighlightID(int font,int text,int ct, int XPos, int YPos, int borderColor, int shadowColor, int NormalColor)
 {
-  if (text && text!=EMPTY_SID)
+  if (text && text!=EMPTY_TEXTID)
   {
     SetFont(font);
     int MaxXPos,MaxYPos;
@@ -48,9 +48,9 @@ void DispDraw(DISP_OBJ* DO,int a,int b,int c)
   REQUEST_DATEANDTIME_GET(SYNC,&dt);
   wchar_t str[50];
   snwprintf(str,49,L"%02d:%02d",dt.time.hour,dt.time.min);
-  int time=Str2ID(str,0,SID_ANY_LEN);
+  int time=TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN);
   DrawHighlightID(cfg_font, time, cfg_ct, cfg_x, cfg_y, cfg_border, cfg_shadow, cfg_color);
-  TextFree(time);
+  TextID_Destroy(time);
 };
 
 void redraw_init()

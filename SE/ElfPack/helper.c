@@ -38,7 +38,7 @@ void HelperEntryPoint(void)
 
 void StartHelper(void)
 {
-	elfpackdata->HPID = create_process(0,"HelperProc",HelperEntryPoint,32768,30,0,0,0,0,0);
+	elfpackdata->HPID = create_process(OS_PRI_PROC,"HelperProc",HelperEntryPoint,32768,30,0,0,0,0,0);
 	start(elfpackdata->HPID);
 }
 

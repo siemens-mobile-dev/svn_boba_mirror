@@ -1,9 +1,9 @@
 #include "softkeyutil.hpp"
 #include <stddef.h>
 
-static bool isallocatedstrid(STRID strid)
+static bool isallocatedstrid(TEXTID strid)
 {
-	return (strid!=EMPTY_SID) && ((strid&0xFFFF0000)!=0);
+	return (strid!=EMPTY_TEXTID) && ((strid&0xFFFF0000)!=0);
 }
 
 enum
@@ -60,13 +60,13 @@ u16 CSoftKeyDesc::GetAction()
 	RETURNSOFTKEYPARAM( action );
 }
 
-STRID CSoftKeyDesc::GetButtonText()
+TEXTID CSoftKeyDesc::GetButtonText()
 {
-	RETURNIFZERO( EMPTY_SID );
+	RETURNIFZERO( EMPTY_TEXTID );
 	RETURNSOFTKEYPARAM( ButtonText );
 }
 
-CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, STRID strid )
+CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, TEXTID strid )
 {
 	wchar_t temp[32];
 	temp[0]=0;
@@ -82,10 +82,10 @@ CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, STRID strid )
 				if( isallocatedstrid(sk->GetButtonText()) || isallocatedstrid(strid) )
 				{
 					if( !temp[0] )
-						TextID2wstr( strid, temp, MAXELEMS( temp ) );
+						TextID_GetWString( strid, temp, MAXELEMS( temp ) );
 
 					wchar_t temp2[32];
-					TextID2wstr( sk->GetButtonText(), temp2, MAXELEMS( temp2 ) );
+					TextID_GetWString( sk->GetButtonText(), temp2, MAXELEMS( temp2 ) );
 
 					if( !wstrcmp( temp, temp2 ) )
 						return sk;

@@ -33,7 +33,7 @@ int Switch_onLBMessage(GUI_MESSAGE * msg)
     MyBOOK *mbk=(MyBOOK*)FindBook(isEvtEditBook);
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     wchar_t* str=(wchar_t *)List_Get(mbk->switch_lst,item);
-    GUIonMessage_SetMenuItemText(msg,Str2ID(str,0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN));
     break;
   }
   return(1);
@@ -73,7 +73,7 @@ static int SwitchPage_OnEnter(void *,BOOK * bk)
 {
   MyBOOK *mbk=(MyBOOK*)bk;
   mbk->switch_gui=CreateSwitchList(bk, mbk->switch_lst->FirstFree);
-  GUIObject_SetTitleText(mbk->switch_gui, Str2ID(lng[CHOOSE],0,SID_ANY_LEN));
+  GUIObject_SetTitleText(mbk->switch_gui, TextID_Create(lng[CHOOSE],ENC_UCS2,TEXTID_ANY_LEN));
   GUIObject_Show(mbk->switch_gui);
   return 1;
 };

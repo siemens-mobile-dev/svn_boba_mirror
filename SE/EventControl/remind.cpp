@@ -159,7 +159,7 @@ void DrawProgressVert(RECT rect, int progress, int time, int upc, int loc)
 void DrawLine(int str, int ct, int x, int y, int x2, int y2, int between, int c)
 {
   DrawString(str,ct,x,y,x2,y2,between,3,c,c);
-  TextFree(str);
+  TextID_Destroy(str);
 };
 /*
 *===========================================================================
@@ -180,30 +180,30 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
     DrawGradientVert(0, 0, width, 25, cl, 0);//BG_COLOR);
     wchar_t str[50];
     snwprintf(str,49,L"%02d/%02d",db->num+1,db->rems->FirstFree);
-    DrawLine(Str2ID(L"EventControl",0,SID_ANY_LEN),0,25,0,width,25,20,clWhite);
-    DrawLine(Str2ID(str,0,SID_ANY_LEN),1,0,0,width,25,20,clWhite);
+    DrawLine(TextID_Create(L"EventControl",ENC_UCS2,TEXTID_ANY_LEN),0,25,0,width,25,20,clWhite);
+    DrawLine(TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN),1,0,0,width,25,20,clWhite);
 
     int icon_id=NOIMAGE;
     iconidname2id(L"CALE_RN_APPOINTMENT_STATUS_ICN",-1,&icon_id);
     GC *gc=get_DisplayGC();
     GC_PutChar(gc,0,0,0,0,icon_id);
     SetFont(FONT_E_20I);
-    DrawLine(Str2ID(rem->text,0,SID_ANY_LEN),2,0,height/2-10,width,height,20,clWhite);
+    DrawLine(TextID_Create(rem->text,ENC_UCS2,TEXTID_ANY_LEN),2,0,height/2-10,width,height,20,clWhite);
     SetFont(FONT_E_16R);
-    DrawLine(Str2ID(rem->utext,0,SID_ANY_LEN),2,0,height-44,width,height,0,clWhite);
+    DrawLine(TextID_Create(rem->utext,ENC_UCS2,TEXTID_ANY_LEN),2,0,height-44,width,height,0,clWhite);
     RECT rec={0,width,height-25,height};
     DrawProgressVert(rec, db->num+1, db->rems->FirstFree, clBlack, cl);
     DrawGradient(width-80, 60, width, 85, 0, cl);
     wchar_t time[50];
     snwprintf(time, 49, L"/%02d:%02d:%02d", h, m, s);
     SetFont(FONT_E_20R);
-    DrawLine(Str2ID(time,0,SID_ANY_LEN),1,0,60,width,80,0,clWhite);
+    DrawLine(TextID_Create(time,ENC_UCS2,TEXTID_ANY_LEN),1,0,60,width,80,0,clWhite);
     SetFont(FONT_E_16R);
-    DrawLine(Str2ID(rem->time,0,SID_ANY_LEN),1,0,63,width-80,80,0,clWhite);
+    DrawLine(TextID_Create(rem->time,ENC_UCS2,TEXTID_ANY_LEN),1,0,63,width-80,80,0,clWhite);
     int font_y=GetImageHeight(L' ')+4;
-    DrawLine(Str2ID(lng[LNG_INFO],0,SID_ANY_LEN),0,0,height-font_y,width,height,0,clWhite);
-    DrawLine(Str2ID(lng[LNG_OK],0,SID_ANY_LEN),2,0,height-font_y,width,height,0,clWhite);
-    DrawLine(Str2ID(lng[LNG_MARK],0,SID_ANY_LEN),1,0,height-font_y,width,height,0,clWhite);
+    DrawLine(TextID_Create(lng[LNG_INFO],ENC_UCS2,TEXTID_ANY_LEN),0,0,height-font_y,width,height,0,clWhite);
+    DrawLine(TextID_Create(lng[LNG_OK],ENC_UCS2,TEXTID_ANY_LEN),2,0,height-font_y,width,height,0,clWhite);
+    DrawLine(TextID_Create(lng[LNG_MARK],ENC_UCS2,TEXTID_ANY_LEN),1,0,height-font_y,width,height,0,clWhite);
   }
 };
 
@@ -214,7 +214,7 @@ void GUI_REMIND_OnRedraw(DISP_OBJ_REMIND *db,int ,int,int)
 */
 void Reminder_onInfo(BOOK *bk, void *)
 {
-  MessageBox(EMPTY_SID,Str2ID(lng[LNG_FINFO],0,SID_ANY_LEN),NOIMAGE,1,0,0);
+  MessageBox(EMPTY_TEXTID,TextID_Create(lng[LNG_FINFO],ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
 };
 
 /*

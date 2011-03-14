@@ -76,7 +76,7 @@ void IV_onEnterPressed( BOOK* bk, GUI* )
 int IV_On_Msg(GUI_MESSAGE * msg)
 {
   int d;
-  STRID str=LGP_NULL;
+  TEXTID str=LGP_NULL;
   switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
@@ -93,9 +93,9 @@ int IV_On_Msg(GUI_MESSAGE * msg)
 void InsertVar_CreateMenu(MyBOOK *mbk)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   mbk->calc_insvar=lo=CreateListMenu(&mbk->book,0);
-  sid=Str2ID(L"Settings",0,SID_ANY_LEN);
+  sid=TextID_Create(L"Settings",ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,VAR_Z-VAR_A+1);
   ListMenu_SetCursorToItem(lo,0);
@@ -132,11 +132,11 @@ const wchar_t *angle_names[]={
 void AngleSelect_CreateCBoxGui(MyBOOK *mbk)
 {
 
-  STRID strid[3];
+  TEXTID strid[3];
   GUI_ONEOFMANY *om;
   mbk->angle_sel_list=om=CreateOneOfMany(&mbk->book);
-  GUIObject_SetTitleText(om,Str2ID(L"Angle setup",0,SID_ANY_LEN));
-  for (int i=0; i<3; i++) strid[i]=Str2ID(angle_names[i],0,SID_ANY_LEN);
+  GUIObject_SetTitleText(om,TextID_Create(L"Angle setup",ENC_UCS2,TEXTID_ANY_LEN));
+  for (int i=0; i<3; i++) strid[i]=TextID_Create(angle_names[i],ENC_UCS2,TEXTID_ANY_LEN);
   OneOfMany_SetTexts(om,strid,3);
   OneOfMany_SetChecked(om,calc_set.drg);
   GUIObject_SoftKeys_SetAction(om,ACTION_BACK,AngleSelect_OnCloseCBoxGui);
@@ -162,10 +162,10 @@ void OnOkEditFmtGui(BOOK * bk, wchar_t *string, int len)
 void CreateEditFmtStr(MyBOOK *myBook)
 {
   wchar_t ustr[sizeof(calc_set.fmt)];
-  STRID text, header_name;
+  TEXTID text, header_name;
   win12512unicode(ustr,calc_set.fmt,sizeof(calc_set.fmt)-1);
-  text=Str2ID(ustr,0,SID_ANY_LEN);
-  header_name=Str2ID("Edit format str",6,SID_ANY_LEN);
+  text=TextID_Create(ustr,ENC_UCS2,TEXTID_ANY_LEN);
+  header_name=TextID_Create("Edit format str",ENC_LAT1,TEXTID_ANY_LEN);
   myBook->edit_fmtstr = CreateStringInputVA(0,
                                                VAR_HEADER_TEXT(header_name),
                                                VAR_STRINP_MIN_LEN(1),
@@ -202,11 +202,11 @@ const wchar_t *dis_ena[]={
 void AutocalcSelect_CreateCBoxGui(MyBOOK *mbk)
 {
 
-  STRID strid[2];
+  TEXTID strid[2];
   GUI_ONEOFMANY *om;
   mbk->autocalc_sel_list=om=CreateOneOfMany(&mbk->book);
-  GUIObject_SetTitleText(om,Str2ID(L"Realtime calc",0,SID_ANY_LEN));
-  for (int i=0; i<2; i++) strid[i]=Str2ID(dis_ena[i],0,SID_ANY_LEN);
+  GUIObject_SetTitleText(om,TextID_Create(L"Realtime calc",ENC_UCS2,TEXTID_ANY_LEN));
+  for (int i=0; i<2; i++) strid[i]=TextID_Create(dis_ena[i],ENC_UCS2,TEXTID_ANY_LEN);
   OneOfMany_SetTexts(om,strid,2);
   OneOfMany_SetChecked(om,calc_set.auto_recalc);
   GUIObject_SoftKeys_SetAction(om,ACTION_BACK,AutocalcSelect_OnCloseCBoxGui);
@@ -251,26 +251,26 @@ int CS_On_Msg(GUI_MESSAGE * msg)
     L"Real-Time Calculation"
   };
   int d;
-  STRID str=LGP_NULL;
+  TEXTID str=LGP_NULL;
   switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);
     if (d<3)
     {
-      STRID tx=LGP_NULL;
-      str=Str2ID(names[d],0,SID_ANY_LEN);
+      TEXTID tx=LGP_NULL;
+      str=TextID_Create(names[d],ENC_UCS2,TEXTID_ANY_LEN);
       GUIonMessage_SetMenuItemText(msg,str);
       switch(d)
       {
       case 0:
-        tx=Str2ID(angle_names[calc_set.drg],0,SID_ANY_LEN);
+        tx=TextID_Create(angle_names[calc_set.drg],ENC_UCS2,TEXTID_ANY_LEN);
         break;
       case 1:
-        tx=Str2ID(calc_set.fmt,6,SID_ANY_LEN);
+        tx=TextID_Create(calc_set.fmt,ENC_LAT1,TEXTID_ANY_LEN);
         break;
       case 2:
-        tx=Str2ID(dis_ena[calc_set.auto_recalc],0,SID_ANY_LEN);
+        tx=TextID_Create(dis_ena[calc_set.auto_recalc],ENC_UCS2,TEXTID_ANY_LEN);
         break;
       }
       GUIonMessage_SetMenuItemSecondLineText(msg,tx);
@@ -282,9 +282,9 @@ int CS_On_Msg(GUI_MESSAGE * msg)
 void CreateCalcSettings(MyBOOK *mbk)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   mbk->calc_settings=lo=CreateListMenu(&mbk->book,0);
-  sid=Str2ID(L"Settings",0,SID_ANY_LEN);
+  sid=TextID_Create(L"Settings",ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,3);
   ListMenu_SetCursorToItem(lo,0);
@@ -341,21 +341,21 @@ void CM_onEnterPressed( BOOK* bk, GUI* )
 void CreateCalcMenu(void)
 {
   GUI_LIST *lo;
-  STRID sid;
-  STRID texts[7];
+  TEXTID sid;
+  TEXTID texts[7];
   BOOK *bk=FindBook(isScalkaBook);
   if (bk)
   {
     MyBOOK *mbk=(MyBOOK *)bk;
     mbk->calc_menu=lo=CreateListMenu(&mbk->book,0);
-    sid=Str2ID(L"Menu",0,SID_ANY_LEN);
-    texts[0]=Str2ID(L"Set formula",0,SID_ANY_LEN);
-    texts[1]=Str2ID(L"Insert var",0,SID_ANY_LEN);
-    texts[2]=Str2ID(L"Add formula",0,SID_ANY_LEN);
-    texts[3]=Str2ID(L"View vars",0,SID_ANY_LEN);
-    texts[4]=Str2ID(L"Ans To X",0,SID_ANY_LEN);
-    texts[5]=Str2ID(L"Ans To Y",0,SID_ANY_LEN);
-    texts[6]=Str2ID(L"Settings",0,SID_ANY_LEN);
+    sid=TextID_Create(L"Menu",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[0]=TextID_Create(L"Set formula",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[1]=TextID_Create(L"Insert var",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[2]=TextID_Create(L"Add formula",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[3]=TextID_Create(L"View vars",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[4]=TextID_Create(L"Ans To X",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[5]=TextID_Create(L"Ans To Y",ENC_UCS2,TEXTID_ANY_LEN);
+    texts[6]=TextID_Create(L"Settings",ENC_UCS2,TEXTID_ANY_LEN);
     OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,7);
     GUIObject_SetTitleText(lo,sid);
     ListMenu_SetItemCount(lo,7);

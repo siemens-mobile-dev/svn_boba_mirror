@@ -84,7 +84,7 @@ bool isUCodeFile = false;
 char * db_buf = 0;
 
 IMAGEID auto_image = NOIMAGE;
-STRID CellNameID = empty;
+TEXTID CellNameID = empty;
 
 IMAGEID location_image = NOIMAGE;
 int imageWidth = 0;
@@ -426,7 +426,7 @@ void InitVar()
     extractdir(tmppath, tmpname, cfg_auto_file);
     if(fstat(tmppath,tmpname,&_fstat)!=0)
     {
-      MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONIMG,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+      MessageBox(EMPTY_TEXTID, TextID_Create(LG_AUTOLOCATIONIMG,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
     else if(ImageID_Get(tmppath,tmpname,&auto_image)<0) auto_image = NOIMAGE;
   }
@@ -437,7 +437,7 @@ void InitVar()
     encode_type = 0;
     if(!load_encode_file())
     {
-      MessageBox(EMPTY_SID, Str2ID(LG_GFGENCODEFILENOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+      MessageBox(EMPTY_TEXTID, TextID_Create(LG_GFGENCODEFILENOTFOUND,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
   }
   else
@@ -447,13 +447,13 @@ void InitVar()
     if(CODEMAP_ADDR == 0)
     {
       encode_type = 0;
-      MessageBox(EMPTY_SID, Str2ID(LG_GFGINCORRECTCODEMAPADDR,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+      MessageBox(EMPTY_TEXTID, TextID_Create(LG_GFGINCORRECTCODEMAPADDR,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     }
   }
 
   if(!load_db_file())
   {
-    MessageBox(EMPTY_SID, Str2ID(LG_DBLOADERROR,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(LG_DBLOADERROR,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
   }
 
   getdir(logFolder, cfg_logs_path);
@@ -613,8 +613,8 @@ int CheckCurrentCell()
     if(AddTo_db()) LocFound = 1;
   }
 
-  if(CellNameID != empty) TextFree(CellNameID);
-  CellNameID = Str2ID(CellNameStatus,0,SID_ANY_LEN);
+  if(CellNameID != empty) TextID_Destroy(CellNameID);
+  CellNameID = TextID_Create(CellNameStatus,ENC_UCS2,TEXTID_ANY_LEN);
 
   UpdateLocationImage();
 
@@ -728,7 +728,7 @@ void onTimer(u16 timerID, LPARAM lparam)
   currentCID  = rat_ci.CI;
   if((currentLAC != prevLAC) || (currentCID != prevCID)) CheckCellName();
   if (visible && (cfg_location < 9)) {
-    StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, Str2ID(CellNameStatus,0,SID_ANY_LEN));
+    StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, TextID_Create(CellNameStatus,ENC_UCS2,TEXTID_ANY_LEN));
   }
   Timer_ReSet(&timer, cfg_update_interval, onTimer, 0);
 }
@@ -833,9 +833,9 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
 #if (!defined(LANG_RU) && !defined(LANG_EN))
-  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+  MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO _T("\n") LTRANSLATED TRANSLATED_BY,0,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
 #else
-  MessageBox(EMPTY_SID,Str2ID( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+  MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME _T("\n") LELFVERSION _T("\n") LAUTHORINFO,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
 #endif
   return(1);
 }
@@ -846,12 +846,12 @@ static int onReconfigElf(void *mess , BOOK *book)
   int result=0;
   if (wstrcmpi(reconf->path,successed_config_path)==0 && wstrcmpi(reconf->name,successed_config_name)==0)
   {
-    MessageBox(EMPTY_SID, Str2ID(LG_UPDSETTING,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(LG_UPDSETTING,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     InitVar();
     CheckCurrentCell();
 
     if (visible && (cfg_location < 9)) {
-      StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, Str2ID(CellNameStatus,0,SID_ANY_LEN));
+      StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, TextID_Create(CellNameStatus,ENC_UCS2,TEXTID_ANY_LEN));
     }
 
     result=1;
@@ -877,7 +877,7 @@ int onBcfgConfig(void* mess, BOOK* bk)
   }
   else
   {
-    MessageBox(EMPTY_SID, Str2ID(LG_GFGBCFGEDITNOTFOUND,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(LG_GFGBCFGEDITNOTFOUND,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     return 1;
   }
   wstrcat(tmppath,L"/");
@@ -918,7 +918,7 @@ void ShowHideProc()
     }
     else
     {
-      StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, Str2ID(CellNameStatus,0,SID_ANY_LEN));
+      StatusIndication_SetItemText(SBY_GetStatusIndication(Find_StandbyBook()), wnd, TextID_Create(CellNameStatus,ENC_UCS2,TEXTID_ANY_LEN));
     }
   }
   visible = !visible;
@@ -979,10 +979,10 @@ int NewKey(int key, int r1, int mode, LPARAM, DISP_OBJ*)
           if (AutoLocation == false)
           {
             if(MiniGPSBook->text_input) GUIObject_Destroy(MiniGPSBook->text_input);
-            STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
+            TEXTID text = TextID_Create(SIwstr,ENC_UCS2,TEXTID_ANY_LEN);
             MiniGPSBook->text_input = CreateStringInputVA(0,
                                           VAR_BOOK(MiniGPSBook),
-                                          VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
+                                          VAR_STRINP_FIXED_TEXT(TextID_Create(LG_CURRENTLOCATION,ENC_UCS2,TEXTID_ANY_LEN)),
                                           VAR_STRINP_TEXT(text),
                                           VAR_STRINP_NEW_LINE(0),
                                           VAR_STRINP_ENABLE_EMPTY_STR(0),
@@ -997,7 +997,7 @@ int NewKey(int key, int r1, int mode, LPARAM, DISP_OBJ*)
           else
           {
             AutoLocation = false;
-            MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+            MessageBox(EMPTY_TEXTID, TextID_Create(LG_AUTOLOCATIONOFF,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
           }
         }
         InvalidateAll();
@@ -1055,7 +1055,7 @@ void onCloseMiniGPSBook(BOOK * book)
 
     if(CellNameID != empty)
     {
-      TextFree(CellNameID);
+      TextID_Destroy(CellNameID);
       CellNameID = empty;
     }
 
@@ -1101,7 +1101,7 @@ int main (void)
 {
   if(FindBook(isMiniGPSBook))
   {
-    MessageBox(EMPTY_SID, Str2ID(LELFNAME _T("\n") LG_ALREADY_STARTED,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(LELFNAME _T("\n") LG_ALREADY_STARTED,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
     SUBPROC(elf_exit);
   }
   else

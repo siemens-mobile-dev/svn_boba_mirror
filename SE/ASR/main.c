@@ -24,7 +24,7 @@ typedef struct
   char RecordOpenFlag;
   u16  _unk;
   int  RadioVal;
-  STRID RecorderTitle;
+  TEXTID RecorderTitle;
   char RecorderStyle;
 }SOUND_RECORDER_DESC;
 
@@ -49,7 +49,7 @@ int SoundRecorderDesc_SetRadioVal(SOUND_RECORDER_DESC* desc,int value)
   return 1;
 }
 
-int SoundRecorderDesc_SetTitle(SOUND_RECORDER_DESC * desc,STRID Title)
+int SoundRecorderDesc_SetTitle(SOUND_RECORDER_DESC * desc,TEXTID Title)
 {
   if(!desc) return 0;
   desc->RecorderTitle = Title;
@@ -68,7 +68,7 @@ int Record_FM(FM_RADIO_BOOK * fm_book)
   SOUND_RECORDER_DESC * desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
   SoundRecorderDesc_SetBookID(desc,BookObj_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+FmRadioRecorderType);
-  if(wstrlen(_FmTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_FmTitle,0,40));
+  if(wstrlen(_FmTitle))SoundRecorderDesc_SetTitle(desc,TextID_Create(_FmTitle,ENC_UCS2,40));
   if(LimitRadioType)
   {
     if(LimitRadioType==1) SoundRecorderDesc_SetRecordTime(desc,(int)FmTIME.hour,(int)FmTIME.min,0,0);
@@ -92,7 +92,7 @@ int Record_User(BOOK * bk)
   SOUND_RECORDER_DESC* desc = (SOUND_RECORDER_DESC*)SoundRecorderDesc_Create();
   SoundRecorderDesc_SetBookID(desc,BookObj_GetBookID(myBook));
   SoundRecorderDesc_SetType(desc,1+UserSoundRecorderType);
-  if(wstrlen(_UserTitle))SoundRecorderDesc_SetTitle(desc,Str2ID(_UserTitle,0,40));
+  if(wstrlen(_UserTitle))SoundRecorderDesc_SetTitle(desc,TextID_Create(_UserTitle,ENC_UCS2,40));
   if(LimitSoundType)
   {
     if(LimitSoundType==1)SoundRecorderDesc_SetRecordTime(desc,(int)UserTIME.hour,(int)UserTIME.min,0,0);
@@ -125,7 +125,7 @@ typedef struct
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  MessageBox(EMPTY_SID,STR("AdvancedSoundRecorder v.1.1\n (c) 2007KrasH\n Respect to SlaveMaster"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("AdvancedSoundRecorder v.1.1\n (c) 2007KrasH\n Respect to SlaveMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -139,7 +139,7 @@ static int SetHook(void *mess,BOOK *book)
   if(!Hook) return 0;
   FM_RADIO_BOOK * fm_bk = (FM_RADIO_BOOK*)FindBook(get_IsFmRadioBook());
   GUIObject_SoftKeys_SetAction(fm_bk->FmGui,0x11,RecFM);
-  GUIObject_SoftKeys_SetText(fm_bk->FmGui,0x11,Str2ID(_ItemText,0,40));
+  GUIObject_SoftKeys_SetText(fm_bk->FmGui,0x11,TextID_Create(_ItemText,ENC_UCS2,40));
   return 1;
 }
 

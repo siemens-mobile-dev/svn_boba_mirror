@@ -33,21 +33,21 @@ void func0( HELLO_WORLD_DLL_DATA * data)
 
 void func1( HELLO_WORLD_DLL_DATA * data, int n)
 {
-  MessageBox(EMPTY_SID,STR("Hello DLL!\n\nfunc1 has been called"),NOIMAGE, 1 ,5000, 0);
+  MessageBox(EMPTY_TEXTID,STR("Hello DLL!\n\nfunc1 has been called"),NOIMAGE, 1 ,5000, 0);
   debug_printf("\nhelloworld.dll: func1 - %d\n",n);
-  StatusIndication_ShowNotes(int2strID(n));
+  StatusIndication_ShowNotes(TextID_CreateIntegerID(n));
 }
 
 void func2( HELLO_WORLD_DLL_DATA * data)
 {
   debug_printf("\nhelloworld.dll: func2 - %d\n",data->private_int1);
-  StatusIndication_ShowNotes(int2strID(data->private_int1++));
+  StatusIndication_ShowNotes(TextID_CreateIntegerID(data->private_int1++));
 }
 
 void func3( HELLO_WORLD_DLL_DATA * data)
 {
   debug_printf("\nhelloworld.dll: func3 - %ls\n",data->private_wstr);
-  StatusIndication_ShowNotes(Str2ID(data->private_wstr,0,SID_ANY_LEN));
+  StatusIndication_ShowNotes(TextID_Create(data->private_wstr,ENC_UCS2,TEXTID_ANY_LEN));
 }
 // -------------------  Private area  ------------------
 // Ввиду того, что нельзя использовать глобальные переменные в Public методах,

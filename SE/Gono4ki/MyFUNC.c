@@ -39,8 +39,8 @@ int GetStrokaIMG(wchar_t*stroka, int x)
   if(x) iconidname2id(L"CHECKMARK_IN_BOX_ICN",-1, &met[0]);
   else iconidname2id(L"CHECKBOX_ICN", -1, &met[0]);
   met[0]=(0x78000000+met[0]);
-  met[1]=Str2ID(stroka, 0, SID_ANY_LEN);
-  return (Str2ID(met, 5, 2));
+  met[1]=TextID_Create(stroka, ENC_UCS2, TEXTID_ANY_LEN);
+  return (TextID_Create(met, ENC_TEXTID, 2));
 }
 
 BOOK*isBookX(char const*isbook, int x)

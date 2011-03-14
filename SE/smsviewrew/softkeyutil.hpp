@@ -13,10 +13,10 @@ private:
 public:
 	bool IsVisible();
 	u16 GetAction();
-	STRID GetButtonText();
+	TEXTID GetButtonText();
 	void (*GetProc())(BOOK*,GUI*);
 };
 
-CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, STRID strid );
+CSoftKeyDesc* FindSoftkey( DISP_OBJ* disp, BOOK* book, TEXTID strid );
 
 #endif

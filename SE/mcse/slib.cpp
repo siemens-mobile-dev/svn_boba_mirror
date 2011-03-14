@@ -183,14 +183,14 @@ int getLVC(wchar_t *wsbody, int font)
   int width=0;
   int i=0;
   int f=0;
-  STRID str=Str2ID(wsbody,0,SID_ANY_LEN);
+  TEXTID str=TextID_Create(wsbody,ENC_UCS2,TEXTID_ANY_LEN);
   while(*wsbody++)
   {
     width=Disp_GetStrIdWidth(str,i);
     if (width>=MAX_TXT_W) {f=1; break;}
     i++;
   }
-  TextFree(str);
+  TextID_Destroy(str);
   SetFont(old_font);
   return (f?i:0);
 }

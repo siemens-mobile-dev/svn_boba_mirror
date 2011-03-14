@@ -116,7 +116,7 @@ void ViewSex(int indx)
     wchar_t s[256];
     ++CountSex;
     snwprintf(s,255,L"%ls: %ls", LG_SEX, smenu_sextexts[Pets[indx].Status.Sex]);
-    MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[smenu_sexiconsnum[Pets[indx].Status.Sex]], 1, 5000*msgShowTime, 0);
+    MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[smenu_sexiconsnum[Pets[indx].Status.Sex]], 1, 5000*msgShowTime, 0);
   }
   else
   {
@@ -125,10 +125,10 @@ void ViewSex(int indx)
     bk->cur_indx = indx;
     GUI_ONEOFMANY *om=CreateOneOfMany(&bk->book);
     bk->cbox_gui=om;
-    GUIObject_SetTitleText(om,Str2ID(LG_SEX,0,SID_ANY_LEN));
-    STRID strid[2];
-    strid[0]=Str2ID(LG_FEMALE,0,SID_ANY_LEN);
-    strid[1]=Str2ID(LG_MALE,0,SID_ANY_LEN);
+    GUIObject_SetTitleText(om,TextID_Create(LG_SEX,ENC_UCS2,TEXTID_ANY_LEN));
+    TEXTID strid[2];
+    strid[0]=TextID_Create(LG_FEMALE,ENC_UCS2,TEXTID_ANY_LEN);
+    strid[1]=TextID_Create(LG_MALE,ENC_UCS2,TEXTID_ANY_LEN);
     OneOfMany_SetTexts(om,strid,2);
     if(Pets[indx].Status.Sex != 2) OneOfMany_SetChecked(om,Pets[indx].Status.Sex);
     else OneOfMany_SetChecked(om,0);
@@ -143,7 +143,7 @@ void ViewAge(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d\n%d/%d",
             LG_AGE, Pets[indx].Status.Age, (int)Pets[indx].Status.TimeAge, Pets[indx].Status.Age*10+100 );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_SMILE_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_SMILE_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewFamilyLife(int indx)
@@ -151,7 +151,7 @@ void ViewFamilyLife(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d",
             LG_FAMILYLIFE, Pets[indx].Status.FamilyLife );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FAMILY_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_FAMILY_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewHealth(int indx)
@@ -159,42 +159,42 @@ void ViewHealth(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%\n%d/%d",
             LG_HEALTH, (int)Pets[indx].Status.Health*100/Pets[indx].Status.MaxHealth, Pets[indx].Status.Health, Pets[indx].Status.MaxHealth );
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HEALTH_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_HEALTH_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewHunger(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_HUNGER, (int)Pets[indx].Status.Hunger*100/Pets[indx].Status.MaxHunger);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HUNGER_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_HUNGER_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewHappiness(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_HAPPINESS,(int)Pets[indx].Status.Happiness*100/Pets[indx].Status.MaxHappiness);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_HAPPINESS_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_HAPPINESS_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewDirtiness(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_DIRTINESS, 100-(int)Pets[indx].Status.Dirtiness*100/Pets[indx].Status.MaxDirtiness);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_DIRTINESS_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_DIRTINESS_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewBoredom(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_BOREDOM,(int)Pets[indx].Status.Boredom*100/Pets[indx].Status.MaxBoredom);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BOREDOM_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_BOREDOM_ICN], 1, 5000*msgShowTime, 0);
 }
 void ViewBehaviour(int indx)
 {
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_BEHAVIOUR,(int)Pets[indx].Status.Behaviour*100/Pets[indx].Status.MaxBehaviour);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_BEHAVIOUR_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_BEHAVIOUR_ICN], 1, 5000*msgShowTime, 0);
 }
 
 void ViewFatigue(int indx)
@@ -202,12 +202,12 @@ void ViewFatigue(int indx)
   wchar_t s[256];
   snwprintf(s,255,L"%ls:%d%%",
             LG_FATIGUE, (int)Pets[indx].Fatigue);
-  MessageBox(Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN), Str2ID(s,0,255), img_menu[SM_FATIGUE_ICN], 1, 5000*msgShowTime, 0);
+  MessageBox(TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN), TextID_Create(s,ENC_UCS2,255), img_menu[SM_FATIGUE_ICN], 1, 5000*msgShowTime, 0);
 }
 
 int status_list_callback(GUI_MESSAGE * msg)
 {
-  STRID str_id;
+  TEXTID str_id;
   IMAGEID icon_id;
   wchar_t ws[128];
   switch( GUIonMessage_GetMsg(msg) )
@@ -253,12 +253,12 @@ int status_list_callback(GUI_MESSAGE * msg)
         break;
       }
     }
-    str_id  = Str2ID(ws,0,SID_ANY_LEN);
+    str_id  = TextID_Create(ws,ENC_UCS2,TEXTID_ANY_LEN);
     int strID_array[3];
     strID_array[0]=icon_id+0x78000000;
     strID_array[1]=0x78000020;
     strID_array[2]=str_id;
-    GUIonMessage_SetMenuItemText(msg,Str2ID(strID_array,5,3));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(strID_array,ENC_TEXTID,3));
   }
   return(1);
 }
@@ -318,7 +318,7 @@ int CreateStatusList(void *data, BOOK * book)
 
   bk->stat_list=CreateListMenu(book,0);
 
-  GUIObject_SetTitleText(bk->stat_list,Str2ID(Pets[indx].Status.name,0,SID_ANY_LEN));
+  GUIObject_SetTitleText(bk->stat_list,TextID_Create(Pets[indx].Status.name,ENC_UCS2,TEXTID_ANY_LEN));
 
   ListMenu_SetItemCount(bk->stat_list,STATUS_ITEMS_COUNT);
   OneOfMany_SetOnMessage((GUI_ONEOFMANY*)bk->stat_list,status_list_callback);

@@ -28,15 +28,15 @@ void addline(char *line)
   it->strids[2]=SID_NULL;
   //--------------------
   wchar_t *str=getwchr(line,&x,between);
-  if (str)it->strids[0]=Str2ID(str,0,SID_ANY_LEN);
+  if (str)it->strids[0]=TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN);
   delete(str);
   //--------------------
   str=getwchr(line,&x,between);
-  if (str)it->strids[1]=Str2ID(str,0,SID_ANY_LEN);
+  if (str)it->strids[1]=TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN);
   delete(str);
   //--------------------
   str=getwchr(line,&x,between);
-  if (str)it->strids[2]=Str2ID(str,0,SID_ANY_LEN);
+  if (str)it->strids[2]=TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN);
   delete(str);
   //--------------------
   it->style=getint(line,&x,':');
@@ -95,9 +95,9 @@ void csofts_destroy()
     {
       ITEM *it=(ITEM*)List_RemoveAt(csofts,0);
       DELETE(it->name);
-      if (it->strids[0]!=SID_NULL)TextFree(it->strids[0]);
-      if (it->strids[1]!=SID_NULL)TextFree(it->strids[1]);
-      if (it->strids[2]!=SID_NULL)TextFree(it->strids[2]);
+      if (it->strids[0]!=SID_NULL)TextID_Destroy(it->strids[0]);
+      if (it->strids[1]!=SID_NULL)TextID_Destroy(it->strids[1]);
+      if (it->strids[2]!=SID_NULL)TextID_Destroy(it->strids[2]);
       if (it->keys)
       {
         while (it->keys->FirstFree)

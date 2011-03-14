@@ -108,29 +108,29 @@ void SkinGui_OnRedraw(DISP_OBJ_SKIN *db,int ,int,int)
   {
     wchar_t hz[50];
     snwprintf(hz, 49, L"%d-%d", sk[db->curkey].x, sk[db->curkey].y);
-    DrawHighlightID2(FONT_E_20R, Str2ID(L"SoftkeysUI", 0, SID_ANY_LEN), 2, 0, 0,  clBlack, clWhite, true);
-    DrawHighlightID2(FONT_E_20R, Str2ID(vert[db->curkey], 0, SID_ANY_LEN), 0, 0, 22, clBlack, clWhite, true);
-    DrawHighlightID2(FONT_E_20R, Str2ID(hz,0,SID_ANY_LEN), 0, 0, 44, clBlack, clWhite, true);
-    DrawHighlightID2(FONT_E_20R, Str2ID(cts[sk[db->curkey].ct],0,SID_ANY_LEN), 0, 0, 66, clBlack, clWhite, true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press vol up/down",0,SID_ANY_LEN),1,width,24,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press joystick",0,SID_ANY_LEN),1,width,46,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press press 'C'",0,SID_ANY_LEN),1,width,68,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_20R,Str2ID(Font_GetNameByFontId(sk[db->curkey].font),0,SID_ANY_LEN),0,0,90,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press 1/3",0,SID_ANY_LEN),1,width,90,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_20R, TextID_Create(L"SoftkeysUI", ENC_UCS2, TEXTID_ANY_LEN), 2, 0, 0,  clBlack, clWhite, true);
+    DrawHighlightID2(FONT_E_20R, TextID_Create(vert[db->curkey], ENC_UCS2, TEXTID_ANY_LEN), 0, 0, 22, clBlack, clWhite, true);
+    DrawHighlightID2(FONT_E_20R, TextID_Create(hz,ENC_UCS2,TEXTID_ANY_LEN), 0, 0, 44, clBlack, clWhite, true);
+    DrawHighlightID2(FONT_E_20R, TextID_Create(cts[sk[db->curkey].ct],ENC_UCS2,TEXTID_ANY_LEN), 0, 0, 66, clBlack, clWhite, true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press vol up/down",ENC_UCS2,TEXTID_ANY_LEN),1,width,24,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press joystick",ENC_UCS2,TEXTID_ANY_LEN),1,width,46,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press press 'C'",ENC_UCS2,TEXTID_ANY_LEN),1,width,68,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(Font_GetNameByFontId(sk[db->curkey].font),ENC_UCS2,TEXTID_ANY_LEN),0,0,90,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press 1/3",ENC_UCS2,TEXTID_ANY_LEN),1,width,90,clBlack,clWhite,true);
   }
   else
   {
     wchar_t hz[50];
     snwprintf(hz,49,L"%d-%d",sk[db->curkey].hx,sk[db->curkey].hy);
-    DrawHighlightID2(FONT_E_20R,Str2ID(L"SoftkeysUI", 0, SID_ANY_LEN),2,0,0,clBlack,clGreen, true);
-    DrawHighlightID2(FONT_E_20R,Str2ID(horiz[db->curkey],0,SID_ANY_LEN),0,0,22,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_20R,Str2ID(hz,0,SID_ANY_LEN),0,0,44,clBlack,clWhite, true);
-    DrawHighlightID2(FONT_E_20R,Str2ID(cts[sk[db->curkey].hct],0,SID_ANY_LEN),0,0,66,clBlack,clWhite, true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press vol up/down",0,SID_ANY_LEN),1,width,24,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press joystick",0,SID_ANY_LEN),1,width,46,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press press 'C'",0,SID_ANY_LEN),1,width,68,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_20R,Str2ID(Font_GetNameByFontId(sk[db->curkey].hfont),0,SID_ANY_LEN),0,0,90,clBlack,clWhite,true);
-    DrawHighlightID2(FONT_E_14R,Str2ID(L"press 1/3",0,SID_ANY_LEN),1,width,90,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(L"SoftkeysUI", ENC_UCS2, TEXTID_ANY_LEN),2,0,0,clBlack,clGreen, true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(horiz[db->curkey],ENC_UCS2,TEXTID_ANY_LEN),0,0,22,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(hz,ENC_UCS2,TEXTID_ANY_LEN),0,0,44,clBlack,clWhite, true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(cts[sk[db->curkey].hct],ENC_UCS2,TEXTID_ANY_LEN),0,0,66,clBlack,clWhite, true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press vol up/down",ENC_UCS2,TEXTID_ANY_LEN),1,width,24,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press joystick",ENC_UCS2,TEXTID_ANY_LEN),1,width,46,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press press 'C'",ENC_UCS2,TEXTID_ANY_LEN),1,width,68,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_20R,TextID_Create(Font_GetNameByFontId(sk[db->curkey].hfont),ENC_UCS2,TEXTID_ANY_LEN),0,0,90,clBlack,clWhite,true);
+    DrawHighlightID2(FONT_E_14R,TextID_Create(L"press 1/3",ENC_UCS2,TEXTID_ANY_LEN),1,width,90,clBlack,clWhite,true);
   }
 };
 
@@ -366,13 +366,13 @@ void SkinGUI_Test( BOOK* bk, GUI* )
   if (BookObj_GetDisplayOrientation(bk)==0)
   {
     BookObj_SetDisplayOrientation(bk,1);
-    GUIObject_SoftKeys_SetText(mbk->skin,0,Str2ID(L"Normal",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(mbk->skin,0,TextID_Create(L"Normal",ENC_UCS2,TEXTID_ANY_LEN));
     db->cur=get_fontindex(db, sk[db->curkey].hfont);
   }
   else
   {
     BookObj_SetDisplayOrientation(bk,0);
-    GUIObject_SoftKeys_SetText(mbk->skin,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(mbk->skin,0,TextID_Create(L"Landscape",ENC_UCS2,TEXTID_ANY_LEN));
     db->cur=get_fontindex(db, sk[db->curkey].font);
   }
   BookObj_Hide(bk,0);
@@ -406,15 +406,15 @@ int Skin_OnEnter(void *, BOOK * bk)
   GUIObject_SoftKeys_SetAction(skin_gui,0,SkinGUI_Test);
   if (BookObj_GetDisplayOrientation(bk)==0)
   {
-    GUIObject_SoftKeys_SetText(skin_gui,0,Str2ID(L"Landscape",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(skin_gui,0,TextID_Create(L"Landscape",ENC_UCS2,TEXTID_ANY_LEN));
   }
   else
   {
-    GUIObject_SoftKeys_SetText(skin_gui,0,Str2ID(L"Normal",0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(skin_gui,0,TextID_Create(L"Normal",ENC_UCS2,TEXTID_ANY_LEN));
   }
   GUIObject_SoftKeys_SetEnable(skin_gui,0,pl);
   GUIObject_SoftKeys_SetAction(skin_gui,1,SkinGUI_Dummy);
-  GUIObject_SoftKeys_SetText(skin_gui,1,Str2ID(L"-test-",0,SID_ANY_LEN));
+  GUIObject_SoftKeys_SetText(skin_gui,1,TextID_Create(L"-test-",ENC_UCS2,TEXTID_ANY_LEN));
   
   DISP_OBJ_SKIN *db=(DISP_OBJ_SKIN*)GUIObject_GetDispObject(skin_gui);
   db->curkey=0;

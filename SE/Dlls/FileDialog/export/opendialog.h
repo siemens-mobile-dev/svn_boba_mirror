@@ -9,7 +9,7 @@ typedef struct
   BOOK * parrent_book;
   int flags;
   wchar_t * filters;
-  STRID htext;
+  TEXTID htext;
   int parrent_bookID;
   int folders;
   BOOK * DataBrowserBook;
@@ -52,7 +52,7 @@ extern const PAGE_DESC odf_msglist;
 wchar_t * CreateFileDialog (
                             BOOK * book,
                           int flags,
-                          wchar_t * header, // wchar_t либо STRID
+                          wchar_t * header, // wchar_t либо TEXTID
                           wchar_t * filters,
                           va_list ap  // folders list: wchar_t либо DIR_*
                           );

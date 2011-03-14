@@ -120,41 +120,41 @@ int get_curstrid(MyBOOK *mbk)
   case 0:
     if (mbk->curit->name)
     {
-      return Str2ID(mbk->curit->name,0,SID_ANY_LEN);
+      return TextID_Create(mbk->curit->name,ENC_UCS2,TEXTID_ANY_LEN);
     }
     else
     {
-      return Str2ID(L"",0,SID_ANY_LEN);
+      return TextID_Create(L"",ENC_UCS2,TEXTID_ANY_LEN);
     }
   case 1:
     if (mbk->curit->lsi)
     {
-      return Str2ID(mbk->curit->lsi,0,SID_ANY_LEN);
+      return TextID_Create(mbk->curit->lsi,ENC_UCS2,TEXTID_ANY_LEN);
     }
     else
     {
-      return Str2ID(L"",0,SID_ANY_LEN);
+      return TextID_Create(L"",ENC_UCS2,TEXTID_ANY_LEN);
     }
   case 2:
     if (mbk->curit->msi)
     {
-      return Str2ID(mbk->curit->msi,0,SID_ANY_LEN);
+      return TextID_Create(mbk->curit->msi,ENC_UCS2,TEXTID_ANY_LEN);
     }
     else
     {
-      return Str2ID(L"",0,SID_ANY_LEN);
+      return TextID_Create(L"",ENC_UCS2,TEXTID_ANY_LEN);
     }
   case 3:
     if (mbk->curit->rsi)
     {
-      return Str2ID(mbk->curit->rsi,0,SID_ANY_LEN);
+      return TextID_Create(mbk->curit->rsi,ENC_UCS2,TEXTID_ANY_LEN);
     }
     else
     {
-      return Str2ID(L"",0,SID_ANY_LEN);
+      return TextID_Create(L"",ENC_UCS2,TEXTID_ANY_LEN);
     }
   }
-  return EMPTY_SID;
+  return EMPTY_TEXTID;
 };
 
 int getnumwidth(unsigned int num)
@@ -170,7 +170,7 @@ int getnumwidth(unsigned int num)
 
 void CreateTextInput(MyBOOK *myBook)
 {
-  int text=EMPTY_SID;
+  int text=EMPTY_TEXTID;
   int type=myBook->inputType;
   int size=0;
   text=get_curstrid(myBook);

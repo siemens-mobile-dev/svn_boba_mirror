@@ -19,7 +19,7 @@ void OkTextInput(BOOK *,wchar_t * string,int len)
   {
     MsgBoxError(muitxt(ind_err_badname));
     CorFileName(wsbuf);
-    STRID txt=Str2ID(wsbuf,0,SID_ANY_LEN);
+    TEXTID txt=TextID_Create(wsbuf,ENC_UCS2,TEXTID_ANY_LEN);
     StringInput_DispObject_SetText(GUIObject_GetDispObject(MCBook->textinp),txt);
   }
 }
@@ -27,9 +27,9 @@ void OkTextInput(BOOK *,wchar_t * string,int len)
 
 void TextInput(wchar_t *prmpt, int TestFileName, const wchar_t *wsname, IFN_RET_PROC retproc)
 {
-  STRID pr, str;
-  pr=Str2ID(prmpt,0,SID_ANY_LEN);
-  str=Str2ID(wsname,0,SID_ANY_LEN);
+  TEXTID pr, str;
+  pr=TextID_Create(prmpt,ENC_UCS2,TEXTID_ANY_LEN);
+  str=TextID_Create(wsname,ENC_UCS2,TEXTID_ANY_LEN);
   MCBook->tstname=TestFileName;
   MCBook->retproc=retproc;
   MCBook->textinp=CreateStringInputVA(0,

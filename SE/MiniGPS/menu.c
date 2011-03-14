@@ -25,10 +25,10 @@ void CreateAutoLacationInput()
 {
   MyBOOK * bk = (MyBOOK *) FindBook(isMiniGPSBook);
   FREE_GUI(bk->text_input);
-  STRID text = Str2ID(SIwstr,0,SID_ANY_LEN);
+  TEXTID text = TextID_Create(SIwstr,ENC_UCS2,TEXTID_ANY_LEN);
   bk->text_input = CreateStringInputVA(0,
                             VAR_BOOK(bk),
-                            VAR_STRINP_FIXED_TEXT(Str2ID(LG_CURRENTLOCATION,0,SID_ANY_LEN)),
+                            VAR_STRINP_FIXED_TEXT(TextID_Create(LG_CURRENTLOCATION,ENC_UCS2,TEXTID_ANY_LEN)),
                             VAR_STRINP_TEXT(text),
                             VAR_STRINP_NEW_LINE(0),
                             VAR_STRINP_ENABLE_EMPTY_STR(0),
@@ -53,27 +53,27 @@ int menu_callback(GUI_MESSAGE * msg)
       {
       case 0:
         if(visible)
-          str_id  = Str2ID(LG_HIDE,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_HIDE,ENC_UCS2,TEXTID_ANY_LEN);
         else
-          str_id  = Str2ID(LG_SHOW,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_SHOW,ENC_UCS2,TEXTID_ANY_LEN);
         break;
       case 1:
         if(showCellID)
-          str_id  = Str2ID(LG_NAME,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_NAME,ENC_UCS2,TEXTID_ANY_LEN);
         else
-          str_id  = Str2ID(LG_CELLID,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_CELLID,ENC_UCS2,TEXTID_ANY_LEN);
         break;
       case 2:
         if(AutoLocation)
-          str_id  = Str2ID(LG_AUTOLOCATION_OFF,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_AUTOLOCATION_OFF,ENC_UCS2,TEXTID_ANY_LEN);
         else
-          str_id  = Str2ID(LG_AUTOLOCATION_ON,0,SID_ANY_LEN);
+          str_id  = TextID_Create(LG_AUTOLOCATION_ON,ENC_UCS2,TEXTID_ANY_LEN);
         break;
       case 3:
-        str_id  = Str2ID(LG_SETTINGS,0,SID_ANY_LEN);
+        str_id  = TextID_Create(LG_SETTINGS,ENC_UCS2,TEXTID_ANY_LEN);
         break;
       case 4:
-        str_id  = Str2ID(LG_ABOUT,0,SID_ANY_LEN);
+        str_id  = TextID_Create(LG_ABOUT,ENC_UCS2,TEXTID_ANY_LEN);
         break;
       }
     }
@@ -110,7 +110,7 @@ void MenuOnEnter( BOOK* book, GUI* )
     else
     {
       AutoLocation = false;
-      MessageBox(EMPTY_SID, Str2ID(LG_AUTOLOCATIONOFF,0,SID_ANY_LEN), NOIMAGE, 1, 5000, 0);
+      MessageBox(EMPTY_TEXTID, TextID_Create(LG_AUTOLOCATIONOFF,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, 0);
       InvalidateAll();
       BookObj_ReturnPage(book,NIL_EVENT);
     }
@@ -156,7 +156,7 @@ void CreateMenu(MyBOOK *mbk)
 {
   mbk->menu = CreateListMenu(&mbk->book,0);
 
-  GUIObject_SetTitleText(mbk->menu, Str2ID(LELFNAME,0,SID_ANY_LEN));
+  GUIObject_SetTitleText(mbk->menu, TextID_Create(LELFNAME,ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(mbk->menu, MENU_ITEM_NUM);
   OneOfMany_SetOnMessage((GUI_ONEOFMANY*)mbk->menu, menu_callback);
   ListMenu_SetCursorToItem(mbk->menu,0);

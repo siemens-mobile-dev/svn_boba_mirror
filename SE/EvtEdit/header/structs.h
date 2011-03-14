@@ -98,8 +98,8 @@
     unsigned long old_crc;
     u16 check_box_unchecked;
     u16 check_box_checked;
-    STRID changes_have_been_made;
-    STRID save_before_exit;
+    TEXTID changes_have_been_made;
+    TEXTID save_before_exit;
     GUI_LIST *switch_gui;
     LIST *switch_lst;
     int cur_clone_time;

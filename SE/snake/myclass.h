@@ -36,7 +36,7 @@ typedef struct
 #else
 #define DEBUG CDbgPrint __function((char*)__FILE__,(char*)__FUNCTION__)
 #endif
-#define MESSAGE(x) MessageBox(EMPTY_SID,Str2ID(x,0,SID_ANY_LEN),NOIMAGE,1,0,0)
+#define MESSAGE(x) MessageBox(EMPTY_TEXTID,TextID_Create(x,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0)
 class CDbgPrint
 {
   char* fl;

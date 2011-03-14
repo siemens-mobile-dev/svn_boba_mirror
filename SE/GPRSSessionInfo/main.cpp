@@ -140,7 +140,7 @@ void mbox_Create(BOOK *bk, int type)
               cfgCurrency);
   }
   mbk->mbox=TextFeedbackWindow(&mbk->book,0);
-  Feedback_SetTextExtended(mbk->mbox,Str2ID(str,0,SID_ANY_LEN),0);
+  Feedback_SetTextExtended(mbk->mbox,TextID_Create(str,ENC_UCS2,TEXTID_ANY_LEN),0);
   GUIObject_SetStyle(mbk->mbox,1);
   GUIObject_SoftKeys_SetAction(mbk->mbox,ACTION_SELECT1,Feedback_OnOK);
   GUIObject_SoftKeys_SetAction(mbk->mbox,ACTION_BACK,Feedback_OnOK);

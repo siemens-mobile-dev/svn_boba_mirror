@@ -77,7 +77,7 @@ public:
 	void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 	void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 	void SoftKeys_Update( DISP_OBJ* softkeys );
-	void StringInput_DispObject_SetText( DISP_OBJ*, STRID );
+	void StringInput_DispObject_SetText( DISP_OBJ*, TEXTID );
 	*/
 };
 
@@ -94,23 +94,23 @@ public:
 	void SetStyle( int style ); //GUIObject_SetStyle
 	void SetTitleIcon( wchar_t imageID ); //GUIObject_SetTitleIcon
 	void SetTitleImage( wchar_t imageID ); //GUIObject_SetTitleBackgroundImage
-	void SetTitleText( STRID strid ); //GUIObject_SetTitleText
+	void SetTitleText( TEXTID strid ); //GUIObject_SetTitleText
 	void SetTitleType( int type ); //GUIObject_SetTitleType
 	void Show(); //GUIObject_Show
-	void SoftKeys_AddErrorStr( u16 actionID, STRID ); //GUIObject_SoftKeys_AddErrorStr
+	void SoftKeys_AddErrorStr( u16 actionID, TEXTID ); //GUIObject_SoftKeys_AddErrorStr
 	void SoftKeys_ExecuteAction( u16 actionID ); //GUIObject_SoftKeys_ExecuteAction
 	void SoftKeys_Hide(); //GUIObject_SoftKeys_Hide
 	void SoftKeys_RemoveBackground(); //GUIObject_SoftKeys_RemoveBackground
 	void SoftKeys_RemoveItem( u16 actionID ); //GUIObject_SoftKeys_RemoveItem
 	void SoftKeys_RestoreBackground(); //GUIObject_SoftKeys_RestoreBackground
 	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*) ); //GUIObject_SoftKeys_SetAction
-	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID short_text, STRID full_text );
-	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid );
+	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID short_text, TEXTID full_text );
+	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID strid );
 	void SoftKeys_SetEnable( u16 actionID, BOOL enabled ); //GUIObject_SoftKeys_SetEnable
-	void SoftKeys_SetInfoText( u16 actionID, STRID ); //GUIObject_SoftKeys_SetInfoText
+	void SoftKeys_SetInfoText( u16 actionID, TEXTID ); //GUIObject_SoftKeys_SetInfoText
 	void SoftKeys_SetItemAsSubItem( u16 actionID, int subitem ); //GUIObject_SoftKeys_SetItemAsSubItem
-	void SoftKeys_SetText( u16 actionID, STRID ); //GUIObject_SoftKeys_SetText
-	void SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text ); //GUIObject_SoftKeys_SetTexts
+	void SoftKeys_SetText( u16 actionID, TEXTID ); //GUIObject_SoftKeys_SetText
+	void SoftKeys_SetTexts( u16 actionID, TEXTID short_text, TEXTID full_text ); //GUIObject_SoftKeys_SetTexts
 	void SoftKeys_SetVisible( u16 actionID, BOOL visible ); //GUIObject_SoftKeys_SetVisible
 	void SoftKeys_Show(); //GUIObject_SoftKeys_Show
 	void SoftKeys_SuppressDefaultAction( u16 actionID ); //GUIObject_SoftKeys_SuppressDefaultAction
@@ -130,9 +130,9 @@ public:
 	void ProgressBar_SetBarDisabled( GUI*, BOOL disabled );
 	void ProgressBar_SetIcon( GUI*, u16 icon_id );
 	void ProgressBar_SetPercentValue( GUI*, int value );
-	void ProgressBar_SetText( GUI*, STRID text );
+	void ProgressBar_SetText( GUI*, TEXTID text );
 
-	void StatusIndication_SetItemText( GUI*, int item, STRID );
+	void StatusIndication_SetItemText( GUI*, int item, TEXTID );
 
 	void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
 
@@ -167,9 +167,9 @@ public:
 	void UI_Event( int event ); //UI_Event_toBookID
 	void UI_Event_wData( int event, void* message, void (*mfree)(void*) ); //UI_Event_toBookIDwData
 	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*) ); //BookObj_SoftKeys_SetAction
-	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID short_text, STRID full_text );
-	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid );
-	void SoftKeys_SetText( u16 actionID, STRID ); //BookObj_SoftKeys_SetText
+	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID short_text, TEXTID full_text );
+	void SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID strid );
+	void SoftKeys_SetText( u16 actionID, TEXTID ); //BookObj_SoftKeys_SetText
 	void SetFocus( int display ); //BookObj_SetFocus
 	void WindowSetWantsFocus( int display, BOOL WantsFocus ); //BookObj_WindowSetWantsFocus
 	void StayOnTop( int mode ); //BookObj_StayOnTop
@@ -342,11 +342,11 @@ public:
 	int GetCreatedItem(); //GUIonMessage_GetCreatedItemIndex
 	int GetSelectedItem(); //GUIonMessage_GetSelectedItem
 	int GetPrevSelectedItem(); //GUIonMessage_GetPrevSelectedItem
-	char SetItemText( STRID strid );
-	char SetItemSecondLineText( STRID strid );
-	char SetItemInfoText( STRID strid );
-	char SetItemUnavailableText( STRID strid );
-	void SubItem_SetText( STRID strid ); //GUIonMessage_SubItem_SetText
+	char SetItemText( TEXTID strid );
+	char SetItemSecondLineText( TEXTID strid );
+	char SetItemInfoText( TEXTID strid );
+	char SetItemUnavailableText( TEXTID strid );
+	void SubItem_SetText( TEXTID strid ); //GUIonMessage_SubItem_SetText
 	int SubItem_GetCreatedParentIndex(); //GUIonMessage_SubItem_GetCreatedParentIndex
 	int SubItem_GetCreatedIndex(); //GUIonMessage_SubItem_GetCreatedIndex
 	int SubItem_GetSelectedParentIndex(); //GUIonMessage_SubItem_GetSelectedParentIndex
@@ -385,7 +385,7 @@ public:
 	void SetItemCount( int count ); //ListMenu_SetItemCount
 	int GetSelectedItem(); //ListMenu_GetSelectedItem
 	void SetFocused( int item ); //ListMenu_SetCursorToItem
-	void SetNoItemText( STRID ); //ListMenu_SetNoItemText
+	void SetNoItemText( TEXTID ); //ListMenu_SetNoItemText
 	void DestroyItems(); //ListMenu_DestroyItems
 	int GetItemCount(); //ListMenu_GetItemCount
 	void SetItemStyle( int style ); //ListMenu_SetItemStyle
@@ -393,7 +393,7 @@ public:
 	// int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
 	// void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
 	// void ListMenu_SetHotkeyMode( GUI*, LISTMENU_HOTKEY_MODE mode );
-	// void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
+	// void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 	// void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
 };
 
@@ -411,7 +411,7 @@ public:
 	int GetSelectedItem();
 	void SetFocused( int item );
 	void SetChecked( int checked );
-	void SetTexts( STRID* strids, int count );
+	void SetTexts( TEXTID* strids, int count );
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ public:
 	int GetCheckedCount();
 	void SetFocused( int item );
 	void SetChecked( u16* checked_table, int items_count );
-	void SetTexts( STRID* strids, int count );
+	void SetTexts( TEXTID* strids, int count );
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ public:
 	void SetFocusedTab( int tab );
 	void SetTabGui( int tab, CGuiBase* gui );
 	void SetTabIcon( int tab, int icon, int state );
-	void SetTabTitle( int tab, STRID strid );
+	void SetTabTitle( int tab, TEXTID strid );
 };
 
 /////////////////////////////////////////////////////////////////////////

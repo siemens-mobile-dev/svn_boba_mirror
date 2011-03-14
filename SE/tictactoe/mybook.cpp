@@ -13,7 +13,7 @@ int CMyBook::TerminateElf(CBook** pbookmanbook, CMyBook* book)
 
 int CMyBook::ShowAuthorInfo(CBook** pbookmanbook, CMyBook* book)
 {
-	MessageBox(EMPTY_SID,STR("tic tac toe\n\n(c) den_po "),NOIMAGE, 1 ,5000, *pbookmanbook);
+	MessageBox(EMPTY_TEXTID,STR("tic tac toe\n\n(c) den_po "),NOIMAGE, 1 ,5000, *pbookmanbook);
 	return 1;
 }
 
@@ -61,7 +61,7 @@ CMyBook::CMyBook()  :CBook("TTTAI_Book",&base_page)
 	//  gui->SetStyle(4);
 
 	gui->SoftKeys_SetAction( ACTION_BACK, OnBack );
-	STRID strid_exit;
+	TEXTID strid_exit;
 	textidname2id(L"GUI_EXIT_SK", -1, &strid_exit);
 	gui->SoftKeys_SetText( ACTION_BACK, strid_exit );
 

@@ -48,7 +48,7 @@ int CreateMainMenu(void *data, BOOK * book)
     int MainMenuID=BookObj_GetBookID(MainMenu);
     BookObj_SoftKeys_SetAction(MainMenu,0x0,onShortcutSet);
     int str_id;
-    textidname2id(L"SHC_SET_SHORTCUT_SK",SID_ANY_LEN,&str_id);
+    textidname2id(L"SHC_SET_SHORTCUT_SK",TEXTID_ANY_LEN,&str_id);
     BookObj_SoftKeys_SetText(MainMenu,0x0,str_id);
     return(1);
   }

@@ -18,7 +18,7 @@ typedef struct _DISP_OBJ_COLOR : DISP_OBJ
 	int r, g, b, a;
 	int type;
 	int current_column;
-	STRID str_id;
+	TEXTID str_id;
 	int need_str;
 	int cstep;
 } DISP_OBJ_COLOR;
@@ -36,7 +36,7 @@ typedef struct _DISP_OBJ_COORD : DISP_OBJ
 	int type;
 	int is_first_set;
 	RECT old_rect;
-	STRID str_id;
+	TEXTID str_id;
 	int need_str;
 	int cstep;
 	MyBOOK * mb;
@@ -55,7 +55,7 @@ typedef struct _DISP_OBJ_FONT_SEL : DISP_OBJ
 	int cur_font;
 	int cur_offs, cur_pos;
 	int total_fonts;
-	STRID test_str_id;
+	TEXTID test_str_id;
 	u16 *font_heights;
 	int req_check_vis;
 	int platform_flag;

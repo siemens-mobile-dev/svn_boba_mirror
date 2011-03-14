@@ -48,7 +48,7 @@ int MyBook_OnShowAuthorInfo(void *mess ,BOOK* book)
   MSG * msg = (MSG*)mess;
   wchar_t text[100];
   snwprintf(text,99,L"%ls\n\nrevision %d", AuthorInfo, __SVN_REVISION__ );
-  MessageBox(EMPTY_SID,Str2ID(text, 0, SID_ANY_LEN), NOIMAGE, 1 ,5000, msg->book);
+  MessageBox(EMPTY_TEXTID,TextID_Create(text, ENC_UCS2, TEXTID_ANY_LEN), NOIMAGE, 1 ,5000, msg->book);
   return(1);
 };
 

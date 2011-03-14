@@ -290,7 +290,7 @@ void bookOnDestroy(BOOK * book)
 
     ModifyUIPageHook(VOLUMEUPKEY_SHORT_PRESS_EVENT,DisableUP,0,PAGE_HOOK_REMOVE);
     ModifyUIPageHook(VOLUMEDOWNKEY_SHORT_PRESS_EVENT,DisableDOWN,0,PAGE_HOOK_REMOVE);
-    StatusIndication_ShowNotes(EMPTY_SID);
+    StatusIndication_ShowNotes(EMPTY_TEXTID);
     SUBPROC(elf_exit);
 }
 
@@ -303,7 +303,7 @@ int onExit(void* r0,BOOK* b)
 
 int onAbout(void* mess, BOOK* b)
 {
-    MessageBox(EMPTY_SID,Str2ID( LELFNAME LELFVERSION,0,SID_ANY_LEN),NOIMAGE, 1 ,5000, *(BOOK**)mess);
+    MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME LELFVERSION,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE, 1 ,5000, *(BOOK**)mess);
     return 1;
 }
 
@@ -565,9 +565,9 @@ int main(wchar_t* filename)
         if(FindBook(isChallengeBook))
         {
             #ifndef ENG
-                MessageBox(EMPTY_SID, STR("Indication of Call\nуже запущен"), NOIMAGE, 1 ,5000, 0);
+                MessageBox(EMPTY_TEXTID, STR("Indication of Call\nуже запущен"), NOIMAGE, 1 ,5000, 0);
             #else
-                MessageBox(EMPTY_SID, STR("Indication of Call\nalready runned"), NOIMAGE, 1 ,5000, 0);
+                MessageBox(EMPTY_TEXTID, STR("Indication of Call\nalready runned"), NOIMAGE, 1 ,5000, 0);
             #endif
             SUBPROC(elf_exit);
         }
@@ -587,7 +587,7 @@ int main(wchar_t* filename)
             }
 
             if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
-              StatusIndication_ShowNotes(EMPTY_SID);
+              StatusIndication_ShowNotes(EMPTY_TEXTID);
         }
         return 0;
 }

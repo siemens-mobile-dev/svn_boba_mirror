@@ -10,7 +10,7 @@
 #include "revision.h"
 #include "main.h"
 
-#define MESSAGE( __STR__ ) MessageBox( EMPTY_SID, __STR__, NOIMAGE, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
+#define MESSAGE( __STR__ ) MessageBox( EMPTY_TEXTID, __STR__, NOIMAGE, 1 , 11000, (BOOK*) FindBook( isBcfgEditBook ) );
 
 const PAGE_MSG bk_msglst_base[] @ "DYN_PAGE" =
 {
@@ -268,13 +268,13 @@ void CreateCBoxGui( MyBOOK* myBook )
 	wchar_t ustr[64];
 	myBook->cbox_gui = om;
 	win12512unicode( ustr, myBook->cur_hp.cbox->name, MAXELEMS( ustr ) - 1 );
-	GUIObject_SetTitleText( om, Str2ID( ustr, 0, SID_ANY_LEN ) );
-	STRID* strid = new STRID[ myBook->cur_hp.cbox->max ];
+	GUIObject_SetTitleText( om, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
+	TEXTID* strid = new TEXTID[ myBook->cur_hp.cbox->max ];
 
 	for ( int i = 0; i < myBook->cur_hp.cbox->max; i ++ )
 	{
 		win12512unicode( ustr, myBook->cur_hp.cbox->items[i].cbox_text, MAXELEMS( ustr ) - 1 );
-		strid[i] = Str2ID( ustr, 0, SID_ANY_LEN );
+		strid[i] = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	}
 
 	OneOfMany_SetTexts( om, strid, myBook->cur_hp.cbox->max );
@@ -302,7 +302,7 @@ void OnOkCreateUnsignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( ui < myBook->cur_hp.unsignedint->min || ui > myBook->cur_hp.unsignedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %u\nmax: %u", myBook->cur_hp.unsignedint->min, myBook->cur_hp.unsignedint->max );
-		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_TEXTID, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -316,12 +316,12 @@ void OnOkCreateUnsignedNumberGui( BOOK* bk, wchar_t* string, int len )
 void CreateUnsignedNumberInput( MyBOOK* myBook )
 {
 	wchar_t ustr[64];
-	STRID text, header_name;
+	TEXTID text, header_name;
 
 	snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%u", myBook->cur_hp.unsignedint->unsignedint );
-	text = Str2ID( ustr, 0, SID_ANY_LEN );
+	text = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	win12512unicode( ustr, myBook->cur_hp.unsignedint->name, MAXELEMS( ustr ) - 1 );
-	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
+	header_name = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	myBook->text_input = CreateStringInputVA( 0,
 											 VAR_HEADER_TEXT( header_name ),
 											 VAR_STRINP_MAX_LEN( getnumwidth( myBook->cur_hp.unsignedint->max ) ),
@@ -344,7 +344,7 @@ void OnOkCreateSignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	if( i < (int) myBook->cur_hp.signedint->min || i > (int) myBook->cur_hp.signedint->max || *_Geterrno() == ERANGE )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min: %d\nmax: %d", myBook->cur_hp.signedint->min, myBook->cur_hp.signedint->max );
-		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_TEXTID, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -357,9 +357,9 @@ void OnOkCreateSignedNumberGui( BOOK* bk, wchar_t* string, int len )
 void CreateSignedNumberInput( MyBOOK* myBook )
 {
 	wchar_t ustr[64];
-	STRID header_name;
+	TEXTID header_name;
 	win12512unicode( ustr, myBook->cur_hp.signedint->name, MAXELEMS( ustr ) - 1 );
-	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
+	header_name = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	myBook->text_input = CreateStringInputVA( 0,
 											 VAR_HEADER_TEXT( header_name ),
 											 VAR_STRINP_MODE( IT_INTEGER ),
@@ -380,7 +380,7 @@ void OnOkCreateWinOrPassGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.str->min || len > myBook->cur_hp.str->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.str->min, myBook->cur_hp.str->max );
-		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_TEXTID, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -394,7 +394,7 @@ void CreateWinOrPassSI( MyBOOK* myBook, int is_pass )
 {
 	wchar_t* ustr;
 	int len;
-	STRID text, header_name;
+	TEXTID text, header_name;
 	len = myBook->cur_hp.str->max;
 
 	if( len < 63 )
@@ -402,9 +402,9 @@ void CreateWinOrPassSI( MyBOOK* myBook, int is_pass )
 
 	ustr = new wchar_t[len + 1];
 	win12512unicode( ustr, myBook->cur_hp.str->name, len );
-	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
+	header_name = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	win12512unicode( ustr, &myBook->cur_hp.str->chars[0], len );
-	text = Str2ID( ustr, 0, SID_ANY_LEN );
+	text = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	myBook->text_input = CreateStringInputVA( 0,
 											 VAR_HEADER_TEXT( header_name ),
 											 VAR_STRINP_MIN_LEN( myBook->cur_hp.str->min ),
@@ -426,7 +426,7 @@ void OnOkCreateUnicodeGui( BOOK* bk, wchar_t* string, int len )
 	if( len < myBook->cur_hp.wstr->min || len > myBook->cur_hp.wstr->max )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"min_string_len: %d\nmax_string_len: %d", myBook->cur_hp.wstr->min, myBook->cur_hp.wstr->max );
-		MessageBox( EMPTY_SID, Str2ID( ustr, 0, SID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
+		MessageBox( EMPTY_TEXTID, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ), NOIMAGE, 1 , 5000, bk );
 	}
 	else
 	{
@@ -461,8 +461,8 @@ void CreateUnicodeSI( MyBOOK* myBook, int is_pass )
 {
 	wchar_t* ustr;
 	int len;
-	STRID text, header_name, sel_file, sel_folder;
-	int tmp=EMPTY_SID;
+	TEXTID text, header_name, sel_file, sel_folder;
+	int tmp=EMPTY_TEXTID;
 
 	len = myBook->cur_hp.wstr->max;
 
@@ -471,12 +471,12 @@ void CreateUnicodeSI( MyBOOK* myBook, int is_pass )
 
 	ustr = new wchar_t[len + 1];
 	win12512unicode( ustr, myBook->cur_hp.wstr->name, len );
-	header_name = Str2ID( ustr, 0, SID_ANY_LEN );
+	header_name = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	// win12512unicode( ustr, ( char*)hp + sizeof( CFG_HDR ), len );
 	wstrncpy( ustr, &myBook->cur_hp.wstr->chars[0], len );
-	text = Str2ID( ustr, 0, SID_ANY_LEN );
+	text = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	textidname2id( L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT", - 1, &tmp );
-	if (tmp==EMPTY_SID) tmp = Str2ID(L"Select folder",0,SID_ANY_LEN);
+	if (tmp==EMPTY_TEXTID) tmp = TextID_Create(L"Select folder",ENC_UCS2,TEXTID_ANY_LEN);
         sel_folder = tmp;
 	textidname2id( L"WAP_SELECT_FILE_TXT", - 1, &tmp );
 	sel_file = tmp;
@@ -568,48 +568,48 @@ void OnSelect1GuiBcfg( BOOK* bk, GUI* )
 
 
 
-STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
+TEXTID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 {
 	wchar_t ustr[64];
-	STRID str_id = EMPTY_SID;
+	TEXTID str_id = EMPTY_TEXTID;
 	if( hp )
 	{
 		switch( hp->type )
 		{
 		case CFG_UINT:
 			snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%u", ((CFG_HDR_UNSIGNEDINT*)hp)->unsignedint );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_INT:
 			snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%d", ((CFG_HDR_SIGNEDINT*)hp)->signedint );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_STR_WIN1251:
 			win12512unicode( ustr, &((CFG_HDR_STR*)hp)->chars[0], MAXELEMS( ustr ) - 1 );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_CBOX:
 			win12512unicode( ustr, &((CFG_HDR_CBOX*)hp)->items[ ((CFG_HDR_CBOX*)hp)->selected ].cbox_text[0], MAXELEMS( ustr ) - 1 );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_STR_PASS:
 			win12512unicode( ustr, "********", MAXELEMS( ustr ) - 1 );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_COORDINATES:
 			snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%03d, %03d", ((CFG_HDR_POINT*)hp)->point.x, ((CFG_HDR_POINT*)hp)->point.y );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_COLOR:
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%02X, %02X, %02X, %02X", ((CFG_HDR_COLOR*)hp)->rgb[0], ((CFG_HDR_COLOR*)hp)->rgb[1], ((CFG_HDR_COLOR*)hp)->rgb[2], ((CFG_HDR_COLOR*)hp)->rgb[3] );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_LEVEL:
 			{
 				win12512unicode( ustr, "[Enter]", MAXELEMS( ustr ) - 1 );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_CHECKBOX:
@@ -618,26 +618,26 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 		case CFG_TIME:
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%02d:%02d", ((CFG_HDR_TIME*)hp)->time.hour, ((CFG_HDR_TIME*)hp)->time.min );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_DATE:
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%02d.%02d.%04d", ((CFG_HDR_DATE*)hp)->date.day, ((CFG_HDR_DATE*)hp)->date.mon, ((CFG_HDR_DATE*)hp)->date.year );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_RECT:
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"RC:%03d, %03d, %03d, %03d", ((CFG_HDR_RECT*)hp)->rect.x1, ((CFG_HDR_RECT*)hp)->rect.y1, ((CFG_HDR_RECT*)hp)->rect.x2, ((CFG_HDR_RECT*)hp)->rect.y2 );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_COLOR_INT:
 			{
 				unsigned int color = ((CFG_HDR_COLOR*)hp)->color;
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%02X, %02X, %02X, %02X", COLOR_GET_R( color ), COLOR_GET_G( color ), COLOR_GET_B( color ), COLOR_GET_A( color ) );
-				str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_FONT:
@@ -647,7 +647,7 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
                         {
                           int n=1;
                           int sp[5];
-                          sp[0] = int2strID (((CFG_HDR_FONT*)hp)->font&0xFF);
+                          sp[0] = TextID_CreateIntegerID (((CFG_HDR_FONT*)hp)->font&0xFF);
                           int style_flags = ((CFG_HDR_FONT*)hp)->font>>8;
                           if (style_flags&bold)
                           {
@@ -661,28 +661,28 @@ STRID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
                             sp[n+1] = 0x78000000 + 'I';
                             n = n+2;
                           }
-                          str_id = Str2ID(sp,0x5,n);
+                          str_id = TextID_Create(sp,ENC_TEXTID,n);
                         }
-                        else str_id = Str2ID( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), 0, SID_ANY_LEN );
+                        else str_id = TextID_Create( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_KEYCODE:
 			{
-				STRID s_ids[3];
+				TEXTID s_ids[3];
 				s_ids[0] = KeyCode2Name( ((CFG_HDR_KEY*)hp)->keycode );
 				s_ids[1] = ',' | 0x78000000;
 				s_ids[2] = GetKeyModeName( ((CFG_HDR_KEY*)hp)->keymode );
-				str_id = Str2ID( s_ids, 5, 3 );
+				str_id = TextID_Create( s_ids, ENC_TEXTID, 3 );
 			}
 			break;
 		case CFG_UTF16_STRING:
-			str_id = Str2ID( &((CFG_HDR_WSTR*)hp)->chars[0], 0, SID_ANY_LEN );
+			str_id = TextID_Create( &((CFG_HDR_WSTR*)hp)->chars[0], ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		case CFG_STR_UTF8:
 		case CFG_UTF8_STRING:
 		default:
 			snwprintf( ustr, MAXELEMS( ustr ) - 1, L"Type %d is not supporting yet", hp->type );
-			str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			break;
 		}
 	}
@@ -702,12 +702,12 @@ int onLBMessage( GUI_MESSAGE* msg )
 		CFG_HDR* hp = (CFG_HDR*) List_Get( myBook->list, item );
 		wchar_t ustr[32];
 		win12512unicode( ustr, hp->name, MAXELEMS( ustr ) - 1 );
-		GUIonMessage_SetMenuItemText( msg, Str2ID( ustr, 0, SID_ANY_LEN ) );
-		GUIonMessage_SetMenuItemInfoText( msg, Str2ID( ustr, 0, SID_ANY_LEN ) );
+		GUIonMessage_SetMenuItemText( msg, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
+		GUIonMessage_SetMenuItemInfoText( msg, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
 		int str_id = GetSubItemText( myBook, hp );
 
-		if( str_id == EMPTY_SID )
-			str_id = Str2ID ( L"Хрень", 0, SID_ANY_LEN );
+		if( str_id == EMPTY_TEXTID )
+			str_id = TextID_Create ( L"Хрень", ENC_UCS2, TEXTID_ANY_LEN );
 
 		GUIonMessage_SetMenuItemSecondLineText( msg, str_id );
 	}
@@ -715,7 +715,7 @@ int onLBMessage( GUI_MESSAGE* msg )
 };
 
 
-STRID GetParentName( BCFG_DATA* bdata )
+TEXTID GetParentName( BCFG_DATA* bdata )
 {
 	wchar_t ustr[32];
 	if( bdata->level )
@@ -730,7 +730,7 @@ STRID GetParentName( BCFG_DATA* bdata )
 		wstrncpy( ustr, bdata->name, len );
 		ustr[len] = 0;
 	}
-	return Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 );
+	return TextID_Create( ustr, ENC_UCS2, MAXELEMS( ustr ) - 1 );
 }
 
 // создание меню
@@ -1017,7 +1017,7 @@ static int ShowAuthorInfo( void* mess , BOOK* book )
 	MSG* msg = ( MSG*)mess;
 	wchar_t ustr[64];
 	snwprintf( ustr, MAXELEMS( ustr ) - 1, L"\nBcfgEdit v1.0\nRevision %d\n( c ) Rst7, KreN, Hussein", __SVN_REVISION__ );
-	MessageBox( EMPTY_SID, Str2ID( ustr, 0, MAXELEMS( ustr ) - 1 ), NOIMAGE, 1 , 5000, msg->book );
+	MessageBox( EMPTY_TEXTID, TextID_Create( ustr, ENC_UCS2, MAXELEMS( ustr ) - 1 ), NOIMAGE, 1 , 5000, msg->book );
 	return 1;
 }
 
@@ -1035,7 +1035,7 @@ static int SelBcfgPageOnCreate( void* , BOOK* bk )
 	const wchar_t* folder_list[2];
 	folder_list[0] = GetDir( DIR_ELFS_CONFIG|MEM_INTERNAL );
 	folder_list[1] = GetDir( DIR_ELFS_CONFIG|MEM_EXTERNAL );
-	DataBrowserDesc_SetHeaderText( DB_Desc, Str2ID( L"Config", 0, SID_ANY_LEN ) );
+	DataBrowserDesc_SetHeaderText( DB_Desc, TextID_Create( L"Config", ENC_UCS2, TEXTID_ANY_LEN ) );
 	DataBrowserDesc_SetBookID( DB_Desc, BookObj_GetBookID( mbk ) );
 	DataBrowserDesc_SetFolders( DB_Desc, folder_list );
 	DataBrowserDesc_SetFoldersNumber( DB_Desc, 2 );

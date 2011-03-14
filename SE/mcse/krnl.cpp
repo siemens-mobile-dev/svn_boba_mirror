@@ -103,26 +103,26 @@ wchar_t* GetTabPath(int tab)
 
 void FillFileInfo(FILEINF *file)
 {
-  STRID str;
+  TEXTID str;
   if (!file || file->inited) return;
   
   wchar_t buf[MAX_PATH/2];
   if (file->ws_attr==LGP_NULL)
   {
     attr2s(file->attr, buf);
-    str=Str2ID(buf,0,SID_ANY_LEN);
+    str=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
     file->ws_attr=str;
   }
   if (file->ws_size==LGP_NULL)
   {
     sz2s(file->size, buf);
-    str=Str2ID(buf,0,SID_ANY_LEN);
+    str=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
     file->ws_size=str;
   }
   if (file->ws_time==LGP_NULL)
   {
     unixt2s(file->time, buf);
-    str=Str2ID(buf,0,SID_ANY_LEN);
+    str=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
     file->ws_time=str;
   }
   if (!file->icon)
@@ -137,7 +137,7 @@ void FillFileInfo(FILEINF *file)
       float ratio = (float)file->csize * (float)100 / (float)file->size;
       sprintf(cbuf, "%.0f%%", ratio); // без цифр после точки
       win12512unicode(buf,cbuf,MAXELEMS(buf));
-      file->ws_ratio=Str2ID(buf,0,SID_ANY_LEN);
+      file->ws_ratio=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
     }
   }
   wchar_t* sext = GetFileExt(file->ws_name);
@@ -159,13 +159,13 @@ void FillFileInfo(FILEINF *file)
     if (file->uccnt)
     {
       cutname(ws, buf, file->uccnt>MAX_PATH/2?MAX_PATH/2:file->uccnt);
-      file->ws_short=Str2ID(buf,0,SID_ANY_LEN);
+      file->ws_short=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
     }
   }
   wchar_t *ws;
   if (curtab == systab && file->ws_showname) ws=file->ws_showname;
   else ws=file->ws_name;
-  file->sid_name=Str2ID(ws,0,SID_ANY_LEN);
+  file->sid_name=TextID_Create(ws,ENC_UCS2,TEXTID_ANY_LEN);
   file->inited = 1;
 }
 
@@ -216,12 +216,12 @@ void FreeFileInfo(FILEINF* file)
   {
     if (file->ws_name)	delete(file->ws_name);
     if (file->ws_showname) delete(file->ws_showname);
-    TextFree(file->ws_attr);
-    TextFree(file->ws_size);
-    TextFree(file->ws_time);
-    TextFree(file->ws_ratio);
-    TextFree(file->ws_short);
-    TextFree(file->sid_name);
+    TextID_Destroy(file->ws_attr);
+    TextID_Destroy(file->ws_size);
+    TextID_Destroy(file->ws_time);
+    TextID_Destroy(file->ws_ratio);
+    TextID_Destroy(file->ws_short);
+    TextID_Destroy(file->sid_name);
     delete (file);
   }
 }
@@ -1323,8 +1323,8 @@ void SendBT_page()
       send->is_multiple=0;
     }
     send->Book_ID=BookObj_GetBookID(&MCBook->book);
-    send->send=Str2ID(L"Первая строка",0,SID_ANY_LEN);
-    send->sent=Str2ID(L"Вторая строка",0,SID_ANY_LEN);
+    send->send=TextID_Create(L"Первая строка",ENC_UCS2,TEXTID_ANY_LEN);
+    send->sent=TextID_Create(L"Вторая строка",ENC_UCS2,TEXTID_ANY_LEN);
     send->obex_flag=2;
     ObexSendFile(send);
     delete (send);

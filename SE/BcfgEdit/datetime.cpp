@@ -39,7 +39,7 @@ static int TI_OnEnter( void*, BOOK* bk )
 	win12512unicode( ustr, mbk->cur_hp.time->name, MAXELEMS( ustr )-1 );
 
 	mbk->tinput = CreateTimeInputVA( 0,
-									VAR_HEADER_TEXT( Str2ID( ustr, 0, SID_ANY_LEN ) ),
+									VAR_HEADER_TEXT( TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) ),
 									VAR_TIMEINP_TIMEFORMAT( time_format ),
 									VAR_TIMEINP_TIME( &mbk->cur_hp.time->time ),
 									VAR_BOOK( mbk ),
@@ -96,7 +96,7 @@ static int DI_OnEnter( void*, BOOK* bk )
 	win12512unicode( ustr, mbk->cur_hp.date->name, MAXELEMS( ustr )-1 );
 
 	mbk->dinput = CreateDateInputVA( 0,
-									VAR_HEADER_TEXT( Str2ID( ustr, 0, SID_ANY_LEN ) ),
+									VAR_HEADER_TEXT( TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) ),
 									VAR_DATEINP_DATEFORMAT( date_format ),
 									VAR_DATEINP_DATE( &mbk->cur_hp.date->date ),
 									VAR_BOOK( mbk ),

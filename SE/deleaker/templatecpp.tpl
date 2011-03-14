@@ -85,13 +85,13 @@ void trace_init(wchar_t* arg_logname)
 		int max=0;
 		int iconid;
 		
-		if( iconidname2id( _T("RN_SHORTCUT_LIST_CALL_LIST_ICN"), SID_ANY_LEN, &iconid ) )
+		if( iconidname2id( _T("RN_SHORTCUT_LIST_CALL_LIST_ICN"), TEXTID_ANY_LEN, &iconid ) )
 			if( max < iconid )
 				max = iconid;
-		if( iconidname2id( _T("ZERO_ROW_SEPARATOR_ICN"), SID_ANY_LEN, &iconid ) )
+		if( iconidname2id( _T("ZERO_ROW_SEPARATOR_ICN"), TEXTID_ANY_LEN, &iconid ) )
 			if( max < iconid )
 				max = iconid;
-		if( iconidname2id( _T("WV_YAHOO_STATUSBAR_SYSTEMMSG_ICN"), SID_ANY_LEN, &iconid ) )
+		if( iconidname2id( _T("WV_YAHOO_STATUSBAR_SYSTEMMSG_ICN"), TEXTID_ANY_LEN, &iconid ) )
 			if( max < iconid )
 				max = iconid;
 
@@ -234,9 +234,9 @@ u16 trace_timerset(int time, void(*onTimer)(u16 timerID,LPARAM lparam), LPARAM l
 }
 
 
-bool isallocatedstrid(STRID strid)
+bool isallocatedstrid(TEXTID strid)
 {
-	return (strid!=EMPTY_SID) && ((strid&0xFFFF0000)!=0);
+	return (strid!=EMPTY_TEXTID) && ((strid&0xFFFF0000)!=0);
 }
 
 bool isallocatediconid(IMAGEID iconid)

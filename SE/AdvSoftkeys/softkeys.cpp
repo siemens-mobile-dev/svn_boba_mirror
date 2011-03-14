@@ -37,7 +37,7 @@ void getitem(BOOK *bk)
   {
     if (strcmp(bkname,"CUIDisplayableBook")==0)
     {
-      TextID2wstr(bk->xbook->app_session->name,ws,99);
+      TextID_GetWString(bk->xbook->app_session->name,ws,99);
     }
     else goto L_NOT_JAVA;
   }
@@ -141,9 +141,9 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
   if (DO==0 || bk==0 || sk==0)return 0;
   LABELS *ret=new LABELS;
   memset(ret,0,sizeof(LABELS));
-  ret->strids[0]=EMPTY_SID;
-  ret->strids[1]=EMPTY_SID;
-  ret->strids[2]=EMPTY_SID;
+  ret->strids[0]=EMPTY_TEXTID;
+  ret->strids[1]=EMPTY_TEXTID;
+  ret->strids[2]=EMPTY_TEXTID;
   
   SKLABEL left;
   SoftKeys_GetLabel(sk,&left, 0);
@@ -164,7 +164,7 @@ LABELS *get_labels(DISP_OBJ *sk, DISP_OBJ *DO, BOOK *bk, int vis)
         ret->enable[2]=get_enable(lst,right.text);
         ret->strids[0]=left.text;
         ret->enable[0]=get_enable(lst,left.text);
-        ret->strids[1]=EMPTY_SID;
+        ret->strids[1]=EMPTY_TEXTID;
         ret->enable[1]=1;
         if (get_action(lst, right.text)==ACTION_DONE && strcmp(bk->xbook->name,"Installer")==0) //поправка для окна ElfInstaller
         {

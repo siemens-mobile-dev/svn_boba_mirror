@@ -104,13 +104,13 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
     SIDtime=Time2ID(&dt.time,2,0);
     SetFont(font1);
     DrawString(SIDtime,2,1,y0,SM_Book->DISPLAY_WIDTH,y0+GetImageHeight(30),20,0x05,color ,color);
-    TextFree(SIDtime);
+    TextID_Destroy(SIDtime);
     
     
     SIDtime=Date2ID(&dt.date,0,1);
     SetFont(font2);
     DrawString(SIDtime,2,1,y1,SM_Book->DISPLAY_WIDTH,y1+GetImageHeight(30),20,0x05,color ,color);
-    TextFree(SIDtime);
+    TextID_Destroy(SIDtime);
     
     
     SetFont(font3);
@@ -118,7 +118,7 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
     SIDtime=SM_Book->days[weekday];
     
     DrawString(SIDtime,2,1,y2,SM_Book->DISPLAY_WIDTH,y2+GetImageHeight(30),20,0x05,color ,color);
-    TextFree(SIDtime);
+    TextID_Destroy(SIDtime);
     
     int missed[ICONS_COUNT];
     int *p=missed;
@@ -173,7 +173,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("SleepMode v1.1\n\n(c) Hussein"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("SleepMode v1.1\n\n(c) Hussein"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -228,14 +228,14 @@ void CreateSleepModeBook()
   // иконки пропущенных
   for (i=0;i<ICONS_COUNT;i++)
   {
-    iconidname2id(icons[i],SID_ANY_LEN,&icon_id);
+    iconidname2id(icons[i],TEXTID_ANY_LEN,&icon_id);
     SM_Book->missed_icons[i]=icon_id;
   }
   
   //ƒни недели
   for (i=0;i<7;i++)
   {
-    textidname2id(days_str[i],SID_ANY_LEN,&icon_id);
+    textidname2id(days_str[i],TEXTID_ANY_LEN,&icon_id);
     SM_Book->days[i]=icon_id;
   }
   
@@ -272,7 +272,7 @@ int main()
 {
   if (FindBook(myFind))
   {
-    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
+    MessageBox(EMPTY_TEXTID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
   else

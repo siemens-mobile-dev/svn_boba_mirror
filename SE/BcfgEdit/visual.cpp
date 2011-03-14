@@ -17,7 +17,7 @@ int colors[4] = { 0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0x80C6AAAF };
 
 int ColorGuiOnCreate( DISP_OBJ_COLOR* db )
 {
-	db->str_id = EMPTY_SID;
+	db->str_id = EMPTY_TEXTID;
 	db->need_str = 1;
 	db->current_column = 0;
 	db->cstep = 1;
@@ -26,7 +26,7 @@ int ColorGuiOnCreate( DISP_OBJ_COLOR* db )
 
 void ColorGuiOnClose( DISP_OBJ_COLOR* db )
 {
-	TextFree( db->str_id );
+	TextID_Destroy( db->str_id );
 }
 
 
@@ -57,8 +57,8 @@ void ColorGuiOnRedraw( DISP_OBJ_COLOR* db, int, int, int )
 	if ( db->need_str )
 	{
 		snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%02X, %02X, %02X, %02X", db->r, db->g, db->b, db->a );
-		TextFree( db->str_id );
-		db->str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+		TextID_Destroy( db->str_id );
+		db->str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 		db->need_str = 0;
 	}
 	DrawString( db->str_id, 0, x1 + 1, y1 + 1, x1 + scr_w - 30, y1 + 1 + fsize + 1, 0, 0, clBlack, 0x00000000 );
@@ -260,7 +260,7 @@ GUI_COLOR* CreateEditColorGUI( MyBOOK* myBook, int type )
 
 	// GUIObject_SetStyle( myBook->color, 4 );
 	win12512unicode( ustr, myBook->cur_hp.color->name, MAXELEMS( ustr ) - 1 );
-	GUIObject_SetTitleText( myBook->color, Str2ID( ustr, 0, SID_ANY_LEN ) );
+	GUIObject_SetTitleText( myBook->color, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
 	GUIObject_SetTitleType( myBook->color, 3 );
 	// GUIObject_SoftKeys_Hide( myBook->color );
 	GUIObject_SoftKeys_SetAction( myBook->color, ACTION_BACK, OnBackColorEdit );
@@ -275,7 +275,7 @@ static const char CooordinatesGuiName[] = "Gui_Coordinates";
 
 int CoordinatesGuiOnCreate( DISP_OBJ_COORD* db )
 {
-	db->str_id = EMPTY_SID;
+	db->str_id = EMPTY_TEXTID;
 	db->need_str = 1;
 	db->is_first_set = 0;
 	db->cstep = 1;
@@ -284,7 +284,7 @@ int CoordinatesGuiOnCreate( DISP_OBJ_COORD* db )
 
 void CoordinatesGuiOnClose( DISP_OBJ_COORD* db )
 {
-	TextFree( db->str_id );
+	TextID_Destroy( db->str_id );
 }
 
 void DrawOwnRect( int _x1, int _y1, int _x2, int _y2, int pen_color, int brush_color )
@@ -367,8 +367,8 @@ void CoordinatesGuiOnRedraw( DISP_OBJ_COORD* db, int, int, int )
 			if ( db->need_str )
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%d, %d, %d, %d", db->x2, db->y2, db->x, db->y );
-				TextFree( db->str_id );
-				db->str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				TextID_Destroy( db->str_id );
+				db->str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 				db->need_str = 0;
 			}
 		}
@@ -377,8 +377,8 @@ void CoordinatesGuiOnRedraw( DISP_OBJ_COORD* db, int, int, int )
 			if ( db->need_str )
 			{
 				snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%d, %d, %d, %d", db->x, db->y, db->x2, db->y2 );
-				TextFree( db->str_id );
-				db->str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+				TextID_Destroy( db->str_id );
+				db->str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 				db->need_str = 0;
 			}
 		}
@@ -388,8 +388,8 @@ void CoordinatesGuiOnRedraw( DISP_OBJ_COORD* db, int, int, int )
 		if ( db->need_str )
 		{
 			snwprintf( ustr, MAXELEMS( ustr ) - 1, L"%d, %d", db->x, db->y );
-			TextFree( db->str_id );
-			db->str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+			TextID_Destroy( db->str_id );
+			db->str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 			db->need_str = 0;
 		}
 	}
@@ -645,7 +645,7 @@ int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 	wchar_t ustr[64];
         int font_old;
 	win12512unicode( ustr, test_str, MAXELEMS( test_str ) - 1 );
-	db->test_str_id = Str2ID( ustr, 0, SID_ANY_LEN );
+	db->test_str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 
         int platform=GetChipID()&CHIPID_MASK;
         if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
@@ -681,7 +681,7 @@ int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 
 void FontSelectGuiOnClose( DISP_OBJ_FONT_SEL* db )
 {
-	TextFree( db->test_str_id ); db->test_str_id = EMPTY_SID;
+	TextID_Destroy( db->test_str_id ); db->test_str_id = EMPTY_TEXTID;
 	delete db->font_heights;
 }
 
@@ -722,7 +722,7 @@ void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
 	GC* gc = get_DisplayGC();
 	int x1, y1, x2, y2;
 	int y_offs;
-	STRID selfont;
+	TEXTID selfont;
 
 	gc_xx = GC_GetXX( gc );
 	GC_SetXX( gc, 1 );
@@ -744,7 +744,7 @@ void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
         {
           int n=1;
           int sp[5];
-          sp[0] = int2strID((db->cur_pos+1)*font_step);
+          sp[0] = TextID_CreateIntegerID((db->cur_pos+1)*font_step);
           if (db->style_bold)
           {
             sp[n] = 0x78000000 + '_';
@@ -757,11 +757,11 @@ void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
             sp[n+1] = 0x78000000 + 'I';
             n = n+2;
           }
-          selfont = Str2ID(sp,0x5,n);
+          selfont = TextID_Create(sp,ENC_TEXTID,n);
         }
-        else selfont = Str2ID( GetFontDesc()[db->cur_pos].name, 0, 9 );
+        else selfont = TextID_Create( GetFontDesc()[db->cur_pos].name, ENC_UCS2, 9 );
 	DrawString( selfont, 0, x1 + 3, y1 + 1, x2 - 2, y_offs - 1, 0, 0, 0xFF0080FF, 0x00000000 ); // Рисуем выбранный шрифт в шапке меню
-	TextFree( selfont );
+	TextID_Destroy( selfont );
         
 	int cur_y = y_offs;
 	for ( int i = db->cur_offs; i < db->total_fonts; i++ )
@@ -889,7 +889,7 @@ GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook )
 
 	// GUIObject_SetStyle( myBook->font_select, 4 );
 	win12512unicode( ustr, myBook->cur_hp.font->name, MAXELEMS( ustr ) - 1 );
-	GUIObject_SetTitleText( myBook->font_select, Str2ID( ustr, 0, SID_ANY_LEN ) );
+	GUIObject_SetTitleText( myBook->font_select, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
 	GUIObject_SetTitleType( myBook->font_select, 3 );
 	// GUIObject_SoftKeys_Hide( myBook->font_select );
 	GUIObject_SoftKeys_SetAction( myBook->font_select, ACTION_BACK, OnBackFontSelect );
@@ -1064,14 +1064,14 @@ FLIST* FindFLISTtByN( int n )
 int OnMessage( GUI_MESSAGE* msg )
 {
 	int d;
-	STRID str = EMPTY_SID;
+	TEXTID str = EMPTY_TEXTID;
 	FLIST* f;
 	switch( GUIonMessage_GetMsg( msg ) )
 	{
 	case 1:
 		d = GUIonMessage_GetCreatedItemIndex( msg );
 		f = FindFLISTtByN( d );
-		str = Str2ID( f->name, 0, SID_ANY_LEN );
+		str = TextID_Create( f->name, ENC_UCS2, TEXTID_ANY_LEN );
 		GUIonMessage_SetMenuItemText( msg, str );
 		break;
 	}
@@ -1100,7 +1100,7 @@ void Self_onEnterPressed( BOOK* bk, GUI* )
 		}
 		else
 		{
-			STRID str = Str2ID( fl->fullname, 0, SID_ANY_LEN );
+			TEXTID str = TextID_Create( fl->fullname, ENC_UCS2, TEXTID_ANY_LEN );
 			StringInput_DispObject_SetText( GUIObject_GetDispObject( myBook->text_input ), str );
 			FREE_FLGUI( myBook->selectf );
 		}
@@ -1118,7 +1118,7 @@ void Self_onSelectPressed( BOOK* bk, GUI* )
 	{
 		if ( ( fl->is_folder == IS_FOLDER && myBook->type == SFOLDER ) || fl->is_folder == IS_FILE )
 		{
-			STRID str = Str2ID( fl->fullname, 0, SID_ANY_LEN );
+			TEXTID str = TextID_Create( fl->fullname, ENC_UCS2, TEXTID_ANY_LEN );
 			StringInput_DispObject_SetText( GUIObject_GetDispObject( myBook->text_input ), str );
 			FREE_FLGUI( myBook->selectf );
 		}
@@ -1138,7 +1138,7 @@ GUI_LIST* CreateFileFolderSelect( MyBOOK* myBook, wchar_t* str )
 	wchar_t* s;
 	GUI_LIST* lo;
 	int n;
-	STRID sid = Str2ID( myBook->type == SFOLDER ? L"Select folder" : L"Select file", 0, SID_ANY_LEN );
+	TEXTID sid = TextID_Create( myBook->type == SFOLDER ? L"Select folder" : L"Select file", ENC_UCS2, TEXTID_ANY_LEN );
 	lo = CreateListMenu( myBook, 0 );
 	GUIObject_SetTitleText( lo, sid );
 	wstrcpy( ustr, str );
@@ -1168,10 +1168,10 @@ GUI_LIST* CreateFileFolderSelect( MyBOOK* myBook, wchar_t* str )
 	ListMenu_SetCursorToItem( lo, 0 );
 	ListMenu_SetOnMessage( lo, OnMessage );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, Self_onEnterPressed );
-	GUIObject_SoftKeys_SetText( lo, ACTION_SELECT1, Str2ID( L"Open", 0, SID_ANY_LEN ) );
+	GUIObject_SoftKeys_SetText( lo, ACTION_SELECT1, TextID_Create( L"Open", ENC_UCS2, TEXTID_ANY_LEN ) );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, Self_OnBack );
 	GUIObject_SoftKeys_SetAction( lo, 1, Self_onSelectPressed );
-	GUIObject_SoftKeys_SetText( lo, 1, Str2ID( L"Select", 0, SID_ANY_LEN ) );
+	GUIObject_SoftKeys_SetText( lo, 1, TextID_Create( L"Select", ENC_UCS2, TEXTID_ANY_LEN ) );
 	GUIObject_Show( lo );
 	delete ustr;
 	return lo;

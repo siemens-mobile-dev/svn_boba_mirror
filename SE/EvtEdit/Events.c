@@ -532,7 +532,7 @@ int Saver_onLBMessage(GUI_MESSAGE * msg)
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     EVENT* evt=(EVENT *)List_Get(events,item);
-    GUIonMessage_SetMenuItemText(msg,Str2ID(lng[LNG_ONCARD+item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(lng[LNG_ONCARD+item],ENC_UCS2,TEXTID_ANY_LEN));
     break;
   }
   return(1);
@@ -548,7 +548,7 @@ GUI_LIST * CreateSaverList(BOOK * book)
     ListMenu_SetOnMessage(lo,Saver_onLBMessage);
     ListMenu_SetItemStyle(lo,0);
     GUIObject_SetStyle(lo,9);
-    GUIObject_SetTitleText(lo,Str2ID(lng[LNG_SAVE],0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,TextID_Create(lng[LNG_SAVE],ENC_UCS2,TEXTID_ANY_LEN));
     GUIObject_SoftKeys_SetAction(lo,ACTION_BACK, Saver_OnBack);
     GUIObject_SoftKeys_SetAction(lo,ACTION_SELECT1,Saver_OnSelect);
   }

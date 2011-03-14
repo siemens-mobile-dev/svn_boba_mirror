@@ -15,7 +15,7 @@ void KeyCode_KeyHook(BOOK *bk, int key, int unk, int unk2)
   MyBOOK *mbk=(MyBOOK *)bk;
   if (unk2==KBD_SHORT_PRESS)
   {
-    STRID sid[2];
+    TEXTID sid[2];
     if (mbk->key_stage==0)
     {
       mbk->key_stage=1;
@@ -25,16 +25,16 @@ void KeyCode_KeyHook(BOOK *bk, int key, int unk, int unk2)
     {
       mbk->curkey->newkey=key;
     }  
-    sid[0]=Str2ID(L"New key:\n\n",0,SID_ANY_LEN);
+    sid[0]=TextID_Create(L"New key:\n\n",ENC_UCS2,TEXTID_ANY_LEN);
     if (mbk->curkey->newkey!=0)
     {
       sid[1]=KeyCode2Name(mbk->curkey->newkey);
     }
     else
     {
-      sid[1]=Str2ID(L"-empty-",0,SID_ANY_LEN);
+      sid[1]=TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN);
     }
-    Feedback_SetTextExtended(mbk->keyselect,Str2ID(sid,5,2),0);
+    Feedback_SetTextExtended(mbk->keyselect,TextID_Create(sid,ENC_TEXTID,2),0);
     Feedback_SetTimeout(mbk->keyselect,3000);
   }
 };
@@ -79,17 +79,17 @@ int KeyCode_OnEnter(void *, BOOK * bk)
   }
   MyBOOK *mbk=(MyBOOK *)bk;
   FREE_GUI(mbk->keyselect);
-  STRID sid[2];
+  TEXTID sid[2];
   int key;
   if (mbk->key_stage==0)
   {
     key=mbk->curkey->oldkey;
-    sid[0]=Str2ID(L"Old key:\n\n",0,SID_ANY_LEN);
+    sid[0]=TextID_Create(L"Old key:\n\n",ENC_UCS2,TEXTID_ANY_LEN);
   }
   else
   {
     key=mbk->curkey->newkey;
-    sid[0]=Str2ID(L"NewKey:\n\n",0,SID_ANY_LEN);
+    sid[0]=TextID_Create(L"NewKey:\n\n",ENC_UCS2,TEXTID_ANY_LEN);
   }
   mbk->keyselect=TextFeedbackWindow(&mbk->book,0);
   if (key!=0)
@@ -98,9 +98,9 @@ int KeyCode_OnEnter(void *, BOOK * bk)
   }
   else
   {
-    sid[1]=Str2ID(L"-empty-",0,SID_ANY_LEN);
+    sid[1]=TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN);
   }
-  Feedback_SetTextExtended(mbk->keyselect,Str2ID(sid,5,2),0);
+  Feedback_SetTextExtended(mbk->keyselect,TextID_Create(sid,ENC_TEXTID,2),0);
   GUIObject_SetStyle(mbk->keyselect,1);
   Feedback_SetKeyHook(mbk->keyselect,KeyCode_KeyHook);
   Feedback_SetOnClose(mbk->keyselect,KeyCode_OnClose);

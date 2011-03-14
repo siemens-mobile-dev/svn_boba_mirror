@@ -14,21 +14,21 @@ void KeyCode_KeyHook( BOOK* bk, int key, int unk, int mode )
           
           	if (key==epd->LastKey)
           	{
-            		Feedback_SetTextExtended( mbk->key_input, Str2ID( "Key blocked", 6, SID_ANY_LEN ), 0 );
+            		Feedback_SetTextExtended( mbk->key_input, TextID_Create( "Key blocked", ENC_LAT1, TEXTID_ANY_LEN ), 0 );
             		return;
           	}
           
           	wchar_t ustr[64];
-          	STRID sid[3];
+          	TEXTID sid[3];
           
           	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
           
           	mbk->cur_hp.key->keycode = key;
           
-          	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
+          	sid[0] = TextID_Create( L"Current key:\n\n", ENC_UCS2, TEXTID_ANY_LEN );
           	sid[1] = KeyCode2Name( key );
-          	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
-          	Feedback_SetTextExtended( mbk->key_input, Str2ID( sid, 5, 3 ), 0 );
+          	sid[2] = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
+          	Feedback_SetTextExtended( mbk->key_input, TextID_Create( sid, ENC_TEXTID, 3 ), 0 );
           	Feedback_SetTimeout( mbk->key_input, 3000 );
         }
 }
@@ -45,18 +45,18 @@ int KeyCode_OnEnter( void* , BOOK* bk )
 	MyBOOK* mbk = (MyBOOK*) bk;
 	wchar_t ustr[64];
 	int key;
-	STRID sid[3];
+	TEXTID sid[3];
 	mbk->key_input = TextFeedbackWindow( mbk, 0 );
 
 	key = mbk->cur_hp.key->keycode;
 
 	snwprintf( ustr, MAXELEMS( ustr )-1, L"\n\nHEX: 0x%02X\nDEC: %d", key, key );
 
-	sid[0] = Str2ID( L"Current key:\n\n", 0, SID_ANY_LEN );
+	sid[0] = TextID_Create( L"Current key:\n\n", ENC_UCS2, TEXTID_ANY_LEN );
 	sid[1] = KeyCode2Name( key );
-	sid[2] = Str2ID( ustr, 0, SID_ANY_LEN );
+	sid[2] = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 
-	Feedback_SetTextExtended( mbk->key_input, Str2ID( sid, 5, 3 ), 0 );
+	Feedback_SetTextExtended( mbk->key_input, TextID_Create( sid, ENC_TEXTID, 3 ), 0 );
 	GUIObject_SetStyle( mbk->key_input, 1 );
 	Feedback_SetKeyHook( mbk->key_input, KeyCode_KeyHook );
 	Feedback_SetOnClose( mbk->key_input, KeyCode_OnClose );
@@ -106,9 +106,9 @@ const wchar_t* modes[] =
 	L"Long Release"
 };
 
-STRID GetKeyModeName( int mode )
+TEXTID GetKeyModeName( int mode )
 {
-	return mode < MAXELEMS( modes ) ? Str2ID( modes[mode], 0, SID_ANY_LEN ) : EMPTY_SID;
+	return mode < MAXELEMS( modes ) ? TextID_Create( modes[mode], ENC_UCS2, TEXTID_ANY_LEN ) : EMPTY_TEXTID;
 }
 
 void KeyModeSelect_OnCloseCBoxGui( BOOK* bk, GUI* )
@@ -124,19 +124,19 @@ void KeyModeSelect_OnSelectCBoxGui( BOOK* bk, GUI* )
 
 	myBook->cur_hp.key->keymode = item;
 
-	ListMenu_SetItemSecondLineText( myBook->key_sel_list, 1, Str2ID( modes[item], 0, SID_ANY_LEN ) );
+	ListMenu_SetItemSecondLineText( myBook->key_sel_list, 1, TextID_Create( modes[item], ENC_UCS2, TEXTID_ANY_LEN ) );
 	FREE_GUI( myBook->keymode_sel_list );
 }
 
 void KeyModeSelect_CreateCBoxGui( MyBOOK* myBook )
 {
-	STRID strid[MAXELEMS( modes )];
+	TEXTID strid[MAXELEMS( modes )];
 	GUI_ONEOFMANY* om = CreateOneOfMany( myBook );
 	myBook->keymode_sel_list = om;
 
 	wchar_t ustr[64];
 	win12512unicode( ustr, myBook->cur_hp.key->name, MAXELEMS( ustr )-1 );
-	GUIObject_SetTitleText( om, Str2ID( ustr, 0, SID_ANY_LEN ) );
+	GUIObject_SetTitleText( om, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
 
 	for ( int i = 0; i<MAXELEMS( modes ); i++ )
 		strid[i] = GetKeyModeName( i );
@@ -186,7 +186,7 @@ void KeyCodeSelect_OnDelete( BOOK* bk, GUI* )
 		break;
 	case 1:
 		mbk->cur_hp.key->keymode = 0;
-		ListMenu_SetItemSecondLineText( mbk->key_sel_list, 1, Str2ID( modes[ 0 ], 0, SID_ANY_LEN ) );
+		ListMenu_SetItemSecondLineText( mbk->key_sel_list, 1, TextID_Create( modes[ 0 ], ENC_UCS2, TEXTID_ANY_LEN ) );
 		break;
 	}
 }
@@ -197,21 +197,21 @@ int KeyCodeSelect_OnEnter( void* , BOOK* bk )
 
 	wchar_t ustr[64];
 	GUI_LIST* lo;
-	STRID strid[2];
+	TEXTID strid[2];
 
-	strid[0] = Str2ID( L"Select key", 0, SID_ANY_LEN );
-	strid[1] = Str2ID( L"Key mode", 0, SID_ANY_LEN );
+	strid[0] = TextID_Create( L"Select key", ENC_UCS2, TEXTID_ANY_LEN );
+	strid[1] = TextID_Create( L"Key mode", ENC_UCS2, TEXTID_ANY_LEN );
 	lo = CreateListMenu( mbk, 0 );
 	mbk->key_sel_list = lo;
 
 
 	win12512unicode( ustr, mbk->cur_hp.key->name, MAXELEMS( ustr )-1 );
-	GUIObject_SetTitleText( lo, Str2ID( ustr, 0, SID_ANY_LEN ) );
+	GUIObject_SetTitleText( lo, TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN ) );
 	ListMenu_SetItemCount( lo, 2 );
 	OneOfMany_SetTexts( lo, strid, 2 );
 
 	ListMenu_SetItemSecondLineText( lo, 0, KeyCode2Name( mbk->cur_hp.key->keycode ) );
-	ListMenu_SetItemSecondLineText( lo, 1, Str2ID( modes[ mbk->cur_hp.key->keymode ], 0, SID_ANY_LEN ) );
+	ListMenu_SetItemSecondLineText( lo, 1, TextID_Create( modes[ mbk->cur_hp.key->keymode ], ENC_UCS2, TEXTID_ANY_LEN ) );
 
 	ListMenu_SetCursorToItem( lo, 0 );
 	ListMenu_SetItemStyle( lo, 1 );

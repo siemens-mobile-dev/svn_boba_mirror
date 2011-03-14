@@ -7,7 +7,7 @@
 #include <math.h>
 
 static const char CalcGuiName[]="CalcGui";
-#define MESSAGE(__STR__) MessageBox(EMPTY_SID,__STR__,NOIMAGE, 1 ,11000,(BOOK*)NULL);
+#define MESSAGE(__STR__) MessageBox(EMPTY_TEXTID,__STR__,NOIMAGE, 1 ,11000,(BOOK*)NULL);
 extern "C" {
   double strtod(const char *_S, char **_Endptr);
   int abs(int);
@@ -19,7 +19,7 @@ double vars['z'-'a'];
 double d_answer=0;
 
 char operation[256];
-STRID op_str[256];
+TEXTID op_str[256];
 int op_len=0;
 int op_pos=0;
 
@@ -597,21 +597,21 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
   for (int x=0; x<=DIEZ_4; x++)
   {
     int w;
-    STRID text;
+    TEXTID text;
     const char *txt=keydesc[x];
     if (!txt[1])
       text=0x78000000|txt[0];
     else
-      text=Str2ID(txt,6,SID_ANY_LEN);
+      text=TextID_Create(txt,ENC_LAT1,TEXTID_ANY_LEN);
     db->yx[x]=text;
-    w=db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
+    w=db->names_len[x]=Disp_GetStrIdWidth(text,TextID_GetLength(text));
     if (w>db->maxintab) db->maxintab=w;    
   }
   for (int x=VAR_A, a='a'; x<TOTAL_OPS; x++, a++)
   {
-    STRID text=0x78000000|a;
+    TEXTID text=0x78000000|a;
     db->yx[x]=text;
-    db->names_len[x]=Disp_GetStrIdWidth(text,TextGetLength(text));
+    db->names_len[x]=Disp_GetStrIdWidth(text,TextID_GetLength(text));
   }
   SetFont(font);
   db->current_tab=0;
@@ -623,10 +623,10 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
 
 void CalcGuiOnClose(DISP_OBJ_CALC *db)
 {
-  TextFree(db->answer_sid);
+  TextID_Destroy(db->answer_sid);
   for (int x=0; x<TOTAL_OPS; x++)
   {
-    TextFree(db->yx[x]); 
+    TextID_Destroy(db->yx[x]); 
   }
 }
 
@@ -760,8 +760,8 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
     req_recalc=0;
     calc_answer();
     sprintf(revpn, "%1.10lg", d_answer);
-    TextFree(db->answer_sid);
-    db->answer_sid=Str2ID(revpn,6,SID_ANY_LEN);
+    TextID_Destroy(db->answer_sid);
+    db->answer_sid=TextID_Create(revpn,ENC_LAT1,TEXTID_ANY_LEN);
   }
   RECT rt;
   //RECT *rtp=&rt;
@@ -828,7 +828,7 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
       }
       if (i<op_len)
       {
-        STRID text=db->yx[operation[i]];
+        TEXTID text=db->yx[operation[i]];
         int tlen=db->names_len[operation[i]];
         if (tx+tlen>(inp_w+f))
         {
@@ -883,7 +883,7 @@ void CalcGuiOnRedraw(DISP_OBJ_CALC *db,int ,RECT *cur_rc,int)
       {
         unsigned int x_frame=start_x+db->maxintab*x+dx*x;
         unsigned int y_frame=start_y+FONTH*y+5*2*y;
-        STRID text=db->yx[db->current_tab*12+y*3+x];
+        TEXTID text=db->yx[db->current_tab*12+y*3+x];
         SetFont(FONTID);    
         //unsigned int str_width=db->names_len[db->current_tab][y*3+x];
         rt.x1=db->x1+x_frame;

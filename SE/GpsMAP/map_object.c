@@ -248,7 +248,7 @@ void FillScreenBuffer(DISP_OBJ_MAP *db)
 
 static const char MapGuiName[]="Gui_GpsMAP";
 
-int str_id=EMPTY_SID;
+int str_id=EMPTY_TEXTID;
 int MapGuiOnCreate(DISP_OBJ_MAP *db)
 {
   TOWN *town;
@@ -303,8 +303,8 @@ void MapGuiOnRedraw(DISP_OBJ_MAP *db,int ,int,int)
   SetFont(FONT_E_20R);
   wchar_t buf[64];
   snwprintf(buf,63,L"%f,%f",db->Xres, db->Yres);
-  if (str_id!=EMPTY_SID) TextFree(str_id);
-  str_id=Str2ID(buf,0,SID_ANY_LEN);
+  if (str_id!=EMPTY_TEXTID) TextID_Destroy(str_id);
+  str_id=TextID_Create(buf,ENC_UCS2,TEXTID_ANY_LEN);
   DrawString(str_id, 2, db->x1+2,db->y1+2,db->x2-2,db->y1+2+80,20,0,clBlack,0x00000000);
   GC_SetXX(gc,gc_xx);
 }

@@ -91,23 +91,23 @@ void OnDelGui( BOOK* bk, GUI* )
       if (wstrcmp(mbk->curit->name,L"DEFAULT") && wstrcmp(mbk->curit->name,L"StandbyBook"))
       {
         DELETE(mbk->curit->name);
-        ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+        ListMenu_SetItemSecondLineText(mbk->lst,item,TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN));
       }
     }
     if (item==1)
     {
       DELETE(mbk->curit->lsi);
-      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN));
     }
     if (item==2)
     {
       DELETE(mbk->curit->msi);
-      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN));
     }
     if (item==3)
     {
       DELETE(mbk->curit->rsi);
-      ListMenu_SetItemSecondLineText(mbk->lst,item,Str2ID(L"-empty-",0,SID_ANY_LEN));
+      ListMenu_SetItemSecondLineText(mbk->lst,item,TextID_Create(L"-empty-",ENC_UCS2,TEXTID_ANY_LEN));
     }
     else if (item==4)
     {
@@ -171,8 +171,8 @@ void Escape(MyBOOK *mbk, bool save)
     {
       g_save=CreateYesNoQuestionVA(0,
                                    VAR_BOOK(&mbk->book),
-                                   VAR_YESNO_PRE_QUESTION(Str2ID(L"Options were changed.",0,SID_ANY_LEN)),
-                                   VAR_YESNO_QUESTION(Str2ID(L"Do you want to save?",0,SID_ANY_LEN)),
+                                   VAR_YESNO_PRE_QUESTION(TextID_Create(L"Options were changed.",ENC_UCS2,TEXTID_ANY_LEN)),
+                                   VAR_YESNO_QUESTION(TextID_Create(L"Do you want to save?",ENC_UCS2,TEXTID_ANY_LEN)),
                                    0);
       GUIObject_SoftKeys_SetAction(g_save,ACTION_YES,OnYesExitGui);
       GUIObject_SoftKeys_SetAction(g_save,ACTION_NO,OnBackExitGui);
@@ -206,7 +206,7 @@ void OnAuthor( BOOK* bk, GUI* )
 {
   wchar_t text[100];
   snwprintf(text,99,L"SoftEdit\n© UltraShot\n\nrevision %d", __SVN_REVISION__ );
-  MessageBox(SID_NULL,Str2ID(text,0,SID_ANY_LEN), NOIMAGE, 1, 5000, bk);
+  MessageBox(SID_NULL,TextID_Create(text,ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 5000, bk);
 };
 
 void onSave( BOOK* bk, GUI* )
@@ -300,7 +300,7 @@ void OnSelectGui( BOOK* bk, GUI* )
       else
       {
         mbk->curit->style=2;
-        ids=Str2ID(L"standart",0,SID_ANY_LEN);
+        ids=TextID_Create(L"standart",ENC_UCS2,TEXTID_ANY_LEN);
       }
       ListMenu_SetItemSecondLineText(mbk->lst,item,ids);
       mbk->opt_lastindex=item;
@@ -353,12 +353,12 @@ GUI_LIST * CreateGuiList(BOOK * book)
     if (!bk->curit)
     {
       GUIObject_SoftKeys_SetAction(lo,1, onSave);
-      GUIObject_SoftKeys_SetText(lo,1,Str2ID(L"Save",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(lo,1,TextID_Create(L"Save",ENC_UCS2,TEXTID_ANY_LEN));
       GUIObject_SoftKeys_SetAction(lo,2, onSkin);
-      GUIObject_SoftKeys_SetText(lo,2,Str2ID(L"Skin",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(lo,2,TextID_Create(L"Skin",ENC_UCS2,TEXTID_ANY_LEN));
       GUIObject_SoftKeys_SetAction(lo,ACTION_HELP, OnAuthor);
       GUIObject_SoftKeys_SetText(lo,ACTION_HELP, GetStrID(L"JAVA_APP_NR_ABOUT"));
-      GUIObject_SetTitleText(lo,Str2ID(L"SoftEdit",0,SID_ANY_LEN));
+      GUIObject_SetTitleText(lo,TextID_Create(L"SoftEdit",ENC_UCS2,TEXTID_ANY_LEN));
       if (customsofts)
       {
         if (customsofts->FirstFree)
@@ -401,7 +401,7 @@ GUI_LIST * CreateGuiList(BOOK * book)
       {
         wstrcpy(text,L"-empty-");
       }
-      GUIObject_SetTitleText(lo,Str2ID(text,0,SID_ANY_LEN));
+      GUIObject_SetTitleText(lo,TextID_Create(text,ENC_UCS2,TEXTID_ANY_LEN));
       int howmany=0;
       if (bk->curit->keys)
       {

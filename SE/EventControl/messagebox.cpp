@@ -60,7 +60,7 @@ void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra)
     created=true;
   }
   GUI_FEEDBACK *gMBox=mbk->g_mbox;
-  Feedback_SetTextExtended(gMBox,Str2ID(text, 0, SID_ANY_LEN),0);
+  Feedback_SetTextExtended(gMBox,TextID_Create(text, ENC_UCS2, TEXTID_ANY_LEN),0);
   if (minutes)
   {
     int strids[2];
@@ -68,19 +68,19 @@ void mbox_Create(BOOK * bk, wchar_t *text, int minutes, bool vibra)
     if (min<0)min=-min;
     if (minutes<0)
     {
-      strids[0]=int2strID(min);
-      strids[1]=Str2ID(lng[LNG_MIN_REMAIN], 0, SID_ANY_LEN);
+      strids[0]=TextID_CreateIntegerID(min);
+      strids[1]=TextID_Create(lng[LNG_MIN_REMAIN], ENC_UCS2, TEXTID_ANY_LEN);
     }
     else
     {
-      strids[0]=int2strID(min);
-      strids[1]=Str2ID(lng[LNG_MIN_AGO], 0, SID_ANY_LEN);
+      strids[0]=TextID_CreateIntegerID(min);
+      strids[1]=TextID_Create(lng[LNG_MIN_AGO], ENC_UCS2, TEXTID_ANY_LEN);
     }
-    Feedback_SetTextExtended(gMBox,Str2ID(strids,5,2),1);
+    Feedback_SetTextExtended(gMBox,TextID_Create(strids,ENC_TEXTID,2),1);
   }
   Feedback_SetOnClose(gMBox, mbox_OnClose);
   GUIObject_SoftKeys_SetAction(gMBox,ACTION_OK,mbox_onOK);
-  GUIObject_SoftKeys_SetText(gMBox,ACTION_OK,Str2ID(L"OK",0,SID_ANY_LEN));
+  GUIObject_SoftKeys_SetText(gMBox,ACTION_OK,TextID_Create(L"OK",ENC_UCS2,TEXTID_ANY_LEN));
   GUIObject_SoftKeys_SetAction(gMBox,ACTION_BACK,mbox_onOK);
   GUIObject_SetStyle(gMBox, 4);
   GUIObject_SetTitleType(gMBox, 1);

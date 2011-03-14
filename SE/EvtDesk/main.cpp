@@ -127,7 +127,7 @@ void DrawGradientVert(int x, int y, int x2, int y2, int upc, int loc)
 void DrawLine(int str, int ct, int x, int y, int x2, int y2, int between, int c)
 {
   DrawString(str,ct,x,y,x2,y2,between,3,c,c);
-  TextFree(str);
+  TextID_Destroy(str);
 };
 
 int isEvtBook(BOOK *bk)
@@ -162,13 +162,13 @@ void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3)
   DATE_GetWeekDay(&dt.date, &day);
   SetFont(ev_font);
   DrawGradientVert(rc.x1, rc.y1, rc.x2, rc.y2, upp_color, low_color);
-  DrawLine(Str2ID(str_events,0,SID_ANY_LEN), 0, rc.x1,rc.y1,rc.x2,rc.y2,40, ev_color);
+  DrawLine(TextID_Create(str_events,ENC_UCS2,TEXTID_ANY_LEN), 0, rc.x1,rc.y1,rc.x2,rc.y2,40, ev_color);
   EVTBOOK *bk=(EVTBOOK*)FindBook(isEvtBook);
   int pos=rc.y2;
   if (!bk)
   {
     DrawGradientVert(rc2.x1, pos, rc2.x2, pos+rc2.y2, low_color, low_color);
-    DrawLine(Str2ID(str_off,0,SID_ANY_LEN), 2, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, clWhite);
+    DrawLine(TextID_Create(str_off,ENC_UCS2,TEXTID_ANY_LEN), 2, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, clWhite);
     return;
   }
   SetFont(text_font);
@@ -180,7 +180,7 @@ void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3)
     {
       REMIND *rem=(REMIND*)bk->remlst->listdata[x++];
       DrawGradientVert(rc2.x1, pos, rc2.x2, pos+rc2.y2, miss_color, miss_color);
-      DrawLine(Str2ID(rem->text,0,SID_ANY_LEN), 0, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, text_color);
+      DrawLine(TextID_Create(rem->text,ENC_UCS2,TEXTID_ANY_LEN), 0, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, text_color);
       pos+=rc2.y2;
       res++;
     }
@@ -199,11 +199,11 @@ void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3)
           SetFont(text_font);
           txt=ev->txt;
           DrawGradientVert(rc2.x1, pos, rc2.x2, pos+rc2.y2, low_color, low_color);
-          DrawLine(Str2ID(txt,0,SID_ANY_LEN), 0, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, text_color);
+          DrawLine(TextID_Create(txt,ENC_UCS2,TEXTID_ANY_LEN), 0, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, text_color);
           txt=new wchar_t[50];
           snwprintf(txt,49,L"%02d:%02d:%02d", ev->time.hour, ev->time.min, ev->time.sec);
           SetFont(time_font);
-          DrawLine(Str2ID(txt,0,SID_ANY_LEN), 1, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, time_color);
+          DrawLine(TextID_Create(txt,ENC_UCS2,TEXTID_ANY_LEN), 1, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, time_color);
           delete(txt);
           pos+=rc2.y2;
           res++;
@@ -215,7 +215,7 @@ void Display_ReDraw(DISP_OBJ * db,int r1, int r2,int r3)
   {
     SetFont(text_font);
     DrawGradientVert(rc2.x1, pos, rc2.x2, pos+rc2.y2, low_color, low_color);
-    DrawLine(Str2ID(str_noevents,0,SID_ANY_LEN), 2, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, clWhite);
+    DrawLine(TextID_Create(str_noevents,ENC_UCS2,TEXTID_ANY_LEN), 2, rc2.x1, pos, rc2.x2, pos+rc2.y2, 40, clWhite);
   }
    if(Display_oldReDraw) Display_oldReDraw(db,r1,r2,r3);
 };

@@ -25,20 +25,20 @@ void ShowResults(TABL*t)
   j=0;
   for(i=0; i<10; i++)
   {
-    text[j]=int2strID(i+1);
+    text[j]=TextID_CreateIntegerID(i+1);
     j++;
     text[j]=STR(". ");
     j++;
-    text[j]=Str2ID(t->name[i], 0, SID_ANY_LEN);
+    text[j]=TextID_Create(t->name[i], ENC_UCS2, TEXTID_ANY_LEN);
     j++;
     text[j]=STR(" - ");
     j++;
-    text[j]=int2strID(t->rezultat[i]);
+    text[j]=TextID_CreateIntegerID(t->rezultat[i]);
     j++;
     text[j]=STR("\n");
     j++;
   }
-  int ID=Str2ID(text, 5, 60);
+  int ID=TextID_Create(text, ENC_TEXTID, 60);
   MessageBox(STR("Результаты"), ID, NOIMAGE, 2, 0, 0);
 }
 
@@ -68,8 +68,8 @@ void CreateInputI(int x, IMGN*i, MyBook*bk)
                                        VAR_PREV_ACTION_PROC(DestroyInputI),
                                        VAR_LONG_BACK_PROC(DestroyInputI),
                                        VAR_BOOK((BOOK*)bk),
-                                       VAR_STRINP_FIXED_TEXT(Str2ID(L"Изменить имя:",0, SID_ANY_LEN)),
-                                       VAR_STRINP_TEXT(Str2ID(i->names[x], 0, SID_ANY_LEN)),
+                                       VAR_STRINP_FIXED_TEXT(TextID_Create(L"Изменить имя:",ENC_UCS2, TEXTID_ANY_LEN)),
+                                       VAR_STRINP_TEXT(TextID_Create(i->names[x], ENC_UCS2, TEXTID_ANY_LEN)),
                                        VAR_STRINP_MAX_LEN(127),
                                        VAR_STRINP_MIN_LEN(0),
                                        VAR_OK_PROC(OnEntInputI),
@@ -104,24 +104,24 @@ int SetTitlePunktsINM(GUI_MESSAGE * msg)
     {
       if(item==i)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(GetNamesOfIMN(i, 0),0,SID_ANY_LEN));
-        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(((MyBook*)isBookX(NameMyElf, 0))->nast->im->names[i],0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(GetNamesOfIMN(i, 0),ENC_UCS2,TEXTID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,TextID_Create(((MyBook*)isBookX(NameMyElf, 0))->nast->im->names[i],ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"DB_LIST_PICTURE_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
     }
     if(item==3)
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Картинки:",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Картинки:",ENC_UCS2,TEXTID_ANY_LEN));
       if(MyBK()->nast->im->on)
       {
-        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(L"Свои",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,TextID_Create(L"Свои",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"CALLS_INCOMING_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       else
       {
-        GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(L"Из эльфа",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemSecondLineText(msg,TextID_Create(L"Из эльфа",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"CALLS_OUTGOING_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
@@ -143,7 +143,7 @@ void CreateINM(MyBook*bk, int x)
   bk->gui=0;
   GUI_LIST*INM=CreateListMenu((BOOK*)bk,0);
   ((MyBook*)bk)->gui=INM;
-  GUIObject_SetTitleText(INM, Str2ID(L"Картинки",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(INM, TextID_Create(L"Картинки",ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(INM, 4);
   OneOfMany_SetOnMessage(INM,SetTitlePunktsINM);
   ListMenu_SetCursorToItem(INM,x);
@@ -207,8 +207,8 @@ void CreateInput(int x, SOUND*s, MyBook*bk)
                                        VAR_PREV_ACTION_PROC(DestroyInput),
                                        VAR_LONG_BACK_PROC(DestroyInput),
                                        VAR_BOOK((BOOK*)bk),
-                                       VAR_STRINP_FIXED_TEXT(Str2ID(L"Изменить:",0, SID_ANY_LEN)),
-                                       VAR_STRINP_TEXT(Str2ID(s->names[x-1], 0, SID_ANY_LEN)),
+                                       VAR_STRINP_FIXED_TEXT(TextID_Create(L"Изменить:",ENC_UCS2, TEXTID_ANY_LEN)),
+                                       VAR_STRINP_TEXT(TextID_Create(s->names[x-1], ENC_UCS2, TEXTID_ANY_LEN)),
                                        VAR_STRINP_MAX_LEN(255),
                                        VAR_STRINP_MIN_LEN(0),
                                        VAR_OK_PROC(OnEntInput),
@@ -245,14 +245,14 @@ int SetTitlePunktsMNM(GUI_MESSAGE * msg)
       {
         iconidname2id(L"DB_LIST_SOUND_IMELODY_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Звук",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Звук",ENC_UCS2,TEXTID_ANY_LEN));
         GUIonMessage_SetMenuItemSecondLineText(msg,GetStrokaIMG(StatusSettings(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->sound),((MyBook*)isBookX(NameMyElf, 0))->nast->sound->sound));
       }
       for(int i=0; i<6; i++)
       {
         if(item==i+1)
         {
-          GUIonMessage_SetMenuItemText(msg,Str2ID(NamesOfPunkts(i),0,SID_ANY_LEN));
+          GUIonMessage_SetMenuItemText(msg,TextID_Create(NamesOfPunkts(i),ENC_UCS2,TEXTID_ANY_LEN));
           GUIonMessage_SetMenuItemSecondLineText(msg,GetStrokaIMG(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->names[i],((MyBook*)isBookX(NameMyElf, 0))->nast->sound->status[i]));
           iconidname2id(L"DB_LIST_SOUND_EMELODY_ICN", -1, &ID);
           GUIonMessage_SetMenuItemIcon(msg, 0, ID);
@@ -267,8 +267,8 @@ void Set(int item)
   if(item==0)
   {
     GUIObject_SoftKeys_SetAction(((MyBook*)isBookX(NameMyElf, 0))->gui,1,0);
-    GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, 1, Str2ID(L" ",0,SID_ANY_LEN));
-    GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, Str2ID(StatusSettings1(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->sound),0,SID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, 1, TextID_Create(L" ",ENC_UCS2,TEXTID_ANY_LEN));
+    GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, TextID_Create(StatusSettings1(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->sound),ENC_UCS2,TEXTID_ANY_LEN));
     GUIObject_SoftKeys_SetAction(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, OnEntMNM);
     //GUIonMessage_SetMenuItemIcon(msg, 0, IconID->I1);
   }
@@ -277,8 +277,8 @@ void Set(int item)
     if(item==i+1)
     {
       GUIObject_SoftKeys_SetAction(((MyBook*)isBookX(NameMyElf, 0))->gui,1,OnMNM1);
-      GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, 1, Str2ID(StatusSettings1(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->status[i]),0,SID_ANY_LEN));
-      GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, Str2ID(L"Изменить",0,SID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, 1, TextID_Create(StatusSettings1(((MyBook*)isBookX(NameMyElf, 0))->nast->sound->status[i]),ENC_UCS2,TEXTID_ANY_LEN));
+      GUIObject_SoftKeys_SetText(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, TextID_Create(L"Изменить",ENC_UCS2,TEXTID_ANY_LEN));
       GUIObject_SoftKeys_SetAction(((MyBook*)isBookX(NameMyElf, 0))->gui, ACTION_SELECT1, OnEntMNM);
       //GUIonMessage_SetMenuItemIcon(msg, 0, IconID->I2);
     }
@@ -298,7 +298,7 @@ void CreateMNM(MyBook*bk, int x)
   bk->gui=0;
   GUI_LIST*MNM=CreateListMenu((BOOK*)bk,0);
   ((MyBook*)bk)->gui=MNM;
-  GUIObject_SetTitleText(MNM, Str2ID(L"Музыка",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(MNM, TextID_Create(L"Музыка",ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(MNM, 7);
   OneOfMany_SetOnMessage(MNM,SetTitlePunktsMNM);
   ListMenu_SetCursorToItem(MNM,x);
@@ -370,13 +370,13 @@ int SetTitlePunktsNM(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Музыка",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Музыка",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"ENTERTAINMENT_MENU_MIDI_COMP_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==1)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Картинки",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Картинки",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"ENTERTAINMENT_MENU_PICTUREEDITOR_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
@@ -411,19 +411,19 @@ int SetTitlePunktsMR(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Легко",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Легко",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"WV_BUDDYLIST_CONTACT_AVAILABLE_ASHAMED_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==1)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Средне",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Средне",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"WV_BUDDYLIST_CONTACT_AVAILABLE_ANXIOUS_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==2)
       {
-        GUIonMessage_SetMenuItemText(msg,Str2ID(L"Тяжело",0,SID_ANY_LEN));
+        GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Тяжело",ENC_UCS2,TEXTID_ANY_LEN));
         iconidname2id(L"WV_BUDDYLIST_CONTACT_AVAILABLE_ANGRY_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
@@ -437,7 +437,7 @@ void MenuResultat(MyBook*bk)
   bk->gui=0;
   GUI_LIST*MR=CreateListMenu((BOOK*)bk,0);
   ((MyBook*)bk)->gui=MR;
-  GUIObject_SetTitleText(MR, Str2ID(L"Результаты",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(MR, TextID_Create(L"Результаты",ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(MR, 3);
   OneOfMany_SetOnMessage(MR,SetTitlePunktsMR);
   ListMenu_SetCursorToItem(MR,0);
@@ -457,7 +457,7 @@ void CreateNM(MyBook*bk)
   bk->gui=0;
   GUI_LIST*NM=CreateListMenu((BOOK*)bk,0);
   ((MyBook*)bk)->gui=NM;
-  GUIObject_SetTitleText(NM, Str2ID(L"Настройки",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(NM, TextID_Create(L"Настройки",ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(NM, 2);
   OneOfMany_SetOnMessage(NM,SetTitlePunktsNM);
   ListMenu_SetCursorToItem(NM,0);
@@ -485,7 +485,7 @@ void YesNo(MyBook*bk)
 {
   bk->gui1=CreateYesNoQuestionVA(0,
                                     VAR_BOOK(bk),
-                                    VAR_YESNO_QUESTION(Str2ID(L"Выйти?", 0, SID_ANY_LEN)),
+                                    VAR_YESNO_QUESTION(TextID_Create(L"Выйти?", ENC_UCS2, TEXTID_ANY_LEN)),
                                     0);
   GUIObject_SoftKeys_SetAction(bk->gui1, ACTION_YES, YesPress);
   GUIObject_SoftKeys_SetAction(bk->gui1, ACTION_NO,  NoPress);
@@ -507,7 +507,7 @@ void CreateGameM(MyBook*bk)
   bk->gui=0;
   GUI_LIST*GameM=CreateListMenu((BOOK*)bk,0);
   ((MyBook*)bk)->gui=GameM;
-  GUIObject_SetTitleText(GameM, Str2ID(L"Выбор уровня",0,SID_ANY_LEN));
+  GUIObject_SetTitleText(GameM, TextID_Create(L"Выбор уровня",ENC_UCS2,TEXTID_ANY_LEN));
   ListMenu_SetItemCount(GameM, 3);
   OneOfMany_SetOnMessage(GameM,SetTitlePunktsMR);
   ListMenu_SetCursorToItem(GameM,0);
@@ -553,45 +553,45 @@ int SetTitlePunktsGM(GUI_MESSAGE * msg)
       item=GUIonMessage_GetCreatedItemIndex(msg);
       if(item==0)
       {
-        ID=Str2ID(L"Новая игра",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Новая игра",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemText(msg,ID);
-        ID=Str2ID(L"Начать игру!",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Начать игру!",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemSecondLineText(msg,ID);
         iconidname2id(L"PROFILE_INCAR_LIST_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==1)
       {
-        ID=Str2ID(L"Настройки",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Настройки",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemText(msg,ID);
-        ID=Str2ID(L"Поковыряца",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Поковыряца",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemSecondLineText(msg,ID);
         iconidname2id(L"MENU_SETTINGS_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==2)
       {
-        ID=Str2ID(L"Результаты",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Результаты",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemText(msg,ID);
-        ID=Str2ID(L"Просмотр результатов",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Просмотр результатов",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemSecondLineText(msg,ID);
         iconidname2id(L"MISCELLANEOUS_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==3)
       {
-        ID=Str2ID(L"Инфо",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Инфо",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemText(msg,ID);
-        ID=Str2ID(L"Информация",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Информация",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemSecondLineText(msg,ID);
         iconidname2id(L"HELP_TEXT_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
       }
       if(item==4)
       {
-        ID=Str2ID(L"Выход",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Выход",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemText(msg,ID);
-        ID=Str2ID(L"Выйти из игры",0,SID_ANY_LEN);
+        ID=TextID_Create(L"Выйти из игры",ENC_UCS2,TEXTID_ANY_LEN);
         GUIonMessage_SetMenuItemSecondLineText(msg,ID);
         iconidname2id(L"FORBIDDEN_NETWORK_ICN", -1, &ID);
         GUIonMessage_SetMenuItemIcon(msg, 0, ID);
@@ -607,7 +607,7 @@ int CreateGM(void*, BOOK*bk)
   if(((MyBook*)bk)->gui) GUIObject_Destroy(((MyBook*)bk)->gui);
   ((MyBook*)bk)->gui=0;
   ((MyBook*)bk)->gui=GM;
-  ID=Str2ID(L"Gono4ki",0,SID_ANY_LEN);
+  ID=TextID_Create(L"Gono4ki",ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(GM, ID);
   ListMenu_SetItemCount(GM, 5);
   OneOfMany_SetOnMessage(GM,SetTitlePunktsGM);

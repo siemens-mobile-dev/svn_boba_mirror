@@ -197,7 +197,7 @@ int main(wchar_t *elfpath)
   }
   if (FindBook(isEVBookByName))
   {
-    MessageBox(EMPTY_SID, Str2ID(lng[LNG_ALREADY_RUNNED],0,SID_ANY_LEN), NOIMAGE, 1, 0, 0);
+    MessageBox(EMPTY_TEXTID, TextID_Create(lng[LNG_ALREADY_RUNNED],ENC_UCS2,TEXTID_ANY_LEN), NOIMAGE, 1, 0, 0);
     delete(extFolder);
     delete(intFolder);
     destroy_innative_lng();
@@ -214,7 +214,7 @@ int main(wchar_t *elfpath)
     if (InitializeEvents(bk)==0)
       mbox_Create(&bk->bk, lng[LNG_NOFILE], 0, false);
     DateAndTime_Update(1);
-    proc_ = create_process(0, "EvtCtrl_wrk", worker_entrypoint, 32768, 10, (OSTIME) 0, (PROCESS) 0, NULL, (OSVECTOR) 0, (OSUSER) 0);
+    proc_ = create_process(OS_PRI_PROC, "EvtCtrl_wrk", worker_entrypoint, 32768, 10, (OSTIME) 0, (PROCESS) 0, NULL, (OSVECTOR) 0, (OSUSER) 0);
     start(proc_);
     EventTimer = Timer_Set(1000, onEventTimer, 0);
     onEventTimer(EventTimer, 0);

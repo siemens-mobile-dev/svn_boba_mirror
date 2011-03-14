@@ -80,7 +80,7 @@ int TerminateElf(void *Data, BOOK *Book)
 int ShowAuthorInfo(void *Message, BOOK *Book)
 {
     MSG *Msg = (MSG*)Message;
-    MessageBox(EMPTY_SID, STR("StandbySoftkeys, v.1.2\n\n(c) DuXeN0N"), NOIMAGE, 1, 0, Msg->Book);
+    MessageBox(EMPTY_TEXTID, STR("StandbySoftkeys, v.1.2\n\n(c) DuXeN0N"), NOIMAGE, 1, 0, Msg->Book);
     return(1);
 };
 
@@ -354,7 +354,7 @@ int main(void)
 {
     if (FindBook(IsStandbySoftkeys)) // Если уже запущен
     {
-        MessageBox(EMPTY_SID, STR("StandbySoftkeys is running"), NOIMAGE, 1, 0, 0);
+        MessageBox(EMPTY_TEXTID, STR("StandbySoftkeys is running"), NOIMAGE, 1, 0, 0);
         SUBPROC(elf_exit);
         return(0);
     }

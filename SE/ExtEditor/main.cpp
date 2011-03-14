@@ -76,7 +76,7 @@ static int ShowAuthorInfo(void *mess ,BOOK *book)
   MSG * msg = (MSG *)mess;
   wchar_t ustr[64];
   snwprintf(ustr,MAXELEMS(ustr)-1,L"\nExtEditor v1.0\nRevision %d\n(c) KreN",__SVN_REVISION__);
-  MessageBox(LGP_NULL,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(LGP_NULL,TextID_Create(ustr,ENC_UCS2,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -343,7 +343,7 @@ static int SelFilePageOnCreate(void *, BOOK *bk)
     filter=L"*.png;*.gif;*.jpg;*.jpeg";
     filefilter=DataBrowser_isFileInListExt_adr();
   }
-  DataBrowserDesc_SetHeaderText(DB_Desc,Str2ID(L"SelectFile",0,SID_ANY_LEN));
+  DataBrowserDesc_SetHeaderText(DB_Desc,TextID_Create(L"SelectFile",ENC_UCS2,TEXTID_ANY_LEN));
   DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID(&mbk->book));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
   DataBrowserDesc_SetFoldersNumber(DB_Desc,folder_num);
@@ -392,7 +392,7 @@ static int SelFilePageOnAccept(void *data, BOOK *bk)
     second_line=mbk->el_elf;
   }
   if (second_line)
-    ListMenu_SetSecondLineText((GUI_LIST *)mbk->edit_list, mbk->edit_list_selected, Str2ID(second_line,6,SID_ANY_LEN));
+    ListMenu_SetSecondLineText((GUI_LIST *)mbk->edit_list, mbk->edit_list_selected, TextID_Create(second_line,ENC_LAT1,TEXTID_ANY_LEN));
   BookObj_ReturnPage(bk, PREVIOUS_EVENT);
   return(1);
 }
@@ -431,10 +431,10 @@ void OnOkSI_EditExt(BOOK * bk, wchar_t *string, int len)
 void CreateSI_EditExt(MyBOOK *myBook)
 {
   wchar_t ustr[64];
-  STRID text, header_name;
-  header_name=Str2ID(L"Input new ext",0,SID_ANY_LEN);
+  TEXTID text, header_name;
+  header_name=TextID_Create(L"Input new ext",ENC_UCS2,TEXTID_ANY_LEN);
   win12512unicode(ustr,myBook->el_ext,MAXELEMS(ustr)-1);
-  text=Str2ID(ustr,0,SID_ANY_LEN);
+  text=TextID_Create(ustr,ENC_UCS2,TEXTID_ANY_LEN);
   myBook->si_editext = CreateStringInputVA(0,
                                               VAR_HEADER_TEXT(header_name),
                                               VAR_STRINP_MIN_LEN(0),
@@ -469,7 +469,7 @@ static void YSPrev (BOOK * bk, void *)
 
 void MsgBoxYesNo(MyBOOK *mbk, wchar_t *qv, void(*f)(BOOK *, int))
 {
-  STRID q=Str2ID(qv,0,SID_ANY_LEN);
+  TEXTID q=TextID_Create(qv,ENC_UCS2,TEXTID_ANY_LEN);
   mbk->YesNoFunc=f;
   mbk->yes_no=CreateYesNoQuestionVA(0,
                                        VAR_BOOK(mbk),
@@ -587,8 +587,8 @@ int onLBMessageEditExtList(GUI_MESSAGE * msg)
       first_txt=L"big img";
       break;
     }
-    GUIonMessage_SetMenuItemText(msg,Str2ID(first_txt,0,SID_ANY_LEN));
-    GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(str,6,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(first_txt,ENC_UCS2,TEXTID_ANY_LEN));
+    GUIonMessage_SetMenuItemSecondLineText(msg,TextID_Create(str,ENC_LAT1,TEXTID_ANY_LEN));
   }
   return(1);
 };
@@ -613,7 +613,7 @@ GUI_LIST *CreateEditExtList(MyBOOK *mbk, int list_id)
     *mbk->el_smicon=0;
     *mbk->el_bicon=0;
   }
-  GUIObject_SetTitleText(lo,Str2ID(title, 0, SID_ANY_LEN));
+  GUIObject_SetTitleText(lo,TextID_Create(title, ENC_UCS2, TEXTID_ANY_LEN));
   ListMenu_SetItemCount(lo,4);
   ListMenu_SetItemStyle(lo,3);
   ListMenu_SetCursorToItem(lo,0);
@@ -653,12 +653,12 @@ int onLBMessage(GUI_MESSAGE * msg)
         }
       }
       GetExtInfo(str, el_ext, el_elf, 0, 0);
-      GUIonMessage_SetMenuItemText(msg,Str2ID(el_ext,6,SID_ANY_LEN));
-      GUIonMessage_SetMenuItemSecondLineText(msg,Str2ID(el_elf,6,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(el_ext,ENC_LAT1,TEXTID_ANY_LEN));
+      GUIonMessage_SetMenuItemSecondLineText(msg,TextID_Create(el_elf,ENC_LAT1,TEXTID_ANY_LEN));
     }
     else
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(L"add new ext",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(L"add new ext",ENC_UCS2,TEXTID_ANY_LEN));
     }
   }
   return(1);
@@ -738,7 +738,7 @@ GUI_LIST * CreateGuiList(MyBOOK * mbk)
   int count=1;
   FREE_GUI(mbk->main_gui);
   mbk->main_gui=CreateListMenu(&mbk->book,0);
-  GUIObject_SetTitleText(mbk->main_gui,Str2ID(L"ExtEditor", 0, SID_ANY_LEN));
+  GUIObject_SetTitleText(mbk->main_gui,TextID_Create(L"ExtEditor", ENC_UCS2, TEXTID_ANY_LEN));
   
   for (int i=0; i<mbk->astr->FirstFree; i++)
   {

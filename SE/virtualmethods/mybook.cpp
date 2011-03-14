@@ -21,7 +21,7 @@ int CMyBook::TerminateElf(CBook** pbookmanbook, CMyBook* book)
 
 int CMyBook::ShowAuthorInfo(CBook** pbookmanbook, CMyBook* book)
 {
-	MessageBox(EMPTY_SID,STR("Hello Wordl!\n\nExample elf.."),NOIMAGE, 1 ,5000, *pbookmanbook);
+	MessageBox(EMPTY_TEXTID,STR("Hello Wordl!\n\nExample elf.."),NOIMAGE, 1 ,5000, *pbookmanbook);
 	return 1;
 }
 

@@ -109,14 +109,14 @@ int NewKey(int key, int r1 , int mode, LPARAM, DISP_OBJ*)
       wchar_t ws[100];
       if (strcmp(bk->xbook->name,"CUIDisplayableBook")==0)
       {
-        TextID2wstr(bk->xbook->app_session->name,ws,100);
+        TextID_GetWString(bk->xbook->app_session->name,ws,100);
       }
       else
       {
         str2wstr(ws,bk->xbook->name);
       }
-      MessageBox(EMPTY_SID,int2strID(lastitem->type),NOIMAGE,1,0,0);
-      MessageBox(EMPTY_SID,Str2ID(ws,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+      MessageBox(EMPTY_TEXTID,TextID_CreateIntegerID(lastitem->type),NOIMAGE,1,0,0);
+      MessageBox(EMPTY_TEXTID,TextID_Create(ws,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
       return -1;
     }
   }
@@ -189,9 +189,9 @@ void save()
         
         wchar_t name[128];
         char name2[128];
-        if (sk->text!=EMPTY_SID)
+        if (sk->text!=EMPTY_TEXTID)
         {
-          TextID2wstr(sk->text,name,100);
+          TextID_GetWString(sk->text,name,100);
           unicode2win1251(name2, name, 100);
         }
         else
@@ -203,7 +203,7 @@ void save()
         char name5[128];
         if (sk->text_mini!=SID_NULL)
         {
-          TextID2wstr(sk->text_mini, name,100);
+          TextID_GetWString(sk->text_mini, name,100);
           unicode2win1251(name3, name, 100);
         }
         else
@@ -212,7 +212,7 @@ void save()
         }
         if (sk->text_disabled!=SID_NULL)
         {
-          TextID2wstr(sk->text_disabled, name,100);
+          TextID_GetWString(sk->text_disabled, name,100);
           unicode2win1251(name4, name, 100);
         }
         else
@@ -221,7 +221,7 @@ void save()
         }
         if (sk->text_help!=SID_NULL)
         {
-          TextID2wstr(sk->text_help, name,100);
+          TextID_GetWString(sk->text_help, name,100);
           unicode2win1251(name5, name, 100);
         }
         else
@@ -243,15 +243,15 @@ void save()
       for (x=0;x<lst->FirstFree;x++)
       {
         SOFTKEY * sk = (SOFTKEY*)List_Get(lst,x);
-        if (sk->visible && sk->action!=ACTION_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=EMPTY_SID && sk->parent_action==0xFFFF)
+        if (sk->visible && sk->action!=ACTION_BACK && isvisible(lst,x) && isInIronPatch(sk->action)!=true && sk->text!=EMPTY_TEXTID && sk->parent_action==0xFFFF)
         {
           char pattern[1024];
           
           wchar_t name[128];
           char name2[128];
-          if (sk->text!=EMPTY_SID)
+          if (sk->text!=EMPTY_TEXTID)
           {
-            TextID2wstr(sk->text,name,100);
+            TextID_GetWString(sk->text,name,100);
             unicode2win1251(name2, name, 100);
           }
           else
@@ -263,7 +263,7 @@ void save()
           char name5[128];
           if (sk->text_mini!=SID_NULL)
           {
-            TextID2wstr(sk->text_mini, name,100);
+            TextID_GetWString(sk->text_mini, name,100);
             unicode2win1251(name3, name, 100);
           }
           else
@@ -272,7 +272,7 @@ void save()
           }
           if (sk->text_disabled!=SID_NULL)
           {
-            TextID2wstr(sk->text_disabled, name,100);
+            TextID_GetWString(sk->text_disabled, name,100);
             unicode2win1251(name4, name, 100);
           }
           else
@@ -281,7 +281,7 @@ void save()
           }
           if (sk->text_help!=SID_NULL)
           {
-            TextID2wstr(sk->text_help, name,100);
+            TextID_GetWString(sk->text_help, name,100);
             unicode2win1251(name5, name, 100);
           }
           else

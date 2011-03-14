@@ -11,7 +11,7 @@ typedef struct
 }MyBOOK;
 
 DISP_OBJ * StatusRow;
-STRID SIDheap=EMPTY_SID;
+TEXTID SIDheap=EMPTY_TEXTID;
 void (*SIonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
 
 u16 timer; // ID таймера
@@ -41,8 +41,8 @@ void Draw(DISP_OBJ * db,int r1, int r2,int r3)
 
 void onTimer(u16 r0, LPARAM)
 {
-  if (SIDheap!=EMPTY_SID){TextFree(SIDheap);SIDheap=EMPTY_SID;}
-  SIDheap=int2strID(GetFreeBytesOnHeap());
+  if (SIDheap!=EMPTY_TEXTID){TextID_Destroy(SIDheap);SIDheap=EMPTY_TEXTID;}
+  SIDheap=TextID_CreateIntegerID(GetFreeBytesOnHeap());
   Timer_ReSet(&timer,REFRESH_TIME,onTimer,0);
   DispObject_InvalidateRect(StatusRow,0);
 }
@@ -64,7 +64,7 @@ typedef struct
 static int ShowAuthorInfo(void *mess ,BOOK *book)
 {
   MSG * msg = (MSG *)mess;
-  MessageBox(EMPTY_SID,STR("BcfgExample"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("BcfgExample"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 

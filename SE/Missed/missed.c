@@ -47,7 +47,7 @@ void onTimer(u16 timerID, LPARAM lparam)
 		{
 			wchar_t temp[256];
 			snwprintf(temp, MAXELEMS(temp), _T("unknown event status\n%x: %x"), me, mestatus &~(skipevents|checkevents));
-			MessageBox(EMPTY_SID, Str2ID(temp,0,MAXELEMS(temp)), NOIMAGE, 1, 0, 0);
+			MessageBox(EMPTY_TEXTID, TextID_Create(temp,ENC_UCS2,MAXELEMS(temp)), NOIMAGE, 1, 0, 0);
 			skipevents|=mestatus;
 		}
 #endif
@@ -98,7 +98,7 @@ void elf_exit(void)
 void bookOnDestroy(BOOK * book)
 {
 	Timer_Kill(&timer);
-	MessageBox(EMPTY_SID,Str2ID( LELFNAME L" has been stopped",0,SID_ANY_LEN),NOIMAGE,1,5000,0);
+	MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME L" has been stopped",ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,5000,0);
 	SUBPROC(elf_exit);
 }
 
@@ -110,7 +110,7 @@ int onExit(void* r0,BOOK* b)
 
 int onAbout(void* mess,BOOK* b)
 {
-	MessageBox(EMPTY_SID,Str2ID( LELFNAME LELFVERSION,0,SID_ANY_LEN),NOIMAGE, 1 ,5000, *(BOOK**)mess);
+	MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME LELFVERSION,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE, 1 ,5000, *(BOOK**)mess);
 	return 1;
 }
 
@@ -180,7 +180,7 @@ int main(wchar_t* filename)
 		{
 			snwprintf(temp, MAXELEMS(temp), _T("bad '%s'\nconfig:\npath:%ls\nname:%ls\ntime:%d"),badarg
 				,cfg_filepath,cfg_filename,cfg_period);
-			MessageBox(EMPTY_SID,Str2ID(temp,0,MAXELEMS(temp)),NOIMAGE,1,0,0);
+			MessageBox(EMPTY_TEXTID,TextID_Create(temp,ENC_UCS2,MAXELEMS(temp)),NOIMAGE,1,0,0);
 			SUBPROC(elf_exit);
 			return 0;
 		}
@@ -208,7 +208,7 @@ int main(wchar_t* filename)
 		timer=Timer_Set(cfg_period*1000, onTimer, 0);
 
 		if(!wstrwstr(filename,GetDir(DIR_ELFS_DAEMONS)))
-			MessageBox(EMPTY_SID,Str2ID( LELFNAME L" has been started",0,SID_ANY_LEN),NOIMAGE,1,5000,0);
+			MessageBox(EMPTY_TEXTID,TextID_Create( LELFNAME L" has been started",ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,5000,0);
 	}
 
 	return 0;

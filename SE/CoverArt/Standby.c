@@ -169,13 +169,13 @@ void Redraw(DISP_OBJ_ONREDRAW_METHOD DefRedraw, int DrawOld, signed int PlusY, D
         {
           if (labels[x].Hide==false)
           {
-            DrawLine(labels[x].SHOW,labels[x].Font,labels[x].str,labels[x].CT,labels[x].X,labels[x].Y+PlusY+AnimYPlus,labels[x].MaxX,labels[x].MaxY+PlusY+AnimYPlus,labels[x].borderColor,labels[x].Color,SID_ANY_LEN, labels[x].UsedInAnim, &labels[x]);
+            DrawLine(labels[x].SHOW,labels[x].Font,labels[x].str,labels[x].CT,labels[x].X,labels[x].Y+PlusY+AnimYPlus,labels[x].MaxX,labels[x].MaxY+PlusY+AnimYPlus,labels[x].borderColor,labels[x].Color,TEXTID_ANY_LEN, labels[x].UsedInAnim, &labels[x]);
           }
           else if (labels[x].Hide==true)
           {
             if (isInStandby==true)
             {
-              DrawLine(labels[x].SHOW,labels[x].Font,labels[x].str,labels[x].CT,labels[x].X,labels[x].Y+PlusY+AnimYPlus,labels[x].MaxX,labels[x].MaxY+PlusY+AnimYPlus,labels[x].borderColor,labels[x].Color,SID_ANY_LEN, labels[x].UsedInAnim, &labels[x]);
+              DrawLine(labels[x].SHOW,labels[x].Font,labels[x].str,labels[x].CT,labels[x].X,labels[x].Y+PlusY+AnimYPlus,labels[x].MaxX,labels[x].MaxY+PlusY+AnimYPlus,labels[x].borderColor,labels[x].Color,TEXTID_ANY_LEN, labels[x].UsedInAnim, &labels[x]);
             }
           }
         }

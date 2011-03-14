@@ -400,16 +400,16 @@ void act_proc(EVENT *ev)
   else if (t==13)
   {
     if (!ev->param || ev->param[0]==0)
-      StatusIndication_ShowNotes(EMPTY_SID);
+      StatusIndication_ShowNotes(EMPTY_TEXTID);
     else
-      StatusIndication_ShowNotes(Str2ID(ev->param,0,SID_ANY_LEN));
+      StatusIndication_ShowNotes(TextID_Create(ev->param,ENC_UCS2,TEXTID_ANY_LEN));
   }
   else if (t==14)
   {
     if (!ev->param || ev->param[0]==0)
-      StatusIndication_Item8_SetText(EMPTY_SID);
+      StatusIndication_Item8_SetText(EMPTY_TEXTID);
     else
-      StatusIndication_Item8_SetText(Str2ID(ev->param,0,SID_ANY_LEN));
+      StatusIndication_Item8_SetText(TextID_Create(ev->param,ENC_UCS2,TEXTID_ANY_LEN));
   }
   else if (t==15)
   {

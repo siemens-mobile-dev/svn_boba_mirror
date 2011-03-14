@@ -112,13 +112,13 @@ __swi __arm void* __original_DataBrowserDesc_Create( void );
 __swi __arm void __original_DataBrowserDesc_SetItemStyle( void* DataBrowserDesc, int style );
 
 #pragma swi_number=0x121
-__swi __arm void __original_DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, STRID );
+__swi __arm void __original_DataBrowserDesc_SetHeaderText( void* DataBrowserDesc, TEXTID );
 
 #pragma swi_number=0x122
 __swi __arm void __original_DataBrowserDesc_SetFolders( void* DataBrowserDesc, const wchar_t** FolderList );
 
 #pragma swi_number=0x123
-__swi __arm void __original_DataBrowserDesc_SetOKSoftKeyText( void* DataBrowserDesc, STRID );
+__swi __arm void __original_DataBrowserDesc_SetOKSoftKeyText( void* DataBrowserDesc, TEXTID );
 
 #pragma swi_number=0x124
 __swi __arm void __original_DataBrowser_Create( void* DataBrowserDesc );
@@ -167,7 +167,7 @@ __swi __arm BOOK* __original_Find_StandbyBook( void );
 __swi __arm void __original_BookObj_SetFocus( BOOK* book, int display );
 
 #pragma swi_number=0x133
-__swi __arm void __original_GUIObject_SetTitleText( GUI*, STRID );
+__swi __arm void __original_GUIObject_SetTitleText( GUI*, TEXTID );
 
 #pragma swi_number=0x134
 __swi __arm void __original_GUIObject_Show( GUI* );
@@ -182,22 +182,22 @@ __swi __arm void __original_GUIObject_SetStyle( GUI*, int style );
 __swi __arm int __original_GUIonMessage_GetCreatedItemIndex( GUI_MESSAGE* msg );
 
 #pragma swi_number=0x138
-__swi __arm char __original_GUIonMessage_SetMenuItemText( GUI_MESSAGE* msg, STRID );
+__swi __arm char __original_GUIonMessage_SetMenuItemText( GUI_MESSAGE* msg, TEXTID );
 
 #pragma swi_number=0x139
-__swi __arm char __original_GUIonMessage_SetMenuItemSecondLineText( GUI_MESSAGE* msg, STRID );
+__swi __arm char __original_GUIonMessage_SetMenuItemSecondLineText( GUI_MESSAGE* msg, TEXTID );
 
 #pragma swi_number=0x13A
-__swi __arm char __original_GUIonMessage_SetMenuItemInfoText( GUI_MESSAGE* msg, STRID );
+__swi __arm char __original_GUIonMessage_SetMenuItemInfoText( GUI_MESSAGE* msg, TEXTID );
 
 #pragma swi_number=0x13B
-__swi __arm char __original_GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, STRID );
+__swi __arm char __original_GUIonMessage_SetMenuItemUnavailableText( GUI_MESSAGE* msg, TEXTID );
 
 #pragma swi_number=0x13C
 __swi __arm void __original_GUIonMessage_SetMenuItemIcon( GUI_MESSAGE* msg, int align, IMAGEID );
 
 #pragma swi_number=0x13D
-__swi __arm void __original_DispObject_SetTitleText( DISP_OBJ*, STRID );
+__swi __arm void __original_DispObject_SetTitleText( DISP_OBJ*, TEXTID );
 
 #pragma swi_number=0x13E
 __swi __arm int __original_ListMenu_GetSelectedItem( GUI_LIST* );
@@ -214,10 +214,10 @@ __swi __arm int __original_IsScreenSaverBook( BOOK* bk );
 __swi __arm IS_NEEDED_BOOK __original_get_IsScreenSaverBook( void );
 
 #pragma swi_number=0x142
-__swi __arm void __original_StatusIndication_SetItemText( GUI*, int item, STRID );
+__swi __arm void __original_StatusIndication_SetItemText( GUI*, int item, TEXTID );
 
 #pragma swi_number=0x143
-__swi __arm void __original_StatusIndication_ShowNotes( STRID );
+__swi __arm void __original_StatusIndication_ShowNotes( TEXTID );
 
 #pragma swi_number=0x144
 __swi __arm GUI* __original_CreateStringInputVA( int, ... );
@@ -232,25 +232,25 @@ __swi __arm void __original_OneOfMany_SetItemCount( GUI_ONEOFMANY*, int count );
 __swi __arm void __original_OneOfMany_SetChecked( GUI_ONEOFMANY*, int checked );
 
 #pragma swi_number=0x148
-__swi __arm void __original_OneOfMany_SetTexts( GUI_ONEOFMANY*, STRID* strids, int Count );
+__swi __arm void __original_OneOfMany_SetTexts( GUI_ONEOFMANY*, TEXTID* strids, int Count );
 
 #pragma swi_number=0x149
 __swi __arm int __original_OneOfMany_GetSelected( GUI_ONEOFMANY* );
 
 #pragma swi_number=0x14A
-__swi __arm void __original_StatusIndication_Item8_SetText( STRID );
+__swi __arm void __original_StatusIndication_Item8_SetText( TEXTID );
 
 #pragma swi_number=0x14B
 __swi __arm void __original_GUIObject_SoftKeys_SetAction( GUI*, u16 actionID, SKACTIONPROC proc );
 
 #pragma swi_number=0x14C
-__swi __arm void __original_GUIObject_SoftKeys_SetText( GUI*, u16 actionID, STRID );
+__swi __arm void __original_GUIObject_SoftKeys_SetText( GUI*, u16 actionID, TEXTID );
 
 #pragma swi_number=0x14D
 __swi __arm void __original_GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 
 #pragma swi_number=0x14E
-__swi __arm void __original_GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, STRID );
+__swi __arm void __original_GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, TEXTID );
 
 #pragma swi_number=0x14F
 __swi __arm void __original_GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
@@ -292,22 +292,22 @@ __swi __arm int __original_strlen( const char* str );
 __swi __arm char* __original_wstr2strn( char* str, const wchar_t* wstr, int maxlen );
 
 #pragma swi_number=0x15C
-__swi __arm STRID __original_int2strID( int num );
+__swi __arm TEXTID __original_TextID_CreateIntegerID( int num );
 
 #pragma swi_number=0x15D
-__swi __arm STRID __original_Str2ID( const void* wstr, int flag, int len );
+__swi __arm TEXTID __original_TextID_Create( const void* wstr, TEXT_ENCODING flag, int len );
 
 #pragma swi_number=0x15E
-__swi __arm void __original_StrID2Str( STRID, char* str, int maxlen );
+__swi __arm void __original_TextID_GetString( TEXTID, char* str, int maxlen );
 
 #pragma swi_number=0x15F
-__swi __arm int __original_TextID2wstr( STRID, wchar_t* dest, int maxlen );
+__swi __arm int __original_TextID_GetWString( TEXTID, wchar_t* dest, int maxlen );
 
 #pragma swi_number=0x160
-__swi __arm int __original_TextGetLength( STRID );
+__swi __arm int __original_TextID_GetLength( TEXTID );
 
 #pragma swi_number=0x161
-__swi __arm void __original_TextFree( STRID );
+__swi __arm void __original_TextID_Destroy( TEXTID );
 
 #pragma swi_number=0x162
 __swi __arm int __original_AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
@@ -319,7 +319,7 @@ __swi __arm int __original_AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_I
 __swi __arm int __original_AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 
 #pragma swi_number=0x165
-__swi __arm int __original_AB_GETNBROFITEMS( int get_from, int unk_0 );
+__swi __arm int __original_AB_GETNBROFITEMS( int get_from, int sub_id );
 
 #pragma swi_number=0x166
 __swi __arm int __original_PNUM_len( void* pnum );
@@ -399,7 +399,7 @@ __swi __arm PROCESS __original_sender( union SIGNAL** sig );
 #pragma swi_number=0x180
 __swi __arm void __original_free_buf( union SIGNAL** sig );
 #pragma swi_number=0x181
-__swi __arm PROCESS __original_create_process( int proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
+__swi __arm PROCESS __original_create_process( PROCESS_TYPE proc_type, char* name, OSENTRYPOINT* entrypoint, OSADDRESS stack_size, OSPRIORITY priority, OSTIME timeslice, PROCESS pid_block, void* redir_table, OSVECTOR vector, OSUSER user );
 #pragma swi_number=0x182
 __swi __arm void __original_start( PROCESS pid );
 #pragma swi_number=0x183
@@ -500,7 +500,7 @@ __swi __arm void __original_ListMenu_SetItemCount( GUI_LIST*, int item_count );
 #pragma swi_number=0x81C2
 __swi __arm LIST** __original_ROOT_APP( void );
 #pragma swi_number=0x1C3
-__swi __arm void __original_GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, STRID );
+__swi __arm void __original_GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, TEXTID );
 #pragma swi_number=0x1C4
 __swi __arm void __original_GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
 #pragma swi_number=0x1C5
@@ -508,7 +508,7 @@ __swi __arm int __original_REQUEST_SYSTEM_SHUTDOWN( void );
 #pragma swi_number=0x1C6
 __swi __arm int __original_REQUEST_SYSTEM_RESTART( void );
 #pragma swi_number=0x1C7
-__swi __arm void __original_GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, STRID short_text, STRID full_text );
+__swi __arm void __original_GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, TEXTID short_text, TEXTID full_text );
 
 #pragma swi_number=0x1C8
 __swi __arm int __original_IsRightNowBook( BOOK* book );
@@ -537,7 +537,7 @@ __swi __arm void __original_GUIInput_SetIcon( GUI*, IMAGEID );
 __swi __arm int __original_StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 
 #pragma swi_number=0x81D1
-__swi __arm PAudioControl* __original_GetAudioControlPtr( );
+__swi __arm PAudioControl* __original_GetAudioControlPtr( void );
 #pragma swi_number=0x1D2
 __swi __arm int __original_AudioControl_Vibrate( PAudioControl pIAudioControl, int vibratime, int pausetime, int totaltime );
 
@@ -548,7 +548,7 @@ __swi __arm int __original_GetVolumeSize( wchar_t* root_folder, VOLUMESIZE* );
 __swi __arm GUI_NOFMANY* __original_CreateNOfMany( BOOK* book );
 
 #pragma swi_number=0x1D5
-__swi __arm void __original_NOfMany_SetTexts( GUI_NOFMANY*, STRID* strids, int items_count );
+__swi __arm void __original_NOfMany_SetTexts( GUI_NOFMANY*, TEXTID* strids, int items_count );
 
 #pragma swi_number=0x1D6
 __swi __arm void __original_NOfMany_SetChecked( GUI_NOFMANY*, u16* checked_table, int items_count );
@@ -566,7 +566,7 @@ __swi __arm int __original_NOfMany_GetChecked( GUI_NOFMANY*, u16* buffer );
 __swi __arm void __original_NOfMany_SetOnMessage( GUI_NOFMANY*, int (*proc)( GUI_MESSAGE* ) );
 
 #pragma swi_number=0x1DF
-__swi __arm PAudioControl __original_AudioControl_Init( );
+__swi __arm PAudioControl __original_AudioControl_Init( void );
 
 #pragma swi_number=0x1E0
 __swi __arm void __original_OneOfMany_SetFocused( GUI_ONEOFMANY*, int item );
@@ -576,9 +576,9 @@ __swi __arm void __original_OneOfMany_SetOnMessage( GUI_ONEOFMANY*, int (*proc)(
 
 
 #pragma swi_number=0x1E2
-__swi __arm GUI_FEEDBACK* __original_CreateMonitorFeedback( STRID, BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
+__swi __arm GUI_FEEDBACK* __original_CreateMonitorFeedback( TEXTID, BOOK*, void (*onbusy)(BOOK*), void (*onedit)(BOOK*), void (*ondelete)(BOOK*) );
 #pragma swi_number=0x1E3
-__swi __arm void __original_Feedback_SetText( GUI_FEEDBACK*, STRID );
+__swi __arm void __original_Feedback_SetText( GUI_FEEDBACK*, TEXTID );
 #pragma swi_number=0x1E4
 __swi __arm int __original_GetBatteryState( void* unused, BATT* );
 #pragma swi_number=0x1E5
@@ -598,7 +598,7 @@ __swi __arm void __original_BookObj_AddGUIObject( BOOK* book, GUI* );
 #pragma swi_number=0x1EC
 __swi __arm void __original_DrawRect( int x1, int y1, int x2, int y2, int pen_color, int brush_color );
 #pragma swi_number=0x1ED
-__swi __arm void __original_DrawString( STRID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
+__swi __arm void __original_DrawString( TEXTID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
 #pragma swi_number=0x1EE
 __swi __arm void __original_XGUIList_AddGUIObject( XGUILIST* xguilist, GUI* );
 #pragma swi_number=0x1EF
@@ -676,13 +676,13 @@ __swi __arm void* __original_get_APP_DESC_TABLE( void );
 #pragma swi_number=0x212
 __swi __arm int __original_AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 #pragma swi_number=0x213
-__swi __arm STRID __original_AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
+__swi __arm TEXTID __original_AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
 #pragma swi_number=0x214
-__swi __arm STRID __original_AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
+__swi __arm TEXTID __original_AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
 #pragma swi_number=0x215
 __swi __arm int __original_GetABRecNum( AB_GET_STRUCT* );
 #pragma swi_number=0x8216
-__swi __arm AB_ITEM_DESC* __original_get_AB_ITEMS_DESC( );
+__swi __arm AB_ITEM_DESC* __original_get_AB_ITEMS_DESC( void );
 
 
 #pragma swi_number=0x217
@@ -778,15 +778,15 @@ __swi __arm DISP_OBJ_METHOD __original_DispObject_GetMethod0C( DISP_OBJ* );
 #pragma swi_number=0x240
 __swi __arm void __original_JavaSession_Manager( int cmd );
 #pragma swi_number=0x241
-__swi __arm STRID __original_JavaSession_GetName( void );
+__swi __arm TEXTID __original_JavaSession_GetName( void );
 #pragma swi_number=0x242
-__swi __arm STRID __original_TextCopyId( STRID );
+__swi __arm TEXTID __original_TextID_Copy( TEXTID );
 #pragma swi_number=0x243
 __swi __arm UI_APP_SESSION* __original_BookObj_GetSession( BOOK* book );
 #pragma swi_number=0x244
 __swi __arm void __original_GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 #pragma swi_number=0x245
-__swi __arm void __original_GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, STRID );
+__swi __arm void __original_GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 #pragma swi_number=0x246
 __swi __arm int __original_GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x247
@@ -815,7 +815,7 @@ __swi __arm DB_EXT* __original_LastExtDB( void );
 #pragma swi_number=0x256
 __swi __arm void __original_GetOtherExtMethods( FILESUBROUTINE** );
 #pragma swi_number=0x257
-__swi __arm int __original_MessageBox( STRID header_text, STRID message_text, IMAGEID, int style, int time, BOOK* book );
+__swi __arm int __original_MessageBox( TEXTID header_text, TEXTID message_text, IMAGEID, int style, int time, BOOK* book );
 #pragma swi_number=0x258
 __swi __arm int __original_Display_GetHeight( int display );
 #pragma swi_number=0x259
@@ -920,10 +920,10 @@ __swi __arm SURFACE** __original_get_Surfaces( void );
 #pragma swi_number=0x286
 __swi __arm int __original_iconidname2id( const wchar_t* idname, int maxnamelen, int* id );
 #pragma swi_number=0x287
-__swi __arm int __original_textidname2id( const wchar_t* idname, int maxnamelen, STRID* id );
+__swi __arm int __original_textidname2id( const wchar_t* idname, int maxnamelen, TEXTID* id );
 
 #pragma swi_number=0x288
-__swi __arm void __original_ListMenu_SetNoItemText( GUI_LIST*, STRID str );
+__swi __arm void __original_ListMenu_SetNoItemText( GUI_LIST*, TEXTID str );
 
 #pragma swi_number=0x28A
 __swi __arm int __original_IsFmRadioBook( BOOK* bk );
@@ -1005,7 +1005,7 @@ __swi __arm int __original_StandbyBackground_SetImage( int type, int, int, const
 #pragma swi_number=0x2A5
 __swi __arm GUI* __original_CreateYesNoQuestionVA( int zero, ... );
 #pragma swi_number=0x2A6
-__swi __arm void __original_ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, STRID );
+__swi __arm void __original_ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 
 #pragma swi_number=0x2A7
 __swi __arm void __original__REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -1062,7 +1062,7 @@ __swi __arm unsigned int __original_TimeInput_GetTimeInt( GUI* );
 __swi __arm FONT_DESC* __original_GetFontDesc( void );
 
 #pragma swi_number=0x82BC
-__swi __arm int* __original_GetFontCount( );
+__swi __arm int* __original_GetFontCount( void );
 
 #pragma swi_number=0x2BD
 __swi __arm int __original_GC_GetBrushColor( GC* gc );
@@ -1078,7 +1078,7 @@ __swi __arm wchar_t* __original_MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBo
 #pragma swi_number=0x2C2
 __swi __arm void __original_BookObj_SoftKeys_SetAction( BOOK* book, int actionID, SKACTIONPROC proc );
 #pragma swi_number=0x2C3
-__swi __arm void __original_BookObj_SoftKeys_SetText( BOOK* book, int actionID, STRID );
+__swi __arm void __original_BookObj_SoftKeys_SetText( BOOK* book, int actionID, TEXTID );
 #pragma swi_number=0x2C4
 __swi __arm BOOK* __original_FindBookByID( int BookID );
 
@@ -1091,13 +1091,13 @@ __swi __arm void __original_Feedback_SetOnClose( GUI_FEEDBACK*, void (*OnClose)(
 #pragma swi_number=0x2C8
 __swi __arm void __original_Feedback_SetTimeout( GUI_FEEDBACK*, int time_ms );
 #pragma swi_number=0x2C9
-__swi __arm void __original_Feedback_SetTextExtended( GUI_FEEDBACK*, STRID text, int where );
+__swi __arm void __original_Feedback_SetTextExtended( GUI_FEEDBACK*, TEXTID text, int where );
 
 #pragma swi_number=0x2CA
 __swi __arm void __original_TabMenuBar_SetOnTabSwitch( GUI_TABMENUBAR*, void (*proc)( BOOK*, int act_tab ) );
 
 #pragma swi_number=0x2CB
-__swi __arm STRID __original_KeyCode2Name( int key_code );
+__swi __arm TEXTID __original_KeyCode2Name( int key_code );
 
 #pragma swi_number=0x2CC
 __swi __arm int __original_ImageID_Get( const wchar_t* fpath, const wchar_t* fname, IMAGEID* );
@@ -1151,7 +1151,7 @@ __swi __arm IS_NEEDED_BOOK __original_get_IsDataBrowserBook( void );
 __swi __arm SUB_EXECUTE* __original_BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
 
 #pragma swi_number=0x2E1
-__swi __arm STRID __original_Shortcut_Get_MenuItemName( void* );
+__swi __arm TEXTID __original_Shortcut_Get_MenuItemName( void* );
 #pragma swi_number=0x2E2
 __swi __arm IMAGEID __original_Shortcut_Get_MenuItemIconID( void* );
 
@@ -1176,7 +1176,7 @@ __swi __arm void __original_MainInput_Hide( GUI* );
 #pragma swi_number=0x2EC
 __swi __arm void __original_DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 #pragma swi_number=0x2ED
-__swi __arm STRID __original_PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
+__swi __arm TEXTID __original_PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
 #pragma swi_number=0x2EE
 __swi __arm int __original_SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
 
@@ -1217,7 +1217,7 @@ __swi __arm int __original_w_mkdir( const wchar_t* path, int mode );
 #pragma swi_number=0x2FF
 __swi __arm int __original_DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
 #pragma swi_number=0x300
-__swi __arm int __original_Disp_GetStrIdWidth( STRID, int len );
+__swi __arm int __original_Disp_GetStrIdWidth( TEXTID, int len );
 
 #pragma swi_number=0x301
 __swi __arm int __original_MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
@@ -1252,7 +1252,7 @@ __swi __arm int __original_JavaApp_LogoImageID_Get( wchar_t* fullpath, IMAGEID* 
 #pragma swi_number=0x30D
 __swi __arm GUI* __original_CreateProgressBar( BOOK* book, int display );
 #pragma swi_number=0x30E
-__swi __arm void __original_ProgressBar_SetText( GUI*, STRID text );
+__swi __arm void __original_ProgressBar_SetText( GUI*, TEXTID text );
 #pragma swi_number=0x30F
 __swi __arm void __original_ProgressBar_SetIcon( GUI*, IMAGEID );
 #pragma swi_number=0x310
@@ -1261,7 +1261,7 @@ __swi __arm void __original_ProgressBar_SetPercentValue( GUI*, int value );
 __swi __arm void __original_ProgressBar_SetBarDisabled( GUI*, BOOL );
 
 #pragma swi_number=0x312
-__swi __arm void __original_StringInput_DispObject_SetText( DISP_OBJ*, STRID );
+__swi __arm void __original_StringInput_DispObject_SetText( DISP_OBJ*, TEXTID );
 
 #pragma swi_number=0x313
 __swi __arm void __original_GUIObject_SetTitleBackgroundImage( GUI*, IMAGEID );
@@ -1476,13 +1476,13 @@ __swi __arm void __original_REQUEST_SETTING_ALLOWEDCALLERS_GET( const int* sync,
 __swi __arm void* __original_IncommingCall_Accept( BOOK* book );
 
 #pragma swi_number=0x369
-__swi __arm void __original_MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, STRID );
+__swi __arm void __original_MediaPlayer_SoftKeys_SetText( GUI* player_gui, int actionID, TEXTID );
 #pragma swi_number=0x36A
 __swi __arm void __original_MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, SKACTIONPROC proc );
 #pragma swi_number=0x36B
 __swi __arm void __original_MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 #pragma swi_number=0x36C
-__swi __arm void __original_MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, STRID );
+__swi __arm void __original_MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, TEXTID );
 #pragma swi_number=0x36D
 __swi __arm void __original_MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 
@@ -1498,7 +1498,7 @@ __swi __arm void __original_GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID
 __swi __arm int __original_Request_ICA_ShutdownAllConnections( const int* sync );
 
 #pragma swi_number=0x372
-__swi __arm int __original_REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, STRID_DATA*, char* error );
+__swi __arm int __original_REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, TEXTID_DATA*, char* error );
 
 #pragma swi_number=0x373
 __swi __arm int __original_DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
@@ -1635,7 +1635,7 @@ __swi __arm void __original_DispObject_SetBackgroundImage( DISP_OBJ*, IMAGEID );
 __swi __arm void __original_DispObject_SetTitleBackgroundImage( DISP_OBJ*, IMAGEID );
 
 #pragma swi_number=0x3AB
-__swi __arm void __original_TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, STRID );
+__swi __arm void __original_TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, TEXTID );
 
 #pragma swi_number=0x3AC
 __swi __arm BOOK* __original_GUIObject_GetBook( GUI* );
@@ -1712,7 +1712,7 @@ __swi __arm int __original_Theme_DestroyMenuIcons( void );
 __swi __arm void __original_CoCreateInstance( PUUID cid, PUUID iid, void** pInterface );
 
 #pragma swi_number=0x3C9
-__swi __arm void __original_GUIObject_SetSecondRowTitleText( GUI*, STRID );
+__swi __arm void __original_GUIObject_SetSecondRowTitleText( GUI*, TEXTID );
 #pragma swi_number=0x3CA
 __swi __arm int __original_ListMenu_GetItemCount( GUI_LIST* );
 
@@ -1738,7 +1738,7 @@ __swi __arm void __original_DispObject_WindowSetPosition( DISP_OBJ*, int x, int 
 __swi __arm void __original_DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 
 #pragma swi_number=0x3D2
-__swi __arm STRID __original_Feedback_DispObject_GetText( DISP_OBJ* );
+__swi __arm TEXTID __original_Feedback_DispObject_GetText( DISP_OBJ* );
 
 #pragma swi_number=0x3D3
 __swi __arm void __original_DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );

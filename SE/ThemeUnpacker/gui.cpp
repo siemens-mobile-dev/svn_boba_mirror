@@ -38,7 +38,7 @@ void OnEnterGui( BOOK* bk, GUI* )
     {
       snwprintf(ustr,MAXELEMS(ustr)-1,L"Unpacking failed\nTotal files: %d", res);
     }
-    MessageBox(EMPTY_SID,Str2ID(ustr,0,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(ustr,ENC_UCS2,MAXELEMS(ustr)-1), NOIMAGE, 1, 5000,0);
     FreeBook(bk);
   }
 };
@@ -50,11 +50,11 @@ int onLBMessage(GUI_MESSAGE * msg)
     int item=GUIonMessage_GetCreatedItemIndex(msg);
     if (item==0)
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Activate",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Activate",ENC_UCS2,TEXTID_ANY_LEN));
     }
     else
     {
-      GUIonMessage_SetMenuItemText(msg,Str2ID(L"Unpack",0,SID_ANY_LEN));
+      GUIonMessage_SetMenuItemText(msg,TextID_Create(L"Unpack",ENC_UCS2,TEXTID_ANY_LEN));
     }
   }
   return(1);
@@ -65,7 +65,7 @@ GUI_LIST * CreateGuiList(BOOK * book)
   GUI_LIST * lo=0;
   if (lo=CreateListMenu(book,0))
   {
-    GUIObject_SetTitleText(lo,Str2ID(L"Install theme",0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,TextID_Create(L"Install theme",ENC_UCS2,TEXTID_ANY_LEN));
     ListMenu_SetItemCount(lo,2);
     ListMenu_SetCursorToItem(lo,0);
     ListMenu_SetOnMessage(lo,onLBMessage);

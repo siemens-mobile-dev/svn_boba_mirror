@@ -14,7 +14,7 @@ GUI *CreateVolInput(BOOK *bk, int vol, int maxvol)
                              VAR_BOOK(bk), 
                              VAR_PERINP_ROWNUM(maxvol),
                              VAR_PERINP_CURPERC(vol), 
-                             VAR_HEADER_TEXT(Str2ID(lng[VOLUME],0,SID_ANY_LEN)));
+                             VAR_HEADER_TEXT(TextID_Create(lng[VOLUME],ENC_UCS2,TEXTID_ANY_LEN)));
   GUIInput_SetIcon(g, 0xEB42);
   return g;
 };

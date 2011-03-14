@@ -39,6 +39,6 @@ void DrawHighlightID2(int font,int text,int ct, int XPos, int YPos, int borderCo
   DrawString(text,ct,XPos+1,YPos+1,MaxXPos+1,MaxYPos,60,0x05,borderColor,borderColor);
   //Рисуем с основными координатами:
   DrawString(text,ct,XPos,YPos,MaxXPos,MaxYPos,60,0x05,NormalColor,NormalColor);
-  if (clean)TextFree(text);
+  if (clean)TextID_Destroy(text);
 };
 

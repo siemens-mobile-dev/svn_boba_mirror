@@ -63,7 +63,7 @@ int TerminateElf(void * ,BOOK* book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("CreateTXTFile, v.1.2\r\n\r\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("CreateTXTFile, v.1.2\r\n\r\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -110,8 +110,8 @@ int onAccept(void * data, BOOK *)
   if (fstat( FILEITEM_GetPath((FILEITEM*)data), CreateFileBook->FileName, 0)>=0)
   {
     int str_id;
-    textidname2id(L"DB_NAME_EXIST_TXT",SID_ANY_LEN,&str_id);
-    MessageBox(EMPTY_SID,str_id, NOIMAGE, 1, 5000,0);
+    textidname2id(L"DB_NAME_EXIST_TXT",TEXTID_ANY_LEN,&str_id);
+    MessageBox(EMPTY_TEXTID,str_id, NOIMAGE, 1, 5000,0);
     DestroyList(0,0);
   }
   else
@@ -133,14 +133,14 @@ int onAccept(void * data, BOOK *)
       }
       if (fwrite(f,str_buf,len)!=len)
       {
-        MessageBox(EMPTY_SID,STR("Write File Error!!!"), NOIMAGE, 1, 5000,0);
+        MessageBox(EMPTY_TEXTID,STR("Write File Error!!!"), NOIMAGE, 1, 5000,0);
       }
       fclose(f);
       FreeBook((BOOK*)CreateFileBook);
     }
     else
     {
-      MessageBox(EMPTY_SID,STR("Can't open file. Try later."), NOIMAGE, 1, 5000,0);
+      MessageBox(EMPTY_TEXTID,STR("Can't open file. Try later."), NOIMAGE, 1, 5000,0);
     }
   }
   return(0);
@@ -152,7 +152,7 @@ void CreateBrowser(wchar_t const ** folder_list)
   char option[20];
   strcpy(option,"semc/dir");
   int str_id;
-  textidname2id(L"DB_OTHER_TXT",SID_ANY_LEN,&str_id);
+  textidname2id(L"DB_OTHER_TXT",TEXTID_ANY_LEN,&str_id);
   DataBrowserDesc_SetHeaderText(DB_Desc,str_id);
   DataBrowserDesc_SetBookID(DB_Desc,BookObj_GetBookID((BOOK*)CreateFileBook));
   DataBrowserDesc_SetFolders(DB_Desc,folder_list);
@@ -161,7 +161,7 @@ void CreateBrowser(wchar_t const ** folder_list)
   DataBrowserDesc_SetSelectActionOnFolders(DB_Desc,1);
   DataBrowserDesc_SetOption(DB_Desc,option);
   DataBrowserDesc_SetOpenEmptyFolder(DB_Desc,1);
-  textidname2id(L"GUI_INSERT_SK",SID_ANY_LEN,&str_id);
+  textidname2id(L"GUI_INSERT_SK",TEXTID_ANY_LEN,&str_id);
   DataBrowserDesc_SetOKSoftKeyText(DB_Desc,str_id);
   DataBrowser_Create(DB_Desc);
   DataBrowserDesc_Destroy(DB_Desc);
@@ -201,16 +201,16 @@ int list_callback(GUI_MESSAGE * msg)
   case 1:
     if (GUIonMessage_GetCreatedItemIndex(msg))
     {
-      textidname2id(L"CAMI_HZ_SAVE_TO_MS_TXT",SID_ANY_LEN,&str_id);
+      textidname2id(L"CAMI_HZ_SAVE_TO_MS_TXT",TEXTID_ANY_LEN,&str_id);
       GUIonMessage_SetMenuItemText(msg,str_id);
-      iconidname2id(L"DB_2ROW_MS_ICN",SID_ANY_LEN,&str_id);
+      iconidname2id(L"DB_2ROW_MS_ICN",TEXTID_ANY_LEN,&str_id);
       GUIonMessage_SetMenuItemIcon(msg,0,str_id);
     }
     else
     {
-      textidname2id(L"CAMI_HZ_SAVE_TO_PHONE_TXT",SID_ANY_LEN,&str_id);
+      textidname2id(L"CAMI_HZ_SAVE_TO_PHONE_TXT",TEXTID_ANY_LEN,&str_id);
       GUIonMessage_SetMenuItemText(msg,str_id);
-      iconidname2id(L"DB_2ROW_PHONE_ICN",SID_ANY_LEN,&str_id);
+      iconidname2id(L"DB_2ROW_PHONE_ICN",TEXTID_ANY_LEN,&str_id);
       GUIonMessage_SetMenuItemIcon(msg,0,str_id);
     }
 
@@ -223,9 +223,9 @@ void CreateList(void)
 {
   GUI_LIST * list_menu=CreateListMenu((BOOK*)CreateFileBook,0);
   CreateFileBook->list=list_menu;
-  int str_id=EMPTY_SID;
-  textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",SID_ANY_LEN,&str_id);
-  if (str_id==EMPTY_SID) str_id=Str2ID("Select folder",0x6,SID_ANY_LEN);
+  int str_id=EMPTY_TEXTID;
+  textidname2id(L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT",TEXTID_ANY_LEN,&str_id);
+  if (str_id==EMPTY_TEXTID) str_id=TextID_Create("Select folder",ENC_LAT1,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(list_menu,str_id);
   ListMenu_SetItemCount(list_menu,2);
   OneOfMany_SetOnMessage(list_menu,list_callback);
@@ -263,9 +263,9 @@ void CreateOOMList(void)
 {
   GUI_ONEOFMANY * oom_menu=CreateOneOfMany((BOOK*)CreateFileBook);
   CreateFileBook->oom_list=oom_menu;
-  int str_id=EMPTY_SID;
-  textidname2id(L"ES_TEXT_FORMAT_TXT",SID_ANY_LEN,&str_id);
-  if (str_id==EMPTY_SID) str_id=Str2ID("Text format",0x6,SID_ANY_LEN);
+  int str_id=EMPTY_TEXTID;
+  textidname2id(L"ES_TEXT_FORMAT_TXT",TEXTID_ANY_LEN,&str_id);
+  if (str_id==EMPTY_TEXTID) str_id=TextID_Create("Text format",ENC_LAT1,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(oom_menu,str_id);
   OneOfMany_SetItemCount(oom_menu,2);
   OneOfMany_SetOnMessage(oom_menu,oom_callback);
@@ -294,8 +294,8 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
   if (FSX_GetInvalidChar(string))
   {
     int str_id;
-    textidname2id(L"DB_ILLEGAL_CHAR_TXT",SID_ANY_LEN,&str_id);
-    MessageBox(EMPTY_SID,str_id, NOIMAGE, 0, 2000,0);
+    textidname2id(L"DB_ILLEGAL_CHAR_TXT",TEXTID_ANY_LEN,&str_id);
+    MessageBox(EMPTY_TEXTID,str_id, NOIMAGE, 0, 2000,0);
     FILEITEM * item_desc=FILEITEM_Create();
     wchar_t fname[40];
     memset(fname,0,sizeof(fname));
@@ -307,7 +307,7 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
     sp[0]=0;
     wstrcpy(sp, FILEITEM_GetFname(item_desc));
     wstrcat(sp, extpos);
-    StringInput_DispObject_SetText(GUIObject_GetDispObject(CreateFileBook->NameInput),Str2ID(sp,0,SID_ANY_LEN));
+    StringInput_DispObject_SetText(GUIObject_GetDispObject(CreateFileBook->NameInput),TextID_Create(sp,ENC_UCS2,TEXTID_ANY_LEN));
     FILEITEM_Destroy(item_desc);
   }
   else
@@ -322,7 +322,7 @@ void AcceptAction_FileName(BOOK *,wchar_t * string,int len)
 void CreateNameInput(int editable_strID,u16 cursor_pos,char hz)
 {
   int str_id;
-  textidname2id(L"MSG_UI_FILENAMEP_TXT",SID_ANY_LEN,&str_id);
+  textidname2id(L"MSG_UI_FILENAMEP_TXT",TEXTID_ANY_LEN,&str_id);
   DestroyNameInput();
   CreateFileBook->NameInput=CreateStringInputVA(0,
                                                          VAR_PREV_ACTION_PROC(DestroyNameInput),
@@ -397,7 +397,7 @@ int CreateCreateFileBook()
   CreateFileBook->list=0;
   CreateFileBook->oom_list=0;
   int str_id;
-  textidname2id(L"BL_BLOG_TEXTP_TXT",SID_ANY_LEN,&str_id);
+  textidname2id(L"BL_BLOG_TEXTP_TXT",TEXTID_ANY_LEN,&str_id);
   CreateFileBook->TextInput=CreateStringInputVA(0,
                                               VAR_PREV_ACTION_PROC(ExitAction),
                                               VAR_LONG_BACK_PROC(ExitAction),
@@ -427,7 +427,7 @@ int main (void)
   }
   else
   {
-    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
+    MessageBox(EMPTY_TEXTID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
 }

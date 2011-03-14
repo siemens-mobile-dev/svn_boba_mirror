@@ -89,17 +89,17 @@ void MMF_onEnterPressed( BOOK* bk, GUI* )
 void MM_File(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   cur_gui=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(fl_menu)];
+  TEXTID texts[MAXELEMS(fl_menu)];
   wchar_t *names;
   for (int i=0; i<MAXELEMS(fl_menu); i++)
   {
     names=muitxt(fl_menu[i].id);
-    texts[i]=Str2ID(names,0,SID_ANY_LEN);
+    texts[i]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(fl_menu));
-  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
+  sid=TextID_Create(muitxt(ind_mcmenu),ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,MAXELEMS(fl_menu));
   ListMenu_SetCursorToItem(lo,0);
@@ -197,9 +197,9 @@ void MMO_onEnterPressed( BOOK* bk, GUI* )
 void MM_Oper(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   cur_gui=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(op_menu)];
+  TEXTID texts[MAXELEMS(op_menu)];
   if (IsInArchive())
   {
     for (int i=0; i<MAXELEMS(op_menu); i++) op_menu[i].enabled=0;   // Вырубаем все
@@ -216,12 +216,12 @@ void MM_Oper(void)
     if (op_menu[i].enabled)
     {
       names=muitxt(op_menu[i].id);
-      texts[n]=Str2ID(names,0,SID_ANY_LEN);
+      texts[n]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
       n++;
     }
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,n);
-  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
+  sid=TextID_Create(muitxt(ind_mcmenu),ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,n);
   ListMenu_SetCursorToItem(lo,0);
@@ -292,14 +292,14 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
 {
   wchar_t icn=0;
   int d;
-  STRID str=LGP_NULL;
+  TEXTID str=LGP_NULL;
   switch( GUIonMessage_GetMsg(msg) )
   {
   case 1:
     d=GUIonMessage_GetCreatedItemIndex(msg);
     if (d<MAXELEMS(st_menu))
     {
-      str=Str2ID(muitxt(st_menu[d].id),0,SID_ANY_LEN);
+      str=TextID_Create(muitxt(st_menu[d].id),ENC_UCS2,TEXTID_ANY_LEN);
       GUIonMessage_SetMenuItemText(msg,str);
     }
     int sort=_CurTab->sort;
@@ -329,10 +329,10 @@ int MMS_On_Msg(GUI_MESSAGE * msg)
 void MM_Sort(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   wchar_t *head=muitxt(ind_mcmenu);
   cur_gui=lo=CreateListMenu(&MCBook->book,0);
-  sid=Str2ID(head,0,SID_ANY_LEN);
+  sid=TextID_Create(head,ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,MAXELEMS(st_menu));
   ListMenu_SetCursorToItem(lo,0);
@@ -377,17 +377,17 @@ void MMV_onEnterPressed( BOOK* bk, GUI* )
 void MM_View(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   menu_id[view_ind]=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(vw_menu)];
+  TEXTID texts[MAXELEMS(vw_menu)];
   wchar_t *names;
   for (int i=0; i<MAXELEMS(vw_menu); i++)
   {
     names=muitxt(vw_menu[i].id);
-    texts[i]=Str2ID(names,0,SID_ANY_LEN);
+    texts[i]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(vw_menu));
-  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
+  sid=TextID_Create(muitxt(ind_mcmenu),ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,MAXELEMS(vw_menu));
   ListMenu_SetCursorToItem(lo,0);
@@ -436,18 +436,18 @@ void MMBM_onEnterPressed( BOOK* bk, GUI* )
 void MM_BM(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   wchar_t *head=muitxt(ind_mcmenu);
   cur_gui=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(bm_menu)];
+  TEXTID texts[MAXELEMS(bm_menu)];
   wchar_t *names;
   for (int i=0; i<MAXELEMS(bm_menu); i++)
   {
     names=muitxt(bm_menu[i].id);
-    texts[i]=Str2ID(names,0,SID_ANY_LEN);
+    texts[i]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(bm_menu));
-  sid=Str2ID(head,0,SID_ANY_LEN);
+  sid=TextID_Create(head,ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,MAXELEMS(bm_menu));
   ListMenu_SetCursorToItem(lo,0);
@@ -496,18 +496,18 @@ void MMM_onEnterPressed( BOOK* bk, GUI* )
 void MM_Misc(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   wchar_t *head=muitxt(ind_mcmenu);
   menu_id[misc_ind]=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(mis_menu)];
+  TEXTID texts[MAXELEMS(mis_menu)];
   wchar_t *names;
   for (int i=0; i<MAXELEMS(mis_menu); i++)
   {
     names=muitxt(mis_menu[i].id);
-    texts[i]=Str2ID(names,0,SID_ANY_LEN);
+    texts[i]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,MAXELEMS(mis_menu));
-  sid=Str2ID(head,0,SID_ANY_LEN);
+  sid=TextID_Create(head,ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,MAXELEMS(mis_menu));
   ListMenu_SetCursorToItem(lo,0);
@@ -560,9 +560,9 @@ void MM_onEnterPressed( BOOK* bk, GUI* )
 void MM_Main(void)
 {
   GUI_LIST *lo;
-  STRID sid;
+  TEXTID sid;
   menu_id[main_ind]=lo=CreateListMenu(&MCBook->book,0);
-  STRID texts[MAXELEMS(opt_menu)];
+  TEXTID texts[MAXELEMS(opt_menu)];
   for (int i=0; i<MAXELEMS(opt_menu); i++) opt_menu[i].enabled=1;   // Врубаем все
   if (IsInArchive())
   {
@@ -575,12 +575,12 @@ void MM_Main(void)
     if (opt_menu[i].enabled)
     {
       names=muitxt(opt_menu[i].id);
-      texts[n]=Str2ID(names,0,SID_ANY_LEN);
+      texts[n]=TextID_Create(names,ENC_UCS2,TEXTID_ANY_LEN);
       n++;
     }
   }
   OneOfMany_SetTexts((GUI_ONEOFMANY *)lo,texts,n);
-  sid=Str2ID(muitxt(ind_mcmenu),0,SID_ANY_LEN);
+  sid=TextID_Create(muitxt(ind_mcmenu),ENC_UCS2,TEXTID_ANY_LEN);
   GUIObject_SetTitleText(lo,sid);
   ListMenu_SetItemCount(lo,n);
   ListMenu_SetCursorToItem(lo,0);

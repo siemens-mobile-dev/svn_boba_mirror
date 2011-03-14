@@ -75,7 +75,7 @@ void CDispObjBase::Show( int mode )
 	DispObject_Show( this, mode );
 }
 
-void CDispObjBase::SetTitleText( STRID strid )
+void CDispObjBase::SetTitleText( TEXTID strid )
 {
 	DispObject_SetTitleText( this, strid );
 }
@@ -177,7 +177,7 @@ void CGuiBase::SetTitleImage( wchar_t imageID )
 	GUIObject_SetTitleBackgroundImage( this, imageID );
 }
 
-void CGuiBase::SoftKeys_AddErrorStr( u16 actionID, STRID strid )
+void CGuiBase::SoftKeys_AddErrorStr( u16 actionID, TEXTID strid )
 {
 	GUIObject_SoftKeys_AddErrorStr( this, actionID, strid );
 }
@@ -197,13 +197,13 @@ void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBa
 	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 }
 
-void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid )
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID strid )
 {
 	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 	GUIObject_SoftKeys_SetText( this, actionID, strid );
 }
 
-void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID short_text, STRID full_text )
+void CGuiBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID short_text, TEXTID full_text )
 {
 	GUIObject_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 	GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
@@ -214,7 +214,7 @@ void CGuiBase::SoftKeys_SetEnable( u16 actionID, BOOL enabled )
 	GUIObject_SoftKeys_SetEnable( this, actionID, enabled );
 }
 
-void CGuiBase::SoftKeys_SetInfoText( u16 actionID, STRID strid )
+void CGuiBase::SoftKeys_SetInfoText( u16 actionID, TEXTID strid )
 {
 	GUIObject_SoftKeys_SetInfoText( this, actionID, strid );
 }
@@ -224,12 +224,12 @@ void CGuiBase::SoftKeys_SetItemAsSubItem( u16 actionID, int subitem )
 	GUIObject_SoftKeys_SetItemAsSubItem( this, actionID, subitem );
 }
 
-void CGuiBase::SoftKeys_SetText( u16 actionID, STRID strid )
+void CGuiBase::SoftKeys_SetText( u16 actionID, TEXTID strid )
 {
 	GUIObject_SoftKeys_SetText( this, actionID, strid );
 }
 
-void CGuiBase::SoftKeys_SetTexts( u16 actionID, STRID short_text, STRID full_text )
+void CGuiBase::SoftKeys_SetTexts( u16 actionID, TEXTID short_text, TEXTID full_text )
 {
 	GUIObject_SoftKeys_SetTexts( this, actionID, short_text, full_text );
 }
@@ -335,13 +335,13 @@ void CBookBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiB
 	BookObj_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 }
 
-void CBookBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), STRID strid )
+void CBookBase::SoftKeys_SetAction( u16 actionID, void (*proc)(CBookBase*, CGuiBase*), TEXTID strid )
 {
 	BookObj_SoftKeys_SetAction( this, actionID, (void(*)(BOOK*, GUI*))proc );
 	BookObj_SoftKeys_SetText( this, actionID, strid );
 }
 
-void CBookBase::SoftKeys_SetText( u16 actionID, STRID strid )
+void CBookBase::SoftKeys_SetText( u16 actionID, TEXTID strid )
 {
 	BookObj_SoftKeys_SetText( this, actionID, strid );
 }
@@ -483,27 +483,27 @@ int CGUIMessage::GetPrevSelectedItem()
 	return GUIonMessage_GetPrevSelectedItem( this );
 }
 
-char CGUIMessage::SetItemText( STRID strid )
+char CGUIMessage::SetItemText( TEXTID strid )
 {
 	return GUIonMessage_SetMenuItemText( this, strid );
 }
 
-char CGUIMessage::SetItemSecondLineText( STRID strid )
+char CGUIMessage::SetItemSecondLineText( TEXTID strid )
 {
 	return GUIonMessage_SetMenuItemSecondLineText( this, strid );
 }
 
-char CGUIMessage::SetItemInfoText( STRID strid )
+char CGUIMessage::SetItemInfoText( TEXTID strid )
 {
 	return GUIonMessage_SetMenuItemInfoText( this, strid );
 }
 
-char CGUIMessage::SetItemUnavailableText( STRID strid )
+char CGUIMessage::SetItemUnavailableText( TEXTID strid )
 {
 	return GUIonMessage_SetMenuItemUnavailableText( this, strid );
 }
 
-void CGUIMessage::SubItem_SetText( STRID strid )
+void CGUIMessage::SubItem_SetText( TEXTID strid )
 {
 	GUIonMessage_SubItem_SetText( this, strid );
 }
@@ -609,7 +609,7 @@ void CGuiListMenu::SetFocused( int item )
 	ListMenu_SetCursorToItem( this, item );
 }
 
-void CGuiListMenu::SetNoItemText( STRID strid )
+void CGuiListMenu::SetNoItemText( TEXTID strid )
 {
 	ListMenu_SetNoItemText( this, strid );
 }
@@ -667,7 +667,7 @@ void CGuiOneOfMany::SetChecked( int checked )
 	OneOfMany_SetChecked( this, checked );
 }
 
-void CGuiOneOfMany::SetTexts( STRID* strids, int count )
+void CGuiOneOfMany::SetTexts( TEXTID* strids, int count )
 {
 	OneOfMany_SetTexts( this, strids, count );
 }
@@ -715,7 +715,7 @@ void CGuiNOfMany::SetChecked( u16* checked_table, int items_count )
 	NOfMany_SetChecked( this, checked_table, items_count );
 }
 
-void CGuiNOfMany::SetTexts( STRID* strids, int count )
+void CGuiNOfMany::SetTexts( TEXTID* strids, int count )
 {
 	NOfMany_SetTexts( this, strids, count );
 }
@@ -752,7 +752,7 @@ void CGuiTabMenuBar::SetTabIcon( int tab, int icon, int state )
 	TabMenuBar_SetTabIcon( this, tab, icon, state );
 }
 
-void CGuiTabMenuBar::SetTabTitle( int tab, STRID strid )
+void CGuiTabMenuBar::SetTabTitle( int tab, TEXTID strid )
 {
 	TabMenuBar_SetTabTitle( this, tab, strid );
 }

@@ -10,9 +10,9 @@ int GetLabelSize(wchar_t *lbl, int FONT)
 {
   // Получаем размер надписи функцией тела
   SetFont(FONT);
-  int str=Str2ID(lbl,0,SID_ANY_LEN);
+  int str=TextID_Create(lbl,ENC_UCS2,TEXTID_ANY_LEN);
   int res = Disp_GetStrIdWidth(str, wstrlen(lbl));
-  TextFree(str);
+  TextID_Destroy(str);
   return res;
 };
 
@@ -65,7 +65,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
         }
         else
         {
-          snwprintf(bitrate,SID_ANY_LEN,L"%d",nowmusic.hdr.bitrate);
+          snwprintf(bitrate,TEXTID_ANY_LEN,L"%d",nowmusic.hdr.bitrate);
         }
 	wstrcpy(&returnvalue[nox],bitrate);
 	nox=nox+wstrlen(bitrate);
@@ -73,7 +73,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
       else if (prt[x+1]==L'f' || prt[x+1]==L'6')
       {
         wchar_t frequency[50];
-        snwprintf(frequency,SID_ANY_LEN,L"%d",nowmusic.hdr.frequency);
+        snwprintf(frequency,TEXTID_ANY_LEN,L"%d",nowmusic.hdr.frequency);
 	wstrcpy(&returnvalue[nox],frequency);
 	nox=nox+wstrlen(frequency);
       }
@@ -108,14 +108,14 @@ void caprintf(wchar_t *prt, wchar_t *where)
         int MIN=nowmusic.hdr.LengthInSeconds/60;
         int SEC=nowmusic.hdr.LengthInSeconds%60;
         wchar_t length[50];
-        snwprintf(length,SID_ANY_LEN,L"%02d:%02d",MIN,SEC);
+        snwprintf(length,TEXTID_ANY_LEN,L"%02d:%02d",MIN,SEC);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
       else if (prt[x+1]==L'n' || prt[x+1]==L'9')
       {
         wchar_t length[50];
-        snwprintf(length,SID_ANY_LEN,L"%02d",nowmusic.meta.TrackNum);
+        snwprintf(length,TEXTID_ANY_LEN,L"%02d",nowmusic.meta.TrackNum);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
@@ -124,7 +124,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
         wchar_t length[50];
         int MIN=CurrentTime/60;
         int SEC=CurrentTime%60;
-        snwprintf(length,SID_ANY_LEN,L"%02d:%02d",MIN,SEC);
+        snwprintf(length,TEXTID_ANY_LEN,L"%02d:%02d",MIN,SEC);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
@@ -134,7 +134,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
         int TimeLeft = currenttrack->fulltime-CurrentTime;
         int MIN=TimeLeft/60;
         int SEC=TimeLeft%60;
-        snwprintf(length,SID_ANY_LEN,L"%02d:%02d",MIN,SEC);
+        snwprintf(length,TEXTID_ANY_LEN,L"%02d:%02d",MIN,SEC);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
@@ -142,7 +142,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
       {
         wchar_t length[50];
         int pos = currenttrack->pos;
-        snwprintf(length,SID_ANY_LEN,L"%d",pos);
+        snwprintf(length,TEXTID_ANY_LEN,L"%d",pos);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
@@ -150,7 +150,7 @@ void caprintf(wchar_t *prt, wchar_t *where)
       {
         wchar_t length[50];
         int count= currenttrack->tracks_count;
-        snwprintf(length,SID_ANY_LEN,L"%d",count);
+        snwprintf(length,TEXTID_ANY_LEN,L"%d",count);
         wstrcpy(&returnvalue[nox],length);
 	nox=nox+wstrlen(length);
       }
@@ -566,7 +566,7 @@ void lbl_ofill()
   {
     if (labels[x].ChangeEveryTime)
     {
-      labels[x].str=Str2ID(labels[x].label,0,SID_ANY_LEN);
+      labels[x].str=TextID_Create(labels[x].label,ENC_UCS2,TEXTID_ANY_LEN);
     }
   }
 };
@@ -576,10 +576,10 @@ void lbl_okill()
   int x;
   for (x=0;x<10;x++)
   {
-    if (labels[x].str!=0 && labels[x].str!=EMPTY_SID && labels[x].ChangeEveryTime)
+    if (labels[x].str!=0 && labels[x].str!=EMPTY_TEXTID && labels[x].ChangeEveryTime)
     {
-      TextFree(labels[x].str);
-      labels[x].str=EMPTY_SID;
+      TextID_Destroy(labels[x].str);
+      labels[x].str=EMPTY_TEXTID;
     }
   }
 };
@@ -589,7 +589,7 @@ void lbl_fill()
   int x;
   for (x=0;x<10;x++)
   {
-    labels[x].str=Str2ID(labels[x].label,0,SID_ANY_LEN);
+    labels[x].str=TextID_Create(labels[x].label,ENC_UCS2,TEXTID_ANY_LEN);
   }
 };
 
@@ -598,10 +598,10 @@ void lbl_kill()
   int x;
   for (x=0;x<10;x++)
   {
-    if (labels[x].str!=0 && labels[x].str!=EMPTY_SID)
+    if (labels[x].str!=0 && labels[x].str!=EMPTY_TEXTID)
     {
-      TextFree(labels[x].str);
-      labels[x].str=EMPTY_SID;
+      TextID_Destroy(labels[x].str);
+      labels[x].str=EMPTY_TEXTID;
     }
   }
 };

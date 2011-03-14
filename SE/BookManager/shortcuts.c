@@ -78,7 +78,7 @@ void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
   }
   else
   {
-    MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
+    MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
   }
 }
 
@@ -109,7 +109,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
       }
       else
       {
-        MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, mbk );
+        MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, mbk );
       }
       mfree( param );
     }
@@ -126,7 +126,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
         }
         else
         {
-          MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
+          MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
         }
       }
       else
@@ -206,7 +206,7 @@ int CreateMainMenu( void* data, BOOK* book )
     ( (MyBOOK*) book )->MainMenuID = BookObj_GetBookID( MainMenu );
     BookObj_SoftKeys_SetAction( MainMenu, 0x0, onShortcutSet );
     int str_id;
-    textidname2id( L"SHC_SET_SHORTCUT_SK", SID_ANY_LEN, &str_id );
+    textidname2id( L"SHC_SET_SHORTCUT_SK", TEXTID_ANY_LEN, &str_id );
     BookObj_SoftKeys_SetText( MainMenu, 0x0, str_id );
     return 1;
   }
@@ -343,7 +343,7 @@ int java_list_callback( GUI_MESSAGE* msg )
   {
   case LISTMSG_GetItem:
     java_list_elem* elem = (java_list_elem*) List_Get( mbk->java_list, GUIonMessage_GetCreatedItemIndex( msg ) );
-    GUIonMessage_SetMenuItemText( msg, Str2ID( elem->name, 0, SID_ANY_LEN ) );
+    GUIonMessage_SetMenuItemText( msg, TextID_Create( elem->name, ENC_UCS2, TEXTID_ANY_LEN ) );
     JavaApp_LogoImageID_Get( elem->fullpath, &elem->imageID );
     GUIonMessage_SetMenuItemIcon( msg, 0, elem->imageID );
   }
@@ -495,8 +495,8 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
       }
       if ( strstr( param, "java:" ) )
       {
-        scdata->str_id = Str2ID( param + 5, 6, strstr( param, "//" ) - ( param + 5 ) );
-        iconidname2id( L"DB_LIST_JAVA_ICN", SID_ANY_LEN, &scdata->icon_id );
+        scdata->str_id = TextID_Create( param + 5, ENC_LAT1, strstr( param, "//" ) - ( param + 5 ) );
+        iconidname2id( L"DB_LIST_JAVA_ICN", TEXTID_ANY_LEN, &scdata->icon_id );
       }
       else
       {
@@ -507,11 +507,11 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
         scdata->str_id = Shortcut_Get_MenuItemName( w_buf );
         scdata->icon_id = Shortcut_Get_MenuItemIconID( w_buf );
         
-        if ( scdata->icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", SID_ANY_LEN, &scdata->icon_id );
+        if ( scdata->icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", TEXTID_ANY_LEN, &scdata->icon_id );
         
         delete( w_buf );
         
-        if ( scdata->str_id == EMPTY_SID ) scdata->str_id = Str2ID( param, 6, SID_ANY_LEN );
+        if ( scdata->str_id == EMPTY_TEXTID ) scdata->str_id = TextID_Create( param, ENC_LAT1, TEXTID_ANY_LEN );
       }
     }
     delete(param);
@@ -519,7 +519,7 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
   else
   {
     if (!scdata) return(0);
-    textidname2id( L"SHC_NONE_NAME_TXT", SID_ANY_LEN, &scdata->str_id );
+    textidname2id( L"SHC_NONE_NAME_TXT", TEXTID_ANY_LEN, &scdata->str_id );
   }
   return(0);
 }
@@ -527,7 +527,7 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
 int but_list_callback( GUI_MESSAGE* msg )
 {
   SC_DATA scdata;
-  scdata.str_id = EMPTY_SID;
+  scdata.str_id = EMPTY_TEXTID;
   scdata.icon_id = NOIMAGE;
   int item_num;
   MyBOOK * mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
@@ -655,7 +655,7 @@ void But_onDelete( BOOK* book, GUI* )
   }
   else
   {
-    MessageBox( EMPTY_SID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
+    MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
   }
   delete( path );
 }
@@ -697,7 +697,7 @@ int CreateButtonList( void* data, BOOK* book )
   if ( !mbk->ActiveTAB )
   {
     GUIObject_SoftKeys_SetAction( mbk->but_list, 0, But_SetMM );
-    textidname2id( L"SHC_SET_MAINMENU_TXT", SID_ANY_LEN, &str_id );
+    textidname2id( L"SHC_SET_MAINMENU_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->but_list, 0, str_id );
     GUIObject_SoftKeys_SetAction( mbk->but_list, 1, But_SetJava );
     GUIObject_SoftKeys_SetText( mbk->but_list, 1, STR( "Java" ) );
@@ -748,7 +748,7 @@ int list_callback( GUI_MESSAGE* msg )
       item_name="Long";
       break;
     }
-    GUIonMessage_SetMenuItemText( msg, Str2ID( item_name, 6, SID_ANY_LEN ) );
+    GUIonMessage_SetMenuItemText( msg, TextID_Create( item_name, ENC_LAT1, TEXTID_ANY_LEN ) );
   }
   return 1;
 }

@@ -65,8 +65,8 @@ static int ExplorerOnCreate(void *, BOOK *bk)
   if (ofd->flags & OFD_EMPTY_FOLDER_ENABLE)  DataBrowserDesc_SetOpenEmptyFolder(DB_Desc,1);
   if (ofd->flags & OFD_INSERT_ON_OK_KEY)  
   {
-    STRID str_id;
-    textidname2id(L"GUI_INSERT_SK",SID_ANY_LEN,&str_id);
+    TEXTID str_id;
+    textidname2id(L"GUI_INSERT_SK",TEXTID_ANY_LEN,&str_id);
     DataBrowserDesc_SetOKSoftKeyText(DB_Desc,str_id);
     DataBrowserDesc_SetSelectActionOnFolders(DB_Desc,1);
   }
@@ -142,7 +142,7 @@ void onCloseOFDBook(BOOK * book)
   OFD_BOOK * ofd = (OFD_BOOK *)book;
   delete(ofd->filters);
   delete(ofd->actions);
-  TextFree(ofd->htext);
+  TextID_Destroy(ofd->htext);
   while (ofd->folders_list->FirstFree) 
   {
     delete(List_RemoveAt(ofd->folders_list,ofd->folders_list->FirstFree-1));
@@ -204,14 +204,14 @@ wchar_t * CreateFileDialog (
   ofd->filters=new wchar_t[wstrlen(filters)+1];
   wstrcpy(ofd->filters,filters);
   
-  // проверяем, не STRID ли?
+  // проверяем, не TEXTID ли?
   if (((int)header>0x70000000) || ((int)header<0x10000) )
   {
     ofd->htext=(int)header;
   }
   else
   {
-    ofd->htext=Str2ID(header,0,SID_ANY_LEN);
+    ofd->htext=TextID_Create(header,ENC_UCS2,TEXTID_ANY_LEN);
   }
   ofd->flags=flags;
   ofd->DataBrowserBook=0;

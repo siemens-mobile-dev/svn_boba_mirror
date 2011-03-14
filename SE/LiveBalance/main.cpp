@@ -218,9 +218,9 @@ void My_OnRedraw(DISP_OBJ *db,int i1,int i2, int i3)
     DrawRect(x, start_y, scr_w-x-1, end_y, COLOR_TEXTPB, 0x00000000);
     DrawRect(x+1, start_y+1, fill+2, end_y-1, *progress_colors[i], *progress_colors[i]);
     snwprintf(ws, MAXELEMS(ws)-1, L"%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, max/100, max%100);
-    str_id=Str2ID(ws,0,MAXELEMS(ws)-1);
+    str_id=TextID_Create(ws,ENC_UCS2,MAXELEMS(ws)-1);
     DrawString(str_id, 2, 0, start_y+1, scr_w, end_y-1, 0, 0, COLOR_TEXTPB, 0x00000000);
-    TextFree(str_id);
+    TextID_Destroy(str_id);
   }
   SetFont(old_font);
 }

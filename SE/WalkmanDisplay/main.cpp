@@ -205,7 +205,7 @@ __EVENT( TerminateElf )
 #pragma optimize = s 9
 __EVENT( ShowAuthorInfo )
 {
-  MessageBox(EMPTY_SID,STR(PROJECT_ABOUT), NOIMAGE, 1, 5000, ((BOOKMANMSG*)msg)->bookmanbook);
+  MessageBox(EMPTY_TEXTID,STR(PROJECT_ABOUT), NOIMAGE, 1, 5000, ((BOOKMANMSG*)msg)->bookmanbook);
   return(1);
 };
 
@@ -460,7 +460,7 @@ __EVENT( onBcfgConfig )
   }
   else
   {
-    MessageBox(EMPTY_SID,Str2ID(lng_msgSkinNotLoaded,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(lng_msgSkinNotLoaded,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
   }
   return 1;
 }
@@ -611,7 +611,7 @@ void DrawLine(int font,wchar_t *NAME,int CEN, int XPos, int YPos, int XPos2, int
   if (!NAME)
     return;
   int width=0;
-  int strID=Str2ID(NAME,0,SID_ANY_LEN);
+  int strID=TextID_Create(NAME,ENC_UCS2,TEXTID_ANY_LEN);
   SetFont(font);
   if (CEN==2)
   {
@@ -655,7 +655,7 @@ void DrawLine(int font,wchar_t *NAME,int CEN, int XPos, int YPos, int XPos2, int
   DrawString(strID,CEN,XPos,YPos,XPos2,YPos2,0,1,NormalColor,NormalColor);
   
   if (clean)
-    TextFree(strID);
+    TextID_Destroy(strID);
 };
 
 #pragma optimize = z 9
@@ -704,7 +704,7 @@ void DrawLine2(int font, int strID,int CEN, int XPos, int YPos, int XPos2, int Y
   DrawString(strID,CEN,XPos,YPos,XPos2,YPos2,0,0,NormalColor,NormalColor);
   
   if (clean)
-    TextFree(strID);
+    TextID_Destroy(strID);
 };
 
 #pragma optimize = z 9
@@ -814,7 +814,7 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
         }
       }
     }
-    MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(lng_msgNotSupported,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     UI_Event_toBookID(ELF_TERMINATE_EVENT,BookObj_GetBookID(&MyBook->bk));
     return;
   L_SkinManager_Detected:
@@ -910,13 +910,13 @@ void walkman_Redraw(DISP_OBJ* DO,int a,int b,int c)
     {
       int *integer=(int*)&phone;
       integer[0]=PHONE_W580;
-      MessageBox(EMPTY_SID,Str2ID(lng_msgW580detected,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+      MessageBox(EMPTY_TEXTID,TextID_Create(lng_msgW580detected,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     }
     else
     {
       int *integer=(int*)&phone;
       integer[0]=PHONE_W610;
-      MessageBox(EMPTY_SID,Str2ID(lng_msgW610detected,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+      MessageBox(EMPTY_TEXTID,TextID_Create(lng_msgW610detected,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     }
     SaveConfigData(successed_config_path,successed_config_name);
   }
@@ -1424,7 +1424,7 @@ L_SkipAlbum:
   rc.x2 = orient ? 240 : 320;
   GC_ValidateRect(GC,&rc);
   DrawLine2(FONT_E_20B, 
-            int2strID(BENCH_GET), 
+            TextID_CreateIntegerID(BENCH_GET), 
             2, 
             0, 
             0, 
@@ -1668,25 +1668,25 @@ int main()
   trace_init();
   if (FindBook(isWalkmanDisplayBook))
   {
-    MessageBox(EMPTY_SID,Str2ID(lng_txtAlreadyRunned,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(lng_txtAlreadyRunned,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }
   if (wchar_t *consts=checkConsts())
   {
-    MessageBox(EMPTY_SID,Str2ID(consts,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(consts,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }
   if (GetChipID()&CHIPID_MASK!=CHIPID_DB2020)
   {
-    MessageBox(EMPTY_SID,Str2ID(lng_msgNotSupported,0,SID_ANY_LEN),NOIMAGE,1,0,0);
+    MessageBox(EMPTY_TEXTID,TextID_Create(lng_msgNotSupported,ENC_UCS2,TEXTID_ANY_LEN),NOIMAGE,1,0,0);
     SUBPROC(elf_exit);
     return 0;
   }
   memset(&nowmusic,0,sizeof(MUSIC));
 #ifndef NDEBUG
-  proc_bench = create_process(0, "WD_benchmark", worker_entrypoint, 0x400, 0, (OSTIME) 0, (PROCESS) 0, NULL, (OSVECTOR) 0, (OSUSER) 0);
+  proc_bench = create_process(OS_PRI_PROC, "WD_benchmark", worker_entrypoint, 0x400, 0, (OSTIME) 0, (PROCESS) 0, NULL, (OSVECTOR) 0, (OSUSER) 0);
   start(proc_bench);
 #else
   debug_printf("\nWalkmanDisplay: internal benchmark wasn't runned because of release configuration, so no execution time calculations will be performed\n");

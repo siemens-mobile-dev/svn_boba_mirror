@@ -50,7 +50,7 @@ void InitScr()
 
 void DrwCurTab(GC *gc, RECT *rc)
 {
-  STRID str=EMPTY_SID;  
+  TEXTID str=EMPTY_TEXTID;  
   RECT rt;
   rt.x1=TAB_X;
   rt.y1=TOP_Y;
@@ -88,7 +88,7 @@ void DrwSort(void *gc, RECT *rc)
   
   char s = stn[i];
   if (_CurTab->sort & STD_MASK) s -= 'a' - 'A';
-  STRID str_id=s+0x78000000;
+  TEXTID str_id=s+0x78000000;
   SetFont(CONFIG_FONT_HEADER);
   DrawString(str_id,0,SRT_X,TOP_Y+TOP_B,IND_X1,TOP_Y+TOP_B+TOP_H-1,0,0,
 		Colors[clIndexTxt],0);
@@ -97,16 +97,16 @@ void DrwSort(void *gc, RECT *rc)
 void DrwIndex(void *gc, RECT *rc)
 {
   int chkcnt = EnumChk(NULL,0);
-  STRID str=EMPTY_SID;
+  TEXTID str=EMPTY_TEXTID;
   if (chkcnt)
     snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%d(%d)", chkcnt, _CurCount);
   else
     snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%d/%d", _CurIndex+1, _CurCount);
-  str=Str2ID(gui_buf,0,SID_ANY_LEN);  
+  str=TextID_Create(gui_buf,ENC_UCS2,TEXTID_ANY_LEN);  
   SetFont(CONFIG_FONT_HEADER);
   DrawString(str,2,IND_X1,TOP_Y+TOP_B,IND_X2-2,TOP_Y+TOP_B+TOP_H-1,0,0,
              Colors[clIndexTxt],0);
-  TextFree(str);
+  TextID_Destroy(str);
 }
 
 int GetSBY(RECT *rc, int i, int c)
@@ -124,7 +124,7 @@ void DrwSB(GC *gc, RECT *rc)
 
 void DrwDrvAc(int ind, GC *gc, RECT *rc)
 {
-  STRID str=EMPTY_SID;
+  TEXTID str=EMPTY_TEXTID;
   RECT rt;
   wchar_t* name;
   int x;	
@@ -144,7 +144,7 @@ void DrwDrvAc(int ind, GC *gc, RECT *rc)
     x = DRV_X;
     name = L"MC";
   }
-  str=Str2ID(name,0,SID_ANY_LEN);
+  str=TextID_Create(name,ENC_UCS2,TEXTID_ANY_LEN);
   x+=rc->x1;
   
   rt.x1=x;
@@ -157,7 +157,7 @@ void DrwDrvAc(int ind, GC *gc, RECT *rc)
   
   DrawString(str,2,x+1,TOP_Y+TOP_B,x+DRV_W-2,TOP_Y+TOP_B+TOP_H-1,0,0,
              Colors[clTabTxt],0);
-  TextFree(str);
+  TextID_Destroy(str);
 }
 
 u16 sctm=0;
@@ -253,7 +253,7 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
   if (ind==_CurIndex-_CurBase)
   {
     tc=clSelFileNormal;
-    int d=Disp_GetStrIdWidth(file->sid_name,TextGetLength(file->sid_name));
+    int d=Disp_GetStrIdWidth(file->sid_name,TextID_GetLength(file->sid_name));
     d-=(ITM_X2-ITM_B-2-TXT_X);
     if (d<0)
     {
@@ -273,7 +273,7 @@ void DrwFile(GC *gc, RECT *rc, int ind, FILEINF* file)
   else
   {
     tc=clFileNormal;
-    STRID  fn = (file->uccnt ? file->ws_short :file->sid_name );
+    TEXTID  fn = (file->uccnt ? file->ws_short :file->sid_name );
     DrawString(fn,0, TXT_X,y+ITM_B+1,ITM_X2-ITM_B-2,y+ITM_B+txt_h,0,0,
                Colors[tc],0);
   }
@@ -331,7 +331,7 @@ void ShowFiles(GC *gc, RECT *rc)
 
 void ShowProgr(GC *gc, RECT *rc)
 {
-  STRID str=LGP_NULL;
+  TEXTID str=LGP_NULL;
   DrawRect(PRGB_X1,PRGB_Y,PRGB_X2,PRGB_Y+PRGB_H-1,Colors[clProgrBoxBD],Colors[clProgrBoxBG]);
 
   int p = progr_cur * 100 / progr_max;
@@ -339,15 +339,15 @@ void ShowProgr(GC *gc, RECT *rc)
   if (progr_act)
   {
     snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%ls: ",muitxt(progr_act));
-    str=Str2ID(gui_buf,0,SID_ANY_LEN);
+    str=TextID_Create(gui_buf,ENC_UCS2,TEXTID_ANY_LEN);
     DrawString(str,2,PRGB_X1+2,PRG_AT_Y,PRGB_X2-2,PRG_AT_Y+txt_h,0,0,Colors[clProgrTxt],Colors[clProgrTxtBD]);
-    TextFree(str);
+    TextID_Destroy(str);
   }
   
   snwprintf(gui_buf,MAXELEMS(gui_buf)-1,L"%d%% %d/%d",p,progr_cur,progr_max);
-  str=Str2ID(gui_buf,0,SID_ANY_LEN);  
+  str=TextID_Create(gui_buf,ENC_UCS2,TEXTID_ANY_LEN);  
   DrawString(str,2,PRGB_X1+2,PRG_PT_Y,PRGB_X2-2,PRG_PT_Y+txt_h,0,0,Colors[clProgrTxt],Colors[clProgrTxtBD]);
-  TextFree(str);
+  TextID_Destroy(str);
   
   p = progr_cur * (PRGP_X2-PRGP_X1-2) / progr_max;
   DrawRect(PRGP_X1,PRG_B1_Y,PRGP_X2,PRG_B1_Y+PRGP_H,Colors[clProgrBD],Colors[clProgrBG]);

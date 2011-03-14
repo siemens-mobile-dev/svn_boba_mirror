@@ -418,17 +418,17 @@ void CGameDisp::onDraw(int a, int b, int c)
 
 			int ysize = GetWindowHeight();
 
-			STRID strid = Str2ID(tmp, 0, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetHumanScore() ) );
+			TEXTID strid = TextID_Create(tmp, ENC_UCS2, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetHumanScore() ) );
 			DrawString(strid, 0, xsize/10, ysize*9/10, xsize*9/10, ysize, 0, 0, 0xFF0000FF, 0xFF0000FF);
-			TextFree(strid);
+			TextID_Destroy(strid);
 
-			strid = Str2ID(tmp, 0, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetPCScore() ) );
+			strid = TextID_Create(tmp, ENC_UCS2, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetPCScore() ) );
 			DrawString(strid, 1, xsize/10, ysize*9/10, xsize*9/10, ysize, 0, 0, 0xFFFF0000, 0xFFFF0000);
-			TextFree(strid);
+			TextID_Destroy(strid);
 
-			strid = Str2ID(tmp, 0, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetTies() ) );
+			strid = TextID_Create(tmp, ENC_UCS2, snwprintf( tmp, MAXELEMS(tmp), L"%d", gameptr->GetTies() ) );
 			DrawString(strid, 2, xsize/10, ysize*9/10, xsize*9/10, ysize, 0, 0, 0xFF000000, 0xFF000000);
-			TextFree(strid);
+			TextID_Destroy(strid);
 
 			SetFont( font_old );
 		}

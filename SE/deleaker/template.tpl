@@ -442,7 +442,6 @@ skip str2wstr
 skip strcat
 skip strcmp
 skip strcpy
-skip StrID2Str
 skip StringInput_DispObject_SetLanguage
 skip StringInput_GetStringAndLen
 skip StringInput_MenuItem_SetPriority
@@ -459,9 +458,10 @@ skip TabMenuBar_SetFocusedTab
 skip TabMenuBar_SetOnTabSwitch
 skip TabMenuBar_SetTabCount
 skip TabMenuBar_SetTabGui
-skip TextGetLength
-skip TextID2wstr
 skip textidname2id
+skip TextID_GetLength
+skip TextID_GetString
+skip TextID_GetWString
 skip Theme_DestroyMenuIcons
 skip TimeInput_GetTimeInt
 skip UIEventName
@@ -679,7 +679,7 @@ __make CreateProgressBar
 	return ret;
 }
 
-__make Str2ID
+__make TextID_Create
 {
 	__R ret = __O__;
 	if(isallocatedstrid(ret))
@@ -694,7 +694,7 @@ __make Str2ID
 	return ret;
 }
 
-__make TextCopyId
+__make TextID_Copy
 {
 	__R ret = __O__;
 	if(isallocatedstrid(ret))
@@ -702,7 +702,7 @@ __make TextCopyId
 	return ret;
 }
 
-__make int2strID
+__make TextID_CreateIntegerID
 {
 	__R ret = __O__;
 	if(isallocatedstrid(ret))
@@ -710,7 +710,7 @@ __make int2strID
 	return ret;
 }
 
-__make TextFree
+__make TextID_Destroy
 {
 	trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
 	return __O__;

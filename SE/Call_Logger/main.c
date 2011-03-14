@@ -159,7 +159,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK * book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_SID,STR("Call Logger, v2.3.2\n\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("Call Logger, v2.3.2\n\n(c) IronMaster"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -879,7 +879,7 @@ int main (void)
 {
   if (FindBook(myFind))
   {
-    MessageBox(EMPTY_SID,STR("Already runed"), NOIMAGE, 1, 5000,0);
+    MessageBox(EMPTY_TEXTID,STR("Already runed"), NOIMAGE, 1, 5000,0);
     SUBPROC(elf_exit);
   }
   else

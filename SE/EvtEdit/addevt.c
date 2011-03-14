@@ -270,7 +270,7 @@ int SelectEvent_onLBMessage(GUI_MESSAGE * msg)
   {
   case 1:
     int item=GUIonMessage_GetCreatedItemIndex(msg);
-    GUIonMessage_SetMenuItemText(msg,Str2ID(items[item],0,SID_ANY_LEN));
+    GUIonMessage_SetMenuItemText(msg,TextID_Create(items[item],ENC_UCS2,TEXTID_ANY_LEN));
     break;
   }
   return(1);
@@ -281,7 +281,7 @@ GUI_LIST * SelectEvent_CreateGui(MyBOOK * mbk)
   GUI_LIST * lo=0;
   if (lo=CreateListMenu(&mbk->book,0))
   {
-    GUIObject_SetTitleText(lo,Str2ID(lng[ACTIONS],0,SID_ANY_LEN));
+    GUIObject_SetTitleText(lo,TextID_Create(lng[ACTIONS],ENC_UCS2,TEXTID_ANY_LEN));
     int num=GetNumOfActions();
     ListMenu_SetItemCount(lo,num);
     ListMenu_SetOnMessage(lo,SelectEvent_onLBMessage);

@@ -146,6 +146,13 @@ DEPRECATE(int,CteateNewMessage,MSG_SendMessage_Start)
 DEPRECATE(void,FeedBack_SetText,Feedback_SetText)
 DEPRECATE(void,DataBrowserDesc_SetStyle,DataBrowserDesc_SetItemStyle)
 DEPRECATE(void,ListMenu_SetSecondLineText,ListMenu_SetItemSecondLineText)
+DEPRECATE(TEXTID,int2strID,TextID_CreateIntegerID)
+DEPRECATE(TEXTID,Str2ID,TextID_Create)
+DEPRECATE(void,StrID2Str,TextID_GetString)
+DEPRECATE(int,TextID2wstr,TextID_GetWString)
+DEPRECATE(int,TextGetLength,TextID_GetLength)
+DEPRECATE(void,TextFree,TextID_Destroy)
+DEPRECATE(TEXTID,TextCopyId,TextID_Copy)
 
 #else
 
@@ -293,6 +300,13 @@ DEPRECATE(void,ListMenu_SetSecondLineText,ListMenu_SetItemSecondLineText)
 #define FeedBack_SetText Feedback_SetText
 #define DataBrowserDesc_SetStyle DataBrowserDesc_SetItemStyle
 #define ListMenu_SetSecondLineText ListMenu_SetItemSecondLineText
+#define int2strID TextID_CreateIntegerID
+#define Str2ID TextID_Create
+#define StrID2Str TextID_GetString
+#define TextID2wstr TextID_GetWString
+#define TextGetLength TextID_GetLength
+#define TextFree TextID_Destroy
+#define TextCopyId TextID_Copy
 
 #endif
 
