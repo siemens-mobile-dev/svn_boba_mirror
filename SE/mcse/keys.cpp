@@ -42,16 +42,16 @@ char keyMap[0xFF];
 KEY_PROC procmap[KEYS_COUNT] = 
 {
 	NULL,
-	DoMenu,
-	DoOpen,
+	NULL,//DoMenu,
+	NULL,//DoOpen,
 	DoUp,
 	DoDwn,
 	DoPrvDrv,
 	DoNxtDrv,
 	NULL,
 	NULL,
-        DoDel,
-	DoBackK,
+	DoDel,
+	NULL,//DoBackK,
 	NULL,
 	NULL,
 	DoChk,     //0

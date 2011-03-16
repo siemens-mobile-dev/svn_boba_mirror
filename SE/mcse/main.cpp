@@ -301,6 +301,7 @@ void MainGuiOnKey(DISP_OBJ_MAIN *db,int key,int,int repeat,int type)
   int ignore = 1;
   if (progr_start)
   {
+    //2do: переделать на нормальные софты
     if (key==KEY_LEFT_SOFT || key==KEY_RIGHT_SOFT)
     {
       TEXTID q=TextID_Create(muitxt(ind_pmt_stop),ENC_UCS2,TEXTID_ANY_LEN);
@@ -361,6 +362,23 @@ void MainGui_constr(DISP_DESC *desc)
 
 void MainGui_destr( GUI* ){}
 
+void SK_DoMenu( BOOK*, GUI* gui)
+{
+  DoMenu();
+}
+
+void SK_DoOpen( BOOK*, GUI* gui)
+{
+  DoOpen();
+  DispObject_InvalidateRect( GUIObject_GetDispObject( gui ),0);
+}
+
+void SK_DoBackK( BOOK*, GUI* gui)
+{
+  DoBackK();
+  DispObject_InvalidateRect( GUIObject_GetDispObject( gui ),0);
+}
+
 static GUI *CreateMainGui(MyBOOK *mbk)
 {
   MAIN_GUI *main_gui=new MAIN_GUI;
@@ -375,6 +393,9 @@ static GUI *CreateMainGui(MyBOOK *mbk)
   GUIObject_SetTitleType(gui, 1);
   GUIObject_SoftKeys_Hide(gui);
   //GUIObject_SoftKeys_SetAction(myBook->coord,ACTION_BACK, OnBackCoordinatesEdit);
+  GUIObject_SoftKeys_SetAction(gui, ACTION_OK, SK_DoOpen);
+  GUIObject_SoftKeys_SetAction(gui, ACTION_MORE, SK_DoMenu);
+  GUIObject_SoftKeys_SetAction(gui, ACTION_BACK, SK_DoBackK);
   GUIObject_Show(gui);
   return gui;
 }
