@@ -702,9 +702,9 @@ __swi __arm void* get_APP_DESC_TABLE( void );
 #pragma swi_number=0x212
 __swi __arm int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 #pragma swi_number=0x213
-__swi __arm TEXTID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
+__swi __arm TEXTID AB_NAME_ITEM2TextID( AB_STR_ITEM* ab_name );
 #pragma swi_number=0x214
-__swi __arm TEXTID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
+__swi __arm TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 #pragma swi_number=0x215
 __swi __arm int GetABRecNum( AB_GET_STRUCT* );
 #pragma swi_number=0x8216
@@ -1243,7 +1243,7 @@ __swi __arm int w_mkdir( const wchar_t* path, int mode );
 #pragma swi_number=0x2FF
 __swi __arm int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
 #pragma swi_number=0x300
-__swi __arm int Disp_GetStrIdWidth( TEXTID, int len );
+__swi __arm int Disp_GetTextIDWidth( TEXTID, int len );
 
 #pragma swi_number=0x301
 __swi __arm int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );

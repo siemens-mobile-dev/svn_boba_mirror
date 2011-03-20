@@ -604,14 +604,14 @@ int CalcGuiOnCreate(DISP_OBJ_CALC *db)
     else
       text=TextID_Create(txt,ENC_LAT1,TEXTID_ANY_LEN);
     db->yx[x]=text;
-    w=db->names_len[x]=Disp_GetStrIdWidth(text,TextID_GetLength(text));
+    w=db->names_len[x]=Disp_GetTextIDWidth(text,TextID_GetLength(text));
     if (w>db->maxintab) db->maxintab=w;    
   }
   for (int x=VAR_A, a='a'; x<TOTAL_OPS; x++, a++)
   {
     TEXTID text=0x78000000|a;
     db->yx[x]=text;
-    db->names_len[x]=Disp_GetStrIdWidth(text,TextID_GetLength(text));
+    db->names_len[x]=Disp_GetTextIDWidth(text,TextID_GetLength(text));
   }
   SetFont(font);
   db->current_tab=0;

@@ -262,8 +262,8 @@
 0840: 00000000 FCF09945 ;8210: void* get_APP_DESC_TABLE( void );
 ;0844: xxxxxxxx yyyyyyyy ; 211:
 0848: 00000000 D588DF44 ; 212: int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
-084C: 00000000 FD87DF44 ; 213: TEXTID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
-0850: 00000000 4588DF44 ; 214: TEXTID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
+084C: 00000000 FD87DF44 ; 213: TEXTID AB_NAME_ITEM2TextID( AB_STR_ITEM* ab_name );
+0850: 00000000 4588DF44 ; 214: TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 0854: 00000000 0B261444 ; 215: int GetABRecNum( AB_GET_STRUCT* ); //nullsub(void)
 0858: 00000000 784F9545 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( void );
 085C: 00000000 A58FA744 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
@@ -308,7 +308,7 @@
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 FF34DE44 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
-0904: 00000000 FD34DE44 ; 241: TEXTID JavaSession_GetName( void ); //nullsub(ret 0)
+0904: 00000000 71171145 ; 241: TEXTID JavaSession_GetName( void ); //nullsub(ret 0x6FFFFFFF)
 0908: 00000000 E1333445 ; 242: TEXTID TextID_Copy( TEXTID );
 090C: 00000000 85B62A45 ; 243: UI_APP_SESSION* BookObj_GetSession( BOOK* book );
 ;0910: xxxxxxxx yyyyyyyy ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
@@ -499,7 +499,7 @@
 0BF4: 00000000 81C28644 ; 2FD: int w_fclose( int f );
 0BF8: 00000000 A9A3F944 ; 2FE: int w_mkdir( const wchar_t* path, int mode );
 0BFC: 00000000 751BE944 ; 2FF: int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
-0C00: 00000000 E1AA3545 ; 300: int Disp_GetStrIdWidth( TEXTID, int len );
+0C00: 00000000 E1AA3545 ; 300: int Disp_GetTextIDWidth( TEXTID, int len );
 0C04: 00000000 9D322345 ; 301: int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
 0C08: 00000000 3D8AE444 ; 302: int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, IMAGEID* );
 0C0C: 00000000 F5370045 ; 303: void unixtime2datetime( int, DATETIME* );

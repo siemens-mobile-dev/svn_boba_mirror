@@ -4,7 +4,42 @@
 #include "config_data.h"
 #include "conf_loader.h"
 
-void (*OldonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
+//========================================================================
+
+UUID IID_IClockManager={0xE2,0x34,0xE0,0x57,0x46,0x10,0x45,0x4B,0x8D,0x88,0x63,0x6A,0xA4,0x61,0x10,0xE4};
+UUID CID_CClockManager={0x1C,0x3F,0x00,0x73,0x97,0xA4,0x48,0xDF,0x96,0xE9,0x5C,0x72,0xA6,0xE6,0x31,0x4E};
+
+class IUnknown
+{
+public:
+  virtual void* pguid();
+  virtual void* QueryInterface();
+  virtual void* AddRef();
+  virtual void* Release();
+};
+
+class IClock: public IUnknown
+{
+public:
+  virtual int SetDate(DATE * date);
+  virtual int GetDate(DATE * date);
+  virtual int SetTime(TIME * time);
+  virtual int GetTime(TIME * time);
+  virtual int SetDateAndTime(DATETIME * datetime);
+  virtual int GetDateAndTime(DATETIME * datetime);
+};
+
+class IClockManager: public IUnknown
+{
+public:
+  virtual int CreateClock(IClock ** pIClock);
+  virtual int CreateMonotonicClock(IUnknown ** pIMonotonicClock);
+  virtual int CreateSecureClock(IUnknown ** pISecureClock);
+};
+
+//========================================================================
+
+#define OFF_TIME_CORRECTION 30
 
 #define ICONS_COUNT 8
 #define color clBlack
@@ -31,6 +66,7 @@ void (*OldonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
 #define SAT _T("CALE_SATURDAY_TXT")
 #define SUN _T("CALE_SUNDAY_TXT")
 
+//========================================================================
 
 wchar_t * icons[ICONS_COUNT]=
 {
@@ -77,7 +113,12 @@ typedef struct _MYBOOK : BOOK
   int days[7];
   int DISPLAY_WIDTH;
   int offset;
+  IClock * pIClock;
 }SleepMode_Book;
+
+//========================================================================
+
+void (*OldonRedraw)(DISP_OBJ *,int r1,int r2,int r3);
 
 
 int myFind(BOOK* book)
@@ -173,7 +214,7 @@ int TerminateElf(void * ,BOOK * book)
 int ShowAuthorInfo(void *mess ,BOOK* book)
 {
   MSG * msg = (MSG*)mess;
-  MessageBox(EMPTY_TEXTID,STR("SleepMode v1.1\n\n(c) Hussein"), NOIMAGE, 1, 5000,msg->book);
+  MessageBox(EMPTY_TEXTID,STR("SleepMode v1.2\n\n(c) Hussein"), NOIMAGE, 1, 5000,msg->book);
   return(1);
 }
 
@@ -191,10 +232,31 @@ static int ReconfigElf(void *mess ,BOOK *book)
 }
 
 
+int OnTurnOff(void *mess ,BOOK* book)
+{
+  SleepMode_Book * SM_Book=(SleepMode_Book*)book;
+  
+  if (SM_Book->pIClock)
+  {
+    DATETIME datetime;
+    
+    SM_Book->pIClock->GetDateAndTime(&datetime);
+    
+    int f=_fopen(GetDir( DIR_INI ),L"datetime.bak",FSX_O_WRONLY|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0);
+    fwrite(f,&datetime,sizeof(DATETIME));
+    fclose(f);
+  }
+  
+  UI_CONTROLLED_SHUTDOWN_RESPONSE(BookObj_GetBookID(SM_Book));
+  return 1;
+}
+
+
 const PAGE_MSG SM_PageEvents[]@ "DYN_PAGE" ={
   ELF_TERMINATE_EVENT, TerminateElf,
   ELF_SHOW_INFO_EVENT, ShowAuthorInfo,
   UI_SLEEPMODE_ACTIVATED_EVENT_TAG, onSleepModeActivate,
+  UI_CONTROLLED_SHUTDOWN_REQUESTED_EVENT_TAG, OnTurnOff,
   ELF_RECONFIG_EVENT, ReconfigElf,
   NIL_EVENT_TAG,0
 };
@@ -211,19 +273,29 @@ void elf_exit(void)
 
 void onCloseSMBook(BOOK * SMBook)
 {
+  SleepMode_Book * SM_Book=(SleepMode_Book*)SMBook;
+  
+  if (SM_Book->pIClock) SM_Book->pIClock->Release();
   SUBPROC(elf_exit);
 }
 
 
 void CreateSleepModeBook()
 {
+  IClockManager * pIClockManager=0;
   int i;
+  int f;
+  int error;
   int icon_id;
   FSTAT fstat_struct;
   wchar_t * path;
   
   SleepMode_Book * SM_Book=new(SleepMode_Book);
   CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
+  
+  SM_Book->DISPLAY_WIDTH=Display_GetWidth(0)-1;
+  SM_Book->offset=0;
+  SM_Book->pIClock=0;
 
   // иконки пропущенных
   for (i=0;i<ICONS_COUNT;i++)
@@ -239,8 +311,9 @@ void CreateSleepModeBook()
     SM_Book->days[i]=icon_id;
   }
   
-  SM_Book->DISPLAY_WIDTH=Display_GetWidth(0)-1;
-  SM_Book->offset=0;
+  CoCreateInstance(&CID_CClockManager,&IID_IClockManager,PPINTERFACE(&pIClockManager));
+  if (pIClockManager) pIClockManager->CreateClock(&SM_Book->pIClock);
+  if (pIClockManager) pIClockManager->Release();
   
   path=GetDir( DIR_INI );
   
@@ -248,7 +321,7 @@ void CreateSleepModeBook()
   {
     char buf[20];
     
-    int f=_fopen(path,L"sleepmode.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
+    f=_fopen(path,L"sleepmode.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
     fread(f,&buf,fstat_struct.fsize);
     buf[fstat_struct.fsize]=0;
     fclose(f);
@@ -264,6 +337,30 @@ void CreateSleepModeBook()
     if (platform==CHIPID_DB3150) SM_Book->offset=DB3150_OFFSET;
     if (platform==CHIPID_DB3200) SM_Book->offset=DB3200_OFFSET;
     if (platform==CHIPID_DB3210) SM_Book->offset=DB3210_OFFSET;
+  }
+  
+  if (fstat(path,L"datetime.bak",0)>=0)
+  {
+    DATETIME datetime;
+    DATETIME datetime_bak;
+    
+    if (SM_Book->pIClock) SM_Book->pIClock->GetDateAndTime(&datetime);
+    
+    if ( (datetime.date.year==default_date.year) && (datetime.date.mon==default_date.mon) && (datetime.date.day==default_date.day) )
+    {
+      f=_fopen(path,L"datetime.bak",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
+      fread(f,&datetime_bak,sizeof(DATETIME));
+      fclose(f);
+      
+      int unix=datetime2unixtime(&datetime_bak);
+      unix = unix + datetime.time.sec + datetime.time.min*60 + (datetime.time.hour-default_time.hour)*60*60 + OFF_TIME_CORRECTION;
+      
+      unixtime2datetime(unix,&datetime_bak);
+      
+      if (SM_Book->pIClock) SM_Book->pIClock->SetDateAndTime(&datetime_bak);
+    }
+    
+    FileDelete(path,L"datetime.bak",&error);
   }
 }
 

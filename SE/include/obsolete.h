@@ -153,6 +153,9 @@ DEPRECATE(int,TextID2wstr,TextID_GetWString)
 DEPRECATE(int,TextGetLength,TextID_GetLength)
 DEPRECATE(void,TextFree,TextID_Destroy)
 DEPRECATE(TEXTID,TextCopyId,TextID_Copy)
+DEPRECATE(TEXTID,AB_NAME_ITEM2StrID,AB_NAME_ITEM2TextID)
+DEPRECATE(TEXTID,AB_NUM_ITEM2StrID,AB_NUM_ITEM2TextID)
+DEPRECATE(int,Disp_GetStrIdWidth,Disp_GetTextIDWidth)
 
 #else
 
@@ -307,6 +310,9 @@ DEPRECATE(TEXTID,TextCopyId,TextID_Copy)
 #define TextGetLength TextID_GetLength
 #define TextFree TextID_Destroy
 #define TextCopyId TextID_Copy
+#define AB_NAME_ITEM2StrID AB_NAME_ITEM2TextID
+#define AB_NUM_ITEM2StrID AB_NUM_ITEM2TextID
+#define Disp_GetStrIdWidth Disp_GetTextIDWidth
 
 #endif
 

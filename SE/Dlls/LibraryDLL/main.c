@@ -368,8 +368,8 @@ void dll_Display_SetBrightness_0( int display, int brightness )
 #endif
 
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
-#define USE_dll_Disp_GetStrIdWidth_0
-int dll_Disp_GetStrIdWidth_0( TEXTID strid, int len )
+#define USE_dll_Disp_GetTextIDWidth_0
+int dll_Disp_GetTextIDWidth_0( TEXTID strid, int len )
 {
   ITextRenderingManager * pTextRenderingManager=0;
   ITextRenderingFactory * pTextRenderingFactory=0;
@@ -699,8 +699,8 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     0x31C, (void*) dll_Display_SetBrightness_0,
     #endif
     
-    #ifdef USE_dll_Disp_GetStrIdWidth_0
-    0x300, (void*) dll_Disp_GetStrIdWidth_0,
+    #ifdef USE_dll_Disp_GetTextIDWidth_0
+    0x300, (void*) dll_Disp_GetTextIDWidth_0,
     #endif
     
     #ifdef USE_dll_TextID_CreateIntegerID_0

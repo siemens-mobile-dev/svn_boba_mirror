@@ -1,7 +1,7 @@
 skip AB_DEFAULTNBR_GET
 skip AB_GETNBROFITEMS
-skip AB_NAME_ITEM2StrID
-skip AB_NUM_ITEM2StrID
+skip AB_NAME_ITEM2TextID
+skip AB_NUM_ITEM2TextID
 skip AB_POSITIONNBR_GET
 skip AB_READPHONENBR
 skip AB_READSTRING
@@ -131,7 +131,7 @@ skip DISP_DESC_SetOnLayout
 skip DISP_DESC_SetOnRedraw
 skip DISP_DESC_SetOnRefresh
 skip DISP_DESC_SetSize
-skip Disp_GetStrIdWidth
+skip Disp_GetTextIDWidth
 skip DrawRect
 skip DrawString
 skip elfload

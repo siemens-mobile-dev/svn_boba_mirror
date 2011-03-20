@@ -15,5 +15,8 @@ extern const int y2;
 extern const int x3;
 extern const int y3;
 
+extern const DATE default_date;
+extern const TIME default_time;
+
 
 #endif

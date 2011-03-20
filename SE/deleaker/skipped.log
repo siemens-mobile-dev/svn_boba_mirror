@@ -1,7 +1,7 @@
 __swi __arm int AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
 __swi __arm int AB_GETNBROFITEMS( int get_from, int sub_id );
-__swi __arm TEXTID AB_NAME_ITEM2StrID( AB_STR_ITEM* ab_name );
-__swi __arm TEXTID AB_NUM_ITEM2StrID( AB_NUM_ITEM* ab_num_item );
+__swi __arm TEXTID AB_NAME_ITEM2TextID( AB_STR_ITEM* ab_name );
+__swi __arm TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 __swi __arm int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 __swi __arm int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 __swi __arm int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
@@ -131,7 +131,7 @@ __swi __arm void DISP_DESC_SetOnLayout( DISP_DESC*, DISP_OBJ_METHOD );
 __swi __arm void DISP_DESC_SetOnRedraw( DISP_DESC*, DISP_OBJ_ONREDRAW_METHOD );
 __swi __arm void DISP_DESC_SetOnRefresh( DISP_DESC*, DISP_OBJ_METHOD );
 __swi __arm void DISP_DESC_SetSize( DISP_DESC*, u16 size );
-__swi __arm int Disp_GetStrIdWidth( TEXTID, int len );
+__swi __arm int Disp_GetTextIDWidth( TEXTID, int len );
 __swi __arm void DrawRect( int x1, int y1, int x2, int y2, int pen_color, int brush_color );
 __swi __arm void DrawString( TEXTID, int align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color );
 __swi __arm int elfload( const wchar_t* filename, void* param1, void* param2, void* param3 );
