@@ -100,6 +100,8 @@ int S_ICONS[TOTAL_ICONS+1];
 int CurrentStatus;
 int CurrentXStatus;
 
+int AutoStatusEvent=0;
+
 WSHDR *ews;
 
 extern const unsigned int UIN;
@@ -2793,6 +2795,11 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
                 if (!(--AutoStatusRemainedCounter))
                   AutoStatusOnIdle();
             //  </tridog>
+              if (AutoStatusEvent)
+              {
+                AutoStatusOnAccessory();
+                AutoStatusEvent = 0;
+              }
 	    }
 	    break;
      	  case IPC_SENDMSG:                                   //IPC_SENDMSG by BoBa 26.06.07
@@ -3061,26 +3068,19 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     }
   }
   //  <tridog/>
-  //  8.01.2011. Автостатус при подключении / отключении гарнитуры
+  //  21.03.2011. Автостатус при подключении / отключении аксесуара
 #ifdef NEWSGOLD
 #ifdef ELKA
-  if (AUTOSTATUS_HEADSET_STATUS&&(msg->msg==0x15680))
+  if (msg->msg==0x1567F)
 #else
-  if (AUTOSTATUS_HEADSET_STATUS&&(msg->msg==0x15682))
+  if (msg->msg==0x15681)
 #endif 
-  {
-    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==0)
-    {
-      //  Аксесуар подключен
-      AutoStatusOnHeadset(1);
-    }
-    if ((   ((char *)(((int *)msg->data1)[6]))[0x11]  )==1)
-    {
-      //  Аксесуар отключен
-      AutoStatusOnHeadset(0);
-    }
-  }
+#else
+  if (msg->msg==0x29)    
 #endif
+  {
+    AutoStatusEvent = 1;
+  }
   // </tridog>
   return(1);
 }

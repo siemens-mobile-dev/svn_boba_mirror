@@ -293,15 +293,30 @@ __root const CFG_HDR cfghdr10={CFG_LEVEL,"Autostatus",1,0};
 
   __root const CFG_HDR cfghdr10_2={CFG_LEVEL,"",0,0};
   
-#ifdef NEWSGOLD  
   __root const CFG_HDR cfghdr10_3={CFG_LEVEL,"Autostatus on headset pluging",1,0};
     
-    __root const CFG_HDR cfghdr10_3_2={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен при подключении гарнитуры
+    __root const CFG_HDR cfghdr10_3_1={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен при подключении гарнитуры
     __root const int AUTOSTATUS_HEADSET_STATUS = 0;
     __root const CFG_CBOX_ITEM cfgcbox10_3[5]={"None","Away","Not available","Occupied","Do not disturb"};
 
   __root const CFG_HDR cfghdr10_4={CFG_LEVEL,"",0,0};
-#endif
+  
+  __root const CFG_HDR cfghdr10_5={CFG_LEVEL,"Autostatus on charger pluging",1,0};
+  
+    __root const CFG_HDR cfghdr10_5_1={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен при подключении зарядного устройства
+    __root const int AUTOSTATUS_CHARGER_STATUS = 0;
+    __root const CFG_CBOX_ITEM cfgcbox10_5[5]={"None","Away","Not available","Occupied","Do not disturb"};
+
+  __root const CFG_HDR cfghdr10_6={CFG_LEVEL,"",0,0};
+  
+  
+  __root const CFG_HDR cfghdr10_7={CFG_LEVEL,"Autostatus on cable pluging",1,0};
+  
+    __root const CFG_HDR cfghdr10_7_1={CFG_CBOX, "Set status", 0, 5}; // Статус, который будет установлен при подключении дата-кабеля
+    __root const int AUTOSTATUS_CABLE_STATUS = 0;
+    __root const CFG_CBOX_ITEM cfgcbox10_7[5]={"None","Away","Not available","Occupied","Do not disturb"};
+
+  __root const CFG_HDR cfghdr10_8={CFG_LEVEL,"",0,0};
 
 __root const CFG_HDR cfghdr11={CFG_LEVEL,"",0,0};
 

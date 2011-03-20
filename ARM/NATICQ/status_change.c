@@ -663,12 +663,14 @@ char *GetXStatusStr(int n, int *len)
 
 int AutoStatusIdleActive=0;
 int AutoStatusRemainedCounter=0;
-int LastStatus;
+int LastStatus=0;
 
 extern volatile int contactlist_menu_id;
 extern const unsigned int AUTOSTATUS_IDLE_TIME;
 extern const int AUTOSTATUS_IDLE_STATUS;
 extern const int AUTOSTATUS_HEADSET_STATUS;
+extern const int AUTOSTATUS_CHARGER_STATUS;
+extern const int AUTOSTATUS_CABLE_STATUS;
 
 void AutoStatusOnIdle(void)
 {
@@ -709,21 +711,80 @@ void DisposeAutoStatusEngine(void)
     RemoveKeybMsgHook((void *)status_keyhook); 
 }
 
-void AutoStatusOnHeadset(int HeadsetPlugged)
+const int ACCESSORY_NONE = 0;
+const int ACCESSORY_CHARGER = 1;
+const int ACCESSORY_CABLE = 2;
+const int ACCESSORY_HEADSET = 3;
+
+int CheckAccessoryState(void)
 {
-  if (HeadsetPlugged)
+  char str[64]; 
+  char *p;
+  int* pointer = (int*)RamAccPoint()+2; 
+  if (*pointer != 0) 
+  { 
+    int* device = (int*)*pointer+3; 
+    int* id = (int*)*pointer+2; 
+    if (*id != 0) 
+    {
+      sprintf(str, "%s", *id);
+      p = strstr(str, "DCA");
+      if (p) return ACCESSORY_CABLE;
+      p = strstr(str, "HHS");
+      if (p)  return ACCESSORY_HEADSET;
+    }
+    else 
+    {
+      sprintf(str, " %s", *device); 
+      p = strstr(str, "Boot-box");
+      if (p) return ACCESSORY_CABLE;
+      p = strstr(str, "Standard Charger");
+      if (p) return ACCESSORY_CHARGER;
+    }
+  } 
+  return ACCESSORY_NONE;
+}
+
+void SetAutoStatusOnAccessory(int AccessoryPlugged, int NewStatus)
+{
+  if (AccessoryPlugged)
   {
     if (!AutoStatusIdleActive)
     {
       LastStatus = CurrentStatus;
     }
-    Change_Status(AUTOSTATUS_HEADSET_STATUS + 1);
+    Change_Status(NewStatus + 1);
     AutoStatusIdleActive = 2;
   }
   else
   {
-    Change_Status(LastStatus);
-    AutoStatusIdleActive = 0;
+    if (CurrentStatus != NewStatus)
+    {
+      Change_Status(NewStatus);
+      AutoStatusIdleActive = 0;
+    }
   }
 }
+
+void AutoStatusOnAccessory(void)
+{
+  int i;
+  i =  CheckAccessoryState();
+  if (AUTOSTATUS_CHARGER_STATUS)
+  {
+    if (i == ACCESSORY_CHARGER) SetAutoStatusOnAccessory(1, AUTOSTATUS_CHARGER_STATUS);
+    if (i == ACCESSORY_NONE) SetAutoStatusOnAccessory(0, LastStatus);
+  }
+  if (AUTOSTATUS_CABLE_STATUS)
+  {
+    if (i == ACCESSORY_CABLE) SetAutoStatusOnAccessory(1, AUTOSTATUS_CABLE_STATUS);
+    if (i == ACCESSORY_NONE) SetAutoStatusOnAccessory(0, LastStatus);
+  }
+  if (AUTOSTATUS_HEADSET_STATUS)
+  {
+    if (i == ACCESSORY_HEADSET) SetAutoStatusOnAccessory(1, AUTOSTATUS_HEADSET_STATUS);
+    if (i == ACCESSORY_NONE) SetAutoStatusOnAccessory(0, LastStatus);
+  }
+}
+
 //  </tridog>

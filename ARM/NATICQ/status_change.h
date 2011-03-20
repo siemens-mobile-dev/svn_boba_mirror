@@ -18,7 +18,7 @@ char *GetXStatusStr(int n, int *len);
 void AutoStatusOnIdle(void);
 void InitAutoStatusEngine(void);
 void DisposeAutoStatusEngine(void);
-void AutoStatusOnHeadset(int HeadsetPlugged);
+void AutoStatusOnAccessory(void);
 //  </tridog>
 
 #endif
