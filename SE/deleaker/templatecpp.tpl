@@ -125,7 +125,7 @@ void trace_done()
 			for(int j=0;j<buffers[memtype]->FirstFree;j+=LISTDATACOUNT)
 			{
 				__original_w_fwrite(f,tmp,
-									sprintf(tmp,"- %s:%d (%x)\n",
+									__original_sprintf(tmp,"- %s:%d (%x)\n",
 											__original_List_Get(buffers[memtype],j+1),//file
 											__original_List_Get(buffers[memtype],j+2),//line
 											__original_List_Get(buffers[memtype],j)//value
@@ -137,10 +137,10 @@ void trace_done()
 	}
 
 	if(!detected)
-		__original_w_fwrite(f,tmp, sprintf(tmp,"no leaks detected\n") );
+		__original_w_fwrite(f,tmp, __original_sprintf(tmp,"no leaks detected\n") );
 
 	if(buffers2[trace_list_file]->FirstFree)
-		__original_w_fwrite(f,tmp, sprintf(tmp,"new/delete counter broken\n") );
+		__original_w_fwrite(f,tmp, __original_sprintf(tmp,"new/delete counter broken\n") );
 
 	__original_w_fclose(f);
 

@@ -685,10 +685,10 @@ __make TextID_Create
 	if(isallocatedstrid(ret))
 	{
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
-		if(flag==5)
+		if(flag==ENC_TEXTID)
 		{
 			for(int i=0;i<len;i++)
-				trace_free(trace_strid, (void*)((long*)wstr)[i], __file__, __line__);
+				trace_free(trace_strid, (void*)((TEXTID*)wstr)[i], __file__, __line__);
 		}
 	}
 	return ret;
