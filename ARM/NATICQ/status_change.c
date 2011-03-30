@@ -49,6 +49,13 @@ static void Change_Status(int status)
 }
 
 #pragma inline
+static void Change_Status2(int status)
+{
+  CurrentStatus=status;
+  set_my_status();
+}
+
+#pragma inline
 static void Change_XStatus(int xstatus)
 {
   CurrentXStatus=xstatus;
@@ -678,7 +685,7 @@ void AutoStatusOnIdle(void)
   if (!AutoStatusIdleActive)
   {
     LastStatus = CurrentStatus;
-    Change_Status(AUTOSTATUS_IDLE_STATUS + 1);    //гарнитура приоритетнее
+    Change_Status2(AUTOSTATUS_IDLE_STATUS + 1);    //гарнитура приоритетнее
     AutoStatusIdleActive = 1;
   }
 }
@@ -689,7 +696,7 @@ int status_keyhook(int submsg, int msg)
   {
     if (AutoStatusIdleActive==1)    //гарнитура приоритетнее
     {
-        Change_Status(LastStatus);
+        Change_Status2(LastStatus);
         AutoStatusIdleActive = 0;
       }
     AutoStatusRemainedCounter = AUTOSTATUS_IDLE_TIME * 6; 
@@ -753,14 +760,14 @@ void SetAutoStatusOnAccessory(int AccessoryPlugged, int NewStatus)
     {
       LastStatus = CurrentStatus;
     }
-    Change_Status(NewStatus + 1);
+    Change_Status2(NewStatus + 1);
     AutoStatusIdleActive = 2;
   }
   else
   {
     if (CurrentStatus != NewStatus)
     {
-      Change_Status(NewStatus);
+      Change_Status2(NewStatus);
       AutoStatusIdleActive = 0;
     }
   }

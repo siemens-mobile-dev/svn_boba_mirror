@@ -330,9 +330,10 @@ extern const char sndSrvMsg[];
 extern const char sndGlobal[];
 extern const char sndMsg[];
 extern const char sndMsgSent[];
+extern const char sndDir[];
 extern const unsigned int sndVolume;
 
-void Play(const char *fname)
+int Play(const char *fname)
 {
   if ((!IsCalling())&&Is_Sounds_Enabled&&!InAway())
   {
@@ -372,38 +373,35 @@ void Play(const char *fname)
 #endif
       FreeWS(sndPath);
       FreeWS(sndFName);
-    }
-  }
+      return 1;
+    }else return 0;
+  }else return 2; 
 }
 
 GBSTMR tmr_vibra;
 volatile int vibra_count;
+extern const int VIBR_TYPE;
 
-void start_vibra(void)
-{
-  extern const int VIBR_TYPE;
-  void stop_vibra(void);
-  if((Is_Vibra_Enabled)&&(GetVibraStatus())&&(!IsCalling())&&!InAway())
-  {
+void start_vibra2(void){
+  if((Is_Vibra_Enabled)&&(GetVibraStatus())&&(!IsCalling())&&!InAway()){
+    void stop_vibra(void);
     extern const unsigned int vibraPower;
     SetVibration(vibraPower);
-    if(VIBR_TYPE)
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>2,stop_vibra);
-    else
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,stop_vibra);
+    GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1>>VIBR_TYPE,stop_vibra);
   }
 }
 
-void stop_vibra(void)
-{
-  extern const int VIBR_TYPE;
+void start_vibra(int vibr_type){
+  if (vibr_type){
+    vibra_count=vibr_type;
+    start_vibra2();
+  }
+}
+
+void stop_vibra(void){
   SetVibration(0);
-  if (--vibra_count)
-  {
-    if(VIBR_TYPE)
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND/40,start_vibra);
-    else
-      GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1,start_vibra);
+  if (--vibra_count){
+     GBS_StartTimerProc(&tmr_vibra,TMR_SECOND>>1>>VIBR_TYPE,start_vibra2);
   }
 }
 
@@ -1720,8 +1718,6 @@ void get_answer(void)
 	  SendMSGACK(TOTALRECEIVED);
 	  GBS_SendMessage(MMI_CEPID,MSG_HELPER_TRANSLATOR,0,p,sock);
 	  SMART_REDRAW();
-//	  Play(sndMsg);
-//          UpdateCSMname();
 	  break;
 	case T_SSLRESP:
 	  LockSched();
@@ -1790,7 +1786,8 @@ void AddStringToLog(CLIST *t, int code, char *s, const char *name, unsigned int 
   if(code != 3 || LOG_XTXT) //Нужно сохранять иксстатус
     Add2History(t, hs, s, code); // Запись хистори
   LOGQ *p=NewLOGQ(s);
-  snprintf(p->hdr,79,"%02d:%02d:%02d %02d-%02d %s:",tt.hour,tt.min,tt.sec,d.day,d.month,name);
+//  snprintf(p->hdr,79,"%02d:%02d:%02d %02d-%02d %s:",tt.hour,tt.min,tt.sec,d.day,d.month,name);
+  snprintf(p->hdr,79,"%02d:%02d %02d-%02d %s:",tt.hour,tt.min,d.day,d.month,name);  //сказал же - опционально
 //  snprintf(p->hdr,79,"%s:",name);
   p->type=code;
   p->ID=IDforACK;  //0-32767
@@ -2177,11 +2174,7 @@ void ProcessPacket(TPKT *p)
     }
     else
     {
-      if(VIBR_ON_CONNECT)
-      {
-        vibra_count=1;
-        start_vibra();
-      }
+      start_vibra(VIBR_ON_CONNECT);
       GROUP_CACHE=0;
       ask_my_info();
       if (contactlist_menu_id)
@@ -2316,13 +2309,13 @@ void ProcessPacket(TPKT *p)
     if(!t->isactive && HISTORY_BUFFER) GetHistory(t, 64<<HISTORY_BUFFER);
     t->isactive=ACTIVE_TIME;
 
-    //    ChangeContactPos(t);
-    if(VIBR_TYPE)
-      vibra_count=2;
-    else
-      vibra_count=1;
-    start_vibra();
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
+
+    if (*(int*)t->name==0x50476923)
+      start_vibra(3-VIBR_TYPE);
+    else
+      start_vibra(VIBR_TYPE);
+
     if (t->name[0]=='#'||t->clientid==2)
     {
       //Если это конференция, патчим имя
@@ -2828,7 +2821,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      msg->pkt.data_len=l;
 	      memcpy(msg->data,fmp->msg,l+1);
 	      ae(msg);
-              Play(sndMsg);
+              char snd[80];
+              snprintf(snd,80,"%s%d.wav",sndDir,fmp->uin);
+              if (!Play(snd))
+               Play(sndMsg);
 	    }
 	    mfree(fmp->msg); //Освобождаем сам текст сообщения
 	    mfree(fmp->ipc); //Освобождаем родительский IPC_REQ
@@ -2924,10 +2920,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       is_gprs_online=0;
       return(1);
     case LMAN_CONNECT_CNF:
-      if(VIBR_ON_CONNECT){
-        vibra_count=1;
-        start_vibra();
-      }
+      start_vibra(VIBR_ON_CONNECT);
       is_gprs_online=1;
       //strcpy(logmsg,LG_GRGPRSUP);
       if (!disautorecconect){
@@ -2984,10 +2977,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       case ENIP_SOCK_CONNECTED:
 	if (connect_state==1)
 	{
-	  if(VIBR_ON_CONNECT){
-            vibra_count=2;
-    	    start_vibra();
-          }
+    	  start_vibra(VIBR_ON_CONNECT*2);
 	  //Соединение установленно, посылаем пакет login
 	  strcpy(logmsg, LG_GRTRYLOGIN);
 	  {
@@ -3047,10 +3037,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	connect_state=0;
 	sock=-1;
         host_counter=-1;
-        if(VIBR_ON_CONNECT){
-          vibra_count=4;
-	  start_vibra();
-        }
+        start_vibra(VIBR_ON_CONNECT*4);
 	if (sendq_p)
 	{
 	  snprintf(logmsg,255,"Disconnected, %d bytes not sended!",sendq_l);
@@ -3508,7 +3495,6 @@ unsigned short * wstrstr(unsigned short *ws, char *str, int *wslen, int len)
     (*wslen)--;
   }
   return 0;
-
 }
 
 int IsUrl(WSHDR *ws, int pos, char *link)
@@ -3625,7 +3611,6 @@ void SaveAnswer(CLIST *cl, WSHDR *ws)
   cl->answer=p;
 }
 
-
 int GetTempName(void)
 {
   static const int DMonth[]={0,31,59,90,120,151,181,212,243,273,304,334,365};
@@ -3727,7 +3712,6 @@ int edchat_onkey(GUI *data, GUI_MSG *msg)
     }
     if (l==ENTER_BUTTON)
     {
-
       if (!EDIT_IsMarkModeActive(data))  // Только если не выделение
       {
         int pos, len;
@@ -3978,7 +3962,6 @@ void CreateEditChat(CLIST *t)
   *((int **)(&edchat_hdr.icon))=(int *)S_ICONS+IS_NULLICON;
 
   eq=AllocEQueue(ma,mfree_adr());
-
 
   lp=t->log;
 

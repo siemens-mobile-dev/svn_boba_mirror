@@ -242,12 +242,12 @@ __root const CFG_HDR cfghdr8={CFG_LEVEL,"Notify power",1,0};
   __root const CFG_HDR cfghdr8_1={CFG_UINT,"Sound Volume",0,6};
   __root const unsigned int sndVolume=3;
 
+  __root const CFG_HDR cfghdr8_3={CFG_CBOX,"Vibration type",0,3};
+  __root const int VIBR_TYPE = 0;
+  __root const CFG_CBOX_ITEM cfgcbox8_3[3]={"Disable","Single","Double"};
+
   __root const CFG_HDR cfghdr8_2={CFG_UINT,"Vibra power",0,100};
   __root const unsigned int vibraPower=100;
-
-  __root const CFG_HDR cfghdr8_3={CFG_CBOX,"Vibration type",0,2};
-  __root const int VIBR_TYPE = 0;
-  __root const CFG_CBOX_ITEM cfgcbox8_3[2]={"Single","Double"};
 
   __root const CFG_HDR cfghdr8_4={CFG_CBOX,"Vibra on connect",0,2};
   __root const int VIBR_ON_CONNECT = 0;
@@ -274,6 +274,9 @@ __root const CFG_HDR cfghdr8={CFG_LEVEL,"Notify power",1,0};
 
     __root const CFG_HDR cfghdr8_5_5={CFG_STR_UTF8,"snd MsgSent",0,63};
     __root const char sndMsgSent[64]=DEFAULT_DISK ":\\ZBin\\NatICQ\\Sounds\\sndMsgSent.wav";
+
+    __root const CFG_HDR cfghdr8_5_6={CFG_STR_UTF8,"snd Dir",0,63};
+    __root const char sndDir[64]=DEFAULT_DISK  ":\\Misc\\NatICQ\\Sounds\\";
   __root const CFG_HDR cfghdr8_6={CFG_LEVEL,"",0,0};
 __root const CFG_HDR cfghdr9={CFG_LEVEL,"",0,0};
 
