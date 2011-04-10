@@ -487,10 +487,10 @@ __swi __arm int __original_REQUEST_DATEFORMAT_GET( const int* sync, char* DateFo
 __swi __arm int __original_REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
 
 #pragma swi_number=0x1BE
-__swi __arm int __original_Date2ID( DATE*, int TimeFormat, int );
+__swi __arm TEXTID __original_Date2ID( DATE*, int DateFormat, int );
 
 #pragma swi_number=0x1BF
-__swi __arm int __original_Time2ID( TIME*, char TimeFormat, int isSec );
+__swi __arm TEXTID __original_Time2ID( TIME*, char TimeFormat, int isSec );
 
 #pragma swi_number=0x1C0
 __swi __arm GUI_LIST* __original_CreateListMenu( BOOK*, int display );

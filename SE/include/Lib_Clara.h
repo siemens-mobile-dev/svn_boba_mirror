@@ -513,10 +513,10 @@ __swi __arm int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 __swi __arm int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
 
 #pragma swi_number=0x1BE
-__swi __arm int Date2ID( DATE*, int TimeFormat, int );
+__swi __arm TEXTID Date2ID( DATE*, int DateFormat, int );
 
 #pragma swi_number=0x1BF
-__swi __arm int Time2ID( TIME*, char TimeFormat, int isSec );
+__swi __arm TEXTID Time2ID( TIME*, char TimeFormat, int isSec );
 
 #pragma swi_number=0x1C0
 __swi __arm GUI_LIST* CreateListMenu( BOOK*, int display );

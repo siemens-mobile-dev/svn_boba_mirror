@@ -18,6 +18,9 @@
 
 #define JAVA_BOOK_NAME "CUIDisplayableBook"
 
+#define INI_BOOK_NAMES L"bookman.ini"
+#define INI_SHORTCUTS L"shortcuts.ini"
+
 #define FLASH_MASK 0xF8000000
 
 
@@ -59,15 +62,6 @@ typedef struct _MYBOOK : BOOK
 
 typedef struct
 {
-  BOOK* book;
-  UI_APP_SESSION* session;
-  int book_name;
-  
-}BOOK_ITEM;
-
-
-typedef struct
-{
   BOOK * book;
   char * book_name;
   int isGuiBook;
@@ -86,17 +80,20 @@ typedef struct
 }MSG;
 
 
+void RefreshBookSoftkeys( MyBOOK* mbk, int item );
+int IdlePage_EnterAction( void* r0, BOOK* bk );
+int ReconfigElf( void* mess, BOOK* book );
+void LoadBookNames(MyBOOK * mbk);
+void LoadShortcuts(MyBOOK * mbk);
 int CreateBookList( void* r0, BOOK* bk );
 int RecreateBookList( void* r0, BOOK* bk );
 int isBookManager( BOOK* struc );
 int onUserInactivity( void* r0, BOOK* bk );
 int onRootListChanged( void* r0, BOOK* bk );
-void onMyBookClose( BOOK* );
 void CloseMyBook( BOOK* Book, GUI* );
-int CreateMenu( int r0, BOOK* bk );
+void CreateBookManagerGUI( MyBOOK* bk );
 void PreTerminateManager( BOOK* Book, GUI* );
-int NewKey( int key, int r1, int mode, LPARAM, DISP_OBJ* );
-void SessoinListsFree( MyBOOK* book );
+int NewKey( int key, int rep_count, int mode, MyBOOK * mbk, DISP_OBJ* );
 int get_file( wchar_t* fname, void** buf_set );
 void RefreshElfSoftkeys( MyBOOK* mbk, int item );
 int GetActiveTab(MyBOOK*);

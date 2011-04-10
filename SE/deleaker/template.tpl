@@ -1,7 +1,5 @@
 skip AB_DEFAULTNBR_GET
 skip AB_GETNBROFITEMS
-skip AB_NAME_ITEM2TextID
-skip AB_NUM_ITEM2TextID
 skip AB_POSITIONNBR_GET
 skip AB_READPHONENBR
 skip AB_READSTRING
@@ -1346,4 +1344,20 @@ __make SoundRecorderDesc_Destroy
 {
 	trace_free(trace_memory, desc, __file__, __line__);
 	__O__;
+}
+
+__make AB_NAME_ITEM2TextID
+{
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+__make AB_NUM_ITEM2TextID
+{
+	__R ret = __O__;
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }

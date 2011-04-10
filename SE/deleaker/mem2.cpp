@@ -669,17 +669,17 @@ TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int
 	return ret;
 }
 
-int __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int TimeFormat, int __unknwnargname3 )
+TEXTID __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int DateFormat, int __unknwnargname3 )
 {
-	int ret = __original_Date2ID(__unknwnargname1, TimeFormat, __unknwnargname3);
+	TEXTID ret = __original_Date2ID(__unknwnargname1, DateFormat, __unknwnargname3);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
 }
 
-int __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec )
+TEXTID __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec )
 {
-	int ret = __original_Time2ID(__unknwnargname1, TimeFormat, isSec);
+	TEXTID ret = __original_Time2ID(__unknwnargname1, TimeFormat, isSec);
 	if(isallocatedstrid(ret))
 		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
 	return ret;
@@ -1156,6 +1156,22 @@ void __deleaker_SoundRecorderDesc_Destroy( const char* __file__, int __line__, v
 {
 	trace_free(trace_memory, desc, __file__, __line__);
 	__original_SoundRecorderDesc_Destroy(desc);
+}
+
+TEXTID __deleaker_AB_NAME_ITEM2TextID( const char* __file__, int __line__, AB_STR_ITEM* ab_name )
+{
+	TEXTID ret = __original_AB_NAME_ITEM2TextID(ab_name);
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
+}
+
+TEXTID __deleaker_AB_NUM_ITEM2TextID( const char* __file__, int __line__, AB_NUM_ITEM* ab_num_item )
+{
+	TEXTID ret = __original_AB_NUM_ITEM2TextID(ab_num_item);
+	if(isallocatedstrid(ret))
+		trace_alloc(trace_strid, (void*)ret, __file__, __line__);
+	return ret;
 }
 //__swi __arm GUI* CreateDateInputVA( int zero, ... );
 //__swi __arm GUI* CreatePercentInputVA( int zero, ... );

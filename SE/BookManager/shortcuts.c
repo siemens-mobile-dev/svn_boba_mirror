@@ -65,7 +65,7 @@ PAGE_DESC SelectShortcut_page = { "BookManager_ChangeShortcuts_SelectShortcut_Pa
 void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
 {
   int f;
-  if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_CREAT|FSX_O_APPEND, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+  if ( ( f = _fopen( path, INI_SHORTCUTS, FSX_O_CREAT|FSX_O_APPEND, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
   {
     char* temp_buf = new char[strlen( mask_buf ) + wstrlen( name_buf ) + 4];
     strcpy( temp_buf, mask_buf );
@@ -76,10 +76,10 @@ void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
     fclose( f );
     delete( temp_buf );
   }
-  else
+  /*else
   {
     MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-  }
+  }*/
 }
 
 
@@ -99,7 +99,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
     if ( param )
     {
       pos = strstr( mbk->shortcuts_buf, mask_buf );
-      if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+      if ( ( f = _fopen( path, INI_SHORTCUTS, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
       {
         int len_minus = strlen( param );    //длина старого €рлыка
         fwrite( f, mbk->shortcuts_buf, pos - mbk->shortcuts_buf + len_prefix );     //пишем начало файла
@@ -107,27 +107,27 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
         fwrite( f, pos + len_prefix + len_minus, ( mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) ) - len_minus );      //пишем остаток файла
         fclose( f );
       }
-      else
+      /*else
       {
         MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, mbk );
-      }
+      }*/
       mfree( param );
     }
     else
     {
       if ( pos = strstr( mbk->shortcuts_buf, mask_buf ) )
       {
-        if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+        if ( ( f = _fopen( path, INI_SHORTCUTS, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
         {
           fwrite( f, mbk->shortcuts_buf, pos - mbk->shortcuts_buf + len_prefix );
           fwrite( f, str_buf, len );
           fwrite( f, pos + len_prefix, mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) );
           fclose( f );
         }
-        else
+        /*else
         {
           MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-        }
+        }*/
       }
       else
       {
@@ -169,10 +169,14 @@ void WriteShortcut( wchar_t* name_buf )
     ReWriteShortcut( mbk, name_buf, mask_buf, path );
   }
   delete( path );
+  
+  LoadShortcuts(mbk);
 }
 
 void onShortcutSet( BOOK* MainMenu, GUI* )
 {
+  MyBOOK* mbk = (MyBOOK*) FindBook( isBookManager );
+  
   wchar_t* name_buf = MenuBook_Desktop_GetSelectedItemID( MainMenu );
   if ( name_buf )
   {
@@ -180,7 +184,7 @@ void onShortcutSet( BOOK* MainMenu, GUI* )
     mfree( name_buf );
   }
   FreeBook( MainMenu );
-  BookObj_ReturnPage( FindBook( isBookManager ), ACCEPT_EVENT );
+  BookObj_ReturnPage( mbk, ACCEPT_EVENT );
 }
 
 
@@ -274,7 +278,7 @@ void onEnter_JavaList( BOOK* book, GUI* )
   
   WriteShortcut( java_buf );
   delete( java_buf );
-  BookObj_ReturnPage( book, ACCEPT_EVENT );
+  BookObj_ReturnPage( mbk, ACCEPT_EVENT );
 }
 
 
@@ -303,7 +307,7 @@ void elem_free( void* elem )
   if ( lm->hash_name )
     delete( lm->hash_name );
   
-  if ( lm->imageID )
+  if ( lm->imageID!=NOIMAGE )
     ImageID_Free( lm->imageID );
   
   delete( lm );
@@ -625,7 +629,7 @@ void But_onDelete( BOOK* book, GUI* )
   if (!GetShortcutName(mbk,dig_num,0)) return;
   
   wchar_t* path = get_path();
-  if ( ( f = _fopen( path, L"shortcuts.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+  if ( ( f = _fopen( path, INI_SHORTCUTS, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
   {
     char mask_buf[10];
     
@@ -653,10 +657,10 @@ void But_onDelete( BOOK* book, GUI* )
     if ( res )
       CreateButtonList( 0, book );
   }
-  else
+  /*else
   {
     MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-  }
+  }*/
   delete( path );
 }
 
@@ -666,7 +670,7 @@ int CreateButtonList( void* data, BOOK* book )
   MyBOOK* mbk = (MyBOOK*) book;
   int str_id;
   void* sp;
-  mbk->shortcuts_buf_size = get_file( L"shortcuts.ini", &sp );
+  mbk->shortcuts_buf_size = get_file( INI_SHORTCUTS, &sp );
   
   if ( mbk->shortcuts_buf )
     delete mbk->shortcuts_buf;

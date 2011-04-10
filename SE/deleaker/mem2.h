@@ -182,10 +182,10 @@ void __deleaker_Feedback_SetTextExtended( const char* __file__, int __line__, GU
 void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID short_text, TEXTID full_text );
 #define PNUM2Name(pnum, isIconNeeded, only_full_number_flag) __deleaker_PNUM2Name( __FILE__,  __LINE__, pnum, isIconNeeded, only_full_number_flag )
 TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag );
-#define Date2ID(__unknwnargname1, TimeFormat, __unknwnargname3) __deleaker_Date2ID( __FILE__,  __LINE__, __unknwnargname1, TimeFormat, __unknwnargname3 )
-int __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int TimeFormat, int __unknwnargname3 );
+#define Date2ID(__unknwnargname1, DateFormat, __unknwnargname3) __deleaker_Date2ID( __FILE__,  __LINE__, __unknwnargname1, DateFormat, __unknwnargname3 )
+TEXTID __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int DateFormat, int __unknwnargname3 );
 #define Time2ID(__unknwnargname1, TimeFormat, isSec) __deleaker_Time2ID( __FILE__,  __LINE__, __unknwnargname1, TimeFormat, isSec )
-int __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec );
+TEXTID __deleaker_Time2ID( const char* __file__, int __line__, TIME* __unknwnargname1, char TimeFormat, int isSec );
 #define KeyCode2Name(key_code) __deleaker_KeyCode2Name( __FILE__,  __LINE__, key_code )
 TEXTID __deleaker_KeyCode2Name( const char* __file__, int __line__, int key_code );
 #define NOfMany_SetTexts(__unknwnargname1, strids, items_count) __deleaker_NOfMany_SetTexts( __FILE__,  __LINE__, __unknwnargname1, strids, items_count )
@@ -328,6 +328,10 @@ void* __deleaker_w_diropen( const char* __file__, int __line__, const wchar_t* d
 void* __deleaker_SoundRecorderDesc_Create( const char* __file__, int __line__ );
 #define SoundRecorderDesc_Destroy(desc) __deleaker_SoundRecorderDesc_Destroy( __FILE__,  __LINE__, desc )
 void __deleaker_SoundRecorderDesc_Destroy( const char* __file__, int __line__, void* desc );
+#define AB_NAME_ITEM2TextID(ab_name) __deleaker_AB_NAME_ITEM2TextID( __FILE__,  __LINE__, ab_name )
+TEXTID __deleaker_AB_NAME_ITEM2TextID( const char* __file__, int __line__, AB_STR_ITEM* ab_name );
+#define AB_NUM_ITEM2TextID(ab_num_item) __deleaker_AB_NUM_ITEM2TextID( __FILE__,  __LINE__, ab_num_item )
+TEXTID __deleaker_AB_NUM_ITEM2TextID( const char* __file__, int __line__, AB_NUM_ITEM* ab_num_item );
 
 #endif
 #endif

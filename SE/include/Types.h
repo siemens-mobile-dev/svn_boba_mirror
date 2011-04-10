@@ -290,7 +290,7 @@ typedef struct UI_APP_SESSION
 {
 	LIST* listbook;
 	int name;
-	int W1;
+	IMAGEID icon;
 	int W2;
 	int SessionID;
 	int unk2;

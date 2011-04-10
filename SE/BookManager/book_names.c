@@ -69,7 +69,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
   {
     if ( pos_uni_pair )
     {
-      if ( ( f = _fopen( path, L"bookman.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0) ) >= 0 )
+      if ( ( f = _fopen( path, INI_BOOK_NAMES, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0) ) >= 0 )
       {
         //Delete
         pos = wstrwstr(pos_uni_pair, L"\r\n") + sizeof("\r\n") - sizeof("");
@@ -78,10 +78,10 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
         fwrite( f, pos, mbk->ini_buf_size - (pos - mbk->ini_buf) * sizeof(wchar_t) );     //пишем остаток файла
         fclose( f );
       }
-      else
+      /*else
       {
         MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
-      }
+      }*/
     }
   }
   else
@@ -90,7 +90,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
     {
       if ( pos_uni_pair )
       {
-        if ( ( f = _fopen( path, L"bookman.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+        if ( ( f = _fopen( path, INI_BOOK_NAMES, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
         {
           //ReWrite
           pos = pos_uni_pair + wstrlen(orig_name) + sizeof(": ") - sizeof("");
@@ -101,15 +101,15 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
           fwrite( f, pos + len_minus, mbk->ini_buf_size - (( pos - mbk->ini_buf ) + len_minus ) * sizeof(wchar_t));      //пишем остаток файла
           fclose( f );
         }
-        else
+        /*else
         {
           MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
-        }
+        }*/
         
       }
       else
       {
-        if ( ( f = _fopen( path, L"bookman.ini", FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+        if ( ( f = _fopen( path, INI_BOOK_NAMES, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
         {
           //Append
           fwrite(f, mbk->ini_buf, mbk->ini_buf_size);     //пишем старый файл
@@ -119,17 +119,19 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
           fwrite(f, L"\r\n", (sizeof(L"\r\n") - sizeof(wchar_t)));
           fclose(f);
         }
-        else
+        /*else
         {
           MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when append" ), NOIMAGE, 1 , 5000, mbk );
-        }
+        }*/
       }
     }
   }
   
   delete path;
   
-  BookObj_ReturnPage( book, ACCEPT_EVENT );
+  LoadBookNames(mbk);
+  
+  BookObj_ReturnPage( mbk, ACCEPT_EVENT );
 }
 
 

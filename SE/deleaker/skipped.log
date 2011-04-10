@@ -1,7 +1,5 @@
 __swi __arm int AB_DEFAULTNBR_GET( int rec_num, void* mem_0x30, int* unk );
 __swi __arm int AB_GETNBROFITEMS( int get_from, int sub_id );
-__swi __arm TEXTID AB_NAME_ITEM2TextID( AB_STR_ITEM* ab_name );
-__swi __arm TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 __swi __arm int AB_POSITIONNBR_GET( void* ab_name, char*, u16*, void* ab_num );
 __swi __arm int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 __swi __arm int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );

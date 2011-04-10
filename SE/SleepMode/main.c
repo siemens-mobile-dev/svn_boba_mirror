@@ -27,6 +27,11 @@ public:
   virtual int GetTime(TIME * time);
   virtual int SetDateAndTime(DATETIME * datetime);
   virtual int GetDateAndTime(DATETIME * datetime);
+  virtual int GetDateAndUTCTime(DATETIME * datetime);
+  virtual int GetTimeZone(char * timezone);
+  virtual int SetTimeZone(char * timezone);
+  virtual int GetDaylightSaving(char * ds);
+  virtual int SetDaylightSaving(char * ds);
 };
 
 class IClockManager: public IUnknown
@@ -343,6 +348,7 @@ void CreateSleepModeBook()
   {
     DATETIME datetime;
     DATETIME datetime_bak;
+    char ds=0;
     
     if (SM_Book->pIClock) SM_Book->pIClock->GetDateAndTime(&datetime);
     
@@ -352,8 +358,10 @@ void CreateSleepModeBook()
       fread(f,&datetime_bak,sizeof(DATETIME));
       fclose(f);
       
+      if (SM_Book->pIClock) SM_Book->pIClock->GetDaylightSaving(&ds);
+      
       int unix=datetime2unixtime(&datetime_bak);
-      unix = unix + datetime.time.sec + datetime.time.min*60 + (datetime.time.hour-default_time.hour)*60*60 + OFF_TIME_CORRECTION;
+      unix = unix + datetime.time.sec + datetime.time.min*60 + (datetime.time.hour-default_time.hour-ds)*60*60 + OFF_TIME_CORRECTION;
       
       unixtime2datetime(unix,&datetime_bak);
       

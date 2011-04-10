@@ -176,8 +176,8 @@
 ;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 06F0: 00000000 2592E810 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: 00000000 4593E810 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
-06F8: 00000000 51C25D11 ; 1BE: int Date2ID( DATE*, int TimeFormat, int );
-06FC: 00000000 6DC15D11 ; 1BF: int Time2ID( TIME*, char TimeFormat, int isSec );
+06F8: 00000000 51C25D11 ; 1BE: TEXTID Date2ID( DATE*, int DateFormat, int );
+06FC: 00000000 6DC15D11 ; 1BF: TEXTID Time2ID( TIME*, char TimeFormat, int isSec );
 0700: 00000000 AD766211 ; 1C0: GUI_LIST* CreateListMenu( BOOK*, int display );
 0704: 00000000 DD786211 ; 1C1: void ListMenu_SetItemCount( GUI_LIST*, int item_count );
 0708: 00000000 D4BD272A ;81C2: LIST** ROOT_APP( void );
@@ -531,7 +531,7 @@
 0C78: 00000000 79A6FF10 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 D5A6FF10 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
 0C80: 00000000 DDA6FF10 ; 320: void DataBrowserDesc_Menu_AddMarkFiles( void* DataBrowserDesc, int );
-0C84: 00000000 71086911 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
+0C84: 00000000 FD086911 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 9DF26811 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 ADEE6811 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
 0C90: 00000000 09B97211 ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );

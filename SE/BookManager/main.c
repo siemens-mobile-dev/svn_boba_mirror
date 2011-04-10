@@ -1,9 +1,9 @@
 #include "..\include\Lib_Clara.h"
 #include "..\include\Dir.h"
 #include "..\include\var_arg.h"
+#include "..\include\cfg_items.h"
 #include "conf_loader.h"
 #include "config_data.h"
-#include "bookman_daemon.h"
 #include "shortcuts.h"
 #include "book_names.h"
 #include "main.h"
@@ -62,6 +62,8 @@ const wchar_t* img_names[ICONS_COUNT] =
 const PAGE_MSG bk_main_msglst[] @ "DYN_PAGE" =
 {
   PAGE_ENTER_EVENT_TAG, CreateBookList,
+  BOOK_DESTROYED_EVENT_TAG, onRootListChanged,
+  USER_INACTIVITY_EVENT_TAG, onUserInactivity,
   ACCEPT_EVENT_TAG, RecreateBookList,
   NIL_EVENT_TAG, 0
 };
@@ -69,10 +71,18 @@ const PAGE_MSG bk_main_msglst[] @ "DYN_PAGE" =
 const PAGE_DESC BookManager_Main_Page = { "BookManager_Main_Page", 0, bk_main_msglst };
 
 
+const PAGE_MSG bk_idle_msglst[] @ "DYN_PAGE" =
+{
+  PAGE_ENTER_EVENT_TAG, IdlePage_EnterAction,
+  NIL_EVENT_TAG, 0
+};
+
+const PAGE_DESC BookManager_Idle_Page = { "BookManager_Idle_Page", 0, bk_idle_msglst };
+
+
 const PAGE_MSG bk_base_msglst[] @ "DYN_PAGE" =
 {
-  BOOK_DESTROYED_EVENT_TAG, onRootListChanged,
-  USER_INACTIVITY_EVENT_TAG, onUserInactivity,
+  ELF_RECONFIG_EVENT, ReconfigElf,
   NIL_EVENT_TAG, 0
 };
 
@@ -97,7 +107,7 @@ int GetActiveTab( MyBOOK* mbk )
 
 int isBookManager( BOOK* book )
 {
-  return book->onClose == onMyBookClose;
+  return 0 == strcmp( book->xbook->name, "BookManager" );
 }
 
 
@@ -130,6 +140,7 @@ int CheckEv( BOOK* bk, int ev )
 }
 
 
+//Получить пользовательское имя книги
 wchar_t * GetUserBookName(wchar_t * ini,wchar_t * orig_name,wchar_t * cur_name)
 {
   wchar_t * pos;
@@ -192,6 +203,7 @@ int GetJavaName( BOOK* bk )
 }
 
 
+//Получить ID жавы для ярлыка
 int JavaShortcut_GetID(wchar_t * java_shortcut)
 {
   int ret_val = -1;
@@ -253,7 +265,7 @@ BOOK* GetBook( int list, BOOK* bk )
 
 
 // создаём список книг
-void CreateBookLists( MyBOOK* myBook )
+void CreateBookAndElfsLists( MyBOOK* myBook )
 {
   int i, j, k, fgui;
   int books_cnt=0;
@@ -262,8 +274,6 @@ void CreateBookLists( MyBOOK* myBook )
   BOOK* book;
   UI_APP_SESSION* session;
   BOOK_LIST_ITEM* elem;
-  
-  SessoinListsFree( myBook );
   
   myBook->books_list = List_Create();
   myBook->elfs_list = List_Create();
@@ -279,63 +289,62 @@ void CreateBookLists( MyBOOK* myBook )
     {
       book = (BOOK*) List_Get( session->listbook, k );
       
-      if (!isBookmanDaemonBook(book))
+      fgui = book->xguilist->guilist->FirstFree;
+      
+      if( (fgui) || (ShowNoGUIBooks) || ( ((int)book->onClose)&FLASH_MASK ) != mask )
       {
-        if( (fgui = book->xguilist->guilist->FirstFree) || ( ((int)book->onClose)&FLASH_MASK ) != mask )
+        if ( !isBookManager( book ) && !IsVolumeControllerBook( book ) && !IsRightNowBook( book ) && !isRSSTickerBook( book ))
         {
-          if ( !isBookManager( book ) && !IsVolumeControllerBook( book ) && !IsRightNowBook( book ) && !isRSSTickerBook( book ))
+          char s[MAX_BOOK_NAME_LEN+1];
+          elem = new BOOK_LIST_ITEM;
+          elem->book=book;
+          
+          if ( strcmp( book->xbook->name, JAVA_BOOK_NAME ) )
           {
-            char s[50];
-            elem = new BOOK_LIST_ITEM;
-            elem->book=book;
-            
-            if ( strcmp( book->xbook->name, JAVA_BOOK_NAME ) )
-            {
-              char * bn =new char[strlen(book->xbook->name)+1];
-              strcpy(bn,book->xbook->name);
-              elem->book_name = bn;
-            }
-            else
-            {
-              TextID_GetString( BookObj_GetSession(book)->name, s, MAXELEMS(s) );
-              char * bn =new char[strlen(s)+1];
-              strcpy(bn,s);
-              elem->book_name = bn;
-            }
-            
-            elem->isGuiBook = fgui;
-            
-            TEXTID tmp = GetJavaName( book );
-            
-            if ( tmp != EMPTY_TEXTID )
-            {
-              delete(elem->book_name);
-              TextID_GetString( tmp, s, MAXELEMS(s) );
-              char * java_name =new char[strlen(s)+1];
-              strcpy(java_name,s);
-              elem->book_name = java_name;
-              TextID_Destroy( tmp );
-            }
-            
-            if ( ElfInBookListEnabled && ( ((int)book->onClose)&FLASH_MASK ) != mask )
-            {
-              if ( fgui )
-              {
-                List_InsertFirst( myBook->books_list, elem );
-                books_cnt++;
-              }
-            }
-            
-            if ( ( ((int)book->onClose)&FLASH_MASK ) == mask )
+            char * bn =new char[strlen(book->xbook->name)+1];
+            strcpy(bn,book->xbook->name);
+            elem->book_name = bn;
+          }
+          else
+          {
+            TextID_GetString( BookObj_GetSession(book)->name, s, MAXELEMS(s) );
+            char * bn =new char[strlen(s)+1];
+            strcpy(bn,s);
+            elem->book_name = bn;
+          }
+          
+          elem->isGuiBook = fgui;
+          
+          TEXTID tmp = GetJavaName( book );
+          
+          if ( tmp != EMPTY_TEXTID )
+          {
+            delete(elem->book_name);
+            TextID_GetString( tmp, s, MAXELEMS(s) );
+            char * java_name =new char[strlen(s)+1];
+            strcpy(java_name,s);
+            elem->book_name = java_name;
+            TextID_Destroy( tmp );
+          }
+          /*
+          if ( ElfInBookListEnabled && ( ((int)book->onClose)&FLASH_MASK ) != mask )
+          {
+            if ( fgui )
             {
               List_InsertFirst( myBook->books_list, elem );
               books_cnt++;
             }
-            else
-            {
-              List_InsertFirst( myBook->elfs_list, elem );
-              elfs_cnt++;
-            }
+          }
+          */
+          if ( ( ((int)book->onClose)&FLASH_MASK ) == mask )
+          {
+            List_InsertFirst( myBook->books_list, elem );
+            books_cnt++;
+          }
+          else
+          {
+            List_InsertFirst( myBook->elfs_list, elem );
+            elfs_cnt++;
           }
         }
       }
@@ -346,7 +355,7 @@ void CreateBookLists( MyBOOK* myBook )
 }
 
 
-void SessoinListsFree( MyBOOK* myBook )
+void DestroyBookAndElfsLists( MyBOOK* myBook )
 {
   // MyBOOK* myBook = (MyBOOK*) book;
   LIST* lst = myBook->books_list;
@@ -366,6 +375,7 @@ void SessoinListsFree( MyBOOK* myBook )
     }
     
     List_Destroy( myBook->books_list );
+    myBook->books_list=0;
   }
   
   lst = myBook->elfs_list;
@@ -378,6 +388,7 @@ void SessoinListsFree( MyBOOK* myBook )
       delete(elem);
     }
     List_Destroy( myBook->elfs_list );
+    myBook->elfs_list=0;
   }
 }
 
@@ -464,6 +475,34 @@ void get_iconsID( MyBOOK* mbk )
   }
 }
 
+
+//Загрузить ини файлы
+void LoadBookNames(MyBOOK * mbk)
+{
+  if ( mbk->ini_buf )
+  {
+    delete (mbk->ini_buf);
+    mbk->ini_buf=0;
+  }
+  void* sp;
+  mbk->ini_buf_size = get_file( INI_BOOK_NAMES, &sp );
+  mbk->ini_buf = (wchar_t*)sp;
+}
+
+
+//Загрузить ини файлы
+void LoadShortcuts(MyBOOK * mbk)
+{
+  if ( mbk->shortcuts_buf )
+  {
+    delete (mbk->shortcuts_buf);
+    mbk->shortcuts_buf=0;
+  }
+  void* sp;
+  mbk->shortcuts_buf_size = get_file( INI_SHORTCUTS, &sp );
+  mbk->shortcuts_buf = (char*)sp;
+}
+
 // ======================== всякая служебная ерунда end ===========================================
 
 
@@ -475,7 +514,7 @@ int onRootListChanged( void* r0, BOOK* bk )
   {
     // создали меню
     mbk->ActiveTAB=GetActiveTab(mbk);
-    CreateMenu( mbk->ActiveTAB, bk );
+    CreateBookManagerGUI( mbk );
   }
   return 0;
 }
@@ -503,6 +542,16 @@ int onCallback_Books( GUI_MESSAGE* msg )
     item = GUIonMessage_GetCreatedItemIndex( msg );
     elem = (BOOK_LIST_ITEM*) List_Get( myBook->books_list, item );
     GUIonMessage_SetMenuItemText( msg, GetBookNameStrID(elem->book_name) );
+    
+    if ( !elem->isGuiBook )
+    {
+      GUIonMessage_SetItemDisabled( msg, TRUE );
+      GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to book without GUI..." ) );
+    }
+    break;
+  case LISTMSG_HighlightChanged:
+    item = GUIonMessage_GetSelectedItem( msg );
+    RefreshBookSoftkeys( myBook, item );
     break;
   }
   
@@ -527,7 +576,7 @@ int onCallback_Elfs( GUI_MESSAGE* msg )
       
       if ( !elem->isGuiBook )
       {
-        GUIonMessage_SetItemDisabled( msg, 1 );
+        GUIonMessage_SetItemDisabled( msg, TRUE );
         GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to elf without GUI..." ) );
       }
     }
@@ -562,7 +611,7 @@ void onEnterPressed_Elfs( BOOK* book, GUI* lt )
 
 
 // при нажатии "С"
-void onDelPressed_Books( BOOK* book, void* lt )
+void onDelPressed_Books( BOOK* book, GUI* gui )
 {
   BOOK* bk = GetBook( BOOKLIST, book );
   if ( bk )
@@ -575,10 +624,20 @@ void onDelPressed_Books( BOOK* book, void* lt )
     }
     else
     {
-      if ( Find_StandbyBook() != bk )
+      BOOK * sby_book=Find_StandbyBook();
+      if (!DestroyMethod && bk!=sby_book) FreeBook(bk);
+      else
       {
-        UI_Event_toBookID( RETURN_TO_STANDBY_EVENT, BookObj_GetBookID( bk ) );
-        UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( bk ) );
+        int parentID;
+        do
+        {
+          parentID=bk->xbook->parent_BookID;
+          if (bk!=sby_book) FreeBook(bk);
+          if (parentID!=-1) bk=FindBookByID(parentID);
+        }
+        while(parentID!=-1);
+        //UI_Event_toBookID( RETURN_TO_STANDBY_EVENT, BookObj_GetBookID( bk ) );
+        //UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( bk ) );
       }
     }
   }
@@ -586,7 +645,7 @@ void onDelPressed_Books( BOOK* book, void* lt )
 
 
 // при нажатии "С" на эльфе
-void onDelPressed_Elfs( BOOK* book, void* lt )
+void onDelPressed_Elfs( BOOK* book, GUI* gui )
 {
   BOOK* bk = GetBook( ELFLIST, book );
   if ( bk && bk !=  Find_StandbyBook())
@@ -647,10 +706,6 @@ void myOnKey_Books( DISP_OBJ* p, int keyID, int i2, int i3, int press_mode )
   
   if ( press_mode == KBD_SHORT_RELEASE || press_mode == KBD_LONG_PRESS )
   {
-    if ( keyID == KEY_DEL )
-    {
-      onDelPressed_Books( mbk, 0 );
-    }
     if ( keyID == KEY_DIEZ )
     {
       if ( press_mode == KBD_SHORT_RELEASE )
@@ -744,10 +799,6 @@ void myOnKey_Elfs( DISP_OBJ* p, int keyID, int i2, int i3, int press_mode )
   
   if ( press_mode == KBD_SHORT_RELEASE || press_mode == KBD_LONG_PRESS )
   {
-    if ( keyID == KEY_DEL )
-    {
-      onDelPressed_Elfs( mbk, 0 );
-    }
     if ( keyID == KEY_DIEZ )
     {
       if ( press_mode == KBD_SHORT_RELEASE )
@@ -794,11 +845,11 @@ void RefreshElfSoftkeys( MyBOOK* mbk, int item )
     BOOK_LIST_ITEM* elem = (BOOK_LIST_ITEM*) List_Get( mbk->elfs_list, item );
     if ( !elem->isGuiBook )
     {
-      GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, 0 );
+      GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, FALSE );
     }
     else
     {
-      GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, 1 );
+      GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, TRUE );
     }
   }
   else
@@ -811,18 +862,32 @@ void RefreshElfSoftkeys( MyBOOK* mbk, int item )
 }
 
 
-// создание меню
-void CreateGuiList( int tab_pos, BOOK* bk )
+void RefreshBookSoftkeys( MyBOOK* mbk, int item )
 {
-  MyBOOK* mbk = (MyBOOK*) bk;
+  BOOK_LIST_ITEM* elem = (BOOK_LIST_ITEM*) List_Get( mbk->books_list, item );
+  if ( !elem->isGuiBook )
+  {
+    GUIObject_SoftKeys_SetVisible( mbk->blist, ACTION_SELECT1, FALSE );
+  }
+  else
+  {
+    GUIObject_SoftKeys_SetVisible( mbk->blist, ACTION_SELECT1, TRUE );
+  }
+}
+
+
+// создание меню
+void CreateBookManagerGUI( MyBOOK* mbk )
+{
   int str_id;
   int list_pos;
   
-  CreateBookLists( mbk );
+  DestroyBookAndElfsLists( mbk );
+  CreateBookAndElfsLists( mbk );
   
   if ( !mbk->gui )
   {
-    mbk->gui = CreateTabMenuBar( bk );
+    mbk->gui = CreateTabMenuBar( mbk );
     TabMenuBar_SetTabCount( mbk->gui, 2 );
     
     TabMenuBar_SetTabIcon( mbk->gui, 0, mbk->tabs_image[0].ImageID, 0 );
@@ -838,11 +903,11 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     ListMenu_DestroyItems(mbk->blist);
     ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
     ListMenu_SetCursorToItem( mbk->blist, list_pos );
-    GUIObject_SoftKeys_SetVisible(mbk->blist, ACTION_SELECT1, 1);
+    RefreshBookSoftkeys( mbk, ListMenu_GetSelectedItem(mbk->blist) );
   }
   else
   {
-    mbk->blist = CreateListMenu( bk, 0 );
+    mbk->blist = CreateListMenu( mbk, 0 );
     ListMenu_SetOnMessage( mbk->blist, onCallback_Books );
     ListMenu_SetItemCount( mbk->blist, mbk->blistcnt );
     if ( mbk->blistpos > mbk->blistcnt )
@@ -857,6 +922,8 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_BACK, CloseMyBook );
     GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_LONG_BACK, PreTerminateManager );
     GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_SELECT1, onEnterPressed_Books );
+    GUIObject_SoftKeys_SetAction( mbk->blist, ACTION_DELETE, onDelPressed_Books );
+    GUIObject_SoftKeys_SetVisible(mbk->blist, ACTION_DELETE, FALSE);
     
     GUIObject_SoftKeys_SetAction( mbk->blist, 0, Shortcuts );
     textidname2id( L"SHC_EDIT_SHORTCUT_TXT", TEXTID_ANY_LEN, &str_id );
@@ -888,7 +955,7 @@ void CreateGuiList( int tab_pos, BOOK* bk )
   }
   else
   {
-    mbk->elist = CreateListMenu( bk, 0 );
+    mbk->elist = CreateListMenu( mbk, 0 );
     ListMenu_SetCursorToItem( mbk->elist, 0 );
     ListMenu_SetOnMessage( mbk->elist, onCallback_Elfs );
     ListMenu_SetItemCount( mbk->elist, mbk->elistcnt );
@@ -903,10 +970,13 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_BACK, CloseMyBook );
     GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_LONG_BACK, PreTerminateManager );
+    GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_SELECT1, onEnterPressed_Elfs );
+    GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_DELETE, onDelPressed_Elfs );
+    GUIObject_SoftKeys_SetVisible(mbk->elist, ACTION_DELETE, FALSE);
+    
     GUIObject_SoftKeys_SetAction( mbk->elist, 0, Shortcuts );
     textidname2id( L"SHC_EDIT_SHORTCUT_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->elist, 0, str_id );
-    GUIObject_SoftKeys_SetAction( mbk->elist, ACTION_SELECT1, onEnterPressed_Elfs );
     GUIObject_SoftKeys_SetAction( mbk->elist, 1, BookNames );
     textidname2id( L"DB_RENAME_TXT", TEXTID_ANY_LEN, &str_id );
     GUIObject_SoftKeys_SetText( mbk->elist, 1, str_id );
@@ -923,72 +993,76 @@ void CreateGuiList( int tab_pos, BOOK* bk )
     TabMenuBar_SetTabTitle( mbk->gui, 1, STR( "Elfs" ) );
   }
   
-  TabMenuBar_SetFocusedTab( mbk->gui, tab_pos );
+  TabMenuBar_SetFocusedTab( mbk->gui, mbk->ActiveTAB );
   
   GUIObject_Show(mbk->gui);
 }
 
 
-void LoadIniFiles(MyBOOK * mbk)
+void DestroyIniBuffers(MyBOOK* myBook)
 {
-  if ( mbk->shortcuts_buf )
+  if ( myBook->ini_buf )
   {
-    delete (mbk->shortcuts_buf);
-    mbk->shortcuts_buf=0;
+    delete myBook->ini_buf;
+    myBook->ini_buf=0;
   }
-  if ( mbk->ini_buf )
+  if ( myBook->shortcuts_buf )
   {
-    delete (mbk->ini_buf);
-    mbk->ini_buf=0;
+    delete myBook->shortcuts_buf;
+    myBook->shortcuts_buf=0;
   }
-  void* sp;
-  mbk->ini_buf_size = get_file( L"bookman.ini", &sp );
-  mbk->ini_buf = (wchar_t*)sp;
-  mbk->shortcuts_buf_size = get_file( L"shortcuts.ini", &sp );
-  mbk->shortcuts_buf = (char*)sp;
 }
 
 
-// создание и отображение меню
-int CreateMenu( int tab_pos, BOOK* bk )
+void DestroyAllGUIs(MyBOOK* myBook)
 {
-  MyBOOK* mbk = (MyBOOK*) bk;
-  
-  LoadIniFiles(mbk);
-  
-  CreateGuiList( tab_pos, bk );
-  
-  return 0;
-}
-
-
-// при закрытии книги
-void onMyBookClose( BOOK* book )
-{
-  MyBOOK* myBook = (MyBOOK*) book;
-  DaemonBook * dbk = (DaemonBook*)FindBook(isBookmanDaemonBook);
-  dbk->ActiveTAB = GetActiveTab( myBook );
-  
-  // выгрузили файло
-  if ( myBook->ini_buf ) delete myBook->ini_buf;
-
-  if ( myBook->java_list_menu ) GUIObject_Destroy( myBook->java_list_menu );
-
-  if ( myBook->java_list )
+  if ( myBook->java_list_menu )
   {
+    GUIObject_Destroy( myBook->java_list_menu );
+    myBook->java_list_menu=0;
     List_DestroyElements( myBook->java_list, elem_filter, elem_free );
     List_Destroy( myBook->java_list );
     myBook->java_list = 0;
   }
   
-  if ( myBook->mode_list ) GUIObject_Destroy( myBook->mode_list );
-
-  if ( myBook->but_list ) GUIObject_Destroy( myBook->but_list );
-
-  if ( myBook->YesNoQuestion ) GUIObject_Destroy( myBook->YesNoQuestion );
-
-  if ( myBook->shortcuts_buf ) delete( myBook->shortcuts_buf );
-
+  if ( myBook->mode_list )
+  {
+    GUIObject_Destroy( myBook->mode_list );
+    myBook->mode_list=0;
+  }
+  
+  if ( myBook->but_list )
+  {
+    GUIObject_Destroy( myBook->but_list );
+    myBook->but_list=0;
+  }
+  
+  if ( myBook->YesNoQuestion )
+  {
+    GUIObject_Destroy( myBook->YesNoQuestion );
+    myBook->YesNoQuestion=0;
+  }
+  
+  if ( myBook->blist )
+  {
+    GUIObject_Destroy( myBook->blist );
+    myBook->blist=0;
+    myBook->blistpos=0;
+  }
+  
+  if ( myBook->elist )
+  {
+    GUIObject_Destroy( myBook->elist );
+    myBook->elist=0;
+    myBook->elistpos=0;
+  }
+  
+  if ( myBook->gui )
+  {
+    GUIObject_Destroy( myBook->gui );
+    myBook->gui=0;
+  }
+  
   if ( myBook->MainMenuID != -1 )
   {
     BOOK* MainMenu = FindBookByID( myBook->MainMenuID );
@@ -998,24 +1072,37 @@ void onMyBookClose( BOOK* book )
     
     myBook->MainMenuID = -1;
   }
-  // освободили списки книг/сессий
-  SessoinListsFree( myBook );
-  
-  //убили гуи
-  if ( myBook->blist ) GUIObject_Destroy( myBook->blist );
-  if ( myBook->elist ) GUIObject_Destroy( myBook->elist );
-  if ( myBook->gui ) GUIObject_Destroy( myBook->gui );
-  
-  // выгрузили иконки
+}
+
+
+void DestroyIcons(MyBOOK* myBook)
+{
   int i;
+  
   for ( i = 0;i < ICONS_COUNT;i++ )
   {
     ImageID_Free( myBook->tabs_image[i].ImageID );
   }
+  
   for ( i = 0;i < DIGITS_COUNT;i++ )
   {
     ImageID_Free( myBook->digs_image[i].ImageID );
   }
+}
+
+
+// при закрытии книги
+void onMyBookClose( BOOK* book )
+{
+  MyBOOK* myBook = (MyBOOK*) book;
+  
+  DestroyIniBuffers(myBook);
+  
+  DestroyAllGUIs(myBook);
+  
+  DestroyBookAndElfsLists( myBook );
+  
+  DestroyIcons(myBook);
 }
 
 
@@ -1025,13 +1112,16 @@ void ReturnMyBook( BOOK* bk, GUI* )
   GUIObject_Destroy( mbk->YesNoQuestion );
   mbk->YesNoQuestion = 0;
   mbk->ActiveTAB=GetActiveTab(mbk);
-  CreateMenu( mbk->ActiveTAB, bk );
+  CreateBookManagerGUI( mbk );
 }
 
 
-void CloseMyBook( BOOK* Book, GUI* )
+void CloseMyBook( BOOK* bk, GUI* )
 {
-  FreeBook( Book );
+  MyBOOK* mbk = (MyBOOK*) bk;
+  
+  mbk->ActiveTAB=GetActiveTab(mbk);
+  BookObj_GotoPage( mbk, &BookManager_Idle_Page);
 }
 
 
@@ -1039,8 +1129,7 @@ void TerminateManager( BOOK* Book, GUI* )
 {
   MessageBox( EMPTY_TEXTID,STR("BookManager\n\nterminated"),NOIMAGE,1,3000,0);
   FreeBook( Book );
-  DestroyDaemon();
-  ModifyKeyHook( NewKey, KEY_HOOK_REMOVE, NULL );
+  MODIFYKEYHOOK( NewKey, KEY_HOOK_REMOVE, NULL );
   SUBPROC( elf_exit );
 }
 
@@ -1063,7 +1152,7 @@ void PreTerminateManager( BOOK* bk, GUI* )
 int RecreateBookList( void* r0, BOOK* bk )
 {
   MyBOOK* mbk = (MyBOOK*) bk;
-  CreateMenu( mbk->ActiveTAB, bk );
+  CreateBookManagerGUI( mbk );
   return(0);
 }
 
@@ -1075,25 +1164,43 @@ __root int CreateBookList( void* r0, BOOK* bk )
   
   get_iconsID( mbk );
 
-  int tab_pos;
+  if ( FirstTab )
+    mbk->ActiveTAB = FirstTab-1;
   
-  if ( !FirstTab )
-  {
-    DaemonBook * dbk = (DaemonBook*)FindBook(isBookmanDaemonBook);
-    tab_pos = dbk->ActiveTAB;
-  }
-  else
-    tab_pos = FirstTab-1;
-  
-  CreateMenu( tab_pos, bk );
+  CreateBookManagerGUI( mbk );
   return 0;
 }
 
 
-int NewKey( int key, int rep_count, int mode, LPARAM, DISP_OBJ* )
+int IdlePage_EnterAction( void* r0, BOOK* bk )
 {
-  BOOK* bk = FindBook( isBookManager );
   MyBOOK* mbk = (MyBOOK*) bk;
+  
+  DestroyAllGUIs(mbk);
+  DestroyBookAndElfsLists(mbk);
+  DestroyIcons(mbk);
+  
+  BookObj_WindowSetWantsFocus(mbk,0,FALSE);
+  BookObj_Hide(mbk,0);
+  return 0;
+}
+
+
+int ReconfigElf( void* mess, BOOK* book )
+{
+  RECONFIG_EVENT_DATA* reconf = ( RECONFIG_EVENT_DATA* )mess;
+  
+  if ( !wstrcmpi( reconf->path, successed_config_path ) && !wstrcmpi( reconf->name, successed_config_name ) )
+  {
+    InitConfig();
+    return 1;
+  }
+  return 0;
+}
+
+
+int NewKey( int key, int rep_count, int mode, MyBOOK * mbk, DISP_OBJ* )
+{
   if ( mode == KeyPressMode )
   {
     if ( key == KeyActiv )
@@ -1101,47 +1208,18 @@ int NewKey( int key, int rep_count, int mode, LPARAM, DISP_OBJ* )
       if ( isKeylocked() && !Ignore_KeyLock )
         return 0;
       
-      if ( !bk )
+      if ( Display_GetTopBook(0)!=mbk )
       {
-        MyBOOK* BookManager_Book = (MyBOOK*) malloc( sizeof( MyBOOK ) );
-        memset( BookManager_Book, 0, sizeof( MyBOOK ) );
-        CreateBook( BookManager_Book, onMyBookClose, &BookManager_Base_Page, "BookManager", -1, 0 );
-        MyBOOK* mbk = (MyBOOK*) BookManager_Book;
-        //Init flags
-        mbk->gui = 0;
-        mbk->ini_buf=0;
-        mbk->ini_buf_size=0;
-        mbk->shortcuts_buf = 0;
-        mbk->shortcuts_buf_size = 0;
-        mbk->books_list = 0;
-        mbk->elfs_list = 0;
-        mbk->java_list = 0;
-        mbk->java_list_menu = 0;
-        mbk->blist = 0;
-        mbk->elist = 0;
-        mbk->mode_list = 0;
-        mbk->but_list = 0;
-        mbk->YesNoQuestion = 0;
-        mbk->StringInput = 0;
-        mbk->MainMenuID = -1;
-        mbk->blistpos = 0;
-        mbk->elistpos = 0;
-        mbk->blistcnt = 0;
-        mbk->elistcnt = 0;
-        mbk->ActiveTAB = 0;
-        mbk->isA2 = 0;
-        //End init
-        int platform=GetChipID()&CHIPID_MASK;
-        if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
-          mbk->isA2 = 1;
-        BookObj_GotoPage( BookManager_Book, &BookManager_Main_Page );
+        BookObj_WindowSetWantsFocus(mbk,0,TRUE);
+        BookObj_SetFocus(mbk,0);
+        BookObj_GotoPage( mbk, &BookManager_Main_Page );
         return -1;
       }
       else
       {
         if ( !mbk->mode_list && !mbk->YesNoQuestion && !mbk->StringInput )
         {
-          CloseMyBook( bk, 0 );
+          CloseMyBook( mbk, 0 );
           return 0;
         }
         return -1;
@@ -1152,14 +1230,55 @@ int NewKey( int key, int rep_count, int mode, LPARAM, DISP_OBJ* )
 }
 
 
+MyBOOK * CreateBookManagerBook()
+{
+  MyBOOK* mbk = (MyBOOK*) malloc( sizeof( MyBOOK ) );
+  memset( mbk, 0, sizeof( MyBOOK ) );
+  CreateBook( mbk, onMyBookClose, &BookManager_Base_Page, "BookManager", -1, 0 );
+  //Init flags
+  mbk->gui = 0;
+  mbk->ini_buf=0;
+  mbk->ini_buf_size=0;
+  mbk->shortcuts_buf = 0;
+  mbk->shortcuts_buf_size = 0;
+  mbk->books_list = 0;
+  mbk->elfs_list = 0;
+  mbk->java_list = 0;
+  mbk->java_list_menu = 0;
+  mbk->blist = 0;
+  mbk->elist = 0;
+  mbk->mode_list = 0;
+  mbk->but_list = 0;
+  mbk->YesNoQuestion = 0;
+  mbk->StringInput = 0;
+  mbk->MainMenuID = -1;
+  mbk->blistpos = 0;
+  mbk->elistpos = 0;
+  mbk->blistcnt = 0;
+  mbk->elistcnt = 0;
+  mbk->ActiveTAB = 0;
+  mbk->isA2 = 0;
+  //End init
+  int platform=GetChipID()&CHIPID_MASK;
+  if (platform==CHIPID_DB3150||platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+    mbk->isA2 = 1;
+  
+  LoadBookNames(mbk);
+  LoadShortcuts(mbk);
+  
+  BookObj_GotoPage( mbk, &BookManager_Idle_Page);
+  
+  return mbk;
+}
+
+
 int main ( void )
 {
-  if ( !FindBook( isBookmanDaemonBook ) )
+  if ( !FindBook( isBookManager ) )
   {
 	trace_init(L"bookmanmem.txt");
-    CreateDaemon();
     InitConfig();
-    ModifyKeyHook( NewKey, KEY_HOOK_ADD, NULL );
+    MODIFYKEYHOOK( NewKey, KEY_HOOK_ADD, CreateBookManagerBook() );
   }
   else
   {
