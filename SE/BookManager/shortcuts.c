@@ -76,10 +76,6 @@ void Shortcut_Append( wchar_t* name_buf, char* mask_buf, wchar_t* path )
     fclose( f );
     delete( temp_buf );
   }
-  /*else
-  {
-    MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-  }*/
 }
 
 
@@ -107,10 +103,7 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
         fwrite( f, pos + len_prefix + len_minus, ( mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) ) - len_minus );      //пишем остаток файла
         fclose( f );
       }
-      /*else
-      {
-        MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, mbk );
-      }*/
+
       mfree( param );
     }
     else
@@ -124,10 +117,6 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
           fwrite( f, pos + len_prefix, mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) );
           fclose( f );
         }
-        /*else
-        {
-          MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-        }*/
       }
       else
       {
@@ -365,7 +354,6 @@ java_list_elem* CreateElem( void* JavaDesc )
   elem->fullpath = sp;
   JavaAppDesc_GetJavaAppInfo( JavaDesc, 4, &sp );
   elem->hash_name = sp;
-//  elem->appID = JavaAppDesc_GetJavaAppID( JavaDesc );
   return elem;
 }
 
@@ -552,12 +540,6 @@ int but_list_callback( GUI_MESSAGE* msg )
   return 1;
 }
 
-/*
-void But_EditShortcut( BOOK* book, void* )
-{
-BookObj_CallPage( book, &ChangeShortcuts_Edit_page );
-}
-*/
 
 void But_SetMM( BOOK* book, GUI* )
 {
@@ -614,8 +596,11 @@ int DeleteShortcut( MyBOOK * mbk, char * mask_buf, int f )
         fwrite( f, pos + len_prefix + len_minus, mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) - len_minus );
         res = 1;
       }
+      
+      LoadShortcuts(mbk);
+      
+      delete( param );
     }
-    if ( param ) delete( param );
   }
   return res;
 }
@@ -635,7 +620,7 @@ void But_onDelete( BOOK* book, GUI* )
     
     if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
     {
-      if ( !mbk->ActiveTAB )
+      if ( mbk->ActiveTAB==BOOKLIST )
         sprintf( mask_buf, "[S_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[ES_KEY%d]", dig_num );
@@ -644,7 +629,7 @@ void But_onDelete( BOOK* book, GUI* )
     }
     else
     {
-      if ( !mbk->ActiveTAB )
+      if ( mbk->ActiveTAB==BOOKLIST )
         sprintf( mask_buf, "[L_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[EL_KEY%d]", dig_num );
@@ -657,10 +642,7 @@ void But_onDelete( BOOK* book, GUI* )
     if ( res )
       CreateButtonList( 0, book );
   }
-  /*else
-  {
-    MessageBox( EMPTY_TEXTID, STR( "Can't open shortcuts.ini" ), NOIMAGE, 1 , 5000, 0 );
-  }*/
+
   delete( path );
 }
 
@@ -669,13 +651,7 @@ int CreateButtonList( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   int str_id;
-  void* sp;
-  mbk->shortcuts_buf_size = get_file( INI_SHORTCUTS, &sp );
-  
-  if ( mbk->shortcuts_buf )
-    delete mbk->shortcuts_buf;
-  
-  mbk->shortcuts_buf = (char*)sp;
+
   int but_pos = 0;
   
   if ( mbk->but_list )

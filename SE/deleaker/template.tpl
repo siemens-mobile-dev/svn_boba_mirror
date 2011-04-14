@@ -710,7 +710,7 @@ __make TextID_CreateIntegerID
 
 __make TextID_Destroy
 {
-	trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
 	return __O__;
 }
 

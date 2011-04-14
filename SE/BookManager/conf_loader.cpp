@@ -39,7 +39,7 @@ int LoadConfigData( const wchar_t* path, const wchar_t* fname )
     }
     if( result != 0 )
     {
-      if ( ( f = _fopen( path, fname, FSX_O_WRONLY, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
+      if ( ( f = _fopen( path, fname, FSX_O_WRONLY|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
       {
         if ( fwrite( f, cfg, len ) == len )
           result = 0;

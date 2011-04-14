@@ -18,18 +18,9 @@ PAGE_DESC ChangeName_page = { "BookManager_ChangeName_Page", 0, ChangeName_PageE
 //============= pages end ======================
 
 
-char * GetCurrentName(MyBOOK * mbk)
+char * GetOriginalBookName(MyBOOK * mbk)
 {
-  BOOK_LIST_ITEM* elem;
-  switch(mbk->ActiveTAB)
-  {
-  case 0:
-    elem = (BOOK_LIST_ITEM*)List_Get( mbk->books_list, ListMenu_GetSelectedItem( mbk->blist ) );
-    break;
-  case 1:
-    elem = (BOOK_LIST_ITEM*)List_Get( mbk->elfs_list, ListMenu_GetSelectedItem( mbk->elist ) );
-    break;
-  }
+  BOOK_LIST_ITEM* elem = GetBookListItem(mbk,mbk->ActiveTAB);
   return(elem->book_name);
 }
 
@@ -57,9 +48,9 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
   
   wchar_t * path = get_path();
   
-  str2wstr(orig_name,GetCurrentName(mbk));
+  str2wstr(orig_name,GetOriginalBookName(mbk));
   
-  pos_uni_pair = GetUserBookName(mbk->ini_buf, orig_name, cur_name);
+  pos_uni_pair = GetUserBookName(mbk->booknames_buf, orig_name, cur_name);
   
   int new_name_len = wstrlen(new_name);
   int cur_name_len = wstrlen(cur_name);
@@ -74,14 +65,10 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
         //Delete
         pos = wstrwstr(pos_uni_pair, L"\r\n") + sizeof("\r\n") - sizeof("");
         
-        fwrite( f, mbk->ini_buf, (pos_uni_pair - mbk->ini_buf) * sizeof(wchar_t) );     //пишем начало файла
-        fwrite( f, pos, mbk->ini_buf_size - (pos - mbk->ini_buf) * sizeof(wchar_t) );     //пишем остаток файла
+        fwrite( f, mbk->booknames_buf, (pos_uni_pair - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем начало файла
+        fwrite( f, pos, mbk->booknames_buf_size - (pos - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем остаток файла
         fclose( f );
       }
-      /*else
-      {
-        MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when delete" ), NOIMAGE, 1 , 5000, mbk );
-      }*/
     }
   }
   else
@@ -96,33 +83,24 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
           pos = pos_uni_pair + wstrlen(orig_name) + sizeof(": ") - sizeof("");
           int len_minus = wstrlen( cur_name );    //длина старого названия
           
-          fwrite( f, mbk->ini_buf, (pos - mbk->ini_buf) * sizeof(wchar_t) );     //пишем начало файла
+          fwrite( f, mbk->booknames_buf, (pos - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем начало файла
           fwrite( f, new_name, new_name_len * sizeof(wchar_t) );      //пишем новое название
-          fwrite( f, pos + len_minus, mbk->ini_buf_size - (( pos - mbk->ini_buf ) + len_minus ) * sizeof(wchar_t));      //пишем остаток файла
+          fwrite( f, pos + len_minus, mbk->booknames_buf_size - (( pos - mbk->booknames_buf ) + len_minus ) * sizeof(wchar_t));      //пишем остаток файла
           fclose( f );
         }
-        /*else
-        {
-          MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when write" ), NOIMAGE, 1 , 5000, mbk );
-        }*/
-        
       }
       else
       {
         if ( ( f = _fopen( path, INI_BOOK_NAMES, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
         {
           //Append
-          fwrite(f, mbk->ini_buf, mbk->ini_buf_size);     //пишем старый файл
+          fwrite(f, mbk->booknames_buf, mbk->booknames_buf_size);     //пишем старый файл
           fwrite(f, orig_name, wstrlen(orig_name) * sizeof(wchar_t));
           fwrite(f, L": ", (sizeof(L": ") - sizeof(wchar_t)));
           fwrite(f, new_name, wstrlen(new_name) * sizeof(wchar_t));
           fwrite(f, L"\r\n", (sizeof(L"\r\n") - sizeof(wchar_t)));
           fclose(f);
         }
-        /*else
-        {
-          MessageBox( EMPTY_TEXTID, STR( "Can't open bookman.ini when append" ), NOIMAGE, 1 , 5000, mbk );
-        }*/
       }
     }
   }
@@ -139,7 +117,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
 int CreateSI( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  TEXTID editable_strID = GetBookNameStrID(GetCurrentName(mbk));
+  TEXTID editable_strID = GetUserBookNameTEXTID(GetOriginalBookName(mbk));
   
   mbk->StringInput = CreateStringInputVA( 0,
                                          VAR_PREV_ACTION_PROC( onPrevious_SI ),

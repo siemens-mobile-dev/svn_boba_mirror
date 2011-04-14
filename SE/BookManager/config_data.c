@@ -78,11 +78,7 @@ CFGVAR int FirstTab=0;
 CFGVAR CFG_CBOX_ITEM cfgcbox3[3]={"Last Active","Books","Elfs"};
 
 
-CFGVAR CFG_HDR cfghdr10={CFG_CHECKBOX,"Show NoGUI books",0,0};
-CFGVAR int ShowNoGUIBooks=0;
-
-
-CFGVAR CFG_HDR cfghdr11={CFG_CBOX,"Destroy book method",0,2};
+CFGVAR CFG_HDR cfghdr10={CFG_CBOX,"Destroy book method",0,2};
 CFGVAR int DestroyMethod=1;
 CFGVAR CFG_CBOX_ITEM cfgcbox4[2]={"Book","Session"};
 

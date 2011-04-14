@@ -522,7 +522,7 @@ TEXTID __deleaker_TextID_CreateIntegerID( const char* __file__, int __line__, in
 
 void __deleaker_TextID_Destroy( const char* __file__, int __line__, TEXTID __unknwnargname1 )
 {
-	trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
+	if(isallocatedstrid(__unknwnargname1))trace_free(trace_strid, (void*)__unknwnargname1, __file__, __line__ );
 	return __original_TextID_Destroy(__unknwnargname1);
 }
 
