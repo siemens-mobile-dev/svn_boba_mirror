@@ -2,6 +2,7 @@
 #include "..\include\Dir.h"
 #include "..\include\cfg_items.h"
 #include "..\include\var_arg.h"
+#include "config_data.h"
 #include "shortcuts.h"
 #include "main.h"
 
@@ -141,7 +142,7 @@ void WriteShortcut( wchar_t* name_buf )
   
   if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
   {
-    if ( !mbk->ActiveTAB )
+    if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
       sprintf( mask_buf, "[S_KEY%d]", dig_num );
     else
       sprintf( mask_buf, "[ES_KEY%d]", dig_num );
@@ -150,7 +151,7 @@ void WriteShortcut( wchar_t* name_buf )
   }
   else
   {
-    if ( !mbk->ActiveTAB )
+    if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
       sprintf( mask_buf, "[L_KEY%d]", dig_num );
     else
       sprintf( mask_buf, "[EL_KEY%d]", dig_num );
@@ -461,14 +462,14 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
   
   if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
   {
-    if ( !mbk->ActiveTAB )
+    if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
       sprintf( mask_buf, "[S_KEY%d]", item_num );
     else
       sprintf( mask_buf, "[ES_KEY%d]", item_num );
   }
   else
   {
-    if ( !mbk->ActiveTAB )
+    if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
       sprintf( mask_buf, "[L_KEY%d]", item_num );
     else
       sprintf( mask_buf, "[EL_KEY%d]", item_num );
@@ -549,9 +550,18 @@ void But_SetMM( BOOK* book, GUI* )
   CreateButtonList( 0, book );
 }
 
+
+void But_SetElf( BOOK* book, GUI* )
+{
+  BookObj_CallPage( book, &SelectElf_page );
+}
+
+
 void But_onEnter( BOOK* book, GUI* )
 {
-  if ( !((MyBOOK*)book)->ActiveTAB )
+  MyBOOK* mbk = (MyBOOK*) book;
+  
+  if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
     BookObj_CallPage( book, &SelectShortcut_page );
   else
     BookObj_CallPage( book, &SelectElf_page );
@@ -597,8 +607,6 @@ int DeleteShortcut( MyBOOK * mbk, char * mask_buf, int f )
         res = 1;
       }
       
-      LoadShortcuts(mbk);
-      
       delete( param );
     }
   }
@@ -620,7 +628,7 @@ void But_onDelete( BOOK* book, GUI* )
     
     if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
     {
-      if ( mbk->ActiveTAB==BOOKLIST )
+      if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
         sprintf( mask_buf, "[S_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[ES_KEY%d]", dig_num );
@@ -629,7 +637,7 @@ void But_onDelete( BOOK* book, GUI* )
     }
     else
     {
-      if ( mbk->ActiveTAB==BOOKLIST )
+      if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
         sprintf( mask_buf, "[L_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[EL_KEY%d]", dig_num );
@@ -640,7 +648,10 @@ void But_onDelete( BOOK* book, GUI* )
     fclose( f );
     
     if ( res )
+    {
+      LoadShortcuts(mbk);
       CreateButtonList( 0, book );
+    }
   }
 
   delete( path );
@@ -674,13 +685,18 @@ int CreateButtonList( void* data, BOOK* book )
   GUIObject_SoftKeys_SetAction( mbk->but_list, ACTION_DELETE, But_onDelete );
   GUIObject_SoftKeys_SetVisible( mbk->but_list, ACTION_DELETE, 0 );
   
-  if ( !mbk->ActiveTAB )
+  if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
   {
-    GUIObject_SoftKeys_SetAction( mbk->but_list, 0, But_SetMM );
-    textidname2id( L"SHC_SET_MAINMENU_TXT", TEXTID_ANY_LEN, &str_id );
-    GUIObject_SoftKeys_SetText( mbk->but_list, 0, str_id );
-    GUIObject_SoftKeys_SetAction( mbk->but_list, 1, But_SetJava );
-    GUIObject_SoftKeys_SetText( mbk->but_list, 1, STR( "Java" ) );
+    GUIObject_SoftKeys_SetAction( mbk->but_list, SHORTCUTS_MAINMENU_SOFTKEY, But_SetMM );
+    textidname2id( SHORTCUTS_MAINMENU_NAME_SOFTKEY, TEXTID_ANY_LEN, &str_id );
+    GUIObject_SoftKeys_SetText( mbk->but_list, SHORTCUTS_MAINMENU_SOFTKEY, str_id );
+    GUIObject_SoftKeys_SetAction( mbk->but_list, SHORTCUTS_JAVA_SOFTKEY, But_SetJava );
+    GUIObject_SoftKeys_SetText( mbk->but_list, SHORTCUTS_JAVA_SOFTKEY, STR( "Java" ) );
+    if (ShortcutsMode)
+    {
+      GUIObject_SoftKeys_SetAction( mbk->but_list, SHORTCUTS_ELFS_SOFTKEY, But_SetElf );
+      GUIObject_SoftKeys_SetText( mbk->but_list, SHORTCUTS_ELFS_SOFTKEY, STR( "Elfs" ) );
+    }
   }
   
   GUIObject_Show( mbk->but_list );

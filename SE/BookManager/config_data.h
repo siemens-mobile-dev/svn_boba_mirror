@@ -2,13 +2,18 @@
 #define _CONFIGDATA_H_
 
 
-extern const int KeyActiv;
-extern const int KeyPressMode;
+extern const int KeyStart;
+extern const int KeyStartPressMode;
+extern const int KeyMinimize;
+extern const int KeyMinimizePressMode;
+extern const int KeyCloseAll;
+extern const int KeyCloseAllPressMode;
 extern const int Ignore_KeyLock;
 extern const int UserInactivityEventEnabled;
 extern const int StandbyOnTop;
 extern const int FirstTab;
 extern const int DestroyMethod;
+extern const int ShortcutsMode;
 extern const wchar_t tab1_act[100];
 extern const wchar_t tab1_inact[100];
 extern const wchar_t tab2_act[100];

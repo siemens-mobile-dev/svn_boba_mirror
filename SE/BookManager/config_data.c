@@ -3,9 +3,19 @@
 
 #pragma diag_suppress=Pe177
 
-CFGVAR CFG_HDR cfghdr0={CFG_KEYCODE,"Start Button",0,0};
-CFGVAR int KeyActiv=0xFFFFFFFF;
-CFGVAR int KeyPressMode=0;
+CFGVAR CFG_HDR cfghdr0={CFG_LEVEL,"Buttons",1,0};
+  CFGVAR CFG_HDR cfghdr0_1={CFG_KEYCODE,"Start Button",0,0};
+  CFGVAR int KeyStart=0xFFFFFFFF;
+  CFGVAR int KeyStartPressMode=0;
+
+  CFGVAR CFG_HDR cfghdr0_2={CFG_KEYCODE,"Minimize Button",0,0};
+  CFGVAR int KeyMinimize=0xFFFFFFFF;
+  CFGVAR int KeyMinimizePressMode=0;
+
+  CFGVAR CFG_HDR cfghdr0_3={CFG_KEYCODE,"Close all Button",0,0};
+  CFGVAR int KeyCloseAll=0xFFFFFFFF;
+  CFGVAR int KeyCloseAllPressMode=0;
+CFGVAR CFG_HDR cfghdr0_4={CFG_LEVEL,"",0,0};
 
 
 CFGVAR CFG_HDR cfghdr1={CFG_LEVEL,"Tabs images",1,0};
@@ -81,4 +91,9 @@ CFGVAR CFG_CBOX_ITEM cfgcbox3[3]={"Last Active","Books","Elfs"};
 CFGVAR CFG_HDR cfghdr10={CFG_CBOX,"Destroy book method",0,2};
 CFGVAR int DestroyMethod=1;
 CFGVAR CFG_CBOX_ITEM cfgcbox4[2]={"Book","Session"};
+
+
+CFGVAR CFG_HDR cfghdr11={CFG_CBOX,"Shortcuts mode",0,2};
+CFGVAR int ShortcutsMode=0;
+CFGVAR CFG_CBOX_ITEM cfgcbox5[2]={"Tab-specific","Unified"};
 
