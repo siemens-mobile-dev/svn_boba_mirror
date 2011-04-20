@@ -192,6 +192,7 @@ void HttpAbstract::onDataRead()
 
   char tmp_buf[4096]; // Буфер приема даннях
   int nrecv = Recv(tmp_buf, sizeof(tmp_buf)); // Получаем даные
+  if(nrecv < 1) return; // Если нет данных - выходим
   int hsize; // Длина HTTP заголовка
   
   switch(http_state)
@@ -217,7 +218,7 @@ void HttpAbstract::onDataRead()
     }
     break;
   case HTTP_STREAM: // Принимаем данные
-    if(nrecv) onHTTPData(tmp_buf, nrecv);
+    onHTTPData(tmp_buf, nrecv);
     break;
   }
   if (SieGetDialog::Active)

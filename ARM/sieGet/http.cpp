@@ -28,7 +28,7 @@ HTTP_Request::HTTP_Request()
   Referer = NULL;
   Cookies = NULL;
   TE = NULL;
-  User_Agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
+  User_Agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1) Opera 8.50";
 }
 
 HTTP_Request::~HTTP_Request()
