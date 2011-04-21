@@ -49,13 +49,6 @@ static void Change_Status(int status)
 }
 
 #pragma inline
-static void Change_Status2(int status)
-{
-  CurrentStatus=status;
-  set_my_status();
-}
-
-#pragma inline
 static void Change_XStatus(int xstatus)
 {
   CurrentXStatus=xstatus;
@@ -671,6 +664,7 @@ char *GetXStatusStr(int n, int *len)
 int AutoStatusIdleActive=0;
 int AutoStatusRemainedCounter=0;
 int LastStatus=0;
+int AutoStatusPend=0;
 
 extern volatile int contactlist_menu_id;
 extern const unsigned int AUTOSTATUS_IDLE_TIME;
@@ -679,13 +673,18 @@ extern const int AUTOSTATUS_HEADSET_STATUS;
 extern const int AUTOSTATUS_CHARGER_STATUS;
 extern const int AUTOSTATUS_CABLE_STATUS;
 
+/*void AutoStatusPend(int status){
+  CurrentStatus=status; 
+  SUBPROC((void*)set_my_status);
+}*/
+
 void AutoStatusOnIdle(void)
 {
   // Меняем статус
   if (!AutoStatusIdleActive)
   {
     LastStatus = CurrentStatus;
-    Change_Status2(AUTOSTATUS_IDLE_STATUS + 1);    //гарнитура приоритетнее
+    AutoStatusPend=(AUTOSTATUS_IDLE_STATUS+1);    //гарнитура приоритетнее
     AutoStatusIdleActive = 1;
   }
 }
@@ -696,7 +695,7 @@ int status_keyhook(int submsg, int msg)
   {
     if (AutoStatusIdleActive==1)    //гарнитура приоритетнее
     {
-        Change_Status2(LastStatus);
+        AutoStatusPend=(LastStatus);
         AutoStatusIdleActive = 0;
       }
     AutoStatusRemainedCounter = AUTOSTATUS_IDLE_TIME * 6; 
@@ -760,14 +759,14 @@ void SetAutoStatusOnAccessory(int AccessoryPlugged, int NewStatus)
     {
       LastStatus = CurrentStatus;
     }
-    Change_Status2(NewStatus + 1);
+    AutoStatusPend=(NewStatus + 1);
     AutoStatusIdleActive = 2;
   }
   else
   {
     if (CurrentStatus != NewStatus)
     {
-      Change_Status2(NewStatus);
+      AutoStatusPend=(NewStatus);
       AutoStatusIdleActive = 0;
     }
   }

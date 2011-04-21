@@ -40,6 +40,7 @@ extern int mrand(void);
 extern void msrand(unsigned seed);
 
 extern int AutoStatusRemainedCounter;
+extern int AutoStatusPend;
 extern const int AUTOSTATUS_IDLE_STATUS;
 extern const int AUTOSTATUS_HEADSET_STATUS;
 
@@ -99,8 +100,6 @@ int S_ICONS[TOTAL_ICONS+1];
 #define EOP -10
 int CurrentStatus;
 int CurrentXStatus;
-
-int AutoStatusEvent=0;
 
 WSHDR *ews;
 
@@ -2788,10 +2787,10 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
                 if (!(--AutoStatusRemainedCounter))
                   AutoStatusOnIdle();
             //  </tridog>
-              if (AutoStatusEvent)
-              {
-                AutoStatusOnAccessory();
-                AutoStatusEvent = 0;
+              if (AutoStatusPend){
+                CurrentStatus=AutoStatusPend;
+                AutoStatusPend=0;
+                set_my_status();
               }
 	    }
 	    break;
@@ -3066,7 +3065,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
   if (msg->msg==0x29)    
 #endif
   {
-    AutoStatusEvent = 1;
+    AutoStatusOnAccessory();
   }
   // </tridog>
   return(1);
