@@ -45,17 +45,17 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
   wchar_t * pos_uni_pair;
   wchar_t cur_name[MAX_BOOK_NAME_LEN+1];
   wchar_t orig_name[MAX_BOOK_NAME_LEN+1];
-  
+
   wchar_t * path = get_path();
-  
+
   str2wstr(orig_name,GetOriginalBookName(mbk));
-  
+
   pos_uni_pair = GetUserBookName(mbk->booknames_buf, orig_name, cur_name);
-  
+
   int new_name_len = wstrlen(new_name);
   int cur_name_len = wstrlen(cur_name);
   int orig_name_len = wstrlen(orig_name);
-  
+
   if ( (!len) || ( (!wstrcmp(orig_name,new_name)) && (new_name_len==orig_name_len) ) )
   {
     if ( pos_uni_pair )
@@ -64,7 +64,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
       {
         //Delete
         pos = wstrwstr(pos_uni_pair, L"\r\n") + sizeof("\r\n") - sizeof("");
-        
+
         fwrite( f, mbk->booknames_buf, (pos_uni_pair - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем начало файла
         fwrite( f, pos, mbk->booknames_buf_size - (pos - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем остаток файла
         fclose( f );
@@ -82,7 +82,7 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
           //ReWrite
           pos = pos_uni_pair + wstrlen(orig_name) + sizeof(": ") - sizeof("");
           int len_minus = wstrlen( cur_name );    //длина старого названия
-          
+
           fwrite( f, mbk->booknames_buf, (pos - mbk->booknames_buf) * sizeof(wchar_t) );     //пишем начало файла
           fwrite( f, new_name, new_name_len * sizeof(wchar_t) );      //пишем новое название
           fwrite( f, pos + len_minus, mbk->booknames_buf_size - (( pos - mbk->booknames_buf ) + len_minus ) * sizeof(wchar_t));      //пишем остаток файла
@@ -104,11 +104,11 @@ void onAccept_SI( BOOK * book, wchar_t * new_name, int len )
       }
     }
   }
-  
+
   delete path;
-  
+
   LoadBookNames(mbk);
-  
+
   BookObj_ReturnPage( mbk, ACCEPT_EVENT );
 }
 
@@ -118,7 +118,7 @@ int CreateSI( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
   TEXTID editable_strID = GetUserBookNameTEXTID(GetOriginalBookName(mbk));
-  
+
   mbk->StringInput = CreateStringInputVA( 0,
                                          VAR_PREV_ACTION_PROC( onPrevious_SI ),
                                          VAR_LONG_BACK_PROC( onCancel_SI ),

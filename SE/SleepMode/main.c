@@ -138,34 +138,34 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
   DATETIME dt;
   int SIDtime;
   char weekday;
-  
+
   SleepMode_Book * SM_Book=(SleepMode_Book*)FindBook(myFind);
-  
+
   char * p=(char*)dobj;
   if ( p[SM_Book->offset] ) OldonRedraw(dobj,r1,r2,r3);
   else
   {
     REQUEST_DATEANDTIME_GET(SYNC,&dt);
 
-    SIDtime=Time2ID(&dt.time,2,0);
+    SIDtime=Time2ID(&dt.time,2,ShowSeconds);
     SetFont(font1);
     DrawString(SIDtime,2,1,y0,SM_Book->DISPLAY_WIDTH,y0+GetImageHeight(30),20,0x05,color ,color);
     TextID_Destroy(SIDtime);
-    
-    
+
+
     SIDtime=Date2ID(&dt.date,0,1);
     SetFont(font2);
     DrawString(SIDtime,2,1,y1,SM_Book->DISPLAY_WIDTH,y1+GetImageHeight(30),20,0x05,color ,color);
     TextID_Destroy(SIDtime);
-    
-    
+
+
     SetFont(font3);
     DATE_GetWeekDay(&dt.date,&weekday);
     SIDtime=SM_Book->days[weekday];
-    
+
     DrawString(SIDtime,2,1,y2,SM_Book->DISPLAY_WIDTH,y2+GetImageHeight(30),20,0x05,color ,color);
     TextID_Destroy(SIDtime);
-    
+
     int missed[ICONS_COUNT];
     int *p=missed;
     int m=*MissedEvents();
@@ -178,13 +178,13 @@ void  DrawScreenSaver(DISP_OBJ *dobj,int r1 ,int r2,int r3)
       }
     }
 
-    
+
     int x = 0;
     for (i=0;i<(p-missed);i++)
     {
       x = x + GetImageWidth(missed[i]);
     }
-    
+
     x = (SM_Book->DISPLAY_WIDTH - (x + (i-1)*10) )/2;
     for (i=0;i<(p-missed);i++)
     {
@@ -240,18 +240,18 @@ static int ReconfigElf(void *mess ,BOOK *book)
 int OnTurnOff(void *mess ,BOOK* book)
 {
   SleepMode_Book * SM_Book=(SleepMode_Book*)book;
-  
+
   if (SM_Book->pIClock)
   {
     DATETIME datetime;
-    
+
     SM_Book->pIClock->GetDateAndTime(&datetime);
-    
+
     int f=_fopen(GetDir( DIR_INI ),L"datetime.bak",FSX_O_WRONLY|FSX_O_TRUNC,FSX_S_IREAD|FSX_S_IWRITE,0);
     fwrite(f,&datetime,sizeof(DATETIME));
     fclose(f);
   }
-  
+
   UI_CONTROLLED_SHUTDOWN_RESPONSE(BookObj_GetBookID(SM_Book));
   return 1;
 }
@@ -279,7 +279,7 @@ void elf_exit(void)
 void onCloseSMBook(BOOK * SMBook)
 {
   SleepMode_Book * SM_Book=(SleepMode_Book*)SMBook;
-  
+
   if (SM_Book->pIClock) SM_Book->pIClock->Release();
   SUBPROC(elf_exit);
 }
@@ -294,10 +294,10 @@ void CreateSleepModeBook()
   int icon_id;
   FSTAT fstat_struct;
   wchar_t * path;
-  
+
   SleepMode_Book * SM_Book=new(SleepMode_Book);
   CreateBook(SM_Book,onCloseSMBook,&base_page,"SleepMode",-1,0);
-  
+
   SM_Book->DISPLAY_WIDTH=Display_GetWidth(0)-1;
   SM_Book->offset=0;
   SM_Book->pIClock=0;
@@ -308,66 +308,66 @@ void CreateSleepModeBook()
     iconidname2id(icons[i],TEXTID_ANY_LEN,&icon_id);
     SM_Book->missed_icons[i]=icon_id;
   }
-  
+
   //Дни недели
   for (i=0;i<7;i++)
   {
     textidname2id(days_str[i],TEXTID_ANY_LEN,&icon_id);
     SM_Book->days[i]=icon_id;
   }
-  
+
   CoCreateInstance(&CID_CClockManager,&IID_IClockManager,PPINTERFACE(&pIClockManager));
   if (pIClockManager) pIClockManager->CreateClock(&SM_Book->pIClock);
   if (pIClockManager) pIClockManager->Release();
-  
+
   path=GetDir( DIR_INI );
-  
+
   if (fstat(path,L"sleepmode.ini",&fstat_struct)>=0)
   {
     char buf[20];
-    
+
     f=_fopen(path,L"sleepmode.ini",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
     fread(f,&buf,fstat_struct.fsize);
     buf[fstat_struct.fsize]=0;
     fclose(f);
-    
+
     sscanf(buf,"%*s %x",&SM_Book->offset);
   }
-  
+
   if (!SM_Book->offset)
   {
     int platform=GetChipID()&CHIPID_MASK;
-    
+
     if (platform==CHIPID_DB2020) SM_Book->offset=DB2020_OFFSET;
     if (platform==CHIPID_DB3150) SM_Book->offset=DB3150_OFFSET;
     if (platform==CHIPID_DB3200) SM_Book->offset=DB3200_OFFSET;
     if (platform==CHIPID_DB3210) SM_Book->offset=DB3210_OFFSET;
   }
-  
+
   if (fstat(path,L"datetime.bak",0)>=0)
   {
     DATETIME datetime;
     DATETIME datetime_bak;
     char ds=0;
-    
+
     if (SM_Book->pIClock) SM_Book->pIClock->GetDateAndTime(&datetime);
-    
+
     if ( (datetime.date.year==default_date.year) && (datetime.date.mon==default_date.mon) && (datetime.date.day==default_date.day) )
     {
       f=_fopen(path,L"datetime.bak",FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0);
       fread(f,&datetime_bak,sizeof(DATETIME));
       fclose(f);
-      
+
       if (SM_Book->pIClock) SM_Book->pIClock->GetDaylightSaving(&ds);
-      
+
       int unix=datetime2unixtime(&datetime_bak);
       unix = unix + datetime.time.sec + datetime.time.min*60 + (datetime.time.hour-default_time.hour-ds)*60*60 + OFF_TIME_CORRECTION;
-      
+
       unixtime2datetime(unix,&datetime_bak);
-      
+
       if (SM_Book->pIClock) SM_Book->pIClock->SetDateAndTime(&datetime_bak);
     }
-    
+
     FileDelete(path,L"datetime.bak",&error);
   }
 }

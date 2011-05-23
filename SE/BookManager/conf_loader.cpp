@@ -15,11 +15,11 @@ int LoadConfigData( const wchar_t* path, const wchar_t* fname )
   void* cfg;
   FSTAT _fstat;
   unsigned int rlen;
-  
+
   cfg = ( char* )__segment_begin( "CONFIG_C" );
-  
+
   unsigned int len = ( char* )__segment_end( "CONFIG_C" ) - ( char* )__segment_begin( "CONFIG_C" );
-  
+
   char* buf = new char[len];
   if ( buf )
   {
@@ -29,7 +29,7 @@ int LoadConfigData( const wchar_t* path, const wchar_t* fname )
       {
         rlen = fread( f, buf, len );
         fclose( f );
-        
+
         if ( rlen == _fstat.fsize && rlen == len )
         {
           memcpy( cfg, buf, len );
@@ -43,11 +43,11 @@ int LoadConfigData( const wchar_t* path, const wchar_t* fname )
       {
         if ( fwrite( f, cfg, len ) == len )
           result = 0;
-        
+
         fclose( f );
       }
     }
-    
+
     delete buf;
   }
   if ( result >= 0 )

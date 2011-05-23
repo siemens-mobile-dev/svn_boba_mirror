@@ -791,6 +791,10 @@ __swi __arm void __original_GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXT
 __swi __arm int __original_GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 #pragma swi_number=0x247
 __swi __arm void __original_GoMusic( void );
+#pragma swi_number=0x248
+__swi __arm int __original_GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+#pragma swi_number=0x249
+__swi __arm void __original_GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 
 #pragma swi_number=0x24A
 __swi __arm int __original_PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
@@ -1543,7 +1547,7 @@ __swi __arm GVI_BRUSH __original_GVI_CreateSolidBrush( int color );
 __swi __arm BOOL __original_GVI_Delete_GVI_Object( GVI_OBJ* );
 
 #pragma swi_number=0x384
-__swi __arm void __original_GVI_DrawEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, GVI_PEN pen );
+__swi __arm void __original_GVI_DrawEllipse( GVI_GC gc, int x, int y, int w, int h, GVI_PEN pen );
 #pragma swi_number=0x385
 __swi __arm void __original_GVI_DrawLine( GVI_GC gc, int x1, int y1, int x2, int y2, GVI_PEN pen );
 #pragma swi_number=0x386
@@ -1572,7 +1576,7 @@ __swi __arm void __original_GVI_FillRectangle( GVI_GC gc, int x, int y, int w, i
 __swi __arm void __original_GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
 
 #pragma swi_number=0x391
-__swi __arm void __original_GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
+__swi __arm void __original_GVI_FillSolidEllipse( GVI_GC gc, int x, int y, int w, int h, int color );
 #pragma swi_number=0x392
 __swi __arm void __original_GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 #pragma swi_number=0x393
@@ -1745,6 +1749,9 @@ __swi __arm void __original_DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 ac
 
 #pragma swi_number=0x3D4
 __swi __arm LIST* __original_DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+
+#pragma swi_number=0x3D5
+__swi __arm void __original_DispObject_SetAnimation( DISP_OBJ*, int style );
 
 
 #endif

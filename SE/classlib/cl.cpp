@@ -105,6 +105,11 @@ void CDispObjBase::SetTitleImage( IMAGEID imageID )
 	DispObject_SetTitleImage( this, imageID );
 }
 
+void CDispObjBase::SetAnimation( int style )
+{
+	DispObject_SetAnimation( this, style );
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 CBookBase* CGuiBase::GetBook()
@@ -551,6 +556,16 @@ wchar_t* CGUIMessage::GetSearchString()
 int CGUIMessage::GetSearchStringLength()
 {
 	return GUIonMessage_GetSearchStringLength( this );
+}
+
+int CGUIMessage::SubItem_GetSelectedIndex()
+{
+	return GUIonMessage_SubItem_GetSelectedIndex( this );
+}
+
+void CGUIMessage::SubItem_SetDisabled( BOOL state )
+{
+	GUIonMessage_SubItem_SetDisabled( this, state );
 }
 
 ////////////////////////////////////////////////////////////////////////

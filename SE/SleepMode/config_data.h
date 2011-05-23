@@ -18,5 +18,6 @@ extern const int y3;
 extern const DATE default_date;
 extern const TIME default_time;
 
+extern const int ShowSeconds;
 
 #endif

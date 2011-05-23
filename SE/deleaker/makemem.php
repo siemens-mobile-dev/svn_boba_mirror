@@ -53,7 +53,7 @@
             {
               die("плохой аргумент, негодный\r\n");
             }
-  
+
   }
   /////////////////////////////////////////////////////////////////////
 
@@ -106,7 +106,7 @@
          if(preg_match("/^(__swi __arm\s+(((union)|(unsigned))\s+)?[^\s]+((\s*\*+\s*)|(\s+))(\(\s*\*\s*)?)([^\s\(]+)(\s*\(.*)/",$lib[$i],$m))
          {
            fprintf($liborig,"%s__original_%s%s\r\n",$m[1],$m[10],$m[11]);
-  
+
            $func=$m[10];
 
            $globalfn[$func]=$lib[$i];
@@ -269,7 +269,7 @@
         }
 
       }
-  
+
       while($f[$i]!="}")$i++;
 //      for($k=0;$k<sizeof($fnarray[$curfname]); $k++)
 
@@ -303,7 +303,7 @@
   reset ($globalfn);
   while (list ($key, $val) = each ($globalfn)) {
       fprintf($fcpp,"//%s\r\n",$val);
-  }  
+  }
 
   fputs($fcpp,"\r\n#endif\r\n");
   fputs($fh,"\r\n#endif\r\n#endif\r\n");

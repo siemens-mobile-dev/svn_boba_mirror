@@ -52,7 +52,7 @@ typedef struct DATETIME
 typedef struct POINT
 {
 	int x;
-	int y; 
+	int y;
 }POINT;
 
 typedef struct RECT
@@ -74,7 +74,7 @@ typedef struct RECT
 #define TRUE 1
 #define FALSE 0
 
-// if( GetChipID( ) &CHIPID_MASK == CHIPID_DB... ) 
+// if( GetChipID( ) &CHIPID_MASK == CHIPID_DB... )
 #define CHIPID_MASK 0xFE00
 #define CHIPID_DB2000 0x7000
 #define CHIPID_DB2010 0x8000
@@ -86,7 +86,7 @@ typedef struct RECT
 #define CHIPID_DB3350 0xF000
 
 
-#define MAXELEMS( x ) (sizeof(x)/sizeof(x[0])) 
+#define MAXELEMS( x ) (sizeof(x)/sizeof(x[0]))
 
 #ifdef __cplusplus
 template<typename BASETYPE,typename CHILDTYPE>
@@ -123,7 +123,7 @@ typedef enum TEXT_ENCODING
 
 #define TEXT( __STR__ ) L##__STR__
 #define _T( __STR__ ) L##__STR__
-#define STR( __STR__ ) TextID_Create( _T( __STR__ ), ENC_UCS2, TEXTID_ANY_LEN ) 
+#define STR( __STR__ ) TextID_Create( _T( __STR__ ), ENC_UCS2, TEXTID_ANY_LEN )
 
 // images ----------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ typedef unsigned long OSSEGMENT;
 
 typedef signed long OSFSEMVAL;
 typedef signed long OSSEMVAL;
-  
+
 typedef void ( OSENTRYPOINT )( void );
 
 typedef OSADDRESS( OSERRH )( OSBOOLEAN, OSERRCODE, OSERRCODE );
@@ -172,7 +172,7 @@ typedef enum PROCESS_TYPE
 }PROCESS_TYPE;
 
 
-#define OS_PROCESS( x ) __interwork void x( void ) 
+#define OS_PROCESS( x ) __interwork void x( void )
 
 // list ------------------------------------------------------------------------
 
@@ -256,7 +256,7 @@ typedef struct GUI GUI_FEEDBACK;
 
 typedef enum UI_OverlayStyle_t
 {
-	UI_OverlayStyle_NotDefined = 0, 
+	UI_OverlayStyle_NotDefined = 0,
 	UI_OverlayStyle_Default, // Use original frame settings
 	UI_OverlayStyle_FullScreen, // Fullscreen
 	UI_OverlayStyle_FullScreenNoStatus, // Fullscreen with no statusRow
@@ -277,7 +277,7 @@ typedef enum UI_TitleMode_t
 	UI_TitleMode_Normal, // Normal title size
 	UI_TitleMode_Small, // Small title
 	UI_TitleMode_Tab, // Show tabs instead of title.
-	UI_TitleMode_Large, // Large two row title( different fonts for 1:st and 2:nd line ) 
+	UI_TitleMode_Large, // Large two row title( different fonts for 1:st and 2:nd line )
 	UI_TitleMode_Desktop, // Only for desktop title. Will be removed after hb107.
 	UI_TitleMode_Last
 } UI_TitleMode_t;
@@ -289,7 +289,7 @@ struct BOOK;
 typedef struct UI_APP_SESSION
 {
 	LIST* listbook;
-	int name;
+	TEXTID name;
 	IMAGEID icon;
 	int W2;
 	int SessionID;
@@ -350,41 +350,44 @@ typedef struct BOOK
 
 typedef int (*IS_NEEDED_BOOK)(BOOK*);
 
+
+#define NO_BOOK_ID 0xFFFFFFFF
+
 // gui list --------------------------------------------------------------------
 
 typedef struct GUI_MESSAGE
 {
-	char __msg; // use GUIonMessage_GetMsg( ) 
-	GUI* __gui; // use GUIonMessage_GetGui( ) 
-	BOOK* __book; // use GUIonMessage_GetBook( ) 
+	char __msg; // use GUIonMessage_GetMsg( )
+	GUI* __gui; // use GUIonMessage_GetGui( )
+	BOOK* __book; // use GUIonMessage_GetBook( )
 }GUI_MESSAGE;
 
 
 typedef enum LISTMSGS
 {
-	LISTMSG_HighlightChanged=0, 
-	LISTMSG_GetItem=1, 
-	LISTMSG_SubItemHighlightChanged=2, 
-	LISTMSG_GetSubItem=3, 
-	LISTMSG_Edit=4, 
-	LISTMSG_Delete=5, 
-	LISTMSG_SearchIndex=7, 
-	LISTMSG_GetKeyboard=8, 
-	LISTMSG_ItemSelectionChanged=9, 
-	LISTMSG_DrawComplete=10, 
-	LISTMSG_ListBusy=11, 
-	
-	LISTMSG_KeyRepeat = 12, 
-	LISTMSG_StringInputCharProtYesCB = 13, 
-	LISTMSG_StringInputCharProtNoCB = 14, 
+	LISTMSG_HighlightChanged=0,
+	LISTMSG_GetItem=1,
+	LISTMSG_SubItemHighlightChanged=2,
+	LISTMSG_GetSubItem=3,
+	LISTMSG_Edit=4,
+	LISTMSG_Delete=5,
+	LISTMSG_SearchIndex=7,
+	LISTMSG_GetKeyboard=8,
+	LISTMSG_ItemSelectionChanged=9,
+	LISTMSG_DrawComplete=10,
+	LISTMSG_ListBusy=11,
+
+	LISTMSG_KeyRepeat = 12,
+	LISTMSG_StringInputCharProtYesCB = 13,
+	LISTMSG_StringInputCharProtNoCB = 14,
 	LISTMSG_Minipopup = 15
 }LISTMSGS;
 
 typedef enum LISTMENU_HOTKEY_MODE
 {
-	LKHM_SEARCH = 0, 
-	LKHM_SHORTCUT = 1, 
-	LKHM_FOCUS = 2, 
+	LKHM_SEARCH = 0,
+	LKHM_SHORTCUT = 1,
+	LKHM_FOCUS = 2,
 	LKHM_PRESS = 3
 }LISTMENU_HOTKEY_MODE;
 
@@ -453,13 +456,13 @@ typedef struct SURFACE
 	int Display;
 }SURFACE;
 
-#pragma pack(push, 2) 
+#pragma pack(push, 2)
 typedef struct FONT_DESC
 {
 	u16 id;
 	wchar_t name[10];
 }FONT_DESC;
-#pragma pack(pop) 
+#pragma pack(pop)
 
 // files -----------------------------------------------------------------------
 
@@ -486,7 +489,7 @@ typedef struct W_FSTAT
 	int st_size;
 	unsigned int unk_0x1C;
 	unsigned int unk_0x20;
-	unsigned int unk_0x24; 
+	unsigned int unk_0x24;
 }W_FSTAT;
 
 typedef struct FILELISTITEM
@@ -503,7 +506,7 @@ typedef struct DIR_HANDLE
 	int unk_0;
 	u16 unk_4;
 	u16 unk_6;
-	int unk_8; 
+	int unk_8;
 	char unk_C; // на 2010 флажки отличаются...
 	char unk_D;
 	char ena_hidden;
@@ -536,24 +539,24 @@ typedef struct VOLUMESIZE_A2
 
 //lseek
 typedef enum _SEEK_SET {
-	SEEK_SET=0, 
-	SEEK_CUR, 
+	SEEK_SET=0,
+	SEEK_CUR,
 	SEEK_END
 }_SEEK_SET;
 
 //w_lseek
 typedef enum W_SEEK_SET {
-	WSEEK_CUR=0, 
-	WSEEK_END=1, 
+	WSEEK_CUR=0,
+	WSEEK_END=1,
 	WSEEK_SET=2
 }W_SEEK_SET;
 
 //w_fopen
 typedef enum W_OPEN_ATTR {
-	WA_Read=1, 
-	WA_Write=2, 
-	WA_Append=4, 
-	WA_Create=8, 
+	WA_Read=1,
+	WA_Write=2,
+	WA_Append=4,
+	WA_Create=8,
 	WA_Truncate=0x40
 }W_OPEN_ATTR;
 
@@ -578,7 +581,7 @@ typedef enum W_OPEN_ATTR {
 //fopen/_fopen (mode), FSTAT.st_mode
 #define FSX_S_IRUSR   0x00000100 /// Read access, owner.
 #define FSX_S_IWUSR   0x00000080 /// Write access, owner.
-#define FSX_S_IXUSR   0x00000040 /// Execute/search access, owner. 
+#define FSX_S_IXUSR   0x00000040 /// Execute/search access, owner.
 #define FSX_S_IREAD   FSX_S_IRUSR
 #define FSX_S_IWRITE  FSX_S_IWUSR
 #define FSX_S_IEXEC   FSX_S_IXUSR
@@ -598,14 +601,14 @@ typedef int (*PAGEHOOKPROC)(void* msg, BOOK* book, PAGE_DESC* page_desc, LPARAM 
 
 typedef enum PAGE_HOOK_MODE
 {
-	PAGE_HOOK_REMOVE=0, 
-	PAGE_HOOK_ADD_BEFORE, 
+	PAGE_HOOK_REMOVE=0,
+	PAGE_HOOK_ADD_BEFORE,
 	PAGE_HOOK_ADD_AFTER
 }PAGE_HOOK_MODE;
 
 typedef enum KEY_HOOK_MODE
 {
-	KEY_HOOK_REMOVE=0, 
+	KEY_HOOK_REMOVE=0,
 	KEY_HOOK_ADD
 }KEY_HOOK_MODE;
 
@@ -687,9 +690,9 @@ typedef struct
 }UUID, *PUUID;
 
 
-// #define IID_PPV_ARG( Type, Expr ) &IID_##Type, reinterpret_cast<void**>( static_cast<Type**>( Expr ) ) 
+// #define IID_PPV_ARG( Type, Expr ) &IID_##Type, reinterpret_cast<void**>( static_cast<Type**>( Expr ) )
 #ifdef __cplusplus
-template<typename T> void** PPINTERFACE( T** pp ) 
+template<typename T> void** PPINTERFACE( T** pp )
 {
 	return reinterpret_cast<void**>( pp );
 }
@@ -872,13 +875,13 @@ typedef void* PAudioControl;
 typedef struct BT_FILE_2020
 {
 	wchar_t fname[255];
-	wchar_t fpath[255]; 
+	wchar_t fpath[255];
 }BT_FILE_2020;
 
 typedef struct BT_FILE_2010
 {
 	wchar_t fname[252];
-	wchar_t fpath[252]; 
+	wchar_t fpath[252];
 }BT_FILE_2010;
 
 typedef struct SEND_OBEX_STRUCT
@@ -888,7 +891,7 @@ typedef struct SEND_OBEX_STRUCT
 	TEXTID send;
 	TEXTID sent;
 	u16 obex_flag;
-	union 
+	union
 	{
 		LIST* lst;
 		union
@@ -1025,16 +1028,16 @@ typedef struct SHORTCUT_DESC_A2
 
 
 typedef enum shortcut_state {
-	SC_State_Absent=0, 
-	SC_State_Inactive=1, 
-	SC_State_Present=2, 
+	SC_State_Absent=0,
+	SC_State_Inactive=1,
+	SC_State_Present=2,
 	SC_State_MainMenu=3
 }shortcut_state;
 
 typedef enum shortcut_name_type {
-	SC_Name_StandName=0, 
-	SC_Name_NameAbsent=1, 
-	SC_Name_MainMenu=2, 
+	SC_Name_StandName=0,
+	SC_Name_NameAbsent=1,
+	SC_Name_MainMenu=2,
 	SC_Name_AddShortcut=3
 }shortcut_name_type;
 
@@ -1160,18 +1163,18 @@ template<typename T> TIMERPROC MKTIMERPROC( void(*param)(u16,T*) )
 // other -----------------------------------------------------------------------
 
 typedef enum URISchemeID {
-	file=0, 
-	http=1, 
-	https=2, 
-	rtsp=3, 
-	mailto=4, 
-	smsto=5, 
-	mmsto=6, 
-	sms=7, 
-	mms=8, 
-	tel=9, 
-	vcard=10, 
-	vnote=11, 
+	file=0,
+	http=1,
+	https=2,
+	rtsp=3,
+	mailto=4,
+	smsto=5,
+	mmsto=6,
+	sms=7,
+	mms=8,
+	tel=9,
+	vcard=10,
+	vnote=11,
 	vcal=12
 }URISchemeID;
 
@@ -1255,7 +1258,7 @@ typedef struct UI_MESSAGE
 	char mode;
 	int book_or_sess_id;
 	unsigned short event;
-	
+
 	void* data;
 	void (*mfree)(void*);
 }UI_MESSAGE;

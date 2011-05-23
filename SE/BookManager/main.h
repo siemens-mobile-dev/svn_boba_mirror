@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define COPYRIGHT_STRING STR( "\nBookManager v3.3\nbuild 140411\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
+#define COPYRIGHT_STRING STR( "\nBookManager v3.4\nbuild 020511\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
 
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -77,7 +77,8 @@ typedef struct _MYBOOK : BOOK
   char* hidden_buf;
   int hidden_buf_size;
   DISP_OBJ_ONKEY_METHOD oldOnKey;
-  DISP_OBJ_ONKEY_METHOD oldOnKey1;
+//  DISP_OBJ_ONKEY_METHOD oldOnKey1;
+  LIST* sessions_list;
   LIST* books_list;
   LIST* elfs_list;
   LIST* java_list;
@@ -117,6 +118,14 @@ typedef struct
 
 typedef struct
 {
+  UI_APP_SESSION * session;
+  LIST * books_list;
+  wchar_t pos_subitem;
+}SESSION_LIST_ITEM;
+
+
+typedef struct
+{
   int BookID;
 }DESTROYBOOK_DATA;
 
@@ -128,7 +137,7 @@ typedef struct
 
 
 BOOK_LIST_ITEM * GetBookListItem( BOOK* bk, int list );
-void RefreshBookSoftkeys( MyBOOK* mbk, int item );
+void RefreshBookSoftkeys( MyBOOK* mbk );
 int IdlePage_EnterAction( void* r0, BOOK* bk );
 int ReconfigElf( void* mess, BOOK* book );
 void LoadBookNames(MyBOOK * mbk);

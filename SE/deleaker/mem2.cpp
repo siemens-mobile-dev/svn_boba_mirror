@@ -84,7 +84,7 @@ void trace_init(wchar_t* arg_logname)
 	{
 		int max=0;
 		int iconid;
-		
+
 		if( iconidname2id( _T("RN_SHORTCUT_LIST_CALL_LIST_ICN"), TEXTID_ANY_LEN, &iconid ) )
 			if( max < iconid )
 				max = iconid;
@@ -206,7 +206,7 @@ void trace_timerkill(u16* timerid)
 	if(idx!=LIST_ERROR)
 	{
 		__original_List_RemoveAt(buffers2[trace_list_timers_id],idx);
-		__original_List_RemoveAt(buffers2[trace_list_timers_proc],idx);		
+		__original_List_RemoveAt(buffers2[trace_list_timers_proc],idx);
 	}
 	__original_Timer_Kill(timerid);
 }
@@ -265,7 +265,7 @@ void __deleaker_popfileline( const char*& __file__, int& __line__ )
 }
 
 void operator delete(void* p)
-{ 
+{
 	const char* file;
 	int line;
 	__deleaker_popfileline(file,line);

@@ -46,6 +46,7 @@ public:
 	void SetBackgroundImage( IMAGEID imageID ); //DispObject_SetBackgroundImage
 	void SetCursorImage( IMAGEID imageID ); //DispObject_SetCursorImage
 	void SetTitleImage( IMAGEID imageID ); //DispObject_SetTitleImage
+	void SetAnimation( int style ); //DispObject_SetAnimation
 
 	/*
 	LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
@@ -356,6 +357,8 @@ public:
 	void SetLineSeparator( int _unk1 );
 	wchar_t* GetSearchString();
 	int GetSearchStringLength();
+	int SubItem_GetSelectedIndex(); //GUIonMessage_SubItem_GetSelectedIndex
+	void SubItem_SetDisabled( BOOL state ); //GUIonMessage_SubItem_SetDisabled
 };
 
 /////////////////////////////////////////////////////////////////////////

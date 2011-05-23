@@ -97,6 +97,7 @@ skip DispObject_GetWindowHeight
 skip DispObject_GetWindowWidth
 skip DispObject_InvalidateRect
 skip DispObject_KillRefreshTimer
+skip DispObject_SetAnimation
 skip DispObject_SetLayerColor
 skip DispObject_SetListTextColor
 skip DispObject_SetRefreshTimer
@@ -263,7 +264,9 @@ skip GUIonMessage_SetLineSeparator
 skip GUIonMessage_SetNumberOfSubItems
 skip GUIonMessage_SubItem_GetCreatedIndex
 skip GUIonMessage_SubItem_GetCreatedParentIndex
+skip GUIonMessage_SubItem_GetSelectedIndex
 skip GUIonMessage_SubItem_GetSelectedParentIndex
+skip GUIonMessage_SubItem_SetDisabled
 skip GVI_BitBlt
 skip GVI_DrawEllipse
 skip GVI_DrawLine

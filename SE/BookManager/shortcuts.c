@@ -84,11 +84,11 @@ void ReWriteShortcut( MyBOOK* mbk, wchar_t* name_buf, char* mask_buf, wchar_t* p
 {
   int f;
   char* pos;
-  
+
   if ( mbk->shortcuts_buf )
   {
     char* param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 );
-    
+
     int len = wstrlen( name_buf );      //длина старого €рлыка
     char* str_buf = new char[len + 1];
     wstr2strn( str_buf, name_buf, len );
@@ -137,16 +137,16 @@ void WriteShortcut( wchar_t* name_buf )
   MyBOOK* mbk = (MyBOOK*) FindBook( isBookManager );
   wchar_t* path = get_path();
   char mask_buf[10];
-  
+
   int dig_num = ListMenu_GetSelectedItem( mbk->but_list );
-  
+
   if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
   {
     if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
       sprintf( mask_buf, "[S_KEY%d]", dig_num );
     else
       sprintf( mask_buf, "[ES_KEY%d]", dig_num );
-    
+
     ReWriteShortcut( mbk, name_buf, mask_buf, path );
   }
   else
@@ -155,18 +155,18 @@ void WriteShortcut( wchar_t* name_buf )
       sprintf( mask_buf, "[L_KEY%d]", dig_num );
     else
       sprintf( mask_buf, "[EL_KEY%d]", dig_num );
-    
+
     ReWriteShortcut( mbk, name_buf, mask_buf, path );
   }
   delete( path );
-  
+
   LoadShortcuts(mbk);
 }
 
 void onShortcutSet( BOOK* MainMenu, GUI* )
 {
   MyBOOK* mbk = (MyBOOK*) FindBook( isBookManager );
-  
+
   wchar_t* name_buf = MenuBook_Desktop_GetSelectedItemID( MainMenu );
   if ( name_buf )
   {
@@ -211,12 +211,12 @@ int CreateMainMenu( void* data, BOOK* book )
 int DB_Filter( const wchar_t* ext_table, const wchar_t* path , const wchar_t* name )
 {
   FSTAT _fstat;
-  
+
   if ( DataBrowser_isFileInListExt( ext_table, path, name ) )
     return 1;
-  
+
   fstat( path, name, &_fstat );
-  
+
   return 0 != ( _fstat.st_mode & FSX_S_IFDIR );
 }
 
@@ -226,10 +226,10 @@ int onAccept_DB( void* data, BOOK* book )
   wchar_t* path_ptr = wstrwstr( FILEITEM_GetPath( ( FILEITEM* )data ), L"ZBin/" );
   wchar_t* elf_buf = new wchar_t[wstrlen( path_ptr + 4 ) + wstrlen( FILEITEM_GetFname( ( FILEITEM* )data ) ) + 1];
   elf_buf[0] = 0;
-  
+
   if ( path_ptr )
     wstrcpy( elf_buf, path_ptr + 4 );
-  
+
   wstrcat( elf_buf, L"/" );
   wstrcat( elf_buf, FILEITEM_GetFname( ( FILEITEM* )data ) );
   WriteShortcut( elf_buf );
@@ -265,7 +265,7 @@ void onEnter_JavaList( BOOK* book, GUI* )
   int java_buf_len = wstrlen( elem->name ) + wstrlen( elem->hash_name ) + 10;
   wchar_t* java_buf = new wchar_t[java_buf_len];
   snwprintf( java_buf, java_buf_len, L"java:%ls//%ls", elem->name, elem->hash_name );
-  
+
   WriteShortcut( java_buf );
   delete( java_buf );
   BookObj_ReturnPage( mbk, ACCEPT_EVENT );
@@ -287,19 +287,19 @@ void JavaList_Prev_Action( BOOK* book, GUI* )
 void elem_free( void* elem )
 {
   java_list_elem* lm = (java_list_elem*) elem;
-  
+
   if ( lm->name )
     delete( lm->name );
-  
+
   if ( lm->fullpath )
     delete( lm->fullpath );
-  
+
   if ( lm->hash_name )
     delete( lm->hash_name );
-  
+
   if ( lm->imageID!=NOIMAGE )
     ImageID_Free( lm->imageID );
-  
+
   delete( lm );
 }
 
@@ -312,13 +312,13 @@ int elem_filter( void* elem )
 int onExit_JavaList( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  
+
   if ( mbk->java_list_menu )
   {
     GUIObject_Destroy( mbk->java_list_menu );
     mbk->java_list_menu = 0;
   }
-  
+
   if ( mbk->java_list )
   {
     List_DestroyElements( mbk->java_list, elem_filter, elem_free );
@@ -332,7 +332,7 @@ int onExit_JavaList( void* data, BOOK* book )
 int java_list_callback( GUI_MESSAGE* msg )
 {
   MyBOOK* mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
-  
+
   switch( GUIonMessage_GetMsg( msg ) )
   {
   case LISTMSG_GetItem:
@@ -362,19 +362,19 @@ java_list_elem* CreateElem( void* JavaDesc )
 int CreateJavaList( void* data, BOOK* book )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  
+
   if ( mbk->java_list )
   {
     List_DestroyElements( mbk->java_list, elem_filter, elem_free );
     List_Destroy( mbk->java_list );
   }
-  
+
   mbk->java_list = List_Create();
   char sp1;
   wchar_t* sp;
   void* JavaDesc;
   JavaDialog_Open( 0, &sp1, &JavaDesc );
-  
+
   if ( !JavaAppDesc_GetFirstApp( JavaDesc ) )
   {
     int result = 0;
@@ -390,12 +390,12 @@ int CreateJavaList( void* data, BOOK* book )
       result = JavaAppDesc_GetNextApp( JavaDesc );
     }
   }
-  
+
   JavaDialog_Close( sp1 );
-  
+
   if ( mbk->java_list_menu )
     GUIObject_Destroy( mbk->java_list_menu );
-  
+
   mbk->java_list_menu = CreateListMenu( book, 0 );
   GUIObject_SetTitleText( mbk->java_list_menu, STR( "Java" ) );
   ListMenu_SetItemCount( mbk->java_list_menu, mbk->java_list->FirstFree );
@@ -426,7 +426,7 @@ void * SHORTCUT_DESC_Init(char * param)
   SHORTCUT_DESC * w_buf = new SHORTCUT_DESC;
   memset( w_buf, 0, sizeof(w_buf) );
   w_buf->shortcut_state = SC_State_Present;
-  
+
   if ( strlen( param ) < 0x32 )
   {
     str2wstr( w_buf->name, param );
@@ -451,7 +451,7 @@ void * SHORTCUT_DESC_A2_Init(char * param)
   str2wstr( w_buf->name, param );
   if (!wstrcmp(w_buf->name,L"MainMenu")) w_buf->name_type = SC_Name_MainMenu;
   else w_buf->name_type = SC_Name_StandName;
-  
+
   return(w_buf);
 }
 
@@ -459,7 +459,7 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
 {
   char* param = 0;
   char mask_buf[10];
-  
+
   if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
   {
     if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
@@ -474,9 +474,9 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
     else
       sprintf( mask_buf, "[EL_KEY%d]", item_num );
   }
-  
+
   param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0);
-  
+
   if ( param )
   {
     if ( strlen( param ) )
@@ -496,14 +496,14 @@ int GetShortcutName(MyBOOK * mbk,int item_num,SC_DATA * scdata)
         void * w_buf;
         if (mbk->isA2) w_buf = SHORTCUT_DESC_A2_Init(param);
         else w_buf = SHORTCUT_DESC_Init(param);
-        
+
         scdata->str_id = Shortcut_Get_MenuItemName( w_buf );
         scdata->icon_id = Shortcut_Get_MenuItemIconID( w_buf );
-        
+
         if ( scdata->icon_id == NOIMAGE ) iconidname2id( L"RN_VERT_MY_SHORTCUTS_ICN", TEXTID_ANY_LEN, &scdata->icon_id );
-        
+
         delete( w_buf );
-        
+
         if ( scdata->str_id == EMPTY_TEXTID ) scdata->str_id = TextID_Create( param, ENC_LAT1, TEXTID_ANY_LEN );
       }
     }
@@ -524,20 +524,20 @@ int but_list_callback( GUI_MESSAGE* msg )
   scdata.icon_id = NOIMAGE;
   int item_num;
   MyBOOK * mbk = (MyBOOK*) GUIonMessage_GetBook( msg );
-  
+
   switch( GUIonMessage_GetMsg( msg ) )
   {
   case LISTMSG_GetItem:
     item_num = GUIonMessage_GetCreatedItemIndex( msg );
-    
+
     GetShortcutName(mbk,item_num,&scdata);
-    
+
     GUIonMessage_SetMenuItemText( msg, scdata.str_id );
     GUIonMessage_SetMenuItemIcon(msg, 0, mbk->digs_image[item_num].ImageID );
     GUIonMessage_SetMenuItemIcon(msg, 2, scdata.icon_id );
     break;
   }
-  
+
   return 1;
 }
 
@@ -560,7 +560,7 @@ void But_SetElf( BOOK* book, GUI* )
 void But_onEnter( BOOK* book, GUI* )
 {
   MyBOOK* mbk = (MyBOOK*) book;
-  
+
   if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
     BookObj_CallPage( book, &SelectShortcut_page );
   else
@@ -591,7 +591,7 @@ int DeleteShortcut( MyBOOK * mbk, char * mask_buf, int f )
   char* pos;
   char* param = 0;
   int res = 0;
-  
+
   if ( mbk->shortcuts_buf )
   {
     param = manifest_GetParam( mbk->shortcuts_buf, mask_buf, 0 );
@@ -606,7 +606,7 @@ int DeleteShortcut( MyBOOK * mbk, char * mask_buf, int f )
         fwrite( f, pos + len_prefix + len_minus, mbk->shortcuts_buf_size - ( pos - mbk->shortcuts_buf + len_prefix ) - len_minus );
         res = 1;
       }
-      
+
       delete( param );
     }
   }
@@ -620,19 +620,19 @@ void But_onDelete( BOOK* book, GUI* )
   int res;
   int dig_num = ListMenu_GetSelectedItem( mbk->but_list );
   if (!GetShortcutName(mbk,dig_num,0)) return;
-  
+
   wchar_t* path = get_path();
   if ( ( f = _fopen( path, INI_SHORTCUTS, FSX_O_RDWR|FSX_O_TRUNC, FSX_S_IREAD|FSX_S_IWRITE, 0 ) ) >= 0 )
   {
     char mask_buf[10];
-    
+
     if ( !ListMenu_GetSelectedItem( mbk->mode_list ) )
     {
       if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
         sprintf( mask_buf, "[S_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[ES_KEY%d]", dig_num );
-      
+
       res = DeleteShortcut( mbk, mask_buf, f );
     }
     else
@@ -641,12 +641,12 @@ void But_onDelete( BOOK* book, GUI* )
         sprintf( mask_buf, "[L_KEY%d]", dig_num );
       else
         sprintf( mask_buf, "[EL_KEY%d]", dig_num );
-      
+
       res = DeleteShortcut( mbk, mask_buf, f );
     }
-    
+
     fclose( f );
-    
+
     if ( res )
     {
       LoadShortcuts(mbk);
@@ -664,7 +664,7 @@ int CreateButtonList( void* data, BOOK* book )
   int str_id;
 
   int but_pos = 0;
-  
+
   if ( mbk->but_list )
   {
     but_pos = ListMenu_GetSelectedItem( mbk->but_list );
@@ -684,7 +684,7 @@ int CreateButtonList( void* data, BOOK* book )
   GUIObject_SoftKeys_SetAction( mbk->but_list, ACTION_SELECT1, But_onEnter );
   GUIObject_SoftKeys_SetAction( mbk->but_list, ACTION_DELETE, But_onDelete );
   GUIObject_SoftKeys_SetVisible( mbk->but_list, ACTION_DELETE, 0 );
-  
+
   if ( mbk->ActiveTAB==BOOKLIST || ShortcutsMode )
   {
     GUIObject_SoftKeys_SetAction( mbk->but_list, SHORTCUTS_MAINMENU_SOFTKEY, But_SetMM );
@@ -698,7 +698,7 @@ int CreateButtonList( void* data, BOOK* book )
       GUIObject_SoftKeys_SetText( mbk->but_list, SHORTCUTS_ELFS_SOFTKEY, STR( "Elfs" ) );
     }
   }
-  
+
   GUIObject_Show( mbk->but_list );
   return 0;
 }
