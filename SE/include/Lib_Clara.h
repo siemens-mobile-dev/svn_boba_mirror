@@ -168,7 +168,7 @@ __swi __arm u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 __swi __arm void Timer_Kill( u16* timerID );
 
 #pragma swi_number=0x12B
-__swi __arm int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+__swi __arm int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 
 #pragma swi_number=0x12C
 __swi __arm void BookObj_KillBook( BOOK* book );
@@ -1190,6 +1190,9 @@ __swi __arm BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param 
 #pragma swi_number=0x2E4
 __swi __arm FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
 
+#pragma swi_number=0x2E5
+__swi __arm IMAGEID ImageID_Copy( IMAGEID );
+
 #pragma swi_number=0x2E6
 __swi __arm int BookObj_GetSessionID( BOOK* book );
 #pragma swi_number=0x2E7
@@ -1778,6 +1781,9 @@ __swi __arm LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook )
 
 #pragma swi_number=0x3D5
 __swi __arm void DispObject_SetAnimation( DISP_OBJ*, int style );
+
+#pragma swi_number=0x3D6
+__swi __arm void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 #ifdef LIBCLARANS
 }

@@ -45,41 +45,9 @@ public:
 	void WindowSetSize( int w, int h ); //DispObject_WindowSetSize
 	void SetBackgroundImage( IMAGEID imageID ); //DispObject_SetBackgroundImage
 	void SetCursorImage( IMAGEID imageID ); //DispObject_SetCursorImage
-	void SetTitleImage( IMAGEID imageID ); //DispObject_SetTitleImage
+	void SetTitleBackgroundImage( IMAGEID imageID ); //DispObject_SetTitleBackgroundImage
 	void SetAnimation( int style ); //DispObject_SetAnimation
-
-	/*
-	LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
-	u16 DISP_DESC_GetSize( DISP_OBJ* );
-	void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
-	void DispObject_SetScrollBarBackgroundColor( void* disp_obj, int color );
-	void DispObject_SetScrollBarColor( void* disp_obj, int color );
-	void DispObject_SetSoftkeysColor( void* disp_obj, int color );
-	void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
-	void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
-	void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
-
-	DISP_OBJ_METHOD DispObject_GetMethod04( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod05( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod06( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod07( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod0A( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetOnConfig( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetOnLayout( DISP_OBJ* );
-	DISP_OBJ_METHOD DispObject_GetonRefresh( DISP_OBJ* );
-	DISP_OBJ_ONCLOSE_METHOD DispObject_GetOnClose( DISP_OBJ* );
-	DISP_OBJ_ONCREATE_METHOD DispObject_GetOnCreate( DISP_OBJ* );
-	DISP_OBJ_ONKEY_METHOD DispObject_GetOnKey( DISP_OBJ* );
-	DISP_OBJ_ONREDRAW_METHOD DispObject_GetOnRedraw( DISP_OBJ* );
-
-	void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int );
-	void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
-	void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
-	void SoftKeys_Update( DISP_OBJ* softkeys );
-	void StringInput_DispObject_SetText( DISP_OBJ*, TEXTID );
-	*/
+	void SoftKeys_ExecuteAction( u16 actionID ); //DispObject_SoftKeys_ExecuteAction
 };
 
 class CGuiBase: public GUI
@@ -94,7 +62,7 @@ public:
 	void SetFocus( int i ); //GUIObject_SetFocus
 	void SetStyle( int style ); //GUIObject_SetStyle
 	void SetTitleIcon( wchar_t imageID ); //GUIObject_SetTitleIcon
-	void SetTitleImage( wchar_t imageID ); //GUIObject_SetTitleBackgroundImage
+	void SetTitleBackgroundImage( wchar_t imageID ); //GUIObject_SetTitleBackgroundImage
 	void SetTitleText( TEXTID strid ); //GUIObject_SetTitleText
 	void SetTitleType( int type ); //GUIObject_SetTitleType
 	void Show(); //GUIObject_Show
@@ -115,39 +83,7 @@ public:
 	void SoftKeys_SetVisible( u16 actionID, BOOL visible ); //GUIObject_SoftKeys_SetVisible
 	void SoftKeys_Show(); //GUIObject_SoftKeys_Show
 	void SoftKeys_SuppressDefaultAction( u16 actionID ); //GUIObject_SoftKeys_SuppressDefaultAction
-	/*
-	void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
-	void GUIObject_SetTitleBackgroundImage( GUI*, wchar_t imageID );
-	void GUIObject_SetTitleTextColor( GUI*, int color );
-
-	void GUIInput_SetIcon( GUI*, wchar_t icon );
-
-	int PercentInput_GetPercent( GUI* PercentInput );
-
-	int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
-	void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
-	void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
-
-	void ProgressBar_SetBarDisabled( GUI*, BOOL disabled );
-	void ProgressBar_SetIcon( GUI*, u16 icon_id );
-	void ProgressBar_SetPercentValue( GUI*, int value );
-	void ProgressBar_SetText( GUI*, TEXTID text );
-
-	void StatusIndication_SetItemText( GUI*, int item, TEXTID );
-
-	void TabMenuBar_SetTabGui( GUI_TABMENUBAR*, int tab, GUI* );
-
-	void Video_SetSkin( GUI* VideoPlayerGUI, int skinID );
-
-	char* MainInput_getPNUM( GUI* );
-	int MainInput_getCurPos( GUI* );
-	int MainInput_getVisible( GUI* );
-	int MainInput_isPlus( GUI* );
-	int MainInput_strlen( GUI* );
-	void MainInput_Hide( GUI* );
-
-	void YesNoQuestion_SetIcon( GUI*, wchar_t iconId );
-	*/
+	void SetZOrder( char, CGuiBase* ); //GUIObject_SetZOrder
 };
 
 class CBookBase : public BOOK
@@ -174,42 +110,7 @@ public:
 	void SetFocus( int display ); //BookObj_SetFocus
 	void WindowSetWantsFocus( int display, BOOL WantsFocus ); //BookObj_WindowSetWantsFocus
 	void StayOnTop( int mode ); //BookObj_StayOnTop
-	/*
-	void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
-
-	void* IncommingCall_Accept( BOOK* book );
-	void* IncommingCall_Mute( BOOK* book );
-	void* IncommingCall_Reject( BOOK* book );
-
-	wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
-
-	int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
-
-	void Audio_Pause( BOOK* );
-	void Audio_Play( BOOK* );
-
-	int Video_GetCurrentSkinID( BOOK* VideoPlayerBook );
-	int Video_Refresh( BOOK* VideoPlayerBook, GUI* VideoPlayerGUI );
-	int Video_SetPermit( BOOK* VideoPlayerBook, u16 NewWidth, u16 NewHeight );
-	void VideoPlayerControl( BOOK* VideoPlayerBook, int );
-	void VideoResize_AllScreenMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
-	void VideoResize_AutomateMode( BOOK* VideoPlayerBook, u16 VideoWidth, u16 VideoHeight, u16* NewWidth, u16* NewHeight );
-	void Video_ActionBack( BOOK* VideoPlayerBook, void* );
-	void Video_ExtractFrame( BOOK* VideoPlayerBook, void* );
-	void Video_Pause( BOOK* VideoPlayerBook, void* );
-	void Video_Play( BOOK* VideoPlayerBook, void* );
-	void Video_Stop( BOOK* VideoPlayerBook, void* );
-	void Video_ZoomOn( BOOK* VideoPlayerBook, void* );
-
-	void PlayerControl( BOOK* AudioPlayerBook, int );
-
-	void SwitchRadioStationFromList( BOOK* FmRadioBook, int );
-
-	SUB_EXECUTE* BrowserItem_Get_SUB_EXECUTE( BOOK* BrowserItemBook );
-
-	GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
-	GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
-	*/
+	void Kill(); //BookObj_KillBook
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -235,7 +136,6 @@ public:
 	void SetPixel ( int x1, int y1, int color ); //GC_SetPixel
 	void SetXX( int ); //GC_SetXX
 	void ValidateRect( RECT* ); //GC_ValidateRect
-	//void GC_PutChar( void* xx, int x, int y, int _zero, int zero1, short wchar );
 };
 
 
@@ -247,6 +147,7 @@ class CBook : public CBookBase
 protected:
 	virtual ~CBook(); //не удаляем объект напрямую
 public:
+	//CreateBook
 	CBook( char* pBookName, const PAGE_DESC* bp );
 };
 
@@ -322,6 +223,7 @@ protected:
 	{
 	}
 public:
+	//GUIObject_Create
 	CGuiT( CBook* book, int display )
 	{
 		GUIObject_Create( this, (void(*)(GUI*))__onclose, (void(*)(DISP_DESC*))T::DispDescCreate, book,
@@ -337,26 +239,26 @@ public:
 class CGUIMessage : public GUI_MESSAGE
 {
 public:
-	CBook* GetBook(); //
+	CBook* GetBook(); //GUIonMessage_GetBook
 	CGuiBase* GetGui(); //GUIonMessage_GetGui
 	int GetMsg(); //GUIonMessage_GetMsg
 	int GetCreatedItem(); //GUIonMessage_GetCreatedItemIndex
 	int GetSelectedItem(); //GUIonMessage_GetSelectedItem
 	int GetPrevSelectedItem(); //GUIonMessage_GetPrevSelectedItem
-	char SetItemText( TEXTID strid );
-	char SetItemSecondLineText( TEXTID strid );
-	char SetItemInfoText( TEXTID strid );
-	char SetItemUnavailableText( TEXTID strid );
+	char SetItemText( TEXTID strid ); //GUIonMessage_SetMenuItemText
+	char SetItemSecondLineText( TEXTID strid ); //GUIonMessage_SetMenuItemSecondLineText
+	char SetItemInfoText( TEXTID strid ); //GUIonMessage_SetMenuItemInfoText
+	char SetItemUnavailableText( TEXTID strid ); //GUIonMessage_SetMenuItemUnavailableText
 	void SubItem_SetText( TEXTID strid ); //GUIonMessage_SubItem_SetText
 	int SubItem_GetCreatedParentIndex(); //GUIonMessage_SubItem_GetCreatedParentIndex
 	int SubItem_GetCreatedIndex(); //GUIonMessage_SubItem_GetCreatedIndex
 	int SubItem_GetSelectedParentIndex(); //GUIonMessage_SubItem_GetSelectedParentIndex
-	void SetItemIcon( int align, wchar_t iconID );
+	void SetItemIcon( int align, wchar_t iconID ); //GUIonMessage_SetMenuItemIcon
 	void SetNumberOfSubItems( int unk, int n_sub_items ); //GUIonMessage_SetNumberOfSubItems
-	void SetItemDisabled( BOOL disabled );
-	void SetLineSeparator( int _unk1 );
-	wchar_t* GetSearchString();
-	int GetSearchStringLength();
+	void SetItemDisabled( BOOL disabled ); //GUIonMessage_SetItemDisabled
+	void SetLineSeparator( int _unk1 ); //GUIonMessage_SetLineSeparator
+	wchar_t* GetSearchString(); //GUIonMessage_GetSearchString
+	int GetSearchStringLength(); //GUIonMessage_GetSearchStringLength
 	int SubItem_GetSelectedIndex(); //GUIonMessage_SubItem_GetSelectedIndex
 	void SubItem_SetDisabled( BOOL state ); //GUIonMessage_SubItem_SetDisabled
 };
@@ -382,6 +284,7 @@ class CGuiListMenu : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
+	//ListMenu_SetOnMessage
 	CGuiListMenu( CBook* book, int display = 0 );
 	virtual int OnMessage( CGUIMessage* msg );
 
@@ -392,12 +295,6 @@ public:
 	void DestroyItems(); //ListMenu_DestroyItems
 	int GetItemCount(); //ListMenu_GetItemCount
 	void SetItemStyle( int style ); //ListMenu_SetItemStyle
-	// int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, IMAGEID );
-	// int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
-	// void ListMenu_EnableSearchHeader( GUI_LIST*, BOOL );
-	// void ListMenu_SetHotkeyMode( GUI*, LISTMENU_HOTKEY_MODE mode );
-	// void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
-	// void ListMenu_SetSearchLanguageMode( GUI_LIST*, int mode );
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -407,14 +304,15 @@ class CGuiOneOfMany : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
+    //OneOfMany_SetOnMessage
 	CGuiOneOfMany( CBook* book, int display = 0 );
 	virtual int OnMessage( CGUIMessage* msg );
 
-	void SetItemCount( int count );
-	int GetSelectedItem();
-	void SetFocused( int item );
-	void SetChecked( int checked );
-	void SetTexts( TEXTID* strids, int count );
+	void SetItemCount( int count ); //OneOfMany_SetItemCount
+	int GetSelectedItem(); //OneOfMany_GetSelected
+	void SetFocused( int item ); //OneOfMany_SetFocused
+	void SetChecked( int checked ); //OneOfMany_SetChecked
+	void SetTexts( TEXTID* strids, int count ); //OneOfMany_SetTexts
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -424,15 +322,16 @@ class CGuiNOfMany : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
+	//NOfMany_SetOnMessage
 	CGuiNOfMany( CBook* book, int display = 0 );
 	virtual int OnMessage( CGUIMessage* msg );
 
-	void SetItemCount( int count );
-	int GetChecked( u16* buffer );
-	int GetCheckedCount();
-	void SetFocused( int item );
-	void SetChecked( u16* checked_table, int items_count );
-	void SetTexts( TEXTID* strids, int count );
+	void SetItemCount( int count ); //ListMenu_SetItemCount
+	int GetChecked( u16* buffer ); //NOfMany_GetChecked
+	int GetCheckedCount(); //NOfMany_GetCheckedCount
+	void SetFocused( int item ); //NOfMany_SetCursor
+	void SetChecked( u16* checked_table, int items_count ); //NOfMany_SetChecked
+	void SetTexts( TEXTID* strids, int count ); //NOfMany_SetTexts
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -441,12 +340,12 @@ class CGuiTabMenuBar : public CStdGui
 {
 public:
 	CGuiTabMenuBar( CBook* book, int display = 0 );
-	int GetFocusedTab();
-	void SetTabCount( int count );
-	void SetFocusedTab( int tab );
-	void SetTabGui( int tab, CGuiBase* gui );
-	void SetTabIcon( int tab, int icon, int state );
-	void SetTabTitle( int tab, TEXTID strid );
+	int GetFocusedTab(); //TabMenuBar_GetFocusedTab
+	void SetTabCount( int count ); //TabMenuBar_SetTabCount
+	void SetFocusedTab( int tab ); //TabMenuBar_SetFocusedTab
+	void SetTabGui( int tab, CGuiBase* gui ); //TabMenuBar_SetTabGui
+	void SetTabIcon( int tab, int icon, int state ); //TabMenuBar_SetTabIcon
+	void SetTabTitle( int tab, TEXTID strid ); //TabMenuBar_SetTabTitle
 };
 
 /////////////////////////////////////////////////////////////////////////

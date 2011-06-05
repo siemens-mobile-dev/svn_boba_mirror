@@ -282,6 +282,15 @@ typedef enum UI_TitleMode_t
 	UI_TitleMode_Last
 } UI_TitleMode_t;
 
+//GUIObject_SetZOrder
+typedef enum GuiObjectZOrder_t
+{
+  GuiObjectZOrderAbove = 0, ///< Sets the GUI Z-order to Above
+  GuiObjectZOrderBelow, ///< Sets the GUI Z-order to Below
+  GuiObjectZOrderTop,   ///< Sets the GUI Z-order to Top
+  GuiObjectZOrderBottom, ///< Sets the GUI Z-order to Bottom
+} GuiObjectZOrder_t;
+
 // book ------------------------------------------------------------------------
 
 struct BOOK;

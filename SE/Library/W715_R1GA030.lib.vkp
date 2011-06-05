@@ -31,7 +31,7 @@
 04A0: 00000000 E9D61714 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 197E4A14 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 F9DC1714 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 19A42814 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04AC: 00000000 19A42814 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 0D9A4814 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 F1974814 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 09652114 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -178,8 +178,8 @@
 ;06EC: xxxxxxxx yyyyyyyy ; 1BB:
 06F0: 00000000 4DE13014 ; 1BC: int REQUEST_DATEFORMAT_GET( const int* sync, char* DateFormat );
 06F4: 00000000 05E13014 ; 1BD: int REQUEST_TIMEFORMAT_GET( const int* sync, char* TimeFormat );
-06F8: 00000000 2D713A14 ; 1BE: int Date2ID( DATE*, int TimeFormat, int );
-06FC: 00000000 49E53014 ; 1BF: int Time2ID( TIME*, char TimeFormat, int isSec );
+06F8: 00000000 2D713A14 ; 1BE: TEXTID Date2ID( DATE*, int DateFormat, int );
+06FC: 00000000 49E53014 ; 1BF: TEXTID Time2ID( TIME*, char TimeFormat, int isSec );
 0700: 00000000 15982814 ; 1C0: GUI_LIST* CreateListMenu( BOOK*, int display );
 0704: 00000000 59412814 ; 1C1: void ListMenu_SetItemCount( GUI_LIST*, int item_count );
 0708: 00000000 946EA24B ;81C2: LIST** ROOT_APP( void );
@@ -316,8 +316,8 @@
 0914: 00000000 45B80414 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 0918: 00000000 055A2D14 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 CD305515 ; 247: void GoMusic( void );
-;0920: xxxxxxxx yyyyyyyy ; 248:
-;0924: xxxxxxxx yyyyyyyy ; 249:
+;0920: xxxxxxxx yyyyyyyy ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+;0924: xxxxxxxx yyyyyyyy ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 0928: 00000000 C5CF2914 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 3D453314 ; 24B: int GetSilent( void );
 0930: 00000000 95B04014 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -473,7 +473,7 @@
 0B88: 00000000 0DA01214 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 81814314 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 8DC52C14 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5:
+;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 312E3114 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 8D340114 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
@@ -632,7 +632,7 @@
 0E04: 00000000 A9EE2B10 ; 381: GVI_PEN GVI_CreateDashedPen( char thikness, int color, int bitmask, int step, int offset );
 0E08: 00000000 01A00B10 ; 382: GVI_BRUSH GVI_CreateSolidBrush( int color );
 0E0C: 00000000 79D90410 ; 383: BOOL GVI_Delete_GVI_Object( GVI_OBJ* );
-0E10: 00000000 61BC5110 ; 384: void GVI_DrawEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, GVI_PEN pen );
+0E10: 00000000 61BC5110 ; 384: void GVI_DrawEllipse( GVI_GC gc, int x, int y, int w, int h, GVI_PEN pen );
 0E14: 00000000 C1260A10 ; 385: void GVI_DrawLine( GVI_GC gc, int x1, int y1, int x2, int y2, GVI_PEN pen );
 0E18: 00000000 51CB5110 ; 386: void GVI_DrawLines( GVI_GC gc, POINT* points, int count, GVI_PEN pen );
 0E1C: 00000000 D5CB5110 ; 387: void GVI_DrawPolyLine( GVI_GC gc, POINT* points, int count, GVI_PEN pen, int is_closed );
@@ -645,7 +645,7 @@
 0E38: 00000000 25460A10 ; 38E: void GVI_FillPolygon( GVI_GC gc, POINT* pp, int count, GVI_BRUSH brush );
 0E3C: 00000000 DD230A10 ; 38F: void GVI_FillRectangle( GVI_GC gc, int x, int y, int w, int h, GVI_BRUSH brush );
 0E40: 00000000 D1CC5110 ; 390: void GVI_FillRectangles( GVI_GC gc, GVI_XYWH* rcs, int count, GVI_BRUSH brush );
-0E44: 00000000 F5C05110 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x1, int y1, int x2, int y2, int color );
+0E44: 00000000 F5C05110 ; 391: void GVI_FillSolidEllipse( GVI_GC gc, int x, int y, int w, int h, int color );
 0E48: 00000000 61C50210 ; 392: void GVI_FillSolidRectangle( GVI_GC gc, int x, int y, int w, int h, int color );
 0E4C: 00000000 5D1C2710 ; 393: int GVI_FillSolidRoundRect( GVI_GC gc, int x, int y, int w, int h, int arcx, int arcy, int color );
 0E50: 00000000 0DF20010 ; 394: void GVI_FillSolidTriangle( GVI_GC gc, int x1, int y1, int x2, int y2, int x3, int y3, int color );
@@ -712,7 +712,9 @@
 0F44: 00000000 F5B60C14 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 354F8115 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 A9DE4114 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F50: 00000000 79754414 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F54: 00000000 39FBED14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 

@@ -100,14 +100,19 @@ void CDispObjBase::SetCursorImage( IMAGEID imageID )
 	DispObject_SetCursorImage( this, imageID );
 }
 
-void CDispObjBase::SetTitleImage( IMAGEID imageID )
+void CDispObjBase::SetTitleBackgroundImage( IMAGEID imageID )
 {
-	DispObject_SetTitleImage( this, imageID );
+	DispObject_SetTitleBackgroundImage( this, imageID );
 }
 
 void CDispObjBase::SetAnimation( int style )
 {
 	DispObject_SetAnimation( this, style );
+}
+
+void CDispObjBase::SoftKeys_ExecuteAction( u16 actionID )
+{
+	DispObject_SoftKeys_ExecuteAction( this, actionID );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -177,7 +182,7 @@ void CGuiBase::SetTitleIcon( wchar_t imageID )
 	GUIObject_SetTitleIcon( this, imageID );
 }
 
-void CGuiBase::SetTitleImage( wchar_t imageID )
+void CGuiBase::SetTitleBackgroundImage( wchar_t imageID )
 {
 	GUIObject_SetTitleBackgroundImage( this, imageID );
 }
@@ -264,6 +269,10 @@ void CGuiBase::SetBacklightTimeout( int time )
 	GUIObject_SetBacklightTimeout( this, time );
 }
 
+void CGuiBase::SetZOrder( char ordertype, CGuiBase* anothergui )
+{
+	GUIObject_SetZOrder( this, ordertype, anothergui );
+}
 ////////////////////////////////////////////////////////////////////////
 
 void CBookBase::AddGUIObject( CGuiBase* gui )
@@ -364,6 +373,11 @@ void CBookBase::WindowSetWantsFocus( int display, BOOL WantsFocus )
 void CBookBase::StayOnTop( int mode )
 {
 	BookObj_StayOnTop( this, mode );
+}
+
+void CBookBase::Kill()
+{
+	BookObj_KillBook( this );
 }
 ////////////////////////////////////////////////////////////////////////
 

@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define COPYRIGHT_STRING STR( "\nBookManager v3.4\nbuild 020511\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
+#define COPYRIGHT_STRING STR( "\nBookManager v3.4\nbuild 270511\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
 
 #define BOOKLIST 0
 #define ELFLIST 1

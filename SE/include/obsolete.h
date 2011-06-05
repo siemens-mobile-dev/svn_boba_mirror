@@ -59,7 +59,7 @@ DEPRECATE(int,DISP_OBJ_GetWindowHeight,DispObject_GetWindowHeight)
 DEPRECATE(void,DISP_OBJ_SetBackgroundImage,DispObject_SetBackgroundImage)
 DEPRECATE(void,DISP_OBJ_SetHighlightImage,DispObject_SetCursorImage)
 DEPRECATE(void,DISP_OBJ_SetListTextColor,DispObject_SetListTextColor)
-DEPRECATE(void,DISP_OBJ_SetTitleImage,DispObject_SetTitleImage)
+DEPRECATE(void,DISP_OBJ_SetTitleImage,DispObject_SetTitleBackgroundImage)
 DEPRECATE(void,DISP_OBJ_SetTitleTextColor,DispObject_SetTitleTextColor)
 DEPRECATE(int,DISPLAY_GetBrightness,Display_GetBrightness)
 DEPRECATE(BOOK*,DISPLAY_GetTopBook,Display_GetTopBook)
@@ -216,7 +216,7 @@ DEPRECATE(int,Disp_GetStrIdWidth,Disp_GetTextIDWidth)
 #define DISP_OBJ_SetBackgroundImage DispObject_SetBackgroundImage
 #define DISP_OBJ_SetHighlightImage DispObject_SetCursorImage
 #define DISP_OBJ_SetListTextColor DispObject_SetListTextColor
-#define DISP_OBJ_SetTitleImage DispObject_SetTitleImage
+#define DISP_OBJ_SetTitleImage DispObject_SetTitleBackgroundImage
 #define DISP_OBJ_SetTitleTextColor DispObject_SetTitleTextColor
 #define DISPLAY_GetBrightness Display_GetBrightness
 #define DISPLAY_GetTopBook Display_GetTopBook

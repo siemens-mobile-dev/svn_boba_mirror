@@ -30,7 +30,7 @@
 04A0: 00000000 85A61614 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 EDDC2314 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 75A91614 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 B1BD4A14 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04AC: 00000000 B1BD4A14 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 81590414 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 0D570414 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 51AC2C14 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -69,9 +69,9 @@
 053C: 00000000 7DD63C14 ; 14F: void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
 0540: 00000000 59521014 ; 150: void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, BOOL );
 0544: 00000000 BD531C14 ; 151: void GUIObject_SoftKeys_SuppressDefaultAction( GUI*, u16 actionID );
-0548: 00000000 E90F2914 ; 152: wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
+0548: 00000000 CD244C14 ; 152: wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
 054C: 00000000 612C4A14 ; 153: wchar_t* wstrncpy( wchar_t* dest, const wchar_t* source, int maxlen );
-0550: 00000000 410F2914 ; 154: wchar_t* wstrcat( wchar_t* wstr, const wchar_t* subwstr );
+0550: 00000000 C11F4C14 ; 154: wchar_t* wstrcat( wchar_t* wstr, const wchar_t* subwstr );
 0554: 00000000 21304C14 ; 155: wchar_t* wstrncat( wchar_t* wstr, const wchar_t* subwstr, int maxlen );
 0558: 00000000 410D4C14 ; 156: int wstrcmp( const wchar_t* wstr1, const wchar_t* wstr2 );
 055C: 00000000 D52D4C14 ; 157: int wstrlen( const wchar_t* wstr );
@@ -131,7 +131,7 @@
 0634: 00000000 7DB31E10 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 91B31E10 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 F8481E10 ; 18F: PROCESS get_bid( PROCESS pid );
-;0640: xxxxxxxx yyyyyyyy ; 190: int datetime2unixtime( DATETIME* dt );
+0640: 00000000 5D944914 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -161,7 +161,7 @@
 06AC: 00000000 CD942A14 ; 1AB: void UI_Event_toBookIDwData( int event, int BookID, void* message, void (*free_proc)( void* ) );
 06B0: 00000000 25E31614 ; 1AC: int List_Find( LIST* lst, void* itemtofind, LISTFINDCALLBACK cmp_proc );
 06B4: 00000000 C9E41614 ; 1AD: void* List_Get( LIST* lst, int index );
-06B8: 00000000 A9F50914 ; 1AE: wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
+06B8: 00000000 E92D4C14 ; 1AE: wchar_t* wstrrchr( const wchar_t* wstr, wchar_t wchar );
 06BC: 00000000 E9AD2C14 ; 1AF: void BookObj_CallSubroutine( BOOK* book, BOOK_SUBROUTINE* subr );
 06C0: 00000000 81A81614 ; 1B0: int List_InsertLast( LIST* lst, void* item );
 06C4: 00000000 FC7AC614 ; 1B1: void debug_printf( const char* fmt, ... );
@@ -315,8 +315,8 @@
 0914: 00000000 39BB2A14 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 0918: 00000000 95B82A14 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 A1805315 ; 247: void GoMusic( void );
-;0920: xxxxxxxx yyyyyyyy ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
-;0924: xxxxxxxx yyyyyyyy ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
+0920: 00000000 09B79615 ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+0924: 00000000 2DB79615 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 0928: 00000000 C5F59115 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 81422714 ; 24B: int GetSilent( void );
 0930: 00000000 8D4A2714 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -472,7 +472,7 @@
 0B88: 00000000 FD2C5114 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 11E83914 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 35B42D14 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5:
+;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 693D1314 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 65640114 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
@@ -486,7 +486,7 @@
 0BC0: 00000000 D11BA5ED ; 2F0: void MetaData_Desc_Destroy( void* MetaData_Desc );
 0BC4: 00000000 D11BA5ED ; 2F1: wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
 0BC8: 00000000 D11BA5ED ; 2F2: int MetaData_Desc_GetTrackNum( void* MetaData_Desc, int __NULL );
-0BCC: 00000000 397B1114 ; 2F3: int DispObject_GetWindowWidth( DISP_OBJ* );
+0BCC: 00000000 9DBB1614 ; 2F3: int DispObject_GetWindowWidth( DISP_OBJ* );
 0BD0: 00000000 5DDA1614 ; 2F4: int DispObject_GetWindowHeight( DISP_OBJ* );
 0BD4: 00000000 FDF55014 ; 2F5: int get_system_langID( void );
 0BD8: 00000000 71553514 ; 2F6: char* lang_get_name( int langID );
@@ -711,8 +711,9 @@
 0F44: 00000000 297F1114 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 6DEE8115 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 DDD63914 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
-;0F54: xxxxxxxx yyyyyyyy ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+0F50: 00000000 7DAA2D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F54: 00000000 8180EE14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 

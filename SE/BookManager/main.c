@@ -1516,6 +1516,8 @@ int ReconfigElf( void* mess, BOOK* book )
 int NewKey( int key, int rep_count, int mode, MyBOOK * mbk, DISP_OBJ* disp_obj )
 {
   DISP_OBJ * disp;
+  
+  BOOK * top_book = Display_GetTopBook(0);
 
   if ( mode == KeyStartPressMode )
   {
@@ -1524,7 +1526,7 @@ int NewKey( int key, int rep_count, int mode, MyBOOK * mbk, DISP_OBJ* disp_obj )
       if ( isKeylocked() && !Ignore_KeyLock )
         return 0;
 
-      if ( Display_GetTopBook(0)!=mbk )
+      if ( top_book!=mbk )
       {
         BookObj_WindowSetWantsFocus(mbk,0,TRUE);
         BookObj_SetFocus(mbk,0);
@@ -1543,34 +1545,40 @@ int NewKey( int key, int rep_count, int mode, MyBOOK * mbk, DISP_OBJ* disp_obj )
     }
   }
 
-  if (MINIMIZE_TO_SESSION)
+  if ( top_book==mbk )
   {
-    if ( key == KEY_LEFT || key == KEY_RIGHT )
+    if (MINIMIZE_TO_SESSION)
     {
-      if (mbk->oldOnKey)
+      if ( key == KEY_LEFT || key == KEY_RIGHT )
+      {
+        if (mbk->oldOnKey)
+        {
+          if ( GetActiveTab(mbk) == BOOKLIST )
+            disp = GUIObject_GetDispObject(mbk->blist);
+          else
+            disp = GUIObject_GetDispObject(mbk->elist);
+          
+          if (disp==disp_obj)
+          {
+            mbk->oldOnKey( disp, key, 0, rep_count, mode );
+            return -1;
+          }
+        }
+      }
+      
+      if ( key == KeyChangeTab && mode == KeyChangeTabPressMode )
       {
         if ( GetActiveTab(mbk) == BOOKLIST )
           disp = GUIObject_GetDispObject(mbk->blist);
         else
           disp = GUIObject_GetDispObject(mbk->elist);
-
+        
         if (disp==disp_obj)
         {
-          mbk->oldOnKey( disp, key, 0, rep_count, mode );
+          TabMenuBar_SetFocusedTab( mbk->gui, 1 - GetActiveTab(mbk) );
           return -1;
         }
       }
-    }
-
-    if ( key == KeyChangeTab && mode == KeyChangeTabPressMode )
-    {
-      if ( GetActiveTab(mbk) == BOOKLIST )
-        disp = GUIObject_GetDispObject(mbk->blist);
-      else
-        disp = GUIObject_GetDispObject(mbk->elist);
-
-      TabMenuBar_SetFocusedTab( mbk->gui, 1 - GetActiveTab(mbk) );
-      return -1;
     }
   }
   return 0;
