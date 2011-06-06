@@ -1154,7 +1154,7 @@ void CreateBookManagerGUI( MyBOOK* mbk )
   if ( !mbk->gui )
   {
     mbk->gui = CreateTabMenuBar( mbk );
-    TabMenuBar_SetTabCount( mbk->gui, 1 );
+    TabMenuBar_SetTabCount( mbk->gui, 2 );
 
     TabMenuBar_SetTabIcon( mbk->gui, 0, mbk->tabs_image[0].ImageID, 0 );
     TabMenuBar_SetTabIcon( mbk->gui, 0, mbk->tabs_image[1].ImageID, 1 );

@@ -472,13 +472,13 @@
 0B88: 00000000 FD2C5114 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 11E83914 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 35B42D14 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: 00000000 BD500414 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 693D1314 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 65640114 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
 0BA4: 00000000 25620714 ; 2E9: void UI_CONTROLLED_SHUTDOWN_RESPONSE( int book_id );
 0BA8: 00000000 D11BA5ED ; 2EA: int MainInput_getCurPos( GUI* );
-0BAC: 00000000 69CD0F14 ; 2EB: void MainInput_Hide( GUI* );
+0BAC: 00000000 79EEE214 ; 2EB: void MainInput_Hide( GUI* );
 0BB0: 00000000 C5592314 ; 2EC: void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 0BB4: 00000000 2597FA14 ; 2ED: TEXTID PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
 0BB8: 00000000 1D643715 ; 2EE: int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
@@ -713,7 +713,7 @@
 0F4C: 00000000 DDD63914 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 0F50: 00000000 7DAA2D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 8180EE14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
-;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F58: 00000000 01173A14 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 
