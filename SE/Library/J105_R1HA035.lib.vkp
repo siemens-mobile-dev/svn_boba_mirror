@@ -30,7 +30,7 @@
 04A0: 00000000 5DB22D14 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 55335014 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 FDB12D14 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 89984614 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
+04AC: 00000000 89984614 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 04B0: 00000000 51964614 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 F96B0214 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 557D2414 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -184,8 +184,8 @@
 0708: 00000000 7859A24B ;81C2: LIST** ROOT_APP( void );
 070C: 00000000 4DA73E14 ; 1C3: void GUIObject_SoftKeys_SetInfoText( GUI*, u16 actionID, TEXTID );
 0710: 00000000 DDB91214 ; 1C4: void GUIObject_SoftKeys_SetItemAsSubItem( GUI*, u16 actionID, int subitem );
-0714: 00000000 61E88115 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
-0718: 00000000 E5C0CE14 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
+0714: 00000000 75824610 ; 1C5: int REQUEST_SYSTEM_SHUTDOWN( void );
+0718: 00000000 95824610 ; 1C6: int REQUEST_SYSTEM_RESTART( void );
 071C: 00000000 91A73E14 ; 1C7: void GUIObject_SoftKeys_SetTexts( GUI*, u16 actionID, TEXTID short_text, TEXTID full_text );
 0720: 00000000 359B0014 ; 1C8: int IsRightNowBook( BOOK* book );
 0724: 00000000 41E71B14 ; 1C9: int IsVolumeControllerBook( BOOK* book );
@@ -314,10 +314,10 @@
 0910: 00000000 B1DF5314 ; 244: void GUIonMessage_SetNumberOfSubItems( GUI_MESSAGE* msg, int unk, int num_sub_items );
 0914: 00000000 1DE85314 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 0918: 00000000 45E85314 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
-091C: 00000000 7DB4EC14 ; 247: void GoMusic( void );
-;0920: xxxxxxxx yyyyyyyy ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
-;0924: xxxxxxxx yyyyyyyy ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
-0928: 00000000 9DCC7D15 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
+091C: 00000000 79B3EC14 ; 247: void GoMusic( void );
+0920: 00000000 41968215 ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+0924: 00000000 65968215 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
+0928: 00000000 1DEECF14 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 F99D0714 ; 24B: int GetSilent( void );
 0930: 00000000 01163414 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
 0934: 00000000 5D9F0714 ; 24D: int GetAudioSettings( int what, char* retvalue );
@@ -472,7 +472,7 @@
 0B88: 00000000 99192E14 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 09E93114 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 3DC54D14 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: 00000000 3DA81514 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 51690214 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 A52B0114 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
@@ -619,7 +619,7 @@
 0DD4: 00000000 09D11214 ; 375: BOOK* GUIonMessage_GetBook( GUI_MESSAGE* msg );
 0DD8: 00000000 A1FA5314 ; 376: GUI* GUIonMessage_GetGui( GUI_MESSAGE* msg );
 0DDC: 00000000 45FE5314 ; 377: int GUIonMessage_GetSelectedItem( GUI_MESSAGE* msg );
-;0DE0: xxxxxxxx yyyyyyyy ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
+0DE0: 00000000 D9E4E214 ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
 0DE4: 00000000 15891015 ; 379: void ObexSendFile( SEND_OBEX_STRUCT* );
 0DE8: 00000000 B5CE0814 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 0DEC: 00000000 8DF13314 ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
@@ -713,7 +713,7 @@
 0F4C: 00000000 75630614 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 0F50: 00000000 F9F83D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 C5B5E514 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
-;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F58: 00000000 C9D23B14 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 

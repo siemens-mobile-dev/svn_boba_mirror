@@ -30,7 +30,7 @@
 04A0: 00000000 D9DAE510 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 A5DAE510 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 31DBE510 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 C514E610 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
+04AC: 00000000 C514E610 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 04B0: 00000000 D915E610 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 D511E610 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 8D13E610 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -326,7 +326,7 @@
 ;0940: xxxxxxxx yyyyyyyy ; 250:
 ;0944: xxxxxxxx yyyyyyyy ; 251:
 0948: 00000000 057AAF11 ; 252: int GUIonMessage_SubItem_GetCreatedIndex( GUI_MESSAGE* msg );
-094C: 00000000 1559AE11 ; 253: int GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
+094C: 00000000 F979AF11 ; 253: int GUIonMessage_SubItem_GetSelectedParentIndex( GUI_MESSAGE* msg );
 0950: 00000000 C55F9C10 ; 254: void DestroyDirHandle( DIR_HANDLE* handle );
 0954: 00000000 F0BBEF11 ;8255: DB_EXT* LastExtDB( void );
 0958: 00000000 D1308611 ; 256: void GetOtherExtMethods( FILESUBROUTINE** );

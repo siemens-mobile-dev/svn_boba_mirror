@@ -31,7 +31,7 @@
 04A0: 00000000 C5A11714 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 71FF4914 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 F1A71714 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 FD662814 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
+04AC: 00000000 FD662814 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 04B0: 00000000 3D1D4814 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 211B4814 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 592A2114 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -473,7 +473,7 @@
 0B88: 00000000 FD891214 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 2D0F4314 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 F57F2C14 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: 00000000 69C64C14 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 25E23014 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 59300114 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 D11BA5ED ; 2E8: char* GetIMSI( void );
@@ -713,8 +713,8 @@
 0F48: 00000000 C1617015 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 DD714114 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 0F50: 00000000 A1014414 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
-0F54: 00000000 8180EE14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
-;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F54: 00000000 09B4E114 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+0F58: 00000000 A5470914 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 
