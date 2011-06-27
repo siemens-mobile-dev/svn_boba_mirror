@@ -310,17 +310,20 @@ int Download::onHTTPHeaders()
   {
     if (!is_const_file_name) // Если имя не указано юзером
     {
-      _safe_delete(file_name);
       char * new_fname = Get_Param_Value(content_disposition_str, "filename", 1, ';'); // Получаем имя из заголовка
-      remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы, хотя наверное сервер таких имен не держит :)
-      file_name = utf82filename(new_fname); // utf8 в имя файла
-      delete new_fname;
-      
-      _safe_delete(full_file_name);
-      full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
-      sprintf(full_file_name, "%s%s", file_path, file_name);
-      make_dirs(full_file_name);
-      log->ChangeFileName(file_name);
+      if(new_fname)
+      {
+        _safe_delete(file_name);
+        remove_bad_chars(new_fname); // Удаляем из имени недопустимые символы, хотя наверное сервер таких имен не держит :)
+        file_name = utf82filename(new_fname); // utf8 в имя файла
+        delete new_fname;
+        
+        _safe_delete(full_file_name);
+        full_file_name = new char[strlen(file_path) + strlen(file_name) + 2];
+        sprintf(full_file_name, "%s%s", file_path, file_name);
+        make_dirs(full_file_name);
+        log->ChangeFileName(file_name);
+      }
     }
   }
   /* Строка Content-Length */

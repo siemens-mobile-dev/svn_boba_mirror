@@ -19,7 +19,7 @@ char * Get_Param_Value(char * str, char * req, int cut_quotes, int separator)
   // result = auth
   char * req_displace = strstr(str, req); // начало строки с именем параметра
   char * value = req_displace + strlen(req); // начало строки со значением параметра
-  if (!(value[0] == '=')) return NULL;
+  if (!req_displace || value[0] != '=') return NULL;
   value += 1;
   char * end_ptr = strchr(req_displace, separator); // конец строки
   if (!end_ptr) end_ptr = str + strlen(str);
