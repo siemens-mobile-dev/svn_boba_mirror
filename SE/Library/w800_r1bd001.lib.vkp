@@ -593,7 +593,7 @@
 0D6C: FFFFFFFF 956AF744 ; 35B: int SoundRecorderDesc_SetRecordSize( void* desc, const int size );
 0D70: FFFFFFFF C16AF744 ; 35C: int SoundRecorder_Create( void* desc );
 ;0D74: xxxxxxxx yyyyyyyy ; 35D: int SoundRecorder_RecordCall( BOOK* OngoingCallBook );
-0D78: FFFFFFFF 85AD0C45 ; 35E: int Browser_OpenURI( BOOK* book, char* URI, int mode );
+0D78: FFFFFFFF D11BA5ED ; 35E: int Browser_OpenURI( BOOK* book, char* URI, int mode );
 0D7C: FFFFFFFF 55820245 ; 35F: char* GetURIScheme( int schemeID );
 0D80: FFFFFFFF DD860245 ; 360: char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
 0D84: FFFFFFFF B553E244 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder( void* DataBrowserDesc, int view_sort_ID );
@@ -608,7 +608,7 @@
 0DA8: FFFFFFFF F1CDC744 ; 36A: void MediaPlayer_SoftKeys_SetAction( GUI* player_gui, int actionID, SKACTIONPROC proc );
 ;0DAC: xxxxxxxx yyyyyyyy ; 36B: void MediaPlayer_SoftKeys_SetItemAsSubItem( GUI* player_gui, int item, int subitem );
 0DB0: FFFFFFFF 41CEC744 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, TEXTID );
-;0DB4: xxxxxxxx yyyyyyyy ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
+0DB4: FFFFFFFF 5DE6E244 ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 0DB8: FFFFFFFF 51A0E844 ; 36E: void DispObject_Show( DISP_OBJ*, int mode );
 ;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 ;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
@@ -711,7 +711,7 @@
 0F44: FFFFFFFF CDBCE844 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: FFFFFFFF ED6AE944 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: FFFFFFFF 8D6AD344 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F50: FFFFFFFF C144E244 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 ;0F54: xxxxxxxx yyyyyyyy ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: FFFFFFFF 2598D344 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 

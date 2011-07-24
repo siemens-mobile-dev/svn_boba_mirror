@@ -30,7 +30,7 @@
 04A0: 00000000 B5B53A45 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 81B53A45 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 0DB63A45 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 D5E73A45 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04AC: 00000000 D5E73A45 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 FDE83A45 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 51E53A45 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 B9E63A45 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -131,7 +131,7 @@
 0634: 00000000 D1D03E44 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 E5D03E44 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 F45A4344 ; 18F: PROCESS get_bid( PROCESS pid );
-;0640: xxxxxxxx yyyyyyyy ; 190: int datetime2unixtime( DATETIME* dt );
+0640: 00000000 D5FA1045 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -315,8 +315,8 @@
 0914: 00000000 EDE64145 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 0918: 00000000 E1E64145 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 85063245 ; 247: void GoMusic( void );
-;0920: xxxxxxxx yyyyyyyy ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
-;0924: xxxxxxxx yyyyyyyy ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
+0920: 00000000 B1E64145 ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+0924: 00000000 41E74145 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 0928: 00000000 71E21145 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 6DF70D45 ; 24B: int GetSilent( void );
 0930: 00000000 A5CF0D45 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -472,7 +472,7 @@
 0B88: 00000000 C1544845 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 2DE03A45 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 B1BEFD44 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5:
+0B94: 00000000 6994F444 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 A1ED3A45 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 81D23A45 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 C95C2344 ; 2E8: char* GetIMSI( void );
@@ -713,6 +713,7 @@
 0F4C: 00000000 E1D34745 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 0F50: 00000000 59E4FC44 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 99BF4545 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+0F58: 00000000 B13F4645 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 

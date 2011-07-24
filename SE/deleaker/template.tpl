@@ -239,6 +239,7 @@ skip GUIObject_SetListTextColor
 skip GUIObject_SetStyle
 skip GUIObject_SetTitleTextColor
 skip GUIObject_SetTitleType
+skip GUIObject_SetZOrder
 skip GUIObject_Show
 skip GUIObject_SoftKeys_ExecuteAction
 skip GUIObject_SoftKeys_Hide

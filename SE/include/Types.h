@@ -638,8 +638,9 @@ template<typename T,typename T2> KEYHOOKPROC MKKEYHOOKPROC( int(*param)(int,int,
 #define MODIFYKEYHOOK( proc, mode, lparam ) ModifyKeyHook( MKKEYHOOKPROC(proc), mode, lparam )
 
 #ifdef __cplusplus
-template<typename T> PAGEHOOKPROC MKPAGEHOOKPROC( int(*param)(void*,BOOK*,PAGE_DESC*,T*,u16) )
+template<typename T, typename TBOOK> PAGEHOOKPROC MKPAGEHOOKPROC( int(*param)(void*,TBOOK*,PAGE_DESC*,T*,u16) )
 {
+	INHERITANCECHECK<BOOK,TBOOK>();
 	return reinterpret_cast<PAGEHOOKPROC>(param);
 }
 #else

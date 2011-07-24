@@ -30,7 +30,7 @@
 04A0: 00000000 71C73745 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 3DC73745 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 C9C73745 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 BDFA3745 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
+04AC: 00000000 BDFA3745 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
 04B0: 00000000 E5FB3745 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 39F83745 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 A1F93745 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -472,7 +472,7 @@
 0B88: 00000000 55754545 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 DDE13745 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 A916FC44 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: 00000000 B9FCF244 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 89003845 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 69E53745 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 B94B2344 ; 2E8: char* GetIMSI( void );

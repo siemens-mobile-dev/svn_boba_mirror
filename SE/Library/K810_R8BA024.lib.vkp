@@ -30,7 +30,7 @@
 04A0: 00000000 295E3B45 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 F55D3B45 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 815E3B45 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 49903B45 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04AC: 00000000 49903B45 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 71913B45 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 C58D3B45 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 2D8F3B45 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -472,7 +472,7 @@
 0B88: 00000000 E1FD4845 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 69773B45 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 8D4CFE44 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5:
+0B94: 00000000 B91DF544 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 15963B45 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 F57A3B45 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 45722C44 ; 2E8: char* GetIMSI( void );
@@ -709,10 +709,11 @@
 0F3C: 00000000 85B33B45 ; 3CF: void BookObj_StayOnTop( BOOK* book, int mode );
 0F40: 00000000 3D764645 ; 3D0: void DispObject_WindowSetPosition( DISP_OBJ*, int x, int y );
 0F44: 00000000 DD754645 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
-;0F48: xxxxxxxx yyyyyyyy ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
-;0F4C: xxxxxxxx yyyyyyyy ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F48: 00000000 F95C4745 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
+0F4C: 00000000 017D4845 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
+0F50: 00000000 3572FD44 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 D5844645 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+0F58: 00000000 D1E84645 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 
 
 

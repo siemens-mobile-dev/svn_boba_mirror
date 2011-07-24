@@ -239,6 +239,7 @@ __swi __arm void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int
 __swi __arm void GUIObject_SetStyle( GUI*, int style );
 __swi __arm void GUIObject_SetTitleTextColor( GUI*, int color );
 __swi __arm void GUIObject_SetTitleType( GUI*, int type );
+__swi __arm void GUIObject_SetZOrder( GUI*, char, GUI* );
 __swi __arm void GUIObject_Show( GUI* );
 __swi __arm void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
 __swi __arm void GUIObject_SoftKeys_Hide( GUI* );

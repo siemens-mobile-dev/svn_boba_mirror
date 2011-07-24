@@ -88,8 +88,8 @@ void* __deleaker_malloc( const char* __file__, int __line__, int size );
 void* __deleaker_mfree_adr( const char* __file__, int __line__ );
 #define mfree(p) __deleaker_mfree( __FILE__,  __LINE__, p )
 void __deleaker_mfree( const char* __file__, int __line__, void* p );
-#define CreateBook(pbook, onClose, bp, name, ParentBookID, __unknwnargname6) __deleaker_CreateBook( __FILE__,  __LINE__, pbook, onClose, bp, name, ParentBookID, __unknwnargname6 )
-int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* __unknwnargname6 );
+#define CreateBook(pbook, onClose, bp, name, ParentBookID, appdesc) __deleaker_CreateBook( __FILE__,  __LINE__, pbook, onClose, bp, name, ParentBookID, appdesc )
+int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 #define FreeBook(book) __deleaker_FreeBook( __FILE__,  __LINE__, book )
 void __deleaker_FreeBook( const char* __file__, int __line__, BOOK* book );
 #define BookObj_KillBook(book) __deleaker_BookObj_KillBook( __FILE__,  __LINE__, book )

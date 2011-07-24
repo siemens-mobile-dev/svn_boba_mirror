@@ -355,11 +355,11 @@ void __deleaker_mfree( const char* __file__, int __line__, void* p )
 	__original_mfree(p);
 }
 
-int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* __unknwnargname6 )
+int __deleaker_CreateBook( const char* __file__, int __line__, BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc )
 {
 	trace_free(trace_memory, pbook, __file__, __line__);
 	trace_alloc(trace_book, pbook, __file__, __line__);
-	return __original_CreateBook(pbook, onClose, bp, name, ParentBookID, __unknwnargname6);
+	return __original_CreateBook(pbook, onClose, bp, name, ParentBookID, appdesc);
 }
 
 void __deleaker_FreeBook( const char* __file__, int __line__, BOOK* book )
@@ -1181,6 +1181,7 @@ TEXTID __deleaker_AB_NUM_ITEM2TextID( const char* __file__, int __line__, AB_NUM
 //__swi __arm LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 //__swi __arm SUB_EXECUTE* DataBrowser_CreateSubExecute( int BookID, FILEITEM* );
 //__swi __arm int DataBrowser_ExecuteSubroutine( SUB_EXECUTE* sub, int action, u16* unk );
+//__swi __arm IMAGEID ImageID_Copy( IMAGEID );
 //__swi __arm int JavaAppDesc_Get( int unk1, void** JavaDesc );
 //__swi __arm int JavaAppDesc_GetFirstApp( void* JavaDesc );
 //__swi __arm int JavaAppDesc_GetJavaAppFullpath( void* JavaDesc, JavaAppFullpath* );

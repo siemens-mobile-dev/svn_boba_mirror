@@ -82,6 +82,19 @@ void imsi2str(const char *imsi, char *str)
   *str=0;
 }
 
+static int BookHide(void *data, BOOK *book, PAGE_DESC * page_desc, LPARAM ClientData, u16)
+{
+  if(FindBook(isUSSDBook) == book)
+  {
+    if(!strcmp(page_desc->name,"USSD_Progress_Page"))
+    {
+      BookObj_Hide(book,0);
+      ModifyUIPageHook(PAGE_ENTER_EVENT,BookHide,0,PAGE_HOOK_REMOVE);
+    }
+  }
+  return(1);
+}
+
 int SaveCash(void)
 {FUNCTION
   int f;
@@ -155,7 +168,8 @@ static void ussd_timeout(u16 timer, LPARAM)
 static void ussd_send(u16 timer, LPARAM)
 {FUNCTION
   if ( Display_GetFocusedDispObject(0) == GUIObject_GetDispObject(SBY_GetMainInput(Find_StandbyBook()))
-      || FindBook(get_IsAudioPlayerBook()) || FindBook(get_IsFmRadioBook()) || FindBook(get_IsScreenSaverBook()))
+      || FindBook(get_IsAudioPlayerBook()) || FindBook(get_IsFmRadioBook()) || FindBook(get_IsScreenSaverBook())
+      || !ConnectionManager_Connection_GetState())
   {
     char mv[256];
     wchar_t ws[80];
@@ -165,6 +179,7 @@ static void ussd_send(u16 timer, LPARAM)
     VCALL_SetNumber(mv,ws,wstrlen(ws));
     MakeVoiceCall(BookObj_GetSessionID(Find_StandbyBook()), mv, 4);
     Timer_ReSet(&ussd_tmr,60*1000,ussd_timeout,NULL);
+    ModifyUIPageHook(PAGE_ENTER_EVENT,BookHide,0,PAGE_HOOK_ADD_AFTER);
   }
   else
   {
@@ -188,7 +203,8 @@ void StartHoursTimer(void)
 {FUNCTION
   if (CHECK_HOURS)
   {
-    DATETIME dt; int sc;
+    DATETIME dt; 
+    int sc;
     REQUEST_DATEANDTIME_GET(SYNC,&dt);
     sc = 3600*CHECK_HOURS - 60*dt.time.min - dt.time.sec;
     Timer_ReSet(&hours_tmr,sc*1000, HoursTimerProc, NULL);
@@ -206,7 +222,7 @@ void My_OnRedraw(DISP_OBJ *db,int i1,int i2, int i3)
   int font_size=GetImageHeight(' ')+1;
   int str_id;
   wchar_t ws[32];
-  int x=IDLE_X, y=IDLE_Y;
+  int x=IDLE_X, y=IDLE_Y-((scr_w==240)?24:((scr_w==176)?18:14));
   for (int i=0; i<CASH_SIZE; i++)
   {
     int start_y, end_y, fill, cur, max;
@@ -217,7 +233,7 @@ void My_OnRedraw(DISP_OBJ *db,int i1,int i2, int i3)
     end_y=y+(i+1)*font_size-1;
     DrawRect(x, start_y, scr_w-x-1, end_y, COLOR_TEXTPB, 0x00000000);
     DrawRect(x+1, start_y+1, fill+2, end_y-1, *progress_colors[i], *progress_colors[i]);
-    snwprintf(ws, MAXELEMS(ws)-1, L"%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, max/100, max%100);
+    snwprintf(ws, MAXELEMS(ws)-1, L"%s%u.%02u/%u.%02u", ((cur<0)?"-":""), ((cur<0)?(0-cur):cur)/100, ((cur<0)?(0-cur):cur)%100, ((max<0)?0:max)/100, ((max<0)?0:max)%100);
     str_id=TextID_Create(ws,ENC_UCS2,MAXELEMS(ws)-1);
     DrawString(str_id, 2, 0, start_y+1, scr_w, end_y-1, 0, 0, COLOR_TEXTPB, 0x00000000);
     TextID_Destroy(str_id);
@@ -276,16 +292,16 @@ static int OnCallManager(void *mess ,BOOK *book)
   case CHIPID_DB2020:
 	  callstate = ((CALLMANAGER_EVENT_DATA *)mess)->CallState;
 	  break;
-  case CHIPID_DB3150:	  
+  case CHIPID_DB3150:
   case CHIPID_DB3200:
-  case CHIPID_DB3210:	  
-  case CHIPID_DB3350:	  
-	  callstate = ((CALLMANAGER_EVENT_DATA_A2 *)mess)->CallState;	  
+  case CHIPID_DB3210:
+  case CHIPID_DB3350:
+	  callstate = ((CALLMANAGER_EVENT_DATA_A2 *)mess)->CallState;
 	  break;
   default:
 	  callstate = CALLMANAGER_IDLE;
   }
-	
+
   switch(callstate)
   {
   case CALLMANAGER_IDLE:  // Завершили вызов выходим
@@ -366,7 +382,8 @@ static int FindCash(const char *s)
       }
     }
     if (c) { //Не дошли до конца паттерна
-     s=s0; n++;
+     s=s0; 
+     n++;
      continue;
     }
     if (!pval) break; //Не нашли число
@@ -385,7 +402,9 @@ static int FindCash(const char *s)
        while (k>2) {//делим j на 10^(k-2)
         j/=10; k--;
        }//ибо, бывают ещё балансы в у.е. с 3-4 знаками после запятой. Сам видел у МТСа. Lost, 15.01.2008
-      i+=j;
+
+       if (i>0) i+=j; //на случай если баланс отрицательный. Раньше об этом и не думали, вот так то. Mahmuds, 13.05.2011
+       else i-=j;
 
       pval=ep;
     }
@@ -479,7 +498,7 @@ static int OnReceiveUssd(void * data, BOOK *book, PAGE_DESC * page_desc, LPARAM 
           DispObject_InvalidateRect(StBy_DispObj,0);
         }
       }
-      BookObj_KillBook(FindBook(isUSSDBook));
+      FreeBook(FindBook(isUSSDBook));
     }
     StartHoursTimer();
   }
