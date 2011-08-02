@@ -102,22 +102,12 @@ CFGVAR CFG_HDR cfghdr6_0={CFG_CHECKBOX,"Close when inactive",0,0};
 CFGVAR int UserInactivityEventEnabled=1;
 
 
-CFGVAR CFG_HDR cfghdr7_0={CFG_CBOX,"Show after shortcut",0,2};
-CFGVAR int StandbyOnTop=0;
-CFGVAR CFG_CBOX_ITEM cfgcbox7_0_0[2]={"Current book","Standby"};
-
-
-CFGVAR CFG_HDR cfghdr8_0={CFG_CBOX,"Active Tab",0,3};
+CFGVAR CFG_HDR cfghdr7_0={CFG_CBOX,"Active Tab",0,3};
 CFGVAR int FirstTab=0;
 CFGVAR CFG_CBOX_ITEM cfgcbox8_0_0[3]={"Last Active","Books","Elfs"};
 
 
-CFGVAR CFG_HDR cfghdr9_0={CFG_CBOX,"Destroy book method",0,2};
-CFGVAR int DestroyMethod=1;
-CFGVAR CFG_CBOX_ITEM cfgcbox9_0_0[2]={"Book","Session"};
-
-
-CFGVAR CFG_HDR cfghdr10_0={CFG_CBOX,"Shortcuts mode",0,2};
+CFGVAR CFG_HDR cfghdr8_0={CFG_CBOX,"Shortcuts mode",0,2};
 CFGVAR int ShortcutsMode=0;
 CFGVAR CFG_CBOX_ITEM cfgcbox10_0_0[2]={"Tab-specific","Unified"};
 
