@@ -43,20 +43,20 @@ void dll_GC_PutChar_0( GC* gc, int x, int y, int width, int height, wchar_t imag
   IImageManager * pImageManager=0;
   IUIImage * pUIImage=0;
   IUnknown * pGC =0;
-  
+
   TUIRectangle rect;
   rect.Point.X=x;
   rect.Point.Y=y;
   rect.Size.Width=width;
   rect.Size.Height=height;
-  
+
   CoCreateInstance(&CID_CImageManager, &IID_IImageManager, PPINTERFACE(&pImageManager));
   pImageManager->CreateFromIcon(imageID,&pUIImage);
 
   DisplayGC_AddRef(gc,&pGC);
-  
+
   pImageManager->Draw(pUIImage,pGC,rect);
-  
+
   if (pImageManager) pImageManager->Release();
   if (pUIImage) pUIImage->Release();
   if (pGC) pGC->Release();
@@ -103,7 +103,7 @@ int dll_SetFont_0( int font_size )
   IFontFactory * pFontFactory=0;
   TUIFontData pFontData;
   memset(&pFontData,0,sizeof(TUIFontData));
-  
+
   if (pFont)
   {
     pFont->Release();
@@ -112,17 +112,17 @@ int dll_SetFont_0( int font_size )
 
   CoCreateInstance(&CID_CFontManager,&IID_IFontManager,PPINTERFACE(&pFontManager));
   pFontManager->GetFontFactory(&pFontFactory);
-  
+
   int font_size_without_style = font_size&0xFF;
-  
+
   pFontFactory->GetDefaultFontSettings(UIFontSizeLarge,&pFontData);
   pFontData.size=(float)font_size_without_style;
   pFontData.TUIEmphasisStyle=font_size>>8;
   pFontFactory->CreateDefaultFont(&pFontData,&pFont);
-  
+
   if (pFontManager) pFontManager->Release();
   if (pFontFactory) pFontFactory->Release();
-  
+
   return(1);
 }
 #endif
@@ -132,41 +132,46 @@ int dll_SetFont_0( int font_size )
 void dll_DrawString_0( TEXTID strid, TUITextAlignment align, int x1, int y1, int x2, int y2, int unk, int unk1, int pen_color, int brush_color )
 {
   TUIRectangle rect;
-  
+
   int lineWidth = x2-x1;
-  
+
   ITextRenderingManager * pTextRenderingManager=0;
   ITextRenderingFactory * pTextRenderingFactory=0;
   IRichTextLayout * pRichTextLayout=0;
+  IUIRichTextLayoutOptions * pIUIRichTextLayoutOptions=0;
   IRichText * pTextObject=0;
   IUnknown * pGC =0;
-  
+
   CoCreateInstance(&CID_CTextRenderingManager,&IID_ITextRenderingManager,PPINTERFACE(&pTextRenderingManager));
   pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
-  pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
-  
+  pTextRenderingFactory->CreateRichTextLayoutOptions(&pIUIRichTextLayoutOptions);
+  pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,pIUIRichTextLayoutOptions,&pRichTextLayout);
+
   if (!pFont) dll_SetFont_0(20);
   TextObject_SetText(pTextObject,strid);
-  TextObject_SetFont(pTextObject,pFont,0x8000000A,0x7FFFFFF5);
-  pTextObject->SetTextColor(pen_color,0x8000000A,0x7FFFFFF5);
+  TextObject_SetFont(pTextObject,pFont,UITEXTSTYLE_START_OF_TEXT,UITEXTSTYLE_END_OF_TEXT);
+  pTextObject->SetTextColor(pen_color,UITEXTSTYLE_START_OF_TEXT,UITEXTSTYLE_END_OF_TEXT);
+
+  pTextObject->SetAlignment(align,UITEXTSTYLE_START_OF_TEXT,UITEXTSTYLE_END_OF_TEXT);
   
-  pTextObject->SetAlignment(align,0x8000000A,0x7FFFFFF5);
-  
+  pIUIRichTextLayoutOptions->SetLineBreakModel(UILineBreakBit_OK_To_Break_On_Glyph);
+
   pRichTextLayout->Compose(lineWidth);
-  
+
   rect.Point.X=x1;
   rect.Point.Y=y1;
   rect.Size.Width=x2-x1;
   rect.Size.Height=y2-y1;
-  
+
   DisplayGC_AddRef(get_DisplayGC(),&pGC);
-  
+
   pRichTextLayout->Display(pGC,x1,y1,&rect);
-  
+
   if (pTextRenderingManager) pTextRenderingManager->Release();
   if (pTextRenderingFactory) pTextRenderingFactory->Release();
   if (pRichTextLayout) pRichTextLayout->Release();
+  if (pIUIRichTextLayoutOptions) pIUIRichTextLayoutOptions->Release();
   if (pTextObject) pTextObject->Release();
   if (pGC) pGC->Release();
 }
@@ -180,11 +185,11 @@ int dll_GetImageWidth_0( wchar_t imageID )
   IImageManager * pImageManager=0;
   long image_width=0;
   long image_height=0;
-  
+
   CoCreateInstance(&CID_CImageManager, &IID_IImageManager, PPINTERFACE(&pImageManager));
   if (pImageManager->CreateFromIcon(imageID,&pUIImage)>=0)
       pUIImage->GetDimensions(&image_width,0,&image_height,0);
-  
+
   if (pImageManager) pImageManager->Release();
   if (pUIImage) pUIImage->Release();
   return(image_width);
@@ -199,7 +204,7 @@ int dll_GetImageHeight_0( wchar_t imageID )
   IImageManager * pImageManager=0;
   long image_width=0;
   long image_height=0;
-  
+
   if (imageID<100)
   {
 #if defined(DB3200) || defined(DB3210) || defined(DB3350)
@@ -214,7 +219,7 @@ int dll_GetImageHeight_0( wchar_t imageID )
     if (pImageManager->CreateFromIcon(imageID,&pUIImage)>=0)
       pUIImage->GetDimensions(&image_width,0,&image_height,0);
   }
-  
+
   if (pImageManager) pImageManager->Release();
   if (pUIImage) pUIImage->Release();
   return(image_height);
@@ -321,7 +326,7 @@ void dll_RedLED_On_0( int __NULL )
 {
   IIndicationDeviceManager * pIIndicationDeviceManager=0;
   ILedControlDevice * pILedControlDevice=0;
-  
+
   CoCreateInstance(&CID_CIndicationDeviceManager,&IID_IIndicationDeviceManager,PPINTERFACE(&pIIndicationDeviceManager));
   if (pIIndicationDeviceManager) pIIndicationDeviceManager->CreateLedControlDevice(&pILedControlDevice);
   if (pILedControlDevice)
@@ -332,7 +337,7 @@ void dll_RedLED_On_0( int __NULL )
   }
   if (pIIndicationDeviceManager) pIIndicationDeviceManager->Release();
   if (pILedControlDevice) pILedControlDevice->Release();
-  
+
   Illumination_LedID_SetLevel(RedLED_ID,100);
 }
 #endif
@@ -343,7 +348,7 @@ void dll_RedLED_Off_0( int __NULL )
 {
   IIndicationDeviceManager * pIIndicationDeviceManager=0;
   ILedControlDevice * pILedControlDevice=0;
-  
+
   CoCreateInstance(&CID_CIndicationDeviceManager,&IID_IIndicationDeviceManager,PPINTERFACE(&pIIndicationDeviceManager));
   if (pIIndicationDeviceManager) pIIndicationDeviceManager->CreateLedControlDevice(&pILedControlDevice);
   if (pILedControlDevice)
@@ -354,7 +359,7 @@ void dll_RedLED_Off_0( int __NULL )
   }
   if (pIIndicationDeviceManager) pIIndicationDeviceManager->Release();
   if (pILedControlDevice) pILedControlDevice->Release();
-  
+
   Illumination_LedID_Off(RedLED_ID);
 }
 #endif
@@ -376,19 +381,35 @@ int dll_Disp_GetTextIDWidth_0( TEXTID strid, int len )
   IRichTextLayout * pRichTextLayout=0;
   IRichText * pTextObject=0;
   
+  int width=0;
+  TEXTID temp_strid=EMPTY_TEXTID;
+
   CoCreateInstance(&CID_CTextRenderingManager,&IID_ITextRenderingManager,PPINTERFACE(&pTextRenderingManager));
   pTextRenderingManager->GetTextRenderingFactory(&pTextRenderingFactory);
   pTextRenderingFactory->CreateRichText(&pTextObject);
   pTextRenderingFactory->CreateRichTextLayout(pTextObject,0,0,&pRichTextLayout);
-  
+
   if (!pFont) dll_SetFont_0(20);
-  int width=RichTextLayout_GetTextWidth(strid,pRichTextLayout,pFont);
   
+  if (len==TEXTID_ANY_LEN)
+    temp_strid=TextID_Copy(strid);
+  else
+  {
+    wchar_t * buf=new wchar_t[len+1];
+    TextID_GetWString(strid,buf,len+1);
+    temp_strid=TextID_Create(buf,ENC_UCS2,len);
+    delete buf;
+  }
+  
+  width=RichTextLayout_GetTextWidth(temp_strid,pRichTextLayout,pFont);
+  
+  TextID_Destroy(temp_strid);
+
   if (pTextRenderingManager) pTextRenderingManager->Release();
   if (pTextRenderingFactory) pTextRenderingFactory->Release();
   if (pRichTextLayout) pRichTextLayout->Release();
   if (pTextObject) pTextObject->Release();
-  
+
   return(width);
 }
 #endif
@@ -553,7 +574,7 @@ int dll_GetSignalQuality_0( char * rssi, char * ber )
   static const SIGSELECT sg[]={1,GetSignalQuality_Receive_SignalID};
   char res=0;
   PROCESS pid;
-  
+
   hunt("LNH_ACC_SIDE/SL_Process",NULL,&pid,NULL);
   union SIGNAL * mem = alloc(8,GetSignalQuality_Send_SignalID);
   mem->hsig.null=0;
@@ -587,7 +608,7 @@ int dll_get_CellData_0( PLMN_LAC_DESC * plmn_lac, RAT_CI_DESC * rat_ci, char * C
   rat_ci->RAT=con_info.RAT;
   rat_ci->CI=con_info.CI;
   CSReg[0]=con_info.CSReg;
-  
+
   return(1);
 }
 #endif
@@ -618,7 +639,7 @@ OSBOOLEAN dll_get_mem_0( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size )
   buf.from=from;
   buf.to=to;
   buf.size=size;
-  
+
   return(get_mem_int(1,0,&buf));
 }
 #endif
@@ -642,91 +663,91 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     #ifdef USE_dll_GC_PutChar_0
     0x140, (void*) dll_GC_PutChar_0,
     #endif
-    
+
     #ifdef USE_dll_AB_READSTRING_0
     0x163, (void*) dll_AB_READSTRING_0,
     #endif
-    
+
     #ifdef USE_dll_DrawString_0
     0x1ED, (void*) dll_DrawString_0,
     #endif
-    
+
     #ifdef USE_dll_SetFont_0
     0x1F1, (void*) dll_SetFont_0,
     #endif
-    
+
     #ifdef USE_dll_GetImageWidth_0
     0x293, (void*) dll_GetImageWidth_0,
     #endif
-    
+
     #ifdef USE_dll_GetImageHeight_0
     0x294, (void*) dll_GetImageHeight_0,
     #endif
-    
+
     #ifdef USE_dll_OrangeLED_Control_0
     0x2DC, (void*) dll_OrangeLED_Control_0,
     #endif
-    
+
     #ifdef USE_dll_MetaData_Desc_Create_0
     0x2EF, (void*) dll_MetaData_Desc_Create_0,
     #endif
-    
+
     #ifdef USE_dll_MetaData_Desc_Destroy_0
     0x2F0, (void*) dll_MetaData_Desc_Destroy_0,
     #endif
-    
+
     #ifdef USE_dll_MetaData_Desc_GetTags_0
     0x2F1, (void*) dll_MetaData_Desc_GetTags_0,
     #endif
-    
+
     #ifdef USE_dll_MetaData_Desc_GetTrackNum_0
     0x2F2, (void*) dll_MetaData_Desc_GetTrackNum_0,
     #endif
-    
+
     #ifdef USE_dll_MetaData_Desc_GetCoverInfo_0
     0x301, (void*) dll_MetaData_Desc_GetCoverInfo_0,
     #endif
-    
+
     #ifdef USE_dll_RedLED_On_0
     0x307, (void*) dll_RedLED_On_0,
     #endif
-    
+
     #ifdef USE_dll_RedLED_Off_0
     0x308, (void*) dll_RedLED_Off_0,
     #endif
-    
+
     #ifdef USE_dll_Display_SetBrightness_0
     0x31C, (void*) dll_Display_SetBrightness_0,
     #endif
-    
+
     #ifdef USE_dll_Disp_GetTextIDWidth_0
     0x300, (void*) dll_Disp_GetTextIDWidth_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_CreateIntegerID_0
     0x15C, (void*) dll_TextID_CreateIntegerID_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_Create_0
     0x15D, (void*) dll_TextID_Create_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_GetWString_0
     0x15F, (void*) dll_TextID_GetWString_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_GetLength_0
     0x160, (void*) dll_TextID_GetLength_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_Destroy_0
     0x161, (void*) dll_TextID_Destroy_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_Copy_0
     0x242, (void*) dll_TextID_Copy_0,
     #endif
-    
+
     #ifdef USE_dll_TextID_GetString_0
     0x15E, (void*) dll_TextID_GetString_0,
     #endif
@@ -734,64 +755,64 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     #ifdef USE_dll_MainInput_getVisible_0
     0x1F6, (void*) dll_MainInput_getVisible_0,
     #endif
-    
+
     #ifdef USE_dll_MainInput_isPlus_0
     0x1F9, (void*) dll_MainInput_isPlus_0,
     #endif
-    
+
     #ifdef USE_dll_MainInput_getCurPos_0
     0x2EA, (void*) dll_MainInput_getCurPos_0,
     #endif
-    
+
     #ifdef USE_dll_GUIObject_SetTitleBackgroundImage_0
     0x313, (void*) dll_GUIObject_SetTitleBackgroundImage_0,
     #endif
-    
+
     #ifdef USE_dll_GUIObject_SetCursorImage_0
     0x315, (void*) dll_GUIObject_SetCursorImage_0,
     #endif
-    
+
     #ifdef USE_dll_GUIObject_SetBackgroundImage_0
     0x316, (void*) dll_GUIObject_SetBackgroundImage_0,
     #endif
-    
+
     #ifdef USE_dll_GUIObject_SetTitleTextColor_0
     0x3A4, (void*) dll_GUIObject_SetTitleTextColor_0,
     #endif
-    
+
     #ifdef USE_dll_GetIMSI_0
     0x2E8, (void*) dll_GetIMSI_0,
     #endif
-    
+
     #ifdef USE_dll_GetRadioState_0
     0x327, (void*) dll_GetRadioState_0,
     #endif
-    
+
     #ifdef USE_dll_GetSignalQuality_0
     0x332, (void*) dll_GetSignalQuality_0,
     #endif
-    
+
     #ifdef USE_dll_get_CellData_0
     0x324, (void*) dll_get_CellData_0,
     #endif
-    
+
     #ifdef USE_dll_GetChipID_0
     0x24E, (void*) dll_GetChipID_0,
     #endif
-    
+
     #ifdef USE_dll_get_mem_0
     0x18C, (void*) dll_get_mem_0,
     #endif
-    
+
     #ifdef USE_dll_ConnectionManager_Connection_GetState_0
     0x331, (void*) dll_ConnectionManager_Connection_GetState_0,
     #endif
-    
+
     #ifdef USE_FONTS
     0x2BB, (void*) &font_desc,
     0x2BC, (void*) &font_count,
     #endif
-    
+
 	//финиш
     0, NULL
 };
@@ -819,16 +840,16 @@ void tryvkp(int dirplace, Vkp& vkp)
                 if(!fstat(patchesdir,fli->fname,&st))
                 {
                     int f;
-                    
+
                     if ((f=_fopen(patchesdir,fli->fname,FSX_O_RDONLY,FSX_S_IREAD|FSX_S_IWRITE,0))>=0)
                     {
                         char* vkpf = new char[st.fsize];
                         fread(f,vkpf,st.fsize);
                         fclose(f);
-                        
+
                         int errorline = vkp.dovkp(vkpf, st.fsize);
                         //писать в лог об ошибках?
-                        
+
                         delete[] vkpf;
                     }
                 }
@@ -842,17 +863,17 @@ void tryvkp(int dirplace, Vkp& vkp)
 LIBRARY_DLL_FUNCTIONINFO* dovkp()
 {
     Vkp vkp;
-    
+
     tryvkp(MEM_INTERNAL, vkp);
     tryvkp(MEM_EXTERNAL, vkp);
-    
+
     int size = vkp.gettable( NULL );
-    
+
     LIBRARY_DLL_FUNCTIONINFO* ptr = new LIBRARY_DLL_FUNCTIONINFO[size + MAXELEMS(functions)];
-    
+
     vkp.gettable( (void**)ptr );
     memcpy( &ptr[size], functions, sizeof(functions) );
-    
+
     return ptr;
 }
 
@@ -873,7 +894,7 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     font_desc.id=20;
     wstrcpy(font_desc.name,L"E_20R");
 #endif
-    
+
     debug_printf("\nlibrary.dll: dll init done\n");
     return(0);
 
@@ -891,9 +912,9 @@ int main ( int Action , LIBRARY_DLL_DATA * data )
     //тут можно ifdef например
     p->functions = dovkp();
     //p->functions = ::functions;
-    
+
     // Private area
-    
+
     debug_printf("\nlibrary.dll: dll load done\n");
     return((int)p);
 

@@ -714,6 +714,7 @@
 0F50: 00000000 79880511 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 41036E11 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 A18D6E11 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F5C: 00000000 FD8B6711 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

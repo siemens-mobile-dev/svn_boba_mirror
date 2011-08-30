@@ -426,7 +426,7 @@
 0AD0: 00000000 ADAD2D14 ; 2B4: void FILEITEM_Destroy( FILEITEM* );
 0AD4: 00000000 5997F114 ; 2B5: GUI* CreateDateInputVA( int zero, ... );
 0AD8: 00000000 A19BF114 ; 2B6: GUI* CreateTimeInputVA( int zero, ... );
-0ADC: 00000000 B1EF9515 ; 2B7: void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
+0ADC: 00000000 4919F514 ; 2B7: void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );
 0AE0: 00000000 BDAF2C14 ; 2B8: void BookObj_CallPage( BOOK* book, const PAGE_DESC* page );
 0AE4: 00000000 71FB0E15 ; 2B9: unsigned int DateInput_GetDateInt( GUI* );
 0AE8: 00000000 9583ED14 ; 2BA: unsigned int TimeInput_GetTimeInt( GUI* );
@@ -714,6 +714,7 @@
 0F50: 00000000 7DAA2D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 8180EE14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 01173A14 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F5C: 00000000 61F02214 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

@@ -445,6 +445,7 @@ __swi __arm char* strcat( char* dest, const char* src );
 __swi __arm int strcmp( const char* str1, const char* str2 );
 __swi __arm char* strcpy( char* dest, const char* source );
 __swi __arm int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
+__swi __arm int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 __swi __arm int StringInput_GetStringAndLen( GUI*, wchar_t**, u16* );
 __swi __arm void StringInput_MenuItem_SetPriority( GUI* strinp, int prio, int actionID );
 __swi __arm void StringInput_SetCursorPosition( GUI*, u16 curs_pos, char unk );

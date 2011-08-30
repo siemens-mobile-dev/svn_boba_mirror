@@ -472,7 +472,7 @@
 0B88: FFFFFFFF 51EC0645 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: FFFFFFFF 41B50545 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: FFFFFFFF B5A80F45 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: FFFFFFFF E534F544 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: FFFFFFFF 7D30E844 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: FFFFFFFF 05B60545 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: FFFFFFFF 25CC6D44 ; 2E8: char* GetIMSI( void );
@@ -714,6 +714,7 @@
 0F50: FFFFFFFF C144E244 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 ;0F54: xxxxxxxx yyyyyyyy ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: FFFFFFFF 2598D344 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

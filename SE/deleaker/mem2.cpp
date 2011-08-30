@@ -68,7 +68,7 @@ static wchar_t logname[64]=_T("memory.txt");
 
 void trace_init(wchar_t* arg_logname)
 {
-    if(arg_logname)
+	if(arg_logname)
 		wstrncpy(logname,arg_logname,MAXELEMS(logname));
 
 	for(int i=0;i<trace_typescount;i++)
@@ -125,12 +125,12 @@ void trace_done()
 			for(int j=0;j<buffers[memtype]->FirstFree;j+=LISTDATACOUNT)
 			{
 				__original_w_fwrite(f,tmp,
-									__original_sprintf(tmp,"- %s:%d (%x)\n",
-											__original_List_Get(buffers[memtype],j+1),//file
-											__original_List_Get(buffers[memtype],j+2),//line
-											__original_List_Get(buffers[memtype],j)//value
-												)
-										);
+						__original_sprintf(tmp,"- %s:%d (%x)\n",
+						__original_List_Get(buffers[memtype],j+1),//file
+						__original_List_Get(buffers[memtype],j+2),//line
+						__original_List_Get(buffers[memtype],j)//value
+						)
+					);
 			}
 		}
 		__original_List_Destroy(buffers[memtype]);
@@ -1071,7 +1071,7 @@ void __deleaker_send( const char* __file__, int __line__, union SIGNAL** sig, PR
 
 OSBOOLEAN __deleaker_hunt( const char* __file__, int __line__, const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig )
 {
-    if(hunt_sig)
+	if(hunt_sig)
 		trace_free(trace_osebuff, *hunt_sig, __file__, __line__);
 	return __original_hunt(name, user, name_, hunt_sig);
 }

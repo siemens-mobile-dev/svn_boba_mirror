@@ -263,7 +263,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1087,7 +1087,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1912,7 +1912,7 @@
         </option>
         <option>
           <name>CCMultibyteSupport</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>

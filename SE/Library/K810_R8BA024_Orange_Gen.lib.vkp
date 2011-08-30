@@ -354,12 +354,12 @@
 09B0: 00000000 5D9CC244 ; 26C: png_voidp png_get_progressive_ptr( png_structp png_ptr );
 09B4: 00000000 C188C244 ; 26D: png_uint_32 png_get_IHDR( png_structp png_ptr, png_infop info_ptr, png_uint_32* width, png_uint_32* height, int* bit_depth, int* color_type, int* interlace_method, int* compression_method, int* filter_method );
 09B8: 00000000 4D9FC244 ; 26E: void png_set_strip_16( png_structp png_ptr );
-;09BC: xxxxxxxx yyyyyyyy ; 26F: void png_set_gray_1_2_4_to_8( png_structp png_ptr );
+09BC: 00000000 659FC244 ; 26F: void png_set_gray_1_2_4_to_8( png_structp png_ptr );
 09C0: 00000000 7D9FC244 ; 270: void png_set_gray_to_rgb( png_structp png_ptr );
 09C4: 00000000 9588C244 ; 271: png_uint_32 png_get_valid( png_structp png_ptr, png_infop info_ptr, png_uint_32 flag );
 09C8: 00000000 719FC244 ; 272: void png_set_tRNS_to_alpha( png_structp png_ptr );
 09CC: 00000000 B5CCC244 ; 273: void png_set_filler( png_structp png_ptr, png_uint_32 filler, int flags );
-;09D0: xxxxxxxx yyyyyyyy ; 274: void png_set_palette_to_rgb( png_structp png_ptr );
+09D0: 00000000 599FC244 ; 274: void png_set_palette_to_rgb( png_structp png_ptr );
 09D4: 00000000 AD88C244 ; 275: png_uint_32 png_get_rowbytes( png_structp png_ptr, png_infop info_ptr );
 09D8: 00000000 199CC244 ; 276: void png_progressive_combine_row( png_structp png_ptr, png_bytep old_row, png_bytep new_row );
 09DC: 00000000 FD82C244 ; 277: int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
@@ -535,7 +535,7 @@
 0C84: 00000000 9D784C45 ; 321: void SetTheme( wchar_t* path, wchar_t* name, int bookid, int unk_1 );
 0C88: 00000000 09644C45 ; 322: void SoftKeys_GetLabel( DISP_OBJ* softkeys, SKLABEL* lbl, int id );
 0C8C: 00000000 CD5F4C45 ; 323: void SoftKeys_Update( DISP_OBJ* softkeys );
-;0C90: xxxxxxxx yyyyyyyy ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
+0C90: 00000000 75675345 ; 324: int get_CellData( PLMN_LAC_DESC* desc1, RAT_CI_DESC* desc2, char* CSReg );
 0C94: 00000000 D91EF044 ; 325: void* IncommingCall_Reject( BOOK* book );
 0C98: 00000000 6130F044 ; 326: void* IncommingCall_Mute( BOOK* book );
 0C9C: 00000000 018D1B44 ; 327: int GetRadioState( char* level, char* flag );
@@ -711,9 +711,10 @@
 0F44: 00000000 69124A45 ; 3D1: void DispObject_WindowSetSize( DISP_OBJ*, int w, int h );
 0F48: 00000000 A1154B45 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 A9354C45 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
-;0F50: xxxxxxxx yyyyyyyy ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
+0F50: 00000000 31C00045 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 61214A45 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 79A14A45 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F5C: 00000000 DDC64345 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

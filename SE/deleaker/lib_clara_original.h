@@ -1759,5 +1759,8 @@ __swi __arm void __original_DispObject_SetAnimation( DISP_OBJ*, int style );
 #pragma swi_number=0x3D6
 __swi __arm void __original_GUIObject_SetZOrder( GUI*, char, GUI* );
 
+#pragma swi_number=0x3D7
+__swi __arm int __original_StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+
 
 #endif

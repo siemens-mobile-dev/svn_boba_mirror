@@ -124,14 +124,14 @@
 0618: 00000000 E8983044 ; 186: OSBOOLEAN hunt( const char* name, OSUSER user, PROCESS* name_, union SIGNAL** hunt_sig );
 061C: 00000000 14993044 ; 187: void kill_proc( PROCESS pid );
 ;0620: xxxxxxxx yyyyyyyy ; 188:
-;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
+0624: 00000000 4C973044 ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 062C: 00000000 FC993044 ; 18B: void stop( PROCESS pid );
 0630: 00000000 68983044 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 0634: 00000000 7D0C2C44 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: 00000000 910C2C44 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: 00000000 20983044 ; 18F: PROCESS get_bid( PROCESS pid );
-;0640: xxxxxxxx yyyyyyyy ; 190: int datetime2unixtime( DATETIME* dt );
+0640: 00000000 A561FF44 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
 ;064C: xxxxxxxx yyyyyyyy ; 193:
@@ -300,11 +300,11 @@
 08D8: 00000000 496A3545 ; 236: void DISP_DESC_SetOnLayout( DISP_DESC*, DISP_OBJ_METHOD );
 08DC: 00000000 796B3545 ; 237: DISP_OBJ_METHOD DispObject_GetOnLayout( DISP_OBJ* );
 08E0: 00000000 4D6A3545 ; 238: void DISP_DESC_SetOnConfig( DISP_DESC*, void (*)( void* ) );
-;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DispObject_GetOnConfig( DISP_OBJ* );
-;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A( DISP_DESC*, void (*)( void* ) );
-;08EC: xxxxxxxx yyyyyyyy ; 23B: DISP_OBJ_METHOD DispObject_GetMethod0A( DISP_OBJ* );
-;08F0: xxxxxxxx yyyyyyyy ; 23C: void DISP_DESC_SetMethod0B( DISP_DESC*, void (*)( void* ) );
-;08F4: xxxxxxxx yyyyyyyy ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
+08E4: 00000000 956B3545 ; 239: DISP_OBJ_METHOD DispObject_GetOnConfig( DISP_OBJ* );
+08E8: 00000000 516A3545 ; 23A: void DISP_DESC_SetMethod0A( DISP_DESC*, void (*)( void* ) );
+08EC: 00000000 B16B3545 ; 23B: DISP_OBJ_METHOD DispObject_GetMethod0A( DISP_OBJ* );
+08F0: 00000000 556A3545 ; 23C: void DISP_DESC_SetMethod0B( DISP_DESC*, void (*)( void* ) );
+08F4: 00000000 CD6B3545 ; 23D: DISP_OBJ_METHOD DispObject_GetMethod0B( DISP_OBJ* );
 ;08F8: xxxxxxxx yyyyyyyy ; 23E: void DISP_DESC_SetMethod0C( DISP_DESC*, void (*)( void* ) );
 ;08FC: xxxxxxxx yyyyyyyy ; 23F: DISP_OBJ_METHOD DispObject_GetMethod0C( DISP_OBJ* );
 0900: 00000000 DB051444 ; 240: void JavaSession_Manager( int cmd ); //nullsub(void)
@@ -472,7 +472,7 @@
 0B88: 00000000 796B3845 ; 2E2: IMAGEID Shortcut_Get_MenuItemIconID( void* );
 0B8C: 00000000 69CB2A45 ; 2E3: BOOK* FindBookEx( int (*cmp_proc)( BOOK* book_from_list, int* param ), int* param );
 0B90: 00000000 71F1EC44 ; 2E4: FILEITEM* FILEITEM_CreateCopy( FILEITEM* );
-;0B94: xxxxxxxx yyyyyyyy ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
+0B94: 00000000 CDC8E344 ; 2E5: IMAGEID ImageID_Copy( IMAGEID );
 0B98: 00000000 15EA2A45 ; 2E6: int BookObj_GetSessionID( BOOK* book );
 0B9C: 00000000 F5CE2A45 ; 2E7: void UI_Event_toSID( int event, int sess_id );
 0BA0: 00000000 01EA2244 ; 2E8: char* GetIMSI( void );
@@ -712,8 +712,9 @@
 0F48: 00000000 69C43645 ; 3D2: TEXTID Feedback_DispObject_GetText( DISP_OBJ* );
 0F4C: 00000000 E1E33745 ; 3D3: void DispObject_SoftKeys_ExecuteAction( DISP_OBJ*, u16 actionID );
 0F50: 00000000 7519EC44 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
-;0F54: xxxxxxxx yyyyyyyy ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
-;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F54: 00000000 75CF3545 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
+0F58: 00000000 654F3645 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

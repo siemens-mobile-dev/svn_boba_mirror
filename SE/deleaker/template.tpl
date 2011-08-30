@@ -445,6 +445,7 @@ skip strcat
 skip strcmp
 skip strcpy
 skip StringInput_DispObject_SetLanguage
+skip StringInput_GetCursorPosition
 skip StringInput_GetStringAndLen
 skip StringInput_MenuItem_SetPriority
 skip StringInput_SetCursorPosition
@@ -1263,7 +1264,7 @@ __make send
 
 __make hunt
 {
-    if(hunt_sig)
+	if(hunt_sig)
 		trace_free(trace_osebuff, *hunt_sig, __file__, __line__);
 	return __O__;
 }
