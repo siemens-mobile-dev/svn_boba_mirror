@@ -436,7 +436,7 @@
 0AF8: 00000000 316B6E11 ; 2BE: void GC_SetBrushColor( GC* gc, int brush_color );
 0AFC: 00000000 E5766E11 ; 2BF: void GC_DrawRoundRect( GC* gc, RECT*, int arcWidth, int arcHeight, int border_flag, int fill_flag );
 0B00: 00000000 F1887011 ; 2C0: BOOK* MenuBook_Desktop( int mode, int BookID );
-0B04: 00000000 5DF6F910 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
+0B04: 00000000 457F7011 ; 2C1: wchar_t* MenuBook_Desktop_GetSelectedItemID( BOOK* MenuBook_Desktop );
 0B08: 00000000 D1CC6F11 ; 2C2: void BookObj_SoftKeys_SetAction( BOOK* book, int actionID, SKACTIONPROC proc );
 0B0C: 00000000 09CD6F11 ; 2C3: void BookObj_SoftKeys_SetText( BOOK* book, int actionID, TEXTID );
 0B10: 00000000 653B6411 ; 2C4: BOOK* FindBookByID( int BookID );
@@ -525,7 +525,7 @@
 0C5C: 00000000 31FB6F11 ; 317: void* DispObject_SoftKeys_GetParams( DISP_OBJ* );
 0C60: 00000000 75FB6F11 ; 318: LIST* DispObject_SoftKeys_GetList( DISP_OBJ*, BOOK* book, char __zero );
 0C64: 00000000 19626411 ; 319: int BookObj_GetDisplayOrientation( BOOK* book );
-0C68: 00000000 6DB62811 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
+0C68: 00000000 B1616411 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 35566411 ; 31B: BOOK* Display_GetTopBook( int display );
 0C70: 00000000 D11BA5ED ; 31C: void Display_SetBrightness( int display, int brightness );
 0C74: 00000000 95766611 ; 31D: int Display_GetBrightness( int display );

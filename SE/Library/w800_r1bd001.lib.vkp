@@ -127,7 +127,7 @@
 ;0624: xxxxxxxx yyyyyyyy ; 189: union SIGNAL* receive_w_tmo( OSTIME timeout, SIGSELECT* sel );
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 ;062C: xxxxxxxx yyyyyyyy ; 18B: void stop( PROCESS pid );
-;0630: xxxxxxxx yyyyyyyy ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
+0630: FFFFFFFF 3C8E0644 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
 0634: FFFFFFFF AF1A0344 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
 0638: FFFFFFFF C31A0344 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
 063C: FFFFFFFF F48D0644 ; 18F: PROCESS get_bid( PROCESS pid );
@@ -235,7 +235,7 @@
 07D4: FFFFFFFF E9AE0545 ; 1F5: BOOK* SESSION_GetTopBook( UI_APP_SESSION* );
 07D8: FFFFFFFF A9C5D344 ; 1F6: int MainInput_getVisible( GUI* );
 07DC: FFFFFFFF B5C5D344 ; 1F7: int MainInput_strlen( GUI* );
-;07E0: xxxxxxxx yyyyyyyy ; 1F8: char* MainInput_getPNUM( GUI* );
+07E0: FFFFFFFF C9C5D344 ; 1F8: char* MainInput_getPNUM( GUI* );
 07E4: FFFFFFFF D5C5D344 ; 1F9: int MainInput_isPlus( GUI* );
 07E8: FFFFFFFF E531E844 ; 1FA: int BookObj_GetBookID( BOOK* book );
 07EC: FFFFFFFF 3D1CBF44 ; 1FB: int wstrncmp( const wchar_t*, const wchar_t*, int );
@@ -333,7 +333,7 @@
 095C: FFFFFFFF 21750645 ; 257: int MessageBox( TEXTID header_text, TEXTID message_text, IMAGEID, int style, int time, BOOK* book );
 0960: FFFFFFFF A53B0645 ; 258: int Display_GetHeight( int display );
 0964: FFFFFFFF B53B0645 ; 259: int Display_GetWidth( int display );
-0968: FFFFFFFF 99D6D344 ; 25A: void PlaySystemSound( int SndNumber );
+0968: FFFFFFFF 8DD6D344 ; 25A: void PlaySystemSound( int SndNumber );
 ;096C: xxxxxxxx yyyyyyyy ; 25B:
 ;0970: xxxxxxxx yyyyyyyy ; 25C:
 0974: FFFFFFFF D5B6D344 ; 25D: int TabMenuBar_GetFocusedTab( GUI_TABMENUBAR* );
@@ -418,7 +418,7 @@
 0AB0: FFFFFFFF 4552E244 ; 2AC: void DataBrowserDesc_SetSelectActionOnFolders( void* DataBrowserDesc, int state );
 0AB4: FFFFFFFF 3D51E244 ; 2AD: void DataBrowserDesc_SetBookID( void* DataBrowserDesc, int BookID );
 0AB8: FFFFFFFF D550E244 ; 2AE: void DataBrowserDesc_SetItemFilter( void* DataBrowserDesc, DB_FILE_FILTER );
-0ABC: FFFFFFFF 3155E244 ; 2AF: void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
+0ABC: FFFFFFFF B154E244 ; 2AF: void DataBrowserDesc_SetOption( void* DataBrowserDesc, char* option );
 0AC0: FFFFFFFF F53DFC44 ; 2B0: void DataBrowserDesc_SetOpenEmptyFolder( void* DataBrowserDesc, int state );
 0AC4: FFFFFFFF F950E244 ; 2B1: void DataBrowserDesc_SetFileExtList( void* DataBrowserDesc, const wchar_t* ExtList );
 0AC8: FFFFFFFF 0143FF44 ; 2B2: void FSX_RemoveIllegalSymbolsName( FILEITEM* );
@@ -610,18 +610,18 @@
 0DB0: FFFFFFFF 41CEC744 ; 36C: void MediaPlayer_SoftKeys_AddHelpStr( GUI* player_gui, int item, TEXTID );
 0DB4: FFFFFFFF 5DE6E244 ; 36D: void MediaPlayer_ShowNowPlaying( DISP_OBJ*, int );
 0DB8: FFFFFFFF 51A0E844 ; 36E: void DispObject_Show( DISP_OBJ*, int mode );
-;0DBC: xxxxxxxx yyyyyyyy ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
+0DBC: FFFFFFFF A96B9744 ; 36F: int Request_EventChannel_Subscribe( const int* sync, int mode, int event );
 ;0DC0: xxxxxxxx yyyyyyyy ; 370: void GUIObject_SoftKeys_ExecuteAction( GUI*, u16 actionID );
-;0DC4: xxxxxxxx yyyyyyyy ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
-;0DC8: xxxxxxxx yyyyyyyy ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, TEXTID_DATA*, char* error );
-;0DCC: xxxxxxxx yyyyyyyy ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
+0DC4: FFFFFFFF 61DF9744 ; 371: int Request_ICA_ShutdownAllConnections( const int* sync );
+0DC8: FFFFFFFF 59D41545 ; 372: int REQUEST_PROFILE_GETPROFILENAME( const int* sync, int unk, TEXTID_DATA*, char* error );
+0DCC: FFFFFFFF 3155E244 ; 373: int DataBrowserDesc_SetFocusToFILEITEM( void* DataBrowserDesc, FILEITEM* );
 0DD0: FFFFFFFF 7949D644 ; 374: int GUIonMessage_GetMsg( GUI_MESSAGE* msg );
 0DD4: FFFFFFFF 8149D644 ; 375: BOOK* GUIonMessage_GetBook( GUI_MESSAGE* msg );
 0DD8: FFFFFFFF 7D49D644 ; 376: GUI* GUIonMessage_GetGui( GUI_MESSAGE* msg );
 0DDC: FFFFFFFF 8549D644 ; 377: int GUIonMessage_GetSelectedItem( GUI_MESSAGE* msg );
-;0DE0: xxxxxxxx yyyyyyyy ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
+0DE0: FFFFFFFF 9549D644 ; 378: int GUIonMessage_GetPrevSelectedItem( GUI_MESSAGE* msg );
 ;0DE4: xxxxxxxx yyyyyyyy ; 379: void ObexSendFile( SEND_OBEX_STRUCT* );
-;0DE8: xxxxxxxx yyyyyyyy ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
+0DE8: FFFFFFFF 7963E944 ; 37A: void Feedback_SetManualScrollingText( DISP_OBJ* feedback_disp_obj, int state );
 ;0DEC: xxxxxxxx yyyyyyyy ; 37B: int EqualizerGain_Set( int AudioSessionID, int Band, int Level );
 0DF0: FFFFFFFF D1617344 ; 37C: int CANVAS_Get_GviGC( PCANVAS pcanvas, GVI_GC* dest );
 0DF4: FFFFFFFF 257E8244 ; 37D: void GVI_BitBlt( GVI_GC destgc, int destx, int desty, int destxsize, int destysize, GVI_GC srcgc, int srcx, int srcy, int _204, int _0, int _0_2, int _0_3 );
@@ -714,7 +714,7 @@
 0F50: FFFFFFFF C144E244 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 ;0F54: xxxxxxxx yyyyyyyy ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: FFFFFFFF 2598D344 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
-;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F5C: FFFFFFFF 9596D544 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 
