@@ -26,10 +26,10 @@
 0494: 00000000 19BE2614 ; 125: void DataBrowserDesc_Destroy( void* DataBrowserDesc );
 0498: 00000000 69E84D14 ; 126: wchar_t* getFileExtention( wchar_t* fname );
 049C: 00000000 6D240E14 ; 127: int DataBrowser_isFileInListExt( const wchar_t* ext_table, const wchar_t* path, const wchar_t* fname );
-04A0: 00000000 11AB1614 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
-04A4: 00000000 EDE22314 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
-04A8: 00000000 01AE1614 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 CDBF4A14 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04A0: 00000000 D11BA5ED ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
+04A4: 00000000 D11BA5ED ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
+04A8: 00000000 D11BA5ED ; 12A: void Timer_Kill( u16* timerID );
+04AC: 00000000 CDBF4A14 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 F55B0414 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 81590414 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 35AF2C14 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -713,6 +713,7 @@
 0F50: 00000000 3DAE2D14 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 D1A8EE14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 85173A14 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 
 

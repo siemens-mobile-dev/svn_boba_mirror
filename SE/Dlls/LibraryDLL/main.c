@@ -657,6 +657,29 @@ int dll_ConnectionManager_Connection_GetState_0()
 }
 #endif
 
+#ifdef A2
+#define USE_dll_Timer_ReSet_0
+void dll_Timer_ReSet_0( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam )
+{
+  Timer_ReSet_int( timer, time, onTimer, lparam, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_Timer_Set_0
+u16 dll_Timer_Set_0( int time, TIMERPROC onTimer, LPARAM lparam )
+{
+  return Timer_Set_int( time, onTimer, lparam, 0, 0 );
+}
+#endif
+
+#ifdef A2
+#define USE_dll_Timer_Kill_0
+void dll_Timer_Kill_0( u16* timerID )
+{
+  Timer_Kill_int( timerID, 0, 0 );
+}
+#endif
 
 const LIBRARY_DLL_FUNCTIONINFO functions[]=
 {
@@ -811,6 +834,18 @@ const LIBRARY_DLL_FUNCTIONINFO functions[]=
     #ifdef USE_FONTS
     0x2BB, (void*) &font_desc,
     0x2BC, (void*) &font_count,
+    #endif
+
+    #ifdef USE_dll_Timer_ReSet_0
+    0x128, (void*) dll_Timer_ReSet_0,
+    #endif
+    
+    #ifdef USE_dll_Timer_Set_0
+    0x129, (void*) dll_Timer_Set_0,
+    #endif
+    
+    #ifdef USE_dll_Timer_Kill_0
+    0x12A, (void*) dll_Timer_Kill_0,
     #endif
 
 	//финиш

@@ -29,3 +29,6 @@ int (*Request_SL_GetRadioState)(const int* sync,char * level,char * flag,char * 
 int (*GetChipID_int)()=(int(*)())0x125DDDD5;
 int (*ConnectionManager_Connection_GetState_int)(char * buf)=(int(*)(char * buf))0x10C0631D;
 void (*TextID_GetString_int)(TEXTID, char* str, int maxlen, int null)=(void(*)(TEXTID, char* str, int maxlen, int null))0x10F4684D;
+void (*Timer_ReSet_int)(u16* timer, int time, TIMERPROC onTimer, LPARAM lparam,char * filename,int line_num)=(void(*)(u16* timer, int time, TIMERPROC onTimer, LPARAM lparam,char * filename,int line_num))0x10DD0A5D;
+u16 (*Timer_Set_int)(int time, TIMERPROC onTimer, LPARAM lparam,char * filename,int line_num)=(u16(*)(int time, TIMERPROC onTimer, LPARAM lparam,char * filename,int line_num))0x10DD0A29;
+void (*Timer_Kill_int)(u16* timerID,char * filename,int line_num)=(void(*)(u16* timerID,char * filename,int line_num))0x10DD0AB5;
