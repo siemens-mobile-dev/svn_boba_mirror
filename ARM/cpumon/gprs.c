@@ -3,9 +3,9 @@
 #include "conf_loader.h"
 #include "render.h"
 
-extern int const cfgRamType;
-extern int const cfgRamDiv;
-extern const char cfgFreeRAM[4];
+extern int const cfgGPRSType;
+extern int const cfgGPRSDiv;
+extern const char cfgGPRS[4];
 extern int uiWidth, uiHeight;
 
 static void init(int rewidth);
@@ -13,19 +13,20 @@ static void deinit();
 static void tick();
 static int getValue(const int x,const int h);
 static int getColor(const int x,const int h);
-TSensor ram_sensor={0,0,0,0,init,deinit,tick,getValue,0,getColor,0};
+TSensor GPRS_sensor={0,0,0,0,init,deinit,tick,getValue,0,getColor,0};
 
 static char* values;
-static int color,maxRAM;
+static int color,maxGPRS,prevGPRS;
 
 static void init(int rewidth){
-  color = Color2ColorByRenderBit(&cfgFreeRAM[0]);
-  ram_sensor.type=cfgRamType;
-  ram_sensor.div=cfgRamDiv;
+  color = Color2ColorByRenderBit(&cfgGPRS[0]);
+  GPRS_sensor.type=cfgGPRSType;
+  GPRS_sensor.div=cfgGPRSDiv;
   if ((rewidth)||(values==0)){
     deinit();
     values = malloc(uiWidth);
     zeromem(values, uiWidth);
+    prevGPRS=*GetGPRSTrafficPointer();
   }
 }
 
@@ -35,12 +36,15 @@ static void deinit(){
 }
 
 static void tick(){
-  int r = GetFreeRamAvail();
-  if (r>maxRAM) maxRAM=r;
-  int h=ram_sensor.hhh;
-  values[h] = uiHeight * r / maxRAM;
+  RefreshGPRSTraffic();
+  int rr = *GetGPRSTrafficPointer();
+  int r  = rr-prevGPRS;
+  prevGPRS = rr;
+  if (r>maxGPRS) maxGPRS = r;
+  int h=GPRS_sensor.hhh;
+  values[h] = uiHeight * r / maxGPRS;
   if(++h>=uiWidth) h=0;
-  ram_sensor.hhh=h;
+  GPRS_sensor.hhh=h;
 }
 
 static int getValue(const int x,const int h){

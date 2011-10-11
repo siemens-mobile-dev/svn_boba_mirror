@@ -28,6 +28,34 @@ typedef int jmp_buf[11];
 #include "data_n.h"
 #include "obs.h"
 
+#define PC_FOREGROUND         100
+#define PC_BACKGROUND         101
+#define PC_HEADERFOREGROUND   102
+#define PC_HEADERBACKGROUND   103
+
+#define PC_SELECTFOREGROUND   115
+#define PC_SELECTBACKGROUND   116
+#define PC_SELECTBORDER       117
+#define PC_SELECTSHADOW       118
+
+#define PC_LIGHTTEXTFOREGROUND 122
+#define PC_LIGHTTEXTBACKGROUND 123
+
+#define PC_SCROLLBARSLIDER    127
+#define PC_SCROLLBAR          128
+#define PC_WINDOWFOREGROUND   129
+#define PC_WINDOWBACKGROUND   130
+
+#define PC_BORDER             133
+#define PC_BORDERSHADOW       134
+
+#define PC_POPUPSELECTFOREGROUD 135
+#define PC_POPUPSELECTBACKGROUD 136
+
+#define PC_PROGRESSBACKGROUND 138
+#define PC_PROGRESSFOREGROUND 139
+#define PC_PROGRESSBORDER     140
+
 #define LMAN_CONNECT_CNF 0x80
 #define LMAN_CONNECT_REJ_IND 0x81
 #define LMAN_DISCONNECT_IND 0x82
@@ -294,10 +322,15 @@ typedef struct{
 } CSMROOT;
 
 typedef struct{
-  short x;
-  short y;
-  short x2;
-  short y2;
+  union{
+    struct{
+      short x;
+      short y;
+      short x2;
+      short y2;
+    };
+    short p[4];
+  };
 } RECT;
 
 typedef struct{
@@ -558,7 +591,8 @@ typedef struct
 #define FONT_MEDIUM_ITALIC_BOLD 7
 #define FONT_NUMERIC_SMALL 8
 #define FONT_NUMERIC_SMALL_BOLD 9
-#define FONT_NUMERIC_XSMALL 8
+//#define FONT_NUMERIC_XSMALL 8
+#define FONT_NUMERIC_XSMALL 12
 #define FONT_SMALL 8
 #define FONT_SMALL_BOLD 9
 #define FONT_SMALL_ITALIC 10
@@ -3527,6 +3561,10 @@ __swi __arm int Obs_Sound_GetVolume (HObj hObj, char *vol);
 
 #pragma swi_number=0x26E
 __swi __arm int Obs_Sound_SetPurpose (HObj hObj,int purpose);
+
+#pragma swi_number=0x26F
+__swi __arm int NM_Get_IRE();
+//pattern=??,??,??,E9,??,??,??,E2,??,??,??,E2,??,??,??,EB,??,??,??,E1,??,??,??,E1,??,??,??,E1,??,??,??,33,??,??,??,3A,??,??,??,EB,??,??,??,E1,??,??,??,E1,??,??,??,E0,??,??,??,E3,??,??,??,E0,??,??,??,EB,??,??,??,E1,??,??,??,E1,??,??,??,E8
 
 #pragma swi_number=0x2AE
 __swi __arm void *GetHeaderPointer(void *gui);

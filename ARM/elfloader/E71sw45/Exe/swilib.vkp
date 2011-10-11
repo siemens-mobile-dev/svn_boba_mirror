@@ -631,5 +631,7 @@
 092C: 0xA0954A8B   ; 24B: void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc)
 0930: 0xA0658FA1   ; 24C: int GetPeripheryState (int device, int check_state);
 
+09BC: 0xA01AA190   ; 26F: int NM_Get_IRE();
+
 #pragma disable old_equal_ff
 +0

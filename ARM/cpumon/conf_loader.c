@@ -12,11 +12,11 @@ int LoadConfigData(const char *fname)
   char *buf;
   int result=0;
   void *cfg;
-  unsigned int rlen, end;
+  int rlen, end;
 
   cfg=(char *)__segment_begin("CONFIG_C");
 
-  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
+  int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
 
   if (!(buf=malloc(len))) return -1;
   if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
@@ -45,8 +45,8 @@ int LoadConfigData(const char *fname)
 
 void InitConfig()
 {
-  if (LoadConfigData("4:\\ZBin\\etc\\CPUMon.bcfg")<0)
+  if (LoadConfigData("4:\\ZBin\\etc\\SysMon.bcfg")<0)
   {
-    LoadConfigData("0:\\ZBin\\etc\\CPUMon.bcfg");
+    LoadConfigData("0:\\ZBin\\etc\\SysMon.bcfg");
   }
 }

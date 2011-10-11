@@ -1788,15 +1788,15 @@
         </option>
         <option>
           <name>CCPreprocFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCPreprocComments</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCPreprocLine</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListCFile</name>
@@ -1812,11 +1812,11 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -1854,7 +1854,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>1011111</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -2194,11 +2194,11 @@
         <debug>0</debug>
         <option>
           <name>XOutOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OutputFile</name>
-          <state>cpumon.elf</state>
+          <state>SysMon.elf</state>
         </option>
         <option>
           <name>OutputFormat</name>
@@ -3297,6 +3297,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\accu.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\conf_loader.c</name>
   </file>
   <file>
@@ -3311,7 +3314,7 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -3535,7 +3538,8 @@
           <debug>0</debug>
           <option>
             <name>CCDefines</name>
-            <state></state>
+            <state>NEWSGOLD</state>
+            <state>ELKA</state>
           </option>
           <option>
             <name>CCPreprocFile</name>
@@ -3984,6 +3988,9 @@
     <name>$PROJ_DIR$\func.asm</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\gprs.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
@@ -3994,6 +4001,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\render.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\temp.c</name>
   </file>
 </project>
 

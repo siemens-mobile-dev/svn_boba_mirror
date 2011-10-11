@@ -8,14 +8,13 @@
 #define MIN_WIDTH 30
 #define MIN_HEIGHT 10
 #define MIN_UPTIME 1
-// #define START_DELAY (20 * 216)
-
-#define MAX(a,b) (a)>(b)?(a):(b)
 
 extern const RECT position;
 extern const int cfgShowIn;
 extern const int cfgStTxt;
-extern const unsigned int cfgUpTime;
+extern const int cfgRender;
+extern const int cfgRenderBit;
+extern const int cfgUpTime;
 extern int const cfgLoadType;
 extern TSensor cpu_sensor;
 extern int const cfgRamType;
@@ -24,21 +23,34 @@ extern int const cfgNetType;
 extern TSensor net_sensor;
 extern int const cfgDiskType;
 extern TSensor disk_sensor;
+extern int const cfgGPRSType;
+extern TSensor GPRS_sensor;
+extern int const cfgCapaType;
+extern TSensor Capa_sensor;
+extern int const cfgTempType;
+extern TSensor Temp_sensor;
 
-unsigned int uiWidth, uiHeight, uiUpdateTime, hhh;
+int uiWidth, uiHeight, uiBits, uiUpdateTime;
 
-TSensor Sensors[4];
+TSensor *Sensors[NSENSORS];
 int nSensors;
+#define NTEXSENSORS 2
+TSensor *TexSensors[NTEXSENSORS];
+int nTexSensors;
 
-static IMGHDR img1;
-unsigned short* img1_bmp;
+IMGHDR img1;
+char* img1_bmp;
 
 static GBSTMR mytmr;
-static WSHDR *ws1;
-static int cop;
-
 static const char ipc_my_name[]="SysMon";
-#define IPC_UPDATE_STAT 1
+#define IPC_UPDATE_STAT 392305998
+
+#pragma segment="ELFBEGIN"
+void ElfKiller(void)
+{
+  extern void kill_data(void *p, void (*func_p)(void *));
+  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
+}
 
 #pragma inline=forced
 static int toupper(int c)
@@ -55,73 +67,81 @@ static int strcmp_nocase(const char *s1,const char *s2)
   return(i);
 }
 
-#pragma segment="ELFBEGIN"
-void ElfKiller(void)
-{
-  extern void kill_data(void *p, void (*func_p)(void *));
-  kill_data(__segment_begin("ELFBEGIN"),(void (*)(void *))mfree_adr());
-}
+static int RenderBit2Byte[3]={1,2,4};
+static int RenderBit2bpnum[3]={5,8,10};
 
-static void RereadSettings()
-{
-  unsigned int oldWidth=uiWidth,oldHeight=uiHeight;
-  int oldcpu=cfgLoadType,oldram=cfgRamType,oldnet=cfgNetType;
+static void RereadSettings(){
+  int oldWidth=uiWidth,oldHeight=uiHeight,oldBits=uiBits;
+  int oldcpu=cfgLoadType,oldram=cfgRamType,oldnet=cfgNetType,oldgprs=cfgGPRSType;
 
   InitConfig();
   
   uiUpdateTime = MAX(((262*cfgUpTime)/ 10),MIN_UPTIME);
   uiWidth  = MAX(position.x2-position.x+1,MIN_WIDTH);
   uiHeight = MAX(position.y2-position.y+1,MIN_HEIGHT);
-  
-  if ((oldWidth!=uiWidth)||(oldHeight!=uiHeight)){
+
+  if (cfgRender)
+    uiBits=1;
+   else
+    uiBits=cfgRenderBit;
+
+  int renew=(oldWidth!=uiWidth)||(oldBits!=uiBits);
+
+  if (renew||(oldHeight!=uiHeight)){
+ 
+    
     mfree(img1_bmp);
-    img1_bmp = malloc(4 * uiWidth * uiHeight);
-//    zeromem(img1_bmp, 2 * uiWidth * uiHeight);
-//    memset(img1_bmp,0xaaaa,2 * uiWidth * uiHeight);
+    img1_bmp = malloc(uiWidth * uiHeight * RenderBit2Byte[uiBits]);
     img1.w = uiWidth;
     img1.h = uiHeight;
-    img1.bpnum = 8;
-    img1.bitmap = (char*) img1_bmp;
+    img1.bpnum = RenderBit2bpnum[uiBits];
+    img1.bitmap = img1_bmp;
   }
   
   nSensors=0;
+  nTexSensors=0;
   if (cfgLoadType){
-    cpu_sensor.init(oldWidth!=uiWidth);
-    Sensors[nSensors++]=cpu_sensor;
+    cpu_sensor.init(renew);
+    Sensors[nSensors++]=&cpu_sensor;
   }else if (oldcpu) cpu_sensor.deinit();
 
   if (cfgRamType){
-    ram_sensor.init(oldWidth!=uiWidth);
-    Sensors[nSensors++]=ram_sensor;
+    ram_sensor.init(renew);
+    Sensors[nSensors++]=&ram_sensor;
   }else if (oldram) ram_sensor.deinit();
 
   if (cfgNetType){
-    net_sensor.init(oldWidth!=uiWidth);
-    Sensors[nSensors++]=net_sensor;
+    net_sensor.init(renew);
+    Sensors[nSensors++]=&net_sensor;
   }else if (oldnet) net_sensor.deinit();
+
+  if (cfgGPRSType){
+    GPRS_sensor.init(renew);
+    Sensors[nSensors++]=&GPRS_sensor;
+  }else if (oldgprs) GPRS_sensor.deinit();
 
   if (cfgDiskType){
     disk_sensor.init(0);
-    Sensors[nSensors++]=disk_sensor;
+    Sensors[nSensors++]=&disk_sensor;
+  };
+
+  if (cfgCapaType){
+    Capa_sensor.init(0);
+    TexSensors[nTexSensors++]=&Capa_sensor;
+  };
+  if (cfgTempType){
+    Temp_sensor.init(0);
+    TexSensors[nTexSensors++]=&Temp_sensor;
   };
 }
 
-static void FreeMem()
-{
+static void FreeMem(){
   for(int n=0; n<nSensors; n++)
-    Sensors[n].deinit();
+    Sensors[n]->deinit();
+  for(int n=0; n<nTexSensors; n++)
+    TexSensors[n]->deinit();
   mfree(img1_bmp);
   img1_bmp=0;
-}
-
-static DrwImg(IMGHDR *img, int x, int y, char *pen, char *brush)
-{
-  RECT rc;
-  DRWOBJ drwobj;
-  StoreXYWHtoRECT(&rc, x, y, img->w, img->h);
-  SetPropTo_Obj5(&drwobj, &rc, 0, img);
-  SetColor(&drwobj, pen, brush);
-  DrawObject(&drwobj);
 }
 
 const IPC_REQ gipc={
@@ -130,96 +150,90 @@ const IPC_REQ gipc={
   NULL
 };
 
-static void TimerProc(void)
-{
+static void TimerProc(void){
+  GBS_StartTimerProc(&mytmr, uiUpdateTime, TimerProc);
   GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
 }
 
-static int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
-{
+static int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
   int fShow;
   void *icsm;
-
   if(msg->msg == MSG_RECONFIGURE_REQ){
     if (strcmp_nocase((char*)successed_config_filename,(char *)msg->data0)==0){
       ShowMSG(1,(int)"SysMon config updated!");
-//      FreeMem();
       RereadSettings();
     }
-  }
+  }else
   if (msg->msg==MSG_IPC){
-    IPC_REQ *ipc;
+/*    IPC_REQ *ipc;
     if ((ipc=(IPC_REQ*)msg->data0)){
       if (strcmp_nocase(ipc->name_to,ipc_my_name)==0){
         switch (msg->submess){
           case IPC_UPDATE_STAT:
-            if (ipc->name_from==ipc_my_name){
-              //Накапливаем значения
-              for(int n=0; n<nSensors; n++)
-                Sensors[n].tick(hhh);
-              hhh++;
-              if (hhh >= uiWidth){
-                hhh = 0;
-                cop = 1;
-              }
-              GBS_StartTimerProc(&mytmr, uiUpdateTime, TimerProc);
-            }
+            if (ipc->name_from==ipc_my_name){*/
+    if(msg->submess==IPC_UPDATE_STAT){
+      //Накапливаем значения
+      for(int n=0; n<nSensors; n++){
+        static int divs[NSENSORS]={1,1,1,1,1,1};
+        if(--divs[n]==0){
+          Sensors[n]->tick();
+          divs[n]=Sensors[n]->div;
+        }
+      }
+      for(int n=0; n<nTexSensors; n++){
+        static int texdivs[NTEXSENSORS]={1,1};
+        if(--texdivs[n]==0){
+          TexSensors[n]->tick();
+          texdivs[n]=TexSensors[n]->div;
         }
       }
     }
-  }
-  switch (cfgShowIn){
-    case 0:
-      fShow = !IsUnlocked();
-      break;
-    case 1:
-      fShow = IsUnlocked();
-      break;
-    default:
-      fShow = 1;
-      break;
-  }
-  if (fShow){
-  icsm=FindCSMbyID(CSM_root()->idle_id);
-  if (icsm){
-    if (IsGuiOnTop(idlegui_id(icsm))){ //Если IdleGui на самом верху
-      GUI *igui = GetTopGUI();
-      if (igui){ //И он существует
+/*        }
+      }
+    }*/
+  }else{
+    switch (cfgShowIn){
+      case 0:
+        fShow = !IsUnlocked();
+        break;
+      case 1:
+        fShow = IsUnlocked();
+        break;
+      default:
+        fShow = 1;
+        break;
+    }
+    if (fShow){
+      icsm=FindCSMbyID(CSM_root()->idle_id);
+      if (icsm){
+        if (IsGuiOnTop(idlegui_id(icsm))){ //Если IdleGui на самом верху
+        GUI *igui = GetTopGUI();
+        if(igui){ //И он существует
 #ifdef ELKA
-        {
-          void *canvasdata = BuildCanvas();
+            {
+            void *canvasdata = BuildCanvas();
 #else
-        void *idata = GetDataOfItemByID(igui, 2);
-        if (idata){
-          void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
+          void *idata = GetDataOfItemByID(igui, 2);
+          if (idata){
+            void *canvasdata = ((void **)idata)[DISPLACE_OF_IDLECANVAS / 4];
 #endif
-          //рисуем нашу требуху
-          DrawCanvas(canvasdata, position.x, position.y, position.x2, position.y2, 1);
-          render();
-          DrwImg((IMGHDR *)&img1, position.x, position.y, GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
-          if (!cop && cfgStTxt)
-            DrawString(ws1, 0, position.y-(GetFontYSIZE(FONT_SMALL)+3), ScreenW()-1, ScreenH()-1, FONT_SMALL, 0x20,
-                       GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
+            DrawCanvas(canvasdata, position.x, position.y, position.x2, position.y2, 1);
+            render();
+          }
         }
       }
     }
-  }
-  }
+  }}
   return(1);
 }
 
-static void maincsm_oncreate(CSM_RAM *data)
-{
-  ws1=AllocWS(100);
-  wsprintf(ws1,"%t","SysMon (C)BoBa,Rst7");
-  GBS_SendMessage(MMI_CEPID,MSG_IPC,IPC_UPDATE_STAT,&gipc);
+static void maincsm_oncreate(CSM_RAM *data){
+  TimerProc();
 }
 
-static void maincsm_onclose(CSM_RAM *csm)
-{
+static void maincsm_onclose(CSM_RAM *csm){
   GBS_DelTimer(&mytmr);
   FreeMem();
-  FreeWS(ws1);
   SUBPROC((void *)ElfKiller);
 }
 

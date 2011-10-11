@@ -1,30 +1,32 @@
 #include "..\inc\swilib.h"
 #include "cpumon.h"
 #include "conf_loader.h"
+#include "render.h"
 
 extern int const cfgNetType;
-extern unsigned int const cfgNetDiv;
+extern int const cfgNetDiv;
 extern const char cfgNet900[4];
 extern const char cfgNete900[4];
 extern const char cfgNet1800[4];
-extern unsigned int uiWidth, uiHeight;
+extern int uiWidth, uiHeight;
 
 static void init(int rewidth);
 static void deinit();
-static void tick(const unsigned int);
-static unsigned int getValue(const unsigned int x,const unsigned int h);
-static unsigned int getColor(const unsigned int x,const unsigned int h);
-TSensor net_sensor={0,init,deinit,tick,getValue,getColor};
+static void tick();
+static int getValue(const int x,const int h);
+static int getColor(const int x,const int h);
+TSensor net_sensor={0,0,0,0,init,deinit,tick,getValue,0,getColor,0};
 
 static RAMNET *ramnet;
-static unsigned char *values,*bands;
-static unsigned int nTicks,colors[3],minp=0xff,maxp,avgp,lastp,lastb;
+static char *values,*bands;
+static int colors[3],minp=0xff,maxp,avgp;
 
 static void init(int rewidth){
-  colors[0] = RGB16(cfgNet900[0],cfgNet900[1],cfgNet900[2]);
-  colors[1] = RGB16(cfgNete900[0],cfgNete900[1],cfgNete900[2]);
-  colors[2] = RGB16(cfgNet1800[0],cfgNet1800[1],cfgNet1800[2]);
+  colors[0] = Color2ColorByRenderBit(&cfgNet900[0]);
+  colors[1] = Color2ColorByRenderBit(&cfgNete900[0]);
+  colors[2] = Color2ColorByRenderBit(&cfgNet1800[0]);
   net_sensor.type=cfgNetType;
+  net_sensor.div=cfgNetDiv;
   if ((rewidth)||(values==0)){
     deinit();
     values = malloc(uiWidth);
@@ -50,26 +52,23 @@ int ch2band(int ch){
     return 0;
 }
 
-static void tick(const unsigned int h){
-  if (nTicks==0){
-    unsigned int p = ramnet->power;
-    if (p){
-      if (p>maxp) { maxp=p; avgp=maxp-minp; }
-      if (p<minp) { minp=p; avgp=maxp-minp; }
-      lastp = uiHeight * (maxp-p) / avgp;
-      lastb = ch2band(ramnet->ch_number);
-    }else lastp=0;
-    nTicks=cfgNetDiv;
-  }
-  values[h]=lastp;
-  bands[h]=lastb;
-  nTicks--;
+static void tick(){
+  int p = ramnet->power;
+  int h = net_sensor.hhh;
+  if (p){
+    if (p>maxp) { maxp=p; avgp=maxp-minp; }
+    if (p<minp) { minp=p; avgp=maxp-minp; }
+    values[h] = uiHeight * (maxp-p) / avgp;
+  }else values[h]=0;
+  bands[h] = ch2band(ramnet->ch_number);
+  if(++h>=uiWidth) h=0;
+  net_sensor.hhh=h;
 }
 
-static unsigned int getValue(const unsigned int x,const unsigned int h){
+static int getValue(const int x,const int h){
   return values[h];
 }
 
-static unsigned int getColor(const unsigned int x,const unsigned int h){
+static int getColor(const int x,const int h){
   return colors[bands[h]];
 }

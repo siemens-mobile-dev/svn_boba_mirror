@@ -9,7 +9,7 @@
 0018: 0xA01A75D4   ;   6: int GetAkku(int param1,int param2)
 001C: 0xA006F061   ;   7: GetLP
 0020: 0xA04BD61C   ;   8: long SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay)
-;0020: 0xA0C1AAC0   ;   8: long SetIllumination(unsigned char dev,unsigned long param1,unsigned short bright,unsigned long delay)
+;0020: 0xA0C1AAC0   ;   8: for patch SmartIllumination
 0024: 0xA0549F2C   ;   9: void SwitchPhoneOff()
 0028: 0xA056E674   ;   A: int fopen(const char * cFileName, unsigned int iFileFlags, unsigned int iFileMode, unsigned int *ErrorNumber)
 002C: 0xA056E734   ;   B: unsigned int fread(int FileHandler, void *cBuffer, int iByteCount, unsigned int *ErrorNumber)
@@ -52,7 +52,8 @@
 00C8: 0xA05A3BD4   ;  32: PlaySound(long param1, long param2, long param3, long tone, long param5)
 00CC: 0xA05965D8   ;  33: PlaySound2
 00D0: 0xA0B7AF9C   ;  34: PlaySoundLoop
-00D8: 0xA05AF0E3   ;  36: void SLI_SetState(unsigned char state)
+//00D8: 0xA05AF0E3   ;  36: void SLI_SetState(unsigned char state)
+00D8: 0xA04BDB9C   ;  36: void SLI_SetState(unsigned char state)
 00DC: 0xA059B8A4   ;  37: void Ringtones_SetState(unsigned char state)
 00E0: 0xA06B750C   ;  38: int Registry_GetHMIKeyID(char *Keyword)
 00E4: 0xA06B6F80   ;  39: Registry_SetResourcePath(int HMIKeyID, int Prio, WSHDR *Path)
@@ -520,6 +521,8 @@
 ;091C:    ; 247: NetOff()
 092C: 0xA095E80F   ; 24B: void SetMenuSearchCallBack(void *gui, MenuSearchCallBack proc)
 0930: 0xA065ABD1   ; 24C: int GetPeripheryState (int device, int check_state);
+
+09BC: 0xA01AA190   ; 26F: int NM_Get_IRE();
 
 0B08: 0xA08D30F9   ;  2C2: int GetSubprovider(WSHDR* ws)
 #pragma disable old_equal_ff
