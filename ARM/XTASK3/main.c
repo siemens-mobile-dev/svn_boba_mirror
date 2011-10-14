@@ -342,7 +342,7 @@ int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 L1:
   csm_result=old_icsm_onMessage(data,msg);
 #else    
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий    
+  csm_result=old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий    
 #endif
   
   icgui_id=((int *)data)[DISPLACE_OF_INCOMMINGGUI/4];
@@ -358,10 +358,11 @@ L1:
       ShowMSG(1,(int)"XTask config updated!");
       InitConfig();
     }
-  }
+  }else
   //IPC
   if (msg->msg==MSG_IPC)
-  {
+  {if (msg->submess!=392305998){
+
     IPC_REQ *ipc;
     if ((ipc=(IPC_REQ*)msg->data0))
     {
@@ -393,7 +394,7 @@ L1:
 	}
       }
     }
-  }
+  }}else
   if (msg->msg==MSG_INCOMMING_CALL)
   {
     callhide_mode=1;

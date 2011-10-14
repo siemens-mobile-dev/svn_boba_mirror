@@ -363,93 +363,81 @@ typedef struct
 
 extern void kill_data(void *p, void (*func_p)(void *));
 
-int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
-{
-  if(msg->msg == MSG_RECONFIGURE_REQ) 
-  {
+int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
+  if(msg->msg == MSG_RECONFIGURE_REQ){
     extern const char *successed_config_filename;
-    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
-    {
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0){
       InitConfig();
       GenerateString();
       ShowMSG(1,(int)"WeatherCID config updated!");
     }
-  }
-    #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
-    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
-    if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/) //Если IdleGui на самом верху
-    {
-      GUI *igui=GetTopGUI();
-      if (igui) //И он существует
-      {
-#ifdef ELKA
-   {
-     void *canvasdata=BuildCanvas();
-#else
-      void *idata=GetDataOfItemByID(igui,2);
-      if (idata)
-      {
-        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-#endif        
-
-        if (SHOW_PIC){
-          DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.height, 1);
-          DrawImg(PICT_X, PICT_Y, (int)weath.dt.path);
-          if(weath.cloudness) DrawImg(PICT_X, PICT_Y, (int)weath.c.path);
-          if(weath.rain)      DrawImg(PICT_X, PICT_Y, (int)weath.r.path);
-          if(weath.snow)      DrawImg(PICT_X, PICT_Y, (int)weath.s.path);
-          if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
-          DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y, (int)weath.WindPic.path);
-          //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
-        }
-        DrawString(ews, TEXTRECT.x, TEXTRECT.y , TEXTRECT.x2, TEXTRECT.y2,
-	         FONT_SIZE,TEXT_OUTLINE+TEXT_ALIGNMIDDLE,GetPaletteAdrByColorIndex(122),GetPaletteAdrByColorIndex(123));
-      }
-   }}    
-  
-  if (msg->msg==MSG_HELPER_TRANSLATOR)
-  {
-    if ((int)msg->data1==sock)
-    {
+  }else
+  if (msg->msg == MSG_HELPER_TRANSLATOR){
+    if ((int)msg->data1==sock){
       //Если наш сокет
-      switch((int)msg->data0)
-      {
-      case ENIP_SOCK_CONNECTED:
-        if (connect_state==1)
-        {
-          //Если посылали запрос
-          SUBPROC((void *)send_req);
-        }
-        else
-        {
-          ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
-        }
-        break;
-      case ENIP_SOCK_DATA_READ:
-        if (connect_state==2)
-        {
-          //Если посылали send
-          SUBPROC((void *)get_answer);
-        }
-        else
-        {
-          ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
-        }
-        break;
-      case ENIP_SOCK_REMOTE_CLOSED:
-        //Закрыт со стороны сервера
-        if (connect_state) SUBPROC((void *)end_socket);
-        break;
-      case ENIP_SOCK_CLOSED:
-        //Закрыт вызовом closesocket
-        SUBPROC((void *)Parsing);
-        old_gprs_state[1] = 0;
-        connect_state=0;
-        sock=-1;
-        break;
+      switch((int)msg->data0){
+        case ENIP_SOCK_CONNECTED:
+          if (connect_state==1){
+            //Если посылали запрос
+            SUBPROC((void *)send_req);
+          }else{
+            ShowMSG(1,(int)"Illegal message ENIP_SOCK_CONNECTED!");
+          }
+          break;
+        case ENIP_SOCK_DATA_READ:
+          if (connect_state==2){
+            //Если посылали send
+            SUBPROC((void *)get_answer);
+          }else{
+            ShowMSG(1,(int)"Illegal message ENIP_DATA_READ");
+          }
+          break;
+        case ENIP_SOCK_REMOTE_CLOSED:
+          //Закрыт со стороны сервера
+          if (connect_state) SUBPROC((void *)end_socket);
+          break;
+        case ENIP_SOCK_CLOSED:
+          //Закрыт вызовом closesocket
+          SUBPROC((void *)Parsing);
+          old_gprs_state[1] = 0;
+          connect_state=0;
+          sock=-1;
+          break;
       }
     }
-  }
+  }else
+  if(msg->msg != MSG_IPC){
+    #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
+    if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/){ //Если IdleGui на самом верху
+      GUI *igui=GetTopGUI();
+      if (igui){ //И он существует
+#ifdef ELKA
+        {
+          void *canvasdata=BuildCanvas();
+#else
+        void *idata=GetDataOfItemByID(igui,2);
+        if (idata){
+          void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+#endif        
+          if (SHOW_PIC){
+            DrawCanvas(canvasdata, PICT_X, PICT_Y, PICT_X + weath.dt.width, PICT_Y + weath.dt.height, 1);
+            DrawImg(PICT_X, PICT_Y, (int)weath.dt.path);
+            if(weath.cloudness) DrawImg(PICT_X, PICT_Y, (int)weath.c.path);
+            if(weath.rain)      DrawImg(PICT_X, PICT_Y, (int)weath.r.path);
+            if(weath.snow)      DrawImg(PICT_X, PICT_Y, (int)weath.s.path);
+            if(weath.storm)     DrawImg(PICT_X, PICT_Y, (int)weath.st.path);
+            DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y, (int)weath.WindPic.path);
+            //DrawImg(PICT_X+weath.dt.width-weath.WindPic.width, PICT_Y+weath.dt.height-weath.WindPic.height, (int)weath.WindPic.path);
+          }
+          DrawString(ews, TEXTRECT.x, TEXTRECT.y , TEXTRECT.x2, TEXTRECT.y2,
+	             FONT_SIZE,TEXT_OUTLINE+TEXT_ALIGNMIDDLE,
+                     GetPaletteAdrByColorIndex(PC_LIGHTTEXTFOREGROUND),
+                     GetPaletteAdrByColorIndex(PC_LIGHTTEXTBACKGROUND));
+        }
+      }
+    }
+  }    
   return (1);
 }
 

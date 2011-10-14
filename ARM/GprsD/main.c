@@ -123,7 +123,6 @@ void do_disconnect(void)
 
 int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  //char s[100];  
 #ifdef NEWSGOLD
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
@@ -133,9 +132,8 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
       ShowMSG(1,(int)"GprsD config updated!");
       InitConfig();
     }
-  }
+  }else
 #endif
-  
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     int m=(int)msg->data0;
@@ -166,17 +164,17 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
 	}
       }
     }
-  }
-  if ((!OldGPRSstatus)&&IsGPRSEnabled())
-  {
-    //Включили жопорез
-    GBS_DelTimer(&mytmr);
-    SUBPROC((void*)do_connect);
-  }
-  if (!IsGPRSEnabled()) 
-  {
-    GBS_DelTimer(&mytmr);
-    OldGPRSstatus=0;
+  }else
+  if(msg->msg!=MSG_IPC){  
+    if ((!OldGPRSstatus)&&IsGPRSEnabled()){
+      //Включили жопорез
+      GBS_DelTimer(&mytmr);
+      SUBPROC((void*)do_connect);
+    }
+    if (!IsGPRSEnabled()){
+      GBS_DelTimer(&mytmr);
+      OldGPRSstatus=0;
+    }
   }
   return(1);
 }

@@ -173,21 +173,18 @@ void WriteLog(int dummy, char *text)
 
 int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
 {
-  int csm_result;
-  
   //Пришло сообщение
   if ((msg->msg == MSG_SMS_RX)&&(msg->submess==0x26)&&(((((int)msg->data1)>>16)&0xFF)==0x20))
   {
     char *text=UnpackSMS(IncommingPDU());
     if (text) SUBPROC((void *)WriteLog,0,text);
-  }
-  csm_result = old_icsm_onMessage(data, msg); //Вызываем старый обработчик событий
+  }else
   if(msg->msg == MSG_RECONFIGURE_REQ) 
   {
     FreeMem();
     RereadSettings();
   }
-  return(csm_result);
+  return(old_icsm_onMessage(data, msg));
 }
 
 void MyIDLECSM_onClose(CSM_RAM *data)
