@@ -218,25 +218,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
       GenerateString();
       ShowMSG(1,(int)"microGPS config updated!");
     }
-  }
-  #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
-  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
-  if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/){ //Если IdleGui на самом верху
-    GUI *igui=GetTopGUI();
-    if (igui){ //И он существует
-#ifdef ELKA
-                {
-//      void *canvasdata=BuildCanvas();
-#else
-      void *idata=GetDataOfItemByID(igui,2);
-      if (idata){
-//        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
-#endif        
-        DrawString(ews, DATA_AREA.x, DATA_AREA.y, DATA_AREA.x2, DATA_AREA.y2, FONT_SMALL,
-	           0x20 + (1 << 1),GetPaletteAdrByColorIndex(0), GetPaletteAdrByColorIndex(1));
-      }
-    }  
-  }    
+  }else
   if (msg->msg==MSG_HELPER_TRANSLATOR){
     if ((int)msg->data1==sock){
       //Если наш сокет
@@ -270,7 +252,25 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg){
           break;
       }
     }
-  }
+  }else{
+  #define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+  CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);    
+  if (icsm&&IsGuiOnTop(idlegui_id)&&!IsScreenSaver()/*&&IsUnlocked()*/){ //Если IdleGui на самом верху
+    GUI *igui=GetTopGUI();
+    if (igui){ //И он существует
+#ifdef ELKA
+                {
+//      void *canvasdata=BuildCanvas();
+#else
+      void *idata=GetDataOfItemByID(igui,2);
+      if (idata){
+//        void *canvasdata=((void **)idata)[DISPLACE_OF_IDLECANVAS/4];
+#endif        
+        DrawString(ews, DATA_AREA.x, DATA_AREA.y, DATA_AREA.x2, DATA_AREA.y2, FONT_SMALL,
+	           0x20 + (1 << 1),GetPaletteAdrByColorIndex(PC_LIGHTTEXTFOREGROUND),GetPaletteAdrByColorIndex(PC_LIGHTTEXTBACKGROUND));
+      }
+    }  
+  }}    
   return (1);
 }
 
