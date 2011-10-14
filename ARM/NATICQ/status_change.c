@@ -673,11 +673,6 @@ extern const int AUTOSTATUS_HEADSET_STATUS;
 extern const int AUTOSTATUS_CHARGER_STATUS;
 extern const int AUTOSTATUS_CABLE_STATUS;
 
-/*void AutoStatusPend(int status){
-  CurrentStatus=status; 
-  SUBPROC((void*)set_my_status);
-}*/
-
 void AutoStatusOnIdle(void)
 {
   // Меняем статус

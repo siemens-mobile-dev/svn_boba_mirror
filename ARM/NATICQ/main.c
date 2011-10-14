@@ -41,6 +41,8 @@ extern void msrand(unsigned seed);
 
 extern int AutoStatusRemainedCounter;
 extern int AutoStatusPend;
+extern int AutoStatusIdleActive;
+extern int LastStatus;
 extern const int AUTOSTATUS_IDLE_STATUS;
 extern const int AUTOSTATUS_HEADSET_STATUS;
 
@@ -281,7 +283,7 @@ void ReadDefSettings(void)
     Is_Sounds_Enabled=def_set.sound_status;
     Is_Show_Offline=def_set.off_contacts;
     Is_Show_Groups=def_set.show_groups;
-    CurrentStatus=def_set.def_status+1;
+    CurrentStatus=def_set.def_status;
     CurrentXStatus=def_set.def_xstatus;
     Is_Active_Up=def_set.active_up;
   }
@@ -310,7 +312,10 @@ void WriteDefSettings(void)
     def_set.sound_status=Is_Sounds_Enabled;
     def_set.off_contacts=Is_Show_Offline;
     def_set.show_groups=Is_Show_Groups;
-    def_set.def_status=CurrentStatus-1;
+    if (AutoStatusIdleActive)
+      def_set.def_status=LastStatus;
+    else
+      def_set.def_status=CurrentStatus;
     def_set.def_xstatus=CurrentXStatus;
     def_set.active_up=Is_Active_Up;
     fwrite(f,&def_set,sizeof(DEF_SETTINGS),&err);
@@ -2310,6 +2315,17 @@ void ProcessPacket(TPKT *p)
 
     IlluminationOn(ILL_DISP_RECV,ILL_KEYS_RECV,ILL_RECV_TMR,ILL_RECV_FADE); //Illumination by BoBa 19.04.2007
 
+    if (t->persound){
+      char snd[80];
+      snprintf(snd,80,"%s%d.wav",sndDir,t->uin);
+      if (!Play(snd)){
+        t->persound=0;
+        Play(sndMsg);
+      }
+    }else{
+        Play(sndMsg);
+    }
+
     if (*(int*)t->name==0x50476923)
       start_vibra(3-VIBR_TYPE);
     else
@@ -2718,13 +2734,10 @@ void CheckDoubleRun(void)
 int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 {
   extern const int VIBR_ON_CONNECT;
-
-  //  char ss[100];
   MAIN_CSM *csm=(MAIN_CSM*)data;
-  {
     //IPC
     if (msg->msg==MSG_IPC)
-    {
+    {if (msg->submess!=392305998){
       IPC_REQ *ipc;
       if ((ipc=(IPC_REQ*)msg->data0))
       {
@@ -2820,10 +2833,6 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	      msg->pkt.data_len=l;
 	      memcpy(msg->data,fmp->msg,l+1);
 	      ae(msg);
-              char snd[80];
-              snprintf(snd,80,"%s%d.wav",sndDir,fmp->uin);
-              if (!Play(snd))
-               Play(sndMsg);
 	    }
 	    mfree(fmp->msg); //Освобождаем сам текст сообщения
 	    mfree(fmp->ipc); //Освобождаем родительский IPC_REQ
@@ -2833,49 +2842,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	  }
 	}
       }
-    }
-//    UpdateCSMname();
-    //Нарисуем иконочку моего статуса
-#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
-#ifdef NEWSGOLD
-    if(ICON_ON == 1 || ICON_ON == 3)
-    {
-#endif
-    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
-    if (IsGuiOnTop(idlegui_id)/*&&IsUnlocked()*/) //Если IdleGui на самом верху
-    {
-      GUI *igui=GetTopGUI();
-      if (igui) //И он существует
-      {
-	void *canvasdata=BuildCanvas();
-	int icn;
-	if (messages_unread > 0)
-	  icn=IS_MSG;
-	else
-	{
-	  switch(connect_state)
-	  {
-	  case 0:
-	    icn=IS_OFFLINE; break;
-	  case 3:
-	    icn=CurrentStatus; //IS_ONLINE;
-	    break;
-	  default:
-	    icn=IS_UNKNOWN; break;
-	  }
-	}
-	//Тут трохи поменял
-	// by Rainmaker: Рисуем канву только для иконки и выводим в своих координатах
-	DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+GetImgWidth((int)S_ICONS[icn])-1,
-		   IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);
-	DrawImg(IDLEICON_X,IDLEICON_Y,S_ICONS[icn]);
-      }
-    }
-#ifdef NEWSGOLD
-    }
-#endif
-
-  }
+  }}else
   if (msg->msg==MSG_RECONFIGURE_REQ)
   {
     if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
@@ -2894,7 +2861,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
       InitAutoStatusEngine();
       //  </tridog>
     }
-  }
+  }else
   if (msg->msg==MSG_GUI_DESTROYED)
   {
     if ((int)msg->data0==csm->gui_id)
@@ -2910,7 +2877,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
     {
       edchat_id=0;
     }
-  }
+  }else
   if (msg->msg==MSG_HELPER_TRANSLATOR)
   {
     switch((int)msg->data0)
@@ -3052,7 +3019,7 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 	break;
       }
     }
-  }
+  }else
   //  <tridog/>
   //  21.03.2011. Автостатус при подключении / отключении аксесуара
 #ifdef NEWSGOLD
@@ -3066,8 +3033,44 @@ int maincsm_onmessage(CSM_RAM *data,GBS_MSG *msg)
 #endif
   {
     AutoStatusOnAccessory();
-  }
+  }else{
   // </tridog>
+
+//Нарисуем иконочку моего статуса
+#define idlegui_id (((int *)icsm)[DISPLACE_OF_IDLEGUI_ID/4])
+#ifdef NEWSGOLD
+    if(ICON_ON == 1 || ICON_ON == 3){
+#endif
+    CSM_RAM *icsm=FindCSMbyID(CSM_root()->idle_id);
+    if (IsGuiOnTop(idlegui_id)/*&&IsUnlocked()*/){ //Если IdleGui на самом верху
+      GUI *igui=GetTopGUI();
+      if (igui){ //И он существует
+	void *canvasdata=BuildCanvas();
+	int icn;
+	if (messages_unread > 0)
+	  icn=IS_MSG;
+        else{
+	  switch(connect_state){
+	    case 0:
+	      icn=IS_OFFLINE; break;
+	    case 3:
+	      icn=CurrentStatus; //IS_ONLINE;
+	      break;
+	    default:
+	    icn=IS_UNKNOWN; break;
+	  }
+	}
+	//Тут трохи поменял
+	// by Rainmaker: Рисуем канву только для иконки и выводим в своих координатах
+	DrawCanvas(canvasdata,IDLEICON_X,IDLEICON_Y,IDLEICON_X+GetImgWidth((int)S_ICONS[icn])-1,
+		   IDLEICON_Y+GetImgHeight((int)S_ICONS[icn])-1,1);
+	DrawImg(IDLEICON_X,IDLEICON_Y,S_ICONS[icn]);
+      }
+    }
+#ifdef NEWSGOLD
+    }
+#endif
+  }
   return(1);
 }
 

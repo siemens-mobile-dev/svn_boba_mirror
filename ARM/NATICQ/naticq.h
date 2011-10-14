@@ -38,6 +38,7 @@ typedef struct
   int req_xtext;
   int local;  
   int unreaded;
+  int persound;
 }CLIST;
 
 typedef struct

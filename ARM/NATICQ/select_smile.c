@@ -55,7 +55,7 @@ void DrwImg(IMGHDR *img, int x, int y)
   DRWOBJ drwobj;
   StoreXYWHtoRECT(&rc,x,y,img->w,img->h);
   SetPropTo_Obj5(&drwobj,&rc,0,img);
-  SetColor(&drwobj,GetPaletteAdrByColorIndex(100),GetPaletteAdrByColorIndex(101));
+  SetColor(&drwobj,0,0);
   DrawObject(&drwobj);
 }
 
@@ -111,9 +111,9 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
           char c1[4];
           char c2[4];
           char c3[4];
-          getthefuckingcolour(c1,117,133);
-          getthefuckingcolour(c2,116,136);
-          getthefuckingcolour(c3,118,134);
+          getthefuckingcolour(c1,PC_SELECTBORDER,PC_BORDER);
+          getthefuckingcolour(c2,PC_SELECTBACKGROUND,PC_POPUPSELECTBACKGROUD);
+          getthefuckingcolour(c3,PC_SELECTSHADOW,PC_BORDERSHADOW);
           DrawRectangle(x+2,y2+2,x+img->w-1+1,y2+img->h-1+1,0,c3,NULL);
           DrawRectangle(x,y2,x+img->w-1,y2+img->h-1,0,c1,c2);
           
@@ -133,7 +133,7 @@ int RenderPage(SMILE_GUI *data, int is_draw)   //Возвращает номер последней нари
     if (sm)
     {
       ascii2ws(data->ws,sm->lines->text);
-      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(102),GetPaletteAdrByColorIndex(103));
+      DrawString(data->ws,1,y+1,scr_w,y+1+font_size,font,0,GetPaletteAdrByColorIndex(PC_HEADERFOREGROUND),GetPaletteAdrByColorIndex(PC_HEADERBACKGROUND));
     }
   }
   return (res);  
@@ -144,7 +144,7 @@ static void onRedraw(SMILE_GUI *data)
   int scr_w=ScreenW()-1;
   int scr_h=ScreenH()-1;
   char c[4];
-  getthefuckingcolour(c,101,130);
+  getthefuckingcolour(c,PC_BACKGROUND,PC_WINDOWFOREGROUND);
   DrawRectangle(0,YDISP,scr_w,scr_h,0,c,c);
   RenderPage(data,1);
 }
@@ -289,20 +289,19 @@ static int onKey(SMILE_GUI *data,GUI_MSG *msg)
 
 static int method8(void){return(0);}
 
-static int method9(void){return(0);}
-
 extern void kill_data(void *p, void (*func_p)(void *));
+
 static const void * const gui_methods[11]={
-  (void *)onRedraw,  //Redraw
-  (void *)onCreate,  //Create
-  (void *)onClose,  //Close
-  (void *)onFocus,  //Focus
+  (void *)onRedraw,   //Redraw
+  (void *)onCreate,   //Create
+  (void *)onClose,    //Close
+  (void *)onFocus,    //Focus
   (void *)onUnfocus,  //Unfocus
-  (void *)onKey,  //OnKey
+  (void *)onKey,      //OnKey
   0,
-  (void *)kill_data, //method7, //Destroy
+  (void *)kill_data,  //Destroy
   (void *)method8,
-  (void *)method9,
+  (void *)method8,
   0
 };
 
