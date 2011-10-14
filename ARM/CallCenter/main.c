@@ -40,16 +40,7 @@ extern char *s_ab_entry;
 
 extern const unsigned int MAX_GROUP_SEARCH;
 
-const char *progress_colors[MAX_CASH_SIZE]=
-{
-  COLOR_CASHPB1,
-  COLOR_CASHPB2,
-  COLOR_CASHPB3,
-  COLOR_CASHPB4
-};
-
 #define TMR_SECOND (1300/6)
-
 
 #pragma inline
 static void patch_header(const HEADER_DESC* head)
@@ -291,11 +282,11 @@ static int CompareStrT9(WSHDR *ws, WSHDR *ss, int need_insert_color)
 	{
 	  if (need_insert_color&&(first_pos>0))
 	  {
-	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_NOTSELECTED)[1]),wpos+1);
-	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_NOTSELECTED)[0]),wpos+1);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)GetPaletteAdrByColorIndex(PC_WINDOWFOREGROUND)/*COLOR_NOTSELECTED*/)[1]),wpos+1);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)GetPaletteAdrByColorIndex(PC_WINDOWFOREGROUND)/*COLOR_NOTSELECTED*/)[0]),wpos+1);
 	    wsInsertChar(ws,0xE006,wpos+1);
-	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_SEARCH_MARK)[1]),first_pos);
-	    wsInsertChar(ws,us_reverse(((unsigned short *)COLOR_SEARCH_MARK)[0]),first_pos);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)GetPaletteAdrByColorIndex(PC_SELECTFOREGROUND)/*COLOR_SEARCH_MARK*/)[1]),first_pos);
+	    wsInsertChar(ws,us_reverse(((unsigned short *)GetPaletteAdrByColorIndex(PC_SELECTFOREGROUND)/*COLOR_SEARCH_MARK*/)[0]),first_pos);
 	    wsInsertChar(ws,0xE006,first_pos);
 	  }
 	  return(1); //Все совпало
@@ -664,7 +655,7 @@ static void my_ed_redraw(void *data)
     int y=ScreenH()-SoftkeyH()-(GetFontYSIZE(FONT_MEDIUM)+1)*5-5;
     down_border=ScreenH()-SoftkeyH()-2;
 
-    DrawRectangle/*DrawRoundedFrame*/(1,y,ScreenW()-2,down_border,0/*,0,0*/,COLOR_MENU_BRD,COLOR_MENU_BK);
+    DrawRectangle/*DrawRoundedFrame*/(1,y,ScreenW()-2,down_border,0/*,0,0*/,GetPaletteAdrByColorIndex(PC_BORDER)/*COLOR_MENU_BRD*/,GetPaletteAdrByColorIndex(PC_POPUPSELECTBACKGROUD)/*COLOR_MENU_BK*/);
 
     if (i<0) cp=curpos; else cp=2;
     cl=p;
@@ -676,14 +667,14 @@ static void my_ed_redraw(void *data)
       total_n++;
     }
     i=0;
-    if (total_n>5 && COLOR_SCROLLBAR[3])  //Прорисуем скроллбар
+    if (total_n>5 /*&& COLOR_SCROLLBAR[3]*/)  //Прорисуем скроллбар
     {
       int start_y, y_width;
       right_border=ScreenW()-6;
       start_y=(y+2)+curpos*((down_border-2)-(y+2))/total_n;
       y_width=((down_border-2)-(y+2))/total_n;
-      DrawLine(right_border+2,y+2,right_border+2,down_border-2,0,clBlack);
-      DrawRectangle(right_border+1,start_y,right_border+3,start_y+y_width+1,0,COLOR_SCROLLBAR,COLOR_SCROLLBAR);
+      DrawLine(right_border+2,y+2,right_border+2,down_border-2,0,GetPaletteAdrByColorIndex(PC_SCROLLBAR));
+      DrawRectangle(right_border+1,start_y,right_border+3,start_y+y_width+1,0,GetPaletteAdrByColorIndex(PC_SCROLLBARSLIDER)/*COLOR_SCROLLBAR*/,GetPaletteAdrByColorIndex(PC_SCROLLBARSLIDER)/*COLOR_SCROLLBAR*/);
     }
     else right_border=ScreenW()-3;
     do
@@ -694,7 +685,7 @@ static void my_ed_redraw(void *data)
       {
 	wstrcpy(prws,cl->name);
 	if (e_ws) CompareStrT9(prws,(WSHDR *)e_ws,1);
-	DrawString(prws,3,dy+4,right_border-1,dy+3+GetFontYSIZE(FONT_MEDIUM),FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
+	DrawString(prws,3,dy+4,right_border-1,dy+3+GetFontYSIZE(FONT_MEDIUM),FONT_MEDIUM,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(PC_WINDOWFOREGROUND)/*COLOR_NOTSELECTED*/,0/*GetPaletteAdrByColorIndex(23)*/);
 	//DrawScrollString(cl->name,3,dy+4,ScreenW()-4,dy+3+GetFontYSIZE(FONT_MEDIUM),1,FONT_MEDIUM,0x80,COLOR_NOTSELECTED,GetPaletteAdrByColorIndex(23));
       }
       else
@@ -716,9 +707,9 @@ static void my_ed_redraw(void *data)
 	    max_scroll_disp=d;
 	  }
 	}
-	DrawRectangle(2,dy+2,right_border,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,COLOR_SELECTED_BRD,COLOR_SELECTED_BG);
-	DrawScrollString(cl->name,3,dy+4,right_border-2-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
-	DrawString(cl->icons,right_border-1-icons_size,dy+4,right_border-2,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,0x80,COLOR_SELECTED,GetPaletteAdrByColorIndex(23));
+	DrawRectangle(2,dy+2,right_border,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),0,GetPaletteAdrByColorIndex(PC_SELECTBORDER)/*COLOR_SELECTED_BRD*/,GetPaletteAdrByColorIndex(PC_SELECTBACKGROUND)/*COLOR_SELECTED_BG*/);
+	DrawScrollString(cl->name,3,dy+4,right_border-2-icons_size,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),scroll_disp+1,FONT_MEDIUM_BOLD,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(PC_SELECTFOREGROUND)/*COLOR_SELECTED*/,0/*GetPaletteAdrByColorIndex(23)*/);
+	DrawString(cl->icons,right_border-1-icons_size,dy+4,right_border-2,dy+3+GetFontYSIZE(FONT_MEDIUM_BOLD),FONT_MEDIUM_BOLD,TEXT_NOFORMAT,GetPaletteAdrByColorIndex(PC_SELECTFOREGROUND)/*COLOR_SELECTED*/,0/*GetPaletteAdrByColorIndex(23)*/);
       }
       cl=(CLIST *)cl->next;
       i++;
@@ -1106,11 +1097,19 @@ static void DrawMyProgress(int x, int y, int n)
   start_y=y+n*font_size;
   end_y=y+(n+1)*font_size-1;
 
+const char *progress_colors[MAX_CASH_SIZE]=
+{
+  GetPaletteAdrByColorIndex(PC_PROGRESSFOREGROUND)/*COLOR_CASHPB1*/,
+  COLOR_CASHPB2,
+  COLOR_CASHPB3,
+  COLOR_CASHPB4
+};
+
   DrawCanvas(BuildCanvas(), x, start_y, scr_w-x-1, end_y, 1);
-  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, COLOR_TEXTPB, transparent);
+  DrawRectangle(x, start_y, scr_w-x-1, end_y, 0, GetPaletteAdrByColorIndex(PC_PROGRESSBORDER)/*COLOR_TEXTPB*/, transparent);
   DrawRectangle(x+1, start_y+1, x+1+fill, end_y-1, 0, progress_colors[n], progress_colors[n]);
   wsprintf(ws, "%d.%02d/%d.%02d", cur/100, ((cur<0)?(0-cur):cur)%100, max/100, ((max>0)?max:-max)%100);
-  DrawString(ws, 0, start_y+1, scr_w, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, COLOR_TEXTPB, transparent);
+  DrawString(ws, 0, start_y+1, scr_w, end_y-1, TEXT_FONTSZ, TEXT_ALIGNMIDDLE, GetPaletteAdrByColorIndex(PC_LIGHTTEXTFOREGROUND)/*COLOR_TEXTPB*/, 0);
   FreeWS(ws);
 }
 
@@ -1132,14 +1131,77 @@ void StartHoursTimer(void)
 
 static volatile int is_voice_connected=0;
 
-static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
-{
-#define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
-  int csm_result;
-  {
+static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg){
+  #define edialgui_id (((int *)data)[DISPLACE_OF_EDGUI_ID/4])
+  static volatile int is_incoming_call=0;
+  if (msg->msg==MSG_USSD_RX || msg->msg==MSG_AUTOUSSD_RX){
+    if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
+  }else
+  if (msg->msg==MSG_END_CALL || msg->msg==MSG_HELPER_TRANSLATOR && (int)msg->data0==LMAN_DISCONNECT_IND){
+    if (ENA_CASHTRACE){
+      if (is_voice_connected || msg->msg==MSG_HELPER_TRANSLATOR){
+	GBS_DelTimer(&hours_tmr);
+	SendCashReq();
+      }
+    }
+    is_voice_connected=0;
+  }else
+  if (msg->msg==MSG_GUI_DESTROYED){
+    if ((int)msg->data0==edialgui_id){
+      hook_state=0;
+      e_ws=0;
+      FreeCLIST();
+      DisableScroll();
+    }
+  }else
+  if(msg->msg == MSG_RECONFIGURE_REQ){
+    extern const char *successed_config_filename;
+    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0){
+      ShowMSG(1,(int)"CallCenter config updated!");
+      InitConfig();
+      LoadCash();
+      StartHoursTimer();
+    }
+  }else
+  if (msg->msg==MSG_INCOMMING_CALL) is_incoming_call=1; else
+  #ifdef NEWSGOLD
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2)){
+  #else
+  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0)){
+  #endif
+    is_voice_connected=1;
+    if (ENA_VIBRA==3 || is_incoming_call+ENA_VIBRA==2){
+      SetVibration(vibraPower);
+      GBS_StartTimerProc(&vibra_tmr, vibraDuration*TMR_SECOND/1000, vibra_tmr_proc);
+    }
+    is_incoming_call=0;
+  }else
+  if (msg->msg!=MSG_IPC){
+    if (cfgShowIn != 1 - IsUnlocked()){
+      if (IsGuiOnTop(idlegui_id)){ //Если IdleGui на самом верху
+        GUI *igui = GetTopGUI();
+        if (igui){ //И он существует
+          extern int CASH_SIZE;               //by BoBa 4.07.07
+          int n=0; //Номер
+          while(n<CASH_SIZE){
+            DrawMyProgress(IDLE_X, IDLE_Y, n);
+            n++;
+          }
+        }
+      }
+    }
+    if (IsGuiOnTop(edialgui_id)){ //Если EDialGui на самом верху
+      GUI *igui=GetTopGUI();
+      if (igui){ //И он существует (а не в проекте ;))
+        if (!hook_state){
+          //Не было диалога
+	  DoSplices(igui);
+	  hook_state=1;
+        }
+      }
+    }
     char *imsi=RAM_IMSI();
-    if (memcmp(imsi,cur_imsi,IMSI_DATA_BYTE_LEN))
-    {
+    if (memcmp(imsi,cur_imsi,IMSI_DATA_BYTE_LEN)){
       SaveCash();
       memcpy(cur_imsi,imsi,IMSI_DATA_BYTE_LEN);
       InitConfig();
@@ -1147,97 +1209,7 @@ static int MyIDLECSM_onMessage(CSM_RAM* data,GBS_MSG* msg)
       StartHoursTimer();
     }
   }
-  if (msg->msg==MSG_USSD_RX || msg->msg==MSG_AUTOUSSD_RX)
-  {
-    if (ProcessUSSD(data,(GBS_USSD_MSG *)msg)) return 0; //Обработанно
-  }
-  if (msg->msg==MSG_END_CALL || msg->msg==MSG_HELPER_TRANSLATOR && (int)msg->data0==LMAN_DISCONNECT_IND)
-  {
-    if (ENA_CASHTRACE)
-    {
-      if (is_voice_connected || msg->msg==MSG_HELPER_TRANSLATOR)
-      {
-	GBS_DelTimer(&hours_tmr);
-	SendCashReq();
-      }
-    }
-    is_voice_connected=0;
-  }
-  if (msg->msg==MSG_GUI_DESTROYED)
-  {
-    if ((int)msg->data0==edialgui_id)
-    {
-      hook_state=0;
-      e_ws=0;
-      FreeCLIST();
-      DisableScroll();
-    }
-  }
-  if(msg->msg == MSG_RECONFIGURE_REQ)
-  {
-    extern const char *successed_config_filename;
-    if (strcmp_nocase(successed_config_filename,(char *)msg->data0)==0)
-    {
-      ShowMSG(1,(int)"CallCenter config updated!");
-      InitConfig();
-      LoadCash();
-      StartHoursTimer();
-    }
-  }
-
-  static volatile int is_incoming_call=0;
-  if (msg->msg==MSG_INCOMMING_CALL)
-   is_incoming_call=1;
-  #ifdef NEWSGOLD
-  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==2))
-  #else
-  if ((msg->msg==MSG_STATE_OF_CALL)&&(msg->submess==1)&&((int)msg->data0==0))
-  #endif
-  {
-    is_voice_connected=1;
-    if (ENA_VIBRA==3 || is_incoming_call+ENA_VIBRA==2)
-    {
-      SetVibration(vibraPower);
-      GBS_StartTimerProc(&vibra_tmr, vibraDuration*TMR_SECOND/1000, vibra_tmr_proc);
-    }
-    is_incoming_call=0;
-  }
-
-  csm_result=old_icsm_onMessage(data,msg); //Вызываем старый обработчик событий
-
-  if (cfgShowIn != 1 - IsUnlocked())
-  {
-    if (IsGuiOnTop(idlegui_id)) //Если IdleGui на самом верху
-    {
-      GUI *igui = GetTopGUI();
-      if (igui) //И он существует
-      {
-        extern int CASH_SIZE;               //by BoBa 4.07.07
-
-        int n=0; //Номер
-        while(n<CASH_SIZE)
-        {
-          DrawMyProgress(IDLE_X, IDLE_Y, n);
-          n++;
-        }
-      }
-    }
-  }
-
-  if (IsGuiOnTop(edialgui_id)) //Если EDialGui на самом верху
-  {
-    GUI *igui=GetTopGUI();
-    if (igui) //И он существует (а не в проекте ;))
-    {
-      if (!hook_state)
-      {
-	//Не было диалога
-	DoSplices(igui);
-	hook_state=1;
-      }
-    }
-  }
-  return(csm_result);
+  return(old_icsm_onMessage(data,msg));
 }
 
 void CallCenter_Destructor(void)
