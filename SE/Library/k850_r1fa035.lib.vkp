@@ -363,8 +363,8 @@
 ;09D4: xxxxxxxx yyyyyyyy ; 275: png_uint_32 png_get_rowbytes( png_structp png_ptr, png_infop info_ptr );
 ;09D8: xxxxxxxx yyyyyyyy ; 276: void png_progressive_combine_row( png_structp png_ptr, png_bytep old_row, png_bytep new_row );
 ;09DC: xxxxxxxx yyyyyyyy ; 277: int png_sig_cmp( png_bytep sig, png_size_t start, png_size_t num_to_check );
-;09E0: xxxxxxxx yyyyyyyy ; 278: int setjmp( jmp_buf jmpbuf );
-;09E4: xxxxxxxx yyyyyyyy ; 279: void longjmp( jmp_buf, int );
+09E0: 00000000 ACB60B10 ; 278: int setjmp( jmp_buf jmpbuf );
+09E4: 00000000 D0B60B10 ; 279: void longjmp( jmp_buf, int );
 09E8: 00000000 DD8CB010 ; 27A: int inflateInit2_( z_streamp strm, int windowBits, const char* version, int stream_size );
 09EC: 00000000 858EB010 ; 27B: int inflate( z_streamp strm, int flush );
 09F0: 00000000 7DA1B010 ; 27C: int inflateEnd( z_streamp strm );
@@ -715,6 +715,8 @@
 0F54: 00000000 914C6511 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 ;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 ;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+;0F60: xxxxxxxx yyyyyyyy ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+;0F64: xxxxxxxx yyyyyyyy ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

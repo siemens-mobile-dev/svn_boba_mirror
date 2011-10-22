@@ -5,7 +5,7 @@
 ;(p) awg
 
 +45C3FC00
-0448: 00000000 A0531444 ; 112: void* memset( void* mem, char chr, int size );
+0448: 00000000 90300020 ; 112: void* memset( void* mem, char chr, int size );
 044C: 00000000 60572D44 ; 113: int memcpy( void* dest, const void* source, int cnt );
 0450: 00000000 B9425844 ; 114: int sprintf( char* buf, const char* fmt, ... );
 0454: 00000000 81485844 ; 115: int snwprintf( wchar_t* buffer, int size, const wchar_t* fmt, ... );
@@ -715,6 +715,8 @@
 0F54: 00000000 FD843845 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 B5043945 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 ;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+;0F60: xxxxxxxx yyyyyyyy ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+;0F64: xxxxxxxx yyyyyyyy ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

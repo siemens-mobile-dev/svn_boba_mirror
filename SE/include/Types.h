@@ -285,10 +285,10 @@ typedef enum UI_TitleMode_t
 //GUIObject_SetZOrder
 typedef enum GuiObjectZOrder_t
 {
-  GuiObjectZOrderAbove = 0, ///< Sets the GUI Z-order to Above
-  GuiObjectZOrderBelow, ///< Sets the GUI Z-order to Below
-  GuiObjectZOrderTop,   ///< Sets the GUI Z-order to Top
-  GuiObjectZOrderBottom, ///< Sets the GUI Z-order to Bottom
+	GuiObjectZOrderAbove = 0, ///< Sets the GUI Z-order to Above
+	GuiObjectZOrderBelow, ///< Sets the GUI Z-order to Below
+	GuiObjectZOrderTop,   ///< Sets the GUI Z-order to Top
+	GuiObjectZOrderBottom, ///< Sets the GUI Z-order to Bottom
 } GuiObjectZOrder_t;
 
 // book ------------------------------------------------------------------------
@@ -1171,6 +1171,13 @@ template<typename T> TIMERPROC MKTIMERPROC( void(*param)(u16,T*) )
 #define TIMER_SET( time, onTimer, lparam ) Timer_Set( time, MKTIMERPROC(onTimer), lparam )
 
 // other -----------------------------------------------------------------------
+
+//pb_ui_search_bk_create_search_menu
+#define MODE_PB		0x0001
+#define MODE_GROUPS	0x0002
+#define MODE_SIM	0x0008
+#define MODE_UNSAVED	0x0010
+
 
 typedef enum URISchemeID {
 	file=0,

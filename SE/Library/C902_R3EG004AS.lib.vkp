@@ -529,7 +529,7 @@
 0C68: 00000000 ED4BDD10 ; 31A: void BookObj_SetDisplayOrientation( BOOK* book, int orientation );
 0C6C: 00000000 2D3FDD10 ; 31B: BOOK* Display_GetTopBook( int display );
 0C70: 00000000 D11BA5ED ; 31C: void Display_SetBrightness( int display, int brightness );
-0C74: 00000000 6953DA10 ; 31D: int Display_GetBrightness( int display );
+0C74: 00000000 D152DA10 ; 31D: int Display_GetBrightness( int display );
 0C78: 00000000 4D147E11 ; 31E: void DataBrowserDesc_Menu_AddFSFunctions( void* DataBrowserDesc, int );
 0C7C: 00000000 A9147E11 ; 31F: void DataBrowserDesc_Menu_AddNewFolder( void* DataBrowserDesc, int );
 0C80: 00000000 B1147E11 ; 320: void DataBrowserDesc_Menu_AddMarkFiles( void* DataBrowserDesc, int );
@@ -716,6 +716,8 @@
 0F54: 00000000 15BB9A10 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 15319B10 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 ;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+;0F60: xxxxxxxx yyyyyyyy ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+;0F64: xxxxxxxx yyyyyyyy ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

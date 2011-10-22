@@ -1788,6 +1788,11 @@ __swi __arm void GUIObject_SetZOrder( GUI*, char, GUI* );
 #pragma swi_number=0x3D7
 __swi __arm int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
+#pragma swi_number=0x3D8
+__swi __arm void str2PNUM( void* pnum, char* str, int len, int max_len );
+#pragma swi_number=0x3D9
+__swi __arm void pb_ui_search_bk_create_search_menu( int BookID, int mode );
+
 #ifdef LIBCLARANS
 }
 #endif
