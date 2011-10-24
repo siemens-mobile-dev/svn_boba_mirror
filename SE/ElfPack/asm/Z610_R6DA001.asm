@@ -24,6 +24,7 @@ MESS_HOOK_RET	equ	PATCH_MMI_MESSAGE_HOOK_start+8
 
 	defadr	memalloc,0x44E35A08+1
         defadr  memfree,0x44E35A34+1
+        defadr  Timer_Set,0x4537C73D
 
 // --- Patch Keyhandler ---
 	EXTERN Keyhandler_Hook
@@ -111,7 +112,7 @@ NEW_KEYHANDLER3:
 NEW_KEYHANDLER4:
 
 	MOV	R2, R4
-	SWI	0x129
+	BLX	Timer_Set
 	STRH	R0, [R4,#16]
 	LDRH	R0, [R4,#0]
 	LDR	R1, =KEY_LAST

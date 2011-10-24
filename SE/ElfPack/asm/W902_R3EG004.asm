@@ -22,6 +22,7 @@ a       EQU     b
 
         defadr  memalloc,0x4BB00584
         defadr  memfree,0x4BB005AC
+        defadr  Timer_Set,0x10DF4C81
 
 LastExtDB EQU 0x11F1AFEC
 
@@ -109,7 +110,7 @@ NEW_KEYHANDLER3:
 NEW_KEYHANDLER4:
 
 	MOV	R2, R4
-	SWI	0x129
+	BLX	Timer_Set
 	STRH	R0, [R4,#16]
 	LDRH	R0, [R4,#0]
 	LDR	R1, =KEY_LAST

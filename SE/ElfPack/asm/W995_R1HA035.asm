@@ -20,6 +20,7 @@ a       EQU     b
 
         defadr  memalloc,0x4BA33B64
         defadr  memfree,0x4BA33B8C
+        defadr  Timer_Set,0x1423E2ED
 
 // --- Patch Keyhandler ---
 	EXTERN Keyhandler_Hook
@@ -110,7 +111,7 @@ GO_TO_TIMER:
 NEW_KEYHANDLER4:
 
 	MOV	R2, R4
-	SWI	0x129
+	BLX	Timer_Set
 	STRH	R0, [R4,#16]
 	LDRH	R0, [R4,#0]
 	LDR	R1, =KEY_LAST
