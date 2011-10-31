@@ -315,8 +315,8 @@
 0914: 00000000 6D484645 ; 245: void GUIonMessage_SubItem_SetText( GUI_MESSAGE* msg, TEXTID );
 0918: 00000000 61484645 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 6D173645 ; 247: void GoMusic( void );
-;0920: xxxxxxxx yyyyyyyy ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
-;0924: xxxxxxxx yyyyyyyy ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
+0920: 00000000 31484645 ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
+0924: 00000000 C1484645 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 0928: 00000000 E1E61545 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 B1FB1145 ; 24B: int GetSilent( void );
 0930: 00000000 EDD31145 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -715,6 +715,8 @@
 0F54: 00000000 61214A45 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 79A14A45 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 0F5C: 00000000 DDC64345 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F60: 00000000 6DBC7844 ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+0F64: 00000000 650BF444 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

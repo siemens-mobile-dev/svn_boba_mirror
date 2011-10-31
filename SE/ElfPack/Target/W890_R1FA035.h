@@ -29,14 +29,15 @@
 #define PATH_DLL              L"/usb/other/ZBin/DLL"
 #define PATH_DEFAULT          L"/usb/other"
 
-#define DB_CMD_SETSMALLICON 0x3B
-#define DB_CMD_SETTHUMBNAILICON 0x3C
+#define DB_CMD_SETSAVEDICON 0x39
+#define DB_CMD_SETSMALLICON 0x3A
+#define DB_CMD_SETTHUMBNAILICON 0x3B
 
 #define PAGE_ENTER_EVENT 0xE
 #define PAGE_EXIT_EVENT 0xF
-#define ACCEPT_EVENT 2
-#define PREVIOUS_EVENT 3
-#define CANCEL_EVENT 4
+#define ACCEPT_EVENT 0x2
+#define PREVIOUS_EVENT 0x3
+#define CANCEL_EVENT 0x4
 
 #define KEY_LAST 0x155
 

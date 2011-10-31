@@ -715,6 +715,8 @@
 0F54: 00000000 89329D10 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 ;0F58: xxxxxxxx yyyyyyyy ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 ;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F60: 00000000 D1139410 ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+0F64: 00000000 05ECB710 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

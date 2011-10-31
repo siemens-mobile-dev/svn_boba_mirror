@@ -715,7 +715,9 @@
 0F50: 00000000 79754414 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 39FBED14 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 79550914 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
-;0F5C: xxxxxxxx yyyyyyyy ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F5C: 00000000 916D2014 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F60: 00000000 29160914 ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+0F64: 00000000 510DE914 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 

@@ -363,6 +363,7 @@ skip OneOfMany_SetItemCount
 skip OneOfMany_SetOnMessage
 skip OrangeLED_Control
 skip OSE_GetShell
+skip pb_ui_search_bk_create_search_menu
 skip PercentInput_GetPercent
 skip PHF_GetState
 skip PID_MMI
@@ -440,6 +441,7 @@ skip start
 skip StartAPP
 skip StatusRow_p
 skip stop
+skip str2PNUM
 skip str2wstr
 skip strcat
 skip strcmp

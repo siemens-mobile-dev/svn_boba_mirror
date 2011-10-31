@@ -32,7 +32,7 @@
 04A0: 00000000 ED782645 ; 128: void Timer_ReSet( u16* timer, int time, TIMERPROC onTimer, LPARAM lparam );
 04A4: 00000000 B9782645 ; 129: u16 Timer_Set( int time, TIMERPROC onTimer, LPARAM lparam );
 04A8: 00000000 45792645 ; 12A: void Timer_Kill( u16* timerID );
-04AC: 00000000 05AB2645 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, APP_DESC* );
+04AC: 00000000 05AB2645 ; 12B: int CreateBook( BOOK* pbook, void (*onClose)( BOOK* ), const PAGE_DESC* bp, const char* name, int ParentBookID, const APP_DESC* appdesc );
 04B0: 00000000 2DAC2645 ; 12C: void BookObj_KillBook( BOOK* book );
 04B4: 00000000 81A82645 ; 12D: void BookObj_GotoPage( BOOK* book, const PAGE_DESC* page );
 04B8: 00000000 E9A92645 ; 12E: void BookObj_ReturnPage( BOOK* book, int );
@@ -716,6 +716,9 @@
 0F50: 00000000 29BBE944 ; 3D4: LIST* DataBrowserBook_GetCurrentFoldersList( BOOK* DataBrowserBook );
 0F54: 00000000 DD803145 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 F5003245 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
+0F5C: 00000000 E9262B45 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
+0F60: 00000000 15E96244 ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+0F64: 00000000 8509DD44 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
 
 
