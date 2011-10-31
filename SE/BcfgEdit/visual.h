@@ -65,7 +65,8 @@ typedef struct _DISP_OBJ_FONT_SEL : DISP_OBJ
 
 GUI_COLOR *CreateEditColorGUI(MyBOOK * myBook, int type);
 GUI_COORDINATES *CreateEditCoordinatesGUI(MyBOOK * myBook, int type);
-GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook);
+//GUI_FONT_SEL *CreateFontSelectGUI(MyBOOK * myBook);
+GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook, int step );
 wchar_t *Font_GetNameByFontId(int id);
 GUI_LIST *CreateFileFolderSelect(MyBOOK * myBook, wchar_t *str);
 void Free_FLIST(void);

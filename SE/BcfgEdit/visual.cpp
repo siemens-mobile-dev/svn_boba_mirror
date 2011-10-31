@@ -1,5 +1,6 @@
 #include "..\include\Lib_Clara.h"
 #include "..\include\Dir.h"
+#include "..\include\var_arg.h"
 
 #include "..\include\cfg_items.h"
 #include "main.h"
@@ -11,6 +12,8 @@ void OnOrientationChangeCoordinatesEdit( BOOK* bk, void* );
 
 static const char EditColorGuiName[] = "Gui_EditColor";
 int colors[4] = { 0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0x80C6AAAF };
+
+int font_step;
 
 #define MIN( a, b ) ( a < b ) ? a : b
 #define MAX( a, b ) ( a  >  b ) ? a : b
@@ -217,7 +220,7 @@ void OnOkColorEdit( BOOK* bk, GUI* )
 		myBook->cur_hp.color->color = COLOR_RGBA( disp_obj->r, disp_obj->g, disp_obj->b, disp_obj->a );
 	}
 	FREE_GUI( myBook->color );
-        RefreshEdList(bk);
+	RefreshEdList(bk);
 }
 
 GUI_COLOR* CreateEditColorGUI( MyBOOK* myBook, int type )
@@ -561,7 +564,7 @@ void OnOkCoordinatesEdit( BOOK* bk, void* )
 	{
 		BookObj_SetDisplayOrientation( bk, 0 );
 		FREE_GUI( myBook->coord );
-                RefreshEdList(bk);
+		RefreshEdList(bk);
 	}
 }
 
@@ -643,37 +646,37 @@ int GetIdByFontId( int id )
 int FontSelectGuiOnCreate( DISP_OBJ_FONT_SEL* db )
 {
 	wchar_t ustr[64];
-        int font_old;
+	int font_old;
 	win12512unicode( ustr, test_str, MAXELEMS( test_str ) - 1 );
 	db->test_str_id = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 
-        int platform=GetChipID()&CHIPID_MASK;
-        if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
-          db->platform_flag=1;
-        else
-          db->platform_flag=0;
-
-        if (db->platform_flag)
-        {
-          db->total_fonts = max_size/font_step;
-          db->font_heights = new u16[db->total_fonts];
-          for ( int i = 0; i < db->total_fonts; i++ )
-          {
-            db->font_heights[i] = (i+1)*font_step;
-          }
-        }
+	int platform=GetChipID()&CHIPID_MASK;
+	if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+		db->platform_flag=1;
 	else
-        {
-          db->total_fonts = * GetFontCount();
-          db->font_heights = new u16[db->total_fonts];
-          font_old = SetFont( FONT_E_20R );
-          for ( int i = 0; i < db->total_fonts; i++ )
-          {
-            SetFont( GetFontDesc()[i].id );
-            db->font_heights[i] = GetImageHeight( ' ' );
-          }
-          SetFont( font_old );
-        }
+		db->platform_flag=0;
+
+	if (db->platform_flag)
+	{
+		db->total_fonts = max_size/font_step;
+		db->font_heights = new u16[db->total_fonts];
+		for ( int i = 0; i < db->total_fonts; i++ )
+		{
+			db->font_heights[i] = (i+1)*font_step;
+		}
+	}
+	else
+	{
+		db->total_fonts = * GetFontCount();
+		db->font_heights = new u16[db->total_fonts];
+		font_old = SetFont( FONT_E_20R );
+		for ( int i = 0; i < db->total_fonts; i++ )
+		{
+			SetFont( GetFontDesc()[i].id );
+			db->font_heights[i] = GetImageHeight( ' ' );
+		}
+		SetFont( font_old );
+	}
 	db->cur_offs = 0;
 	db->req_check_vis = 1;
 	return 1;
@@ -741,47 +744,47 @@ void FontSelectGuiOnRedraw( DISP_OBJ_FONT_SEL* db, int, RECT* cur_rc, int )
 	DrawRect( x1, y1, x2, y2, clBlack, clBlack );
 
 	if (db->platform_flag)
-        {
-          int n=1;
-          int sp[5];
-          sp[0] = TextID_CreateIntegerID((db->cur_pos+1)*font_step);
-          if (db->style_bold)
-          {
-            sp[n] = 0x78000000 + '_';
-            sp[n+1] = 0x78000000 + 'B';
-            n = n+2;
-          }
-          if (db->style_italic)
-          {
-            sp[n] = 0x78000000 + '_';
-            sp[n+1] = 0x78000000 + 'I';
-            n = n+2;
-          }
-          selfont = TextID_Create(sp,ENC_TEXTID,n);
-        }
-        else selfont = TextID_Create( GetFontDesc()[db->cur_pos].name, ENC_UCS2, 9 );
+	{
+		int n=1;
+		int sp[5];
+		sp[0] = TextID_CreateIntegerID((db->cur_pos+1)*font_step);
+		if (db->style_bold)
+		{
+			sp[n] = 0x78000000 + '_';
+			sp[n+1] = 0x78000000 + 'B';
+			n = n+2;
+		}
+		if (db->style_italic)
+		{
+			sp[n] = 0x78000000 + '_';
+			sp[n+1] = 0x78000000 + 'I';
+			n = n+2;
+		}
+		selfont = TextID_Create(sp,ENC_TEXTID,n);
+	}
+	else selfont = TextID_Create( GetFontDesc()[db->cur_pos].name, ENC_UCS2, 9 );
 	DrawString( selfont, 0, x1 + 3, y1 + 1, x2 - 2, y_offs - 1, 0, 0, 0xFF0080FF, 0x00000000 ); // Рисуем выбранный шрифт в шапке меню
 	TextID_Destroy( selfont );
-        
+
 	int cur_y = y_offs;
 	for ( int i = db->cur_offs; i < db->total_fonts; i++ )
 	{
-          int font, font_h;
-          font_h = db->font_heights[i];
-          if (db->platform_flag) font = font_h + (db->style_bold<<8) + (db->style_italic<<9);
-          else font = GetFontDesc()[i].id;
-          SetFont( font );
-          if ( i == db->cur_pos ) // Если это выбранный шрифт
-            DrawRect( x1 + 1, cur_y, x2 - 1, cur_y + font_h + 2, 0xFF00FF00, 0xFF408000 );
-          DrawString( db->test_str_id, 0, x1 + 2, cur_y + 1, x2 - 2, cur_y + font_h + 1, 0, 0, clWhite, 0x00000000 );
-          cur_y += font_h + 2;
-          if ( cur_y>y2 ) break;
+		int font, font_h;
+		font_h = db->font_heights[i];
+		if (db->platform_flag) font = font_h + (db->style_bold<<8) + (db->style_italic<<9);
+		else font = GetFontDesc()[i].id;
+		SetFont( font );
+		if ( i == db->cur_pos ) // Если это выбранный шрифт
+			DrawRect( x1 + 1, cur_y, x2 - 1, cur_y + font_h + 2, 0xFF00FF00, 0xFF408000 );
+		DrawString( db->test_str_id, 0, x1 + 2, cur_y + 1, x2 - 2, cur_y + font_h + 1, 0, 0, clWhite, 0x00000000 );
+		cur_y += font_h + 2;
+		if ( cur_y>y2 ) break;
 	}
-        
+
 	SetFont( font_old );
 	GC_SetXX( gc, gc_xx );
-        
-        }
+
+}
 
 
 
@@ -799,27 +802,27 @@ void FontSelectGuiOnKey( DISP_OBJ_FONT_SEL* db, int key, int, int repeat, int ty
 			if ( ++db->cur_pos  >= db->total_fonts )
 				db->cur_pos = 0;
 		}
-                if ( key == KEY_DEL )
-                {
-                        if ((!db->style_bold)&&(!db->style_italic))
-                        {
-                                db->style_bold=1;
-                        }
-                        else if ((db->style_bold)&&(!db->style_italic))
-                        {
-                                db->style_bold=0;
-                                db->style_italic=1;
-                        }
-                        else if ((!db->style_bold)&&(db->style_italic))
-                        {
-                                db->style_bold=1;
-                        }
-                        else if ((db->style_bold)&&(db->style_italic))
-                        {
-                                db->style_bold=0;
-                                db->style_italic=0;
-                        }
-                }
+		if ( key == KEY_DEL )
+		{
+			if ((!db->style_bold)&&(!db->style_italic))
+			{
+				db->style_bold=1;
+			}
+			else if ((db->style_bold)&&(!db->style_italic))
+			{
+				db->style_bold=0;
+				db->style_italic=1;
+			}
+			else if ((!db->style_bold)&&(db->style_italic))
+			{
+				db->style_bold=1;
+			}
+			else if ((db->style_bold)&&(db->style_italic))
+			{
+				db->style_bold=0;
+				db->style_italic=0;
+			}
+		}
 		db->req_check_vis = 1;
 		DispObject_InvalidateRect( db, 0 );
 	}
@@ -836,9 +839,9 @@ void OnOkFontSelect( BOOK* bk, GUI* )
 	MyBOOK* myBook = (MyBOOK*) bk;
 	DISP_OBJ_FONT_SEL* disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( myBook->font_select );
 	if (disp_obj->platform_flag) myBook->cur_hp.font->font = (disp_obj->cur_pos+1)*font_step + (disp_obj->style_bold<<8) + (disp_obj->style_italic<<9);
-        else myBook->cur_hp.font->font = GetFontDesc()[disp_obj->cur_pos].id;
-        FREE_GUI( myBook->font_select );
-        RefreshEdList(bk);
+	else myBook->cur_hp.font->font = GetFontDesc()[disp_obj->cur_pos].id;
+	FREE_GUI( myBook->font_select );
+	RefreshEdList(bk);
 }
 
 
@@ -852,17 +855,46 @@ void FontSelectGui_constr( DISP_DESC* desc )
 	DISP_DESC_SetOnKey( desc, ( DISP_OBJ_ONKEY_METHOD )FontSelectGuiOnKey );
 }
 
+void OnOkManualFontSelect( BOOK *bk, wchar_t *string, int len )
+{
+	MyBOOK *mbk = (MyBOOK *)bk;
+	int step;
+	wtoi( string, len, &step );
 
+	FREE_GUI( mbk->font_select );
+	FREE_GUI( mbk->text_input );
+	//RefreshEdList(bk);
+	CreateFontSelectGUI( mbk, step );
+}
+
+void OnBackManualFontSelect( BOOK *bk, GUI* )
+{
+	MyBOOK *mbk = (MyBOOK *)bk;
+	FREE_GUI(mbk->text_input);
+}
+
+void OnManualFontSelect( BOOK *bk, GUI* )
+{
+	MyBOOK *mbk = (MyBOOK *)bk;
+	mbk->text_input = CreateStringInputVA(0,VAR_BOOK(bk),
+										  VAR_HEADER_TEXT(STR("Введите шаг")),
+										  VAR_STRINP_MODE(9/*IT_UNSIGNED_DIGIT*/),
+										  VAR_STRINP_ENABLE_EMPTY_STR( 0 ),
+										  VAR_PREV_ACTION_PROC(OnBackManualFontSelect),
+										  VAR_OK_PROC(OnOkManualFontSelect),0);
+}
 
 void FontSelectGui_destr( GUI* gui )
 {
 }
 
-GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook )
+GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook, int step )
 {
 
 	GUI_FONT_SEL* gui_fontsel = new GUI_FONT_SEL;
 	DISP_OBJ_FONT_SEL* disp_obj;
+
+	font_step = step;
 
 	wchar_t ustr[64];
 	if ( !GUIObject_Create( gui_fontsel, FontSelectGui_destr, FontSelectGui_constr, myBook, 0, 0, 0 ) )
@@ -871,16 +903,19 @@ GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook )
 		return 0;
 	}
 
-        disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( gui_fontsel );
-        
-        if (disp_obj->platform_flag)
-        {
-          disp_obj->cur_pos = (myBook->cur_hp.font->font&0xFF)/font_step-1;
-          int style_flags = myBook->cur_hp.font->font>>8;
-          disp_obj->style_bold=style_flags&bold;
-          disp_obj->style_italic=(style_flags&italic)>>1;
-        }
-        else disp_obj->cur_pos = GetIdByFontId( myBook->cur_hp.font->font );
+	disp_obj = (DISP_OBJ_FONT_SEL*) GUIObject_GetDispObject( gui_fontsel );
+
+	if (disp_obj->platform_flag)
+	{
+		if((myBook->cur_hp.font->font&0xFF) >= font_step)
+			disp_obj->cur_pos = (myBook->cur_hp.font->font&0xFF)/font_step-1;
+		else
+			disp_obj->cur_pos = 0;
+		int style_flags = myBook->cur_hp.font->font>>8;
+		disp_obj->style_bold=style_flags&bold;
+		disp_obj->style_italic=(style_flags&italic)>>1;
+	}
+	else disp_obj->cur_pos = GetIdByFontId( myBook->cur_hp.font->font );
 
 	myBook->font_select = gui_fontsel;
 
@@ -895,6 +930,12 @@ GUI_FONT_SEL* CreateFontSelectGUI( MyBOOK* myBook )
 	GUIObject_SoftKeys_SetAction( myBook->font_select, ACTION_BACK, OnBackFontSelect );
 	GUIObject_SoftKeys_SetAction( myBook->font_select, ACTION_SELECT1, OnOkFontSelect );
 	GUIObject_Show( myBook->font_select );
+
+	TEXTID textid = EMPTY_TEXTID;
+	textidname2id(L"MP_MANUAL_SK",TEXTID_ANY_LEN,&textid); //вручную
+	GUIObject_SoftKeys_SetAction( myBook->font_select, 0, OnManualFontSelect );
+	GUIObject_SoftKeys_SetText( myBook->font_select, 0, textid );
+
 	return gui_fontsel;
 }
 

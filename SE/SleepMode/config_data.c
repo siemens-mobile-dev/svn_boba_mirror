@@ -37,18 +37,10 @@ CFGVAR CFG_HDR cfghdr4={CFG_LEVEL,"",0,0};
 
 
 
-CFGVAR CFG_HDR cfghdr5={CFG_LEVEL,"Date and Time backup",1,0};
-  CFGVAR CFG_HDR cfghdr5_1={CFG_DATE,"Default Date",0,0};
-  CFGVAR DATE default_date={2000,01,01};
-
-  CFGVAR CFG_HDR cfghdr5_2={CFG_TIME,"Default Time",0,0};
-  CFGVAR TIME default_time={05,00,00};
-  
-  CFGVAR CFG_HDR cfghdr5_3={CFG_INT,"Time correction",0,300};
-  CFGVAR int OFF_TIME_CORRECTION=10;
-CFGVAR CFG_HDR cfghdr6={CFG_LEVEL,"",0,0};
+CFGVAR CFG_HDR cfghdr5={CFG_INT,"Time correction",0,300};
+CFGVAR int OFF_TIME_CORRECTION=10;
 
 
 
-CFGVAR CFG_HDR cfghdr7={CFG_CHECKBOX,"Show seconds",0,0};
+CFGVAR CFG_HDR cfghdr6={CFG_CHECKBOX,"Show seconds",0,0};
 CFGVAR int ShowSeconds=0;

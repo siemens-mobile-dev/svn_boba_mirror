@@ -258,7 +258,7 @@ void OnSelectCBoxGui( BOOK* bk, GUI* )
 		myBook->cur_hp.cbox->selected = item;
 
 	FREE_GUI( myBook->cbox_gui );
-        RefreshEdList(bk);
+	RefreshEdList(bk);
 }
 
 void CreateCBoxGui( MyBOOK* myBook )
@@ -308,7 +308,7 @@ void OnOkCreateUnsignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	{
 		myBook->cur_hp.unsignedint->unsignedint = ui;
 		FREE_GUI( myBook->text_input );
-                RefreshEdList(bk);
+		RefreshEdList(bk);
 	}
 }
 
@@ -350,7 +350,7 @@ void OnOkCreateSignedNumberGui( BOOK* bk, wchar_t* string, int len )
 	{
 		myBook->cur_hp.signedint->signedint = i;
 		FREE_GUI( myBook->text_input );
-                RefreshEdList(bk);
+		RefreshEdList(bk);
 	}
 }
 
@@ -386,7 +386,7 @@ void OnOkCreateWinOrPassGui( BOOK* bk, wchar_t* string, int len )
 	{
 		unicode2win1251( &myBook->cur_hp.str->chars[0], string, myBook->cur_hp.str->max );
 		FREE_GUI( myBook->text_input );
-                RefreshEdList(bk);
+		RefreshEdList(bk);
 	}
 }
 
@@ -433,7 +433,7 @@ void OnOkCreateUnicodeGui( BOOK* bk, wchar_t* string, int len )
 		// unicode2win1251( ( char*)hp + sizeof( CFG_HDR ), string, hp->max );
 		wstrncpy( &myBook->cur_hp.wstr->chars[0], string, myBook->cur_hp.wstr->max - 1 );
 		FREE_GUI( myBook->text_input );
-                RefreshEdList(bk);
+		RefreshEdList(bk);
 	}
 }
 
@@ -477,7 +477,7 @@ void CreateUnicodeSI( MyBOOK* myBook, int is_pass )
 	text = TextID_Create( ustr, ENC_UCS2, TEXTID_ANY_LEN );
 	textidname2id( L"MSG_UI_MOVE_MESSAGE_SELECT_FOLDER_TXT", - 1, &tmp );
 	if (tmp==EMPTY_TEXTID) tmp = TextID_Create(L"Select folder",ENC_UCS2,TEXTID_ANY_LEN);
-        sel_folder = tmp;
+	sel_folder = tmp;
 	textidname2id( L"WAP_SELECT_FILE_TXT", - 1, &tmp );
 	sel_file = tmp;
 	myBook->text_input = CreateStringInputVA( 0,
@@ -553,7 +553,7 @@ void OnSelect1GuiBcfg( BOOK* bk, GUI* )
 		CreateEditColorGUI( mbk, 1 );
 		break;
 	case CFG_FONT:
-		CreateFontSelectGUI( mbk );
+		CreateFontSelectGUI( mbk, 5 );
 		break;
 	case CFG_KEYCODE:
 		BookObj_CallPage( mbk, &bk_keycode_select );
@@ -642,28 +642,28 @@ TEXTID GetSubItemText( MyBOOK* myBook, CFG_HDR* hp )
 			break;
 		case CFG_FONT:
 			{
-                        int platform=GetChipID()&CHIPID_MASK;
-                        if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
-                        {
-                          int n=1;
-                          int sp[5];
-                          sp[0] = TextID_CreateIntegerID (((CFG_HDR_FONT*)hp)->font&0xFF);
-                          int style_flags = ((CFG_HDR_FONT*)hp)->font>>8;
-                          if (style_flags&bold)
-                          {
-                            sp[n] = 0x78000000 + '_';
-                            sp[n+1] = 0x78000000 + 'B';
-                            n = n+2;
-                          }
-                          if (style_flags&italic)
-                          {
-                            sp[n] = 0x78000000 + '_';
-                            sp[n+1] = 0x78000000 + 'I';
-                            n = n+2;
-                          }
-                          str_id = TextID_Create(sp,ENC_TEXTID,n);
-                        }
-                        else str_id = TextID_Create( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), ENC_UCS2, TEXTID_ANY_LEN );
+				int platform=GetChipID()&CHIPID_MASK;
+				if (platform==CHIPID_DB3200||platform==CHIPID_DB3210||platform==CHIPID_DB3350)
+				{
+					int n=1;
+					int sp[5];
+					sp[0] = TextID_CreateIntegerID (((CFG_HDR_FONT*)hp)->font&0xFF);
+					int style_flags = ((CFG_HDR_FONT*)hp)->font>>8;
+					if (style_flags&bold)
+					{
+						sp[n] = 0x78000000 + '_';
+						sp[n+1] = 0x78000000 + 'B';
+						n = n+2;
+					}
+					if (style_flags&italic)
+					{
+						sp[n] = 0x78000000 + '_';
+						sp[n+1] = 0x78000000 + 'I';
+						n = n+2;
+					}
+					str_id = TextID_Create(sp,ENC_TEXTID,n);
+				}
+				else str_id = TextID_Create( Font_GetNameByFontId( ((CFG_HDR_FONT*)hp)->font ), ENC_UCS2, TEXTID_ANY_LEN );
 			}
 			break;
 		case CFG_KEYCODE:
@@ -746,7 +746,7 @@ GUI_LIST* CreateGuiList( MyBOOK* bk, int set_focus )
 	ListMenu_SetItemStyle( lo, 3 );
 	ListMenu_SetItemTextScroll( lo, 1 );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_BACK, OnBackBcfgGui );
-        GUIObject_SoftKeys_SetAction( lo, ACTION_LONG_BACK, OnBackBcfgGui );
+	GUIObject_SoftKeys_SetAction( lo, ACTION_LONG_BACK, OnBackBcfgGui );
 	GUIObject_SoftKeys_SetAction( lo, ACTION_SELECT1, OnSelect1GuiBcfg );
 	return lo;
 };
@@ -754,12 +754,12 @@ GUI_LIST* CreateGuiList( MyBOOK* bk, int set_focus )
 
 void RefreshEdList(BOOK * bk)
 {
-  MyBOOK* mbk = (MyBOOK*) bk;
-  int pos = ListMenu_GetSelectedItem(mbk->bcfg);
-  ListMenu_DestroyItems(mbk->bcfg);
-  ListMenu_SetItemCount( mbk->bcfg, mbk->list->FirstFree );
-  ListMenu_SetCursorToItem( mbk->bcfg, pos );
-  GUIObject_SoftKeys_SetVisible( mbk->bcfg, ACTION_SELECT1, 1 );
+	MyBOOK* mbk = (MyBOOK*) bk;
+	int pos = ListMenu_GetSelectedItem(mbk->bcfg);
+	ListMenu_DestroyItems(mbk->bcfg);
+	ListMenu_SetItemCount( mbk->bcfg, mbk->list->FirstFree );
+	ListMenu_SetCursorToItem( mbk->bcfg, pos );
+	GUIObject_SoftKeys_SetVisible( mbk->bcfg, ACTION_SELECT1, 1 );
 }
 
 
@@ -915,19 +915,19 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 			break;
 
 		case CFG_TIME:
-			n -= sizeof( DATE );
-			if( n < 0 )
-				error = true;
-			else
-				p += sizeof( DATE );
-			break;
-
-		case CFG_DATE:
 			n -= sizeof( TIME );
 			if( n < 0 )
 				error = true;
 			else
 				p += sizeof( TIME );
+			break;
+
+		case CFG_DATE:
+			n -= sizeof( DATE );
+			if( n < 0 )
+				error = true;
+			else
+				p += sizeof( DATE );
 			break;
 
 		case CFG_RECT:
@@ -979,8 +979,8 @@ GUI* create_ed( BOOK* book, CFG_HDR* need_to_focus )
 
 static int RecreateEdPage( void* mess , BOOK* bk )
 {
-        RefreshEdList(bk);
-        return 1;
+	RefreshEdList(bk);
+	return 1;
 }
 
 
@@ -996,7 +996,7 @@ static int CreateEdPageOnCreate( void* mess , BOOK* bk )
 const PAGE_MSG bk_msglst_editor[] @ "DYN_PAGE" =
 {
 	PAGE_ENTER_EVENT_TAG, CreateEdPageOnCreate,
-        ACCEPT_EVENT_TAG, RecreateEdPage,
+	ACCEPT_EVENT_TAG, RecreateEdPage,
 	NIL_EVENT_TAG, NULL
 };
 
@@ -1104,10 +1104,10 @@ static int MainPageOnCreate( void* , BOOK* bk )
 		{
 			BookObj_GotoPage( mbk, &bk_editor );
 		}
-                else
-                {
-                        FreeBook( mbk );
-                }
+		else
+		{
+			FreeBook( mbk );
+		}
 	}
 	else
 	{

@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define font_step 5
+//#define font_step 5
 #define max_size 100
 #define bold 1
 #define italic 2
