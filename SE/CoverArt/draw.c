@@ -111,9 +111,9 @@ void DrawProgress(int bColor, int cColor, int oColor, RECT rect, int progress, i
 {
   if (ProgressBar_ColorFromTheme)
   {
-    bColor=GetThemeColor(0 , 110); //Color 110=Progress_bar_outline
-    oColor=GetThemeColor(0 , 113); //Color 113=Progress_bar_fill
-    cColor=GetThemeColor(0 , 112); //Color 112=Progress_bar_slider
+    bColor=GetThemeColor(0 , THEMEITEM_PROGRESS_BAR_OUTLINE);
+    oColor=GetThemeColor(0 , THEMEITEM_PROGRESS_BAR_FILL);
+    cColor=GetThemeColor(0 , THEMEITEM_PROGRESS_BAR_SLIDER);
   }
   if (type)
   {
