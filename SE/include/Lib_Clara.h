@@ -348,10 +348,10 @@ __swi __arm int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 __swi __arm int AB_GETNBROFITEMS( int get_from, int sub_id );
 
 #pragma swi_number=0x166
-__swi __arm int PNUM_len( void* pnum );
+__swi __arm int PNUM_len( BCD_TEXT pnum );
 
 #pragma swi_number=0x167
-__swi __arm void PNUM2str( char* str, void* pnum, int len, int max_len );
+__swi __arm void PNUM2str( char* str, BCD_TEXT pnum, int len, int max_len );
 
 #pragma swi_number=0x168
 __swi __arm DISP_OBJ* GUIObject_GetDispObject( GUI* );
@@ -648,7 +648,7 @@ __swi __arm int MainInput_getVisible( GUI* );
 #pragma swi_number=0x1F7
 __swi __arm int MainInput_strlen( GUI* );
 #pragma swi_number=0x1F8
-__swi __arm char* MainInput_getPNUM( GUI* );
+__swi __arm BCD_TEXT MainInput_getPNUM( GUI* );
 #pragma swi_number=0x1F9
 __swi __arm int MainInput_isPlus( GUI* );
 
@@ -1209,9 +1209,9 @@ __swi __arm void MainInput_Hide( GUI* );
 #pragma swi_number=0x2EC
 __swi __arm void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
 #pragma swi_number=0x2ED
-__swi __arm TEXTID PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
+__swi __arm TEXTID PNUM2Name( BCD_TEXT pnum, int isIconNeeded, int only_full_number_flag );
 #pragma swi_number=0x2EE
-__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
+__swi __arm int SpeedDial_GetPNUM( int _zero, char charter0__9, BCD_TEXT PNUM );
 
 #pragma swi_number=0x2EF
 __swi __arm void* MetaData_Desc_Create( wchar_t* path, wchar_t* name );
@@ -1789,7 +1789,7 @@ __swi __arm void GUIObject_SetZOrder( GUI*, char, GUI* );
 __swi __arm int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 
 #pragma swi_number=0x3D8
-__swi __arm void str2PNUM( void* pnum, char* str, int len, int max_len );
+__swi __arm void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 #pragma swi_number=0x3D9
 __swi __arm void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 

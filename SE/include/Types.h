@@ -1172,6 +1172,8 @@ template<typename T> TIMERPROC MKTIMERPROC( void(*param)(u16,T*) )
 
 // other -----------------------------------------------------------------------
 
+typedef char* BCD_TEXT;
+
 //pb_ui_search_bk_create_search_menu
 #define MODE_PB		0x0001
 #define MODE_GROUPS	0x0002
