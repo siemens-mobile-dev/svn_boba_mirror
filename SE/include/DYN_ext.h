@@ -675,5 +675,10 @@ extern const int THEMEITEM_VOLUME_STAPLES ;
 extern const int THEMEITEM_PROGRESS_BAR_OUTLINE ;
 extern const int THEMEITEM_PROGRESS_BAR_SLIDER ;
 extern const int THEMEITEM_PROGRESS_BAR_FILL ;
+extern const int ACTION_CLIPBOARD_COPYALL ;
+extern const int ACTION_CLIPBOARD_PASTE ;
+extern const int ACTION_CLIPBOARD_MARKANDCOPY ;
+extern const int ACTION_DB_MANAGEFILE ;
+
 
 #endif

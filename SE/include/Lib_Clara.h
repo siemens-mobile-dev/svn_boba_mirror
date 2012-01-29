@@ -1793,6 +1793,10 @@ __swi __arm void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 #pragma swi_number=0x3D9
 __swi __arm void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 
+
+#pragma swi_number=0x3DD
+__swi __arm void GUIObject_SoftKeys_SubActionPressedNotification( GUI*, u16 actionID, BOOL );
+
 #ifdef LIBCLARANS
 }
 #endif

@@ -350,7 +350,7 @@ int GetBooksFromSession(MyBOOK * mbk,UI_APP_SESSION * session,LIST * books_list,
 			char s[MAX_BOOK_NAME_LEN+1];
 			BOOK_LIST_ITEM * elem = new BOOK_LIST_ITEM;
 			elem->book=book;
-			elem->isGuiBook = book->xguilist->guilist->FirstFree;
+			elem->gui_count = book->xguilist->guilist->FirstFree;
 			elem->isJava=FALSE;
 			elem->isJava_2010=FALSE;
 
@@ -389,7 +389,7 @@ int GetBooksFromSession(MyBOOK * mbk,UI_APP_SESSION * session,LIST * books_list,
 			{
 				if (mbk->books_show_hid==FALSE && elem->isHidden==TRUE)
 					BOOK_LIST_ITEM_Destroy(elem);
-				else if (mbk->books_show_nogui==FALSE && !elem->isGuiBook)
+				else if (mbk->books_show_nogui==FALSE && !elem->gui_count)
 					BOOK_LIST_ITEM_Destroy(elem);
 				else
 					List_InsertFirst( books_list, elem );
@@ -398,7 +398,7 @@ int GetBooksFromSession(MyBOOK * mbk,UI_APP_SESSION * session,LIST * books_list,
 			{
 				if (mbk->elfs_show_hid==FALSE && elem->isHidden==TRUE)
 					BOOK_LIST_ITEM_Destroy(elem);
-				else if (mbk->elfs_show_nogui==FALSE && !elem->isGuiBook)
+				else if (mbk->elfs_show_nogui==FALSE && !elem->gui_count)
 					BOOK_LIST_ITEM_Destroy(elem);
 				else
 				{
@@ -651,7 +651,7 @@ int onCallback_Books( GUI_MESSAGE* msg )
 
 				GUIonMessage_SetMenuItemText( msg, onCallback_Books_GetItemName(elem) );
 
-				if ( !elem->isGuiBook )
+				if ( !elem->gui_count )
 				{
 					GUIonMessage_SetItemDisabled( msg, TRUE );
 					GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to book without GUI..." ) );
@@ -673,7 +673,7 @@ int onCallback_Books( GUI_MESSAGE* msg )
 
 		GUIonMessage_SubItem_SetText(msg,onCallback_Books_GetItemName(elem));
 
-		if ( !elem->isGuiBook )
+		if ( !elem->gui_count )
 		{
 			GUIonMessage_SubItem_SetDisabled( msg, TRUE );
 			//GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to book without GUI..." ) );
@@ -685,7 +685,7 @@ int onCallback_Books( GUI_MESSAGE* msg )
 		ses_elem->pos_subitem = GUIonMessage_SubItem_GetSelectedIndex(msg);
 
 		elem=(BOOK_LIST_ITEM*)List_Get(ses_elem->books_list,ses_elem->pos_subitem);
-		if ( !elem->isGuiBook ) GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to book without GUI..." ) );
+		if ( !elem->gui_count ) GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to book without GUI..." ) );
 
 		RefreshBookSoftkeys( mbk );
 		break;
@@ -719,7 +719,7 @@ int onCallback_Elfs( GUI_MESSAGE* msg )
 			}
 			GUIonMessage_SetMenuItemText( msg, name );
 
-			if ( !elem->isGuiBook )
+			if ( !elem->gui_count )
 			{
 				GUIonMessage_SetItemDisabled( msg, TRUE );
 				GUIonMessage_SetMenuItemUnavailableText( msg, STR( "Can't set focus to elf without GUI..." ) );
@@ -755,32 +755,54 @@ void onEnterPressed_Elfs( BOOK* book, GUI* lt )
 }
 
 
+int List_Find_Back_Action( SOFTKEY_DESC * elem, int act )
+{
+  if ( elem->action == act ) return(0);
+  return(1);
+}
+
+
+int List_Find_Back_Action_A2( SOFTKEY_DESC_A2 * elem, int act )
+{
+  if ( elem->action == act ) return(0);
+  return(1);
+}
+
+
 // при нажатии "С"
 void onDelPressed_Books( BOOK* book )
 {
-	BOOK_LIST_ITEM * elem = GetBookListItem( book, BOOKLIST );
-	if (elem)
+        MyBOOK* mbk = (MyBOOK*) book;
+        
+        BOOK * sby_book=Find_StandbyBook();
+	BOOK_LIST_ITEM * elem = GetBookListItem( mbk, BOOKLIST );
+
+	if (elem )
 	{
 		BOOK* bk = elem->book;
 
-		if (elem->isJava_2010==TRUE) JavaSession_Manager( 0x0E );
-		else if (elem->isJava==TRUE) UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( bk ) );
-		else
-		{
-			//      BOOK * sby_book=Find_StandbyBook();
-			if ( CheckEv( bk, TERMINATE_SESSION_EVENT ) )
-				UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( (BOOK*)List_Get( bk->xbook->app_session->listbook, bk->xbook->app_session->listbook->FirstFree - 1 ) ) );
-			else
-				UI_Event_toBookID( RETURN_TO_STANDBY_EVENT, BookObj_GetBookID( (BOOK*)List_Get( bk->xbook->app_session->listbook, bk->xbook->app_session->listbook->FirstFree - 1 ) ) );
-			/*        int parentID;
-			do
-			{
-			parentID=bk->xbook->parent_BookID;
-			if (bk!=sby_book) FreeBook(bk);
-			if (parentID!=-1) bk=FindBookByID(parentID);
-		}
-			while(parentID!=-1);*/
-		}
+                if (bk != sby_book )
+                {
+		      if (elem->isJava_2010==TRUE) JavaSession_Manager( 0x0E );
+		      else if (elem->isJava==TRUE) UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( bk ) );
+		      else
+      		      {
+			      if ( CheckEv( bk, TERMINATE_SESSION_EVENT ) )
+	      			      UI_Event_toBookID( TERMINATE_SESSION_EVENT, BookObj_GetBookID( (BOOK*)List_Get( bk->xbook->app_session->listbook, bk->xbook->app_session->listbook->FirstFree - 1 ) ) );
+      			      else if ( CheckEv( bk, RETURN_TO_STANDBY_EVENT ) )
+		      		      UI_Event_toBookID( RETURN_TO_STANDBY_EVENT, BookObj_GetBookID( (BOOK*)List_Get( bk->xbook->app_session->listbook, bk->xbook->app_session->listbook->FirstFree - 1 ) ) );
+                              else
+                              {
+                                      if ( elem->gui_count )
+                                      {
+                                              BookObj_SetFocus(bk,0);
+                                              GUI * gui = (GUI*)List_Get( bk->xguilist->guilist, elem->gui_count - 1 );
+                                              GUIObject_SoftKeys_ExecuteAction( gui, ACTION_LONG_BACK );
+                                              BookObj_SetFocus(mbk,0);
+                                      }
+                              }
+		      }
+                }
 	}
 }
 
@@ -1069,7 +1091,7 @@ void RefreshElfSoftkeys( MyBOOK* mbk, int item )
 	if ( mbk->elistcnt )
 	{
 		BOOK_LIST_ITEM* elem = (BOOK_LIST_ITEM*) List_Get( mbk->elfs_list, item );
-		if ( !elem->isGuiBook )
+		if ( !elem->gui_count )
 			GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, FALSE );
 		else
 			GUIObject_SoftKeys_SetVisible( mbk->elist, ACTION_SELECT1, TRUE );
@@ -1104,7 +1126,7 @@ void RefreshBookSoftkeys( MyBOOK* mbk )
 	{
 		BOOK_LIST_ITEM * elem = GetBookListItem(mbk,BOOKLIST);
 
-		if ( elem->isGuiBook )
+		if ( elem->gui_count )
 			GUIObject_SoftKeys_SetVisible( mbk->blist, ACTION_SELECT1, TRUE );
 		else
 			GUIObject_SoftKeys_SetVisible( mbk->blist, ACTION_SELECT1, FALSE );

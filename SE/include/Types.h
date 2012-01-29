@@ -1026,30 +1026,31 @@ typedef struct SHORTCUT_DESC
 typedef struct SHORTCUT_DESC_A2
 {
 	wchar_t name[0xC8];
-	wchar_t name1[0xC8];
-	wchar_t name2[0xC8];
-	char shortcut_state;
-	char shortcutID;
-	char press_mode;
-	char is_name1_present;
-	char name_type;
-	char isEditable;
+	wchar_t vendor_name[0xC8];
+	wchar_t entry_point[0xC8];
+	wchar_t pos_in_list;
+	char xxx1;
+	char xxx2;
+	char item_type;
+	char lock_type;	//0 - no lock, 1 - locked, 2 - lockedposition
+	IMAGEID icon;
 }SHORTCUT_DESC_A2;
 
 
-typedef enum shortcut_state {
-	SC_State_Absent=0,
-	SC_State_Inactive=1,
-	SC_State_Present=2,
+typedef enum SHORTCUT_STATE {
+	SC_State_None=0,
+	SC_State_OutOfUse=1,
+	SC_State_Activated=2,
 	SC_State_MainMenu=3
-}shortcut_state;
+}SHORTCUT_STATE;
 
-typedef enum shortcut_name_type {
-	SC_Name_StandName=0,
-	SC_Name_NameAbsent=1,
-	SC_Name_MainMenu=2,
-	SC_Name_AddShortcut=3
-}shortcut_name_type;
+
+typedef enum SHORTCUT_ITEM_TYPE {
+	SC_Type_Standard=0,
+	SC_Type_JavaItem=1,
+	SC_Type_MainMenu=2,
+	SC_Type_AddShortcut=3
+}SHORTCUT_ITEM_TYPE;
 
 // databrowser/associations ----------------------------------------------------
 

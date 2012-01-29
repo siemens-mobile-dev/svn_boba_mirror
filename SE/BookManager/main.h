@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define COPYRIGHT_STRING STR( "\nBookManager v3.41\nbuild 010811\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
+#define COPYRIGHT_STRING STR( "\nBookManager v3.42\nbuild 170112\nCopyright (c) 2007-2008\nHussein\n\nRespect\nIronMaster, KreN\n\n" )
 
 #define BOOKLIST 0
 #define ELFLIST 1
@@ -109,7 +109,7 @@ typedef struct
 {
 	BOOK * book;
 	char * book_name;
-	int isGuiBook;
+	int gui_count;
 	BOOL isJava;
 	BOOL isJava_2010;
 	BOOL isHidden;

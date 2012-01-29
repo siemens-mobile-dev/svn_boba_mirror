@@ -425,7 +425,7 @@ void * SHORTCUT_DESC_Init(char * param)
 {
 	SHORTCUT_DESC * w_buf = new SHORTCUT_DESC;
 	memset( w_buf, 0, sizeof(w_buf) );
-	w_buf->shortcut_state = SC_State_Present;
+	w_buf->shortcut_state = SC_State_Activated;
 
 	if ( strlen( param ) < 0x32 )
 	{
@@ -447,10 +447,9 @@ void * SHORTCUT_DESC_A2_Init(char * param)
 {
 	SHORTCUT_DESC_A2 * w_buf = new SHORTCUT_DESC_A2;
 	memset( w_buf, 0, sizeof(w_buf) );
-	w_buf->shortcut_state = SC_State_Present;
 	str2wstr( w_buf->name, param );
-	if (!wstrcmp(w_buf->name,L"MainMenu")) w_buf->name_type = SC_Name_MainMenu;
-	else w_buf->name_type = SC_Name_StandName;
+	if (!wstrcmp(w_buf->name,L"MainMenu")) w_buf->item_type = SC_Type_MainMenu;
+	else w_buf->item_type = SC_Type_Standard;
 
 	return(w_buf);
 }
