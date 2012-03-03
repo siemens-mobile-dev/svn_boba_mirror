@@ -11,7 +11,7 @@
 #include "language.h"
 #include "smiles.h"
 #include "naticq_ipc.h"
-#include <stdbool.h>
+//#include <stdbool.h>
 #include "status_change.h"
 #include "strings.h"
 #include "manage_cl.h"
@@ -3544,7 +3544,7 @@ int IsUrl(WSHDR *ws, int pos, char *link)
 
 void ParseAnswer(WSHDR *ws, const char *s)
 {
-  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*#'(),%;:@&=/?אבגדהו¸זחטיךכלםמןנסעףפץצקרשתûü‎‏ÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞ‗";
+  const char *valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*#'(),%;:@&=/?אבגדהו¸זחטיךכלםמןנסעףפץצקרשתûü‎‏ÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞ‗~";
   S_SMILES *t;
   S_SMILES *t_root=(S_SMILES *)s_top;
   STXT_SMILES *st;

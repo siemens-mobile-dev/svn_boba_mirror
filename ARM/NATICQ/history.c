@@ -13,7 +13,7 @@ extern const unsigned int UIN;
 */
 
 
-static do_logwrite(unsigned int uin, char *text)
+static void do_logwrite(unsigned int uin, char *text)
 {
   volatile int hFile;
   unsigned int io_error = 0;
