@@ -486,13 +486,13 @@ int CheckConst(void)
 
 int main(wchar_t *elfname, wchar_t *path, wchar_t *fname)
 {
+  trace_init();
   if (!CheckConst())
   {
     MESSAGE(TextID_Create(L"Go smoke bamboo or update dynconst",ENC_UCS2,TEXTID_ANY_LEN));
     SUBPROC(elf_exit);
     return 0;
   }
-  trace_init();
   MCBook=new MyBOOK;
   memset(MCBook,0,sizeof(MyBOOK));
   GetFileDir(elfname, mcpath,0);

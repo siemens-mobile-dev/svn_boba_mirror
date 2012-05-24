@@ -1030,7 +1030,7 @@ __swi __arm void GUIObject_SoftKeys_Show( GUI* );
 #pragma swi_number=0x2A3
 __swi __arm DISP_OBJ* DispObject_SoftKeys_Get( void );
 #pragma swi_number=0x2A4
-__swi __arm int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+__swi __arm int ThemeImage_SetImage( int theme_image_type, int _zero, int __zero, const wchar_t* path, const wchar_t* fname, int wallp_scaling);
 
 #pragma swi_number=0x2A5
 __swi __arm GUI* CreateYesNoQuestionVA( int zero, ... );
@@ -1792,6 +1792,9 @@ __swi __arm int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 __swi __arm void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 #pragma swi_number=0x3D9
 __swi __arm void pb_ui_search_bk_create_search_menu( int BookID, int mode );
+
+#pragma swi_number=0x3DA
+__swi __arm int ThemeImage_Delete( int theme_image_type );
 
 
 #pragma swi_number=0x3DD

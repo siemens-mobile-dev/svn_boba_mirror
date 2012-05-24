@@ -128,9 +128,9 @@
 ;0628: xxxxxxxx yyyyyyyy ; 18A:
 ;062C: xxxxxxxx yyyyyyyy ; 18B: void stop( PROCESS pid );
 0630: FFFFFFFF B8840E44 ; 18C: OSBOOLEAN get_mem( PROCESS pid, OSADDRESS from, void* to, OSADDRESS size );
-;0634: xxxxxxxx yyyyyyyy ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
-;0638: xxxxxxxx yyyyyyyy ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
-;063C: xxxxxxxx yyyyyyyy ; 18F: PROCESS get_bid( PROCESS pid );
+0634: FFFFFFFF 87D10A44 ; 18D: OSADDRESS get_envp( PROCESS pid, char* name );
+0638: FFFFFFFF 9BD10A44 ; 18E: OSBOOLEAN set_envp( PROCESS pid, char* name, OSADDRESS value );
+063C: FFFFFFFF 70840E44 ; 18F: PROCESS get_bid( PROCESS pid );
 0640: FFFFFFFF 413F1945 ; 190: int datetime2unixtime( DATETIME* dt );
 ;0644: xxxxxxxx yyyyyyyy ; 191:
 ;0648: xxxxxxxx yyyyyyyy ; 192:
@@ -402,12 +402,12 @@
 ;0A70: xxxxxxxx yyyyyyyy ; 29C: void DATE_GetWeekDay( DATE*, char* dest );
 ;0A74: xxxxxxxx yyyyyyyy ; 29D: void Cale_GetSettings( int setID, void* );
 ;0A78: xxxxxxxx yyyyyyyy ; 29E: wchar_t* wstrwstr( const wchar_t* wstr1, const wchar_t* wstr2 );
-;0A7C: xxxxxxxx yyyyyyyy ; 29F: int wstrcmpi( const wchar_t* ws1, const wchar_t* ws2 );
+0A7C: FFFFFFFF 9DD8F144 ; 29F: int wstrcmpi( const wchar_t* ws1, const wchar_t* ws2 );
 ;0A80: xxxxxxxx yyyyyyyy ; 2A0: wchar_t* wstrchr( const wchar_t* source, wchar_t chr );
 ;0A84: xxxxxxxx yyyyyyyy ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
 ;0A88: xxxxxxxx yyyyyyyy ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 ;0A8C: xxxxxxxx yyyyyyyy ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
-;0A90: xxxxxxxx yyyyyyyy ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+0A90: FFFFFFFF FD4A4645 ; 2A4: int ThemeImage_SetImage( int theme_image_type, int _zero, int __zero, const wchar_t* path, const wchar_t* fname, int wallp_scaling);
 ;0A94: xxxxxxxx yyyyyyyy ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 ;0A98: xxxxxxxx yyyyyyyy ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 ;0A9C: xxxxxxxx yyyyyyyy ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -501,7 +501,7 @@
 ;0BFC: xxxxxxxx yyyyyyyy ; 2FF: int DirHandle_SetFilterStr( DIR_HANDLE*, const wchar_t* filter );
 ;0C00: xxxxxxxx yyyyyyyy ; 300: int Disp_GetTextIDWidth( TEXTID, int len );
 ;0C04: xxxxxxxx yyyyyyyy ; 301: int MetaData_Desc_GetCoverInfo( void* MetaData_Desc, char* cover_type, int* size, int* cover_offset );
-;0C08: xxxxxxxx yyyyyyyy ; 302: int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, IMAGEID* );
+0C08: FFFFFFFF 85BD3445 ; 302: int ImageID_GetIndirect( void* buf_image, int size, int __NULL, wchar_t* image_type, IMAGEID* );
 ;0C0C: xxxxxxxx yyyyyyyy ; 303: void unixtime2datetime( int, DATETIME* );
 ;0C10: xxxxxxxx yyyyyyyy ; 304: int List_Insert( LIST* lst, int i, void* item );
 ;0C14: xxxxxxxx yyyyyyyy ; 305: int FileCopy( wchar_t* src_path, wchar_t* src_name, wchar_t* dest_path, wchar_t* dest_name, int );

@@ -181,7 +181,7 @@ void __deleaker_Feedback_SetTextExtended( const char* __file__, int __line__, GU
 #define GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text) __deleaker_GUIObject_SoftKeys_SetTexts( __FILE__,  __LINE__, __unknwnargname1, actionID, short_text, full_text )
 void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__, GUI* __unknwnargname1, u16 actionID, TEXTID short_text, TEXTID full_text );
 #define PNUM2Name(pnum, isIconNeeded, only_full_number_flag) __deleaker_PNUM2Name( __FILE__,  __LINE__, pnum, isIconNeeded, only_full_number_flag )
-TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag );
+TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, BCD_TEXT pnum, int isIconNeeded, int only_full_number_flag );
 #define Date2ID(__unknwnargname1, DateFormat, __unknwnargname3) __deleaker_Date2ID( __FILE__,  __LINE__, __unknwnargname1, DateFormat, __unknwnargname3 )
 TEXTID __deleaker_Date2ID( const char* __file__, int __line__, DATE* __unknwnargname1, int DateFormat, int __unknwnargname3 );
 #define Time2ID(__unknwnargname1, TimeFormat, isSec) __deleaker_Time2ID( __FILE__,  __LINE__, __unknwnargname1, TimeFormat, isSec )

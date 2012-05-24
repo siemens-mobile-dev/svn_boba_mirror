@@ -266,8 +266,8 @@
 0850: 00000000 991CFA10 ; 214: TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum( AB_GET_STRUCT* );
 0858: 00000000 2891A611 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( void );
-085C: 00000000 B9E3FE10 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
-0860: 00000000 65BB2D11 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+085C: 00000000 61C30A10 ; 217: 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+0860: 00000000 B9E3FE10 ; 218: 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 0864: 00000000 1D4BF110 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: 00000000 EC87272A ;821A: PROCESS* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
@@ -598,7 +598,7 @@
 0D80: 00000000 99784E11 ; 360: char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
 0D84: 00000000 C1C60511 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder( void* DataBrowserDesc, int view_sort_ID );
 0D88: 00000000 8D75EE10 ; 362: int Alarm_GetCurrentTypeAndAlarmID( char* type, wchar_t* AlarmID );
-0D8C: 00000000 B16CEE10 ; 363: int Alarm_GetState( char* state, int AlarmID );
+0D8C: 00000000 3D5FEE10 ; 363: 363: int Alarm_GetState( char* state, int AlarmID );
 0D90: 00000000 956DEE10 ; 364: int Alarm_GetTIME( TIME* AlarmTime, int AlarmID );
 0D94: 00000000 257DEE10 ; 365: int Alarm_GetWeekSettings( void* week, int AlarmID );
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState( char* state );

@@ -661,7 +661,7 @@ void __deleaker_GUIObject_SoftKeys_SetTexts( const char* __file__, int __line__,
 	return __original_GUIObject_SoftKeys_SetTexts(__unknwnargname1, actionID, short_text, full_text);
 }
 
-TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, void* pnum, int isIconNeeded, int only_full_number_flag )
+TEXTID __deleaker_PNUM2Name( const char* __file__, int __line__, BCD_TEXT pnum, int isIconNeeded, int only_full_number_flag )
 {
 	TEXTID ret = __original_PNUM2Name(pnum, isIconNeeded, only_full_number_flag);
 	if(isallocatedstrid(ret))

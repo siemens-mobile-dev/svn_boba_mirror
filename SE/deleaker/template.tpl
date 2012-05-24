@@ -251,6 +251,7 @@ skip GUIObject_SoftKeys_SetEnable
 skip GUIObject_SoftKeys_SetItemAsSubItem
 skip GUIObject_SoftKeys_SetVisible
 skip GUIObject_SoftKeys_Show
+skip GUIObject_SoftKeys_SubActionPressedNotification
 skip GUIObject_SoftKeys_SuppressDefaultAction
 skip GUIonMessage_GetBook
 skip GUIonMessage_GetCreatedItemIndex
@@ -436,7 +437,6 @@ skip SoundRecorderDesc_SetType
 skip SpeedDial_GetPNUM
 skip sprintf
 skip sscanf
-skip StandbyBackground_SetImage
 skip start
 skip StartAPP
 skip StatusRow_p
@@ -467,6 +467,8 @@ skip textidname2id
 skip TextID_GetLength
 skip TextID_GetString
 skip TextID_GetWString
+skip ThemeImage_Delete
+skip ThemeImage_SetImage
 skip Theme_DestroyMenuIcons
 skip TimeInput_GetTimeInt
 skip UIEventName
