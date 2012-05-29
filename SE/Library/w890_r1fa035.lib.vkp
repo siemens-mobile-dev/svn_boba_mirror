@@ -266,8 +266,8 @@
 0850: 00000000 991CFA10 ; 214: TEXTID AB_NUM_ITEM2TextID( AB_NUM_ITEM* ab_num_item );
 ;0854: xxxxxxxx yyyyyyyy ; 215: int GetABRecNum( AB_GET_STRUCT* );
 0858: 00000000 2891A611 ;8216: AB_ITEM_DESC* get_AB_ITEMS_DESC( void );
-085C: 00000000 61C30A10 ; 217: 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
-0860: 00000000 B9E3FE10 ; 218: 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+085C: 00000000 61C30A10 ; 217: GUI* SBY_GetMainInput( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
+0860: 00000000 B9E3FE10 ; 218: GUI* SBY_GetStatusIndication( BOOK* StandBy ); // !!!!! не настоящий !!!!!!
 0864: 00000000 1D4BF110 ; 219: int REQUEST_PHONEBOOK_ACCESSSTATUS_TOTAL_GET( const int* sync, int* );
 0868: 00000000 EC87272A ;821A: PROCESS* PID_MMI( void );
 ;086C: xxxxxxxx yyyyyyyy ; 21B:
@@ -316,7 +316,7 @@
 0918: 00000000 4DB26911 ; 246: int GUIonMessage_SubItem_GetCreatedParentIndex( GUI_MESSAGE* msg );
 091C: 00000000 21D84C11 ; 247: void GoMusic( void );
 0920: 00000000 29B26911 ; 248: int GUIonMessage_SubItem_GetSelectedIndex( GUI_MESSAGE* msg );
-0924: 00000000 C9B26911 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
+0924: 00000000 BDB26911 ; 249: void GUIonMessage_SubItem_SetDisabled( GUI_MESSAGE* msg, BOOL state );
 0928: 00000000 49592211 ; 24A: int PlayFileV( const wchar_t* path, const wchar_t* fname, int vol );
 092C: 00000000 F5281F11 ; 24B: int GetSilent( void );
 0930: 00000000 D1E71E11 ; 24C: int GetVibrator( int ignorevibrator, int ignoresilent );
@@ -407,7 +407,7 @@
 0A84: 00000000 E9287011 ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
 0A88: 00000000 F5287011 ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 0A8C: 00000000 BDEE6F11 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
-0A90: 00000000 79606D11 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+0A90: 00000000 79606D11 ; 2A4: int ThemeImage_SetImage( int theme_image_type, int _zero, int __zero, const wchar_t* path, const wchar_t* fname, int wallp_scaling);
 0A94: 00000000 AD7C6F11 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 2DAA6911 ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 0A9C: 00000000 114F0411 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -598,7 +598,7 @@
 0D80: 00000000 99784E11 ; 360: char* CreateURI( wchar_t* fpath, wchar_t* fname, char* URIScheme );
 0D84: 00000000 C1C60511 ; 361: void DataBrowserDesc_SetViewModeAndSortOrder( void* DataBrowserDesc, int view_sort_ID );
 0D88: 00000000 8D75EE10 ; 362: int Alarm_GetCurrentTypeAndAlarmID( char* type, wchar_t* AlarmID );
-0D8C: 00000000 3D5FEE10 ; 363: 363: int Alarm_GetState( char* state, int AlarmID );
+0D8C: 00000000 3D5FEE10 ; 363: int Alarm_GetState( char* state, int AlarmID );
 0D90: 00000000 956DEE10 ; 364: int Alarm_GetTIME( TIME* AlarmTime, int AlarmID );
 0D94: 00000000 257DEE10 ; 365: int Alarm_GetWeekSettings( void* week, int AlarmID );
 ;0D98: xxxxxxxx yyyyyyyy ; 366: int IrDa_GetState( char* state );
@@ -717,7 +717,7 @@
 0F5C: 00000000 FD8B6711 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 0F60: 00000000 85824E11 ; 3D8: void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 0F64: 00000000 05B1FA10 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
-;0F68: xxxxxxxx yyyyyyyy ; 3DA:
+0F68: 00000000 4D636D11 ; 3DA: int ThemeImage_Delete( int theme_image_type );
 ;0F6C: xxxxxxxx yyyyyyyy ; 3DB:
 ;0F70: xxxxxxxx yyyyyyyy ; 3DC:
 0F74: 00000000 01277011 ; 3DD: void GUIObject_SoftKeys_SubActionPressedNotification( GUI*, u16 actionID, BOOL );

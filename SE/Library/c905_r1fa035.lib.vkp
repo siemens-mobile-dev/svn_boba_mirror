@@ -66,7 +66,7 @@
 0530: 00000000 0D7D3914 ; 14C: void GUIObject_SoftKeys_SetText( GUI*, u16 actionID, TEXTID );
 0534: 00000000 FDA33614 ; 14D: void GUIObject_SoftKeys_SetEnable( GUI*, u16 actionID, BOOL );
 0538: 00000000 2D883914 ; 14E: void GUIObject_SoftKeys_AddErrorStr( GUI*, u16 actionID, TEXTID );
-053C: 00000000 45E10014 ; 14F: void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
+053C: 00000000 F5431714 ; 14F: void GUIObject_SoftKeys_RemoveItem( GUI*, u16 actionID );
 0540: 00000000 09F40F14 ; 150: void GUIObject_SoftKeys_SetVisible( GUI*, u16 actionID, BOOL );
 0544: 00000000 99E91914 ; 151: void GUIObject_SoftKeys_SuppressDefaultAction( GUI*, u16 actionID );
 0548: 00000000 7984B714 ; 152: wchar_t* wstrcpy( wchar_t* dest, const wchar_t* source );
@@ -407,7 +407,7 @@
 0A84: 00000000 11520E14 ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
 0A88: 00000000 61E24514 ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 0A8C: 00000000 21342E14 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
-0A90: 00000000 6D370E14 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+0A90: 00000000 6D370E14 ; 2A4: int ThemeImage_SetImage( int theme_image_type, int _zero, int __zero, const wchar_t* path, const wchar_t* fname, int wallp_scaling);
 0A94: 00000000 ED5DDB14 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 F5A11214 ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 0A9C: 00000000 FD300914 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -717,7 +717,7 @@
 0F5C: 00000000 25813614 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
 0F60: 00000000 41F64714 ; 3D8: void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 0F64: 00000000 41CC3415 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
-;0F68: xxxxxxxx yyyyyyyy ; 3DA:
+0F68: 00000000 6D320E14 ; 3DA: int ThemeImage_Delete( int theme_image_type );
 ;0F6C: xxxxxxxx yyyyyyyy ; 3DB:
 ;0F70: xxxxxxxx yyyyyyyy ; 3DC:
 0F74: 00000000 21873914 ; 3DD: void GUIObject_SoftKeys_SubActionPressedNotification( GUI*, u16 actionID, BOOL );

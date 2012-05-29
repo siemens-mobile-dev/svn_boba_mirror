@@ -89,8 +89,8 @@
 058C: 00000000 0943E244 ; 163: int AB_READSTRING( AB_STR_ITEM*, int rec_num, int field_ID );
 0590: 00000000 D543E244 ; 164: int AB_READPHONENBR( AB_NUM_ITEM*, int rec_num, int field_ID );
 0594: 00000000 8D44E244 ; 165: int AB_GETNBROFITEMS( int get_from, int sub_id );
-0598: 00000000 F9213745 ; 166: int PNUM_len( void* pnum );
-059C: 00000000 81F82545 ; 167: void PNUM2str( char* str, void* pnum, int len, int max_len );
+0598: 00000000 F9213745 ; 166: int PNUM_len( BCD_TEXT pnum );
+059C: 00000000 81F82545 ; 167: void PNUM2str( char* str, BCD_TEXT pnum, int len, int max_len );
 05A0: 00000000 E9013945 ; 168: DISP_OBJ* GUIObject_GetDispObject( GUI* );
 05A4: 00000000 910F1E45 ; 169: LIST* List_Create( void );
 05A8: 00000000 CD0F1E45 ; 16A: void List_Destroy( LIST* lst );
@@ -235,7 +235,7 @@
 07D4: 00000000 558D2D45 ; 1F5: BOOK* SESSION_GetTopBook( UI_APP_SESSION* );
 07D8: 00000000 7D952E45 ; 1F6: int MainInput_getVisible( GUI* );
 07DC: 00000000 89952E45 ; 1F7: int MainInput_strlen( GUI* );
-07E0: 00000000 A1952E45 ; 1F8: char* MainInput_getPNUM( GUI* );
+07E0: 00000000 A1952E45 ; 1F8: BCD_TEXT MainInput_getPNUM( GUI* );
 07E4: 00000000 AD952E45 ; 1F9: int MainInput_isPlus( GUI* );
 07E8: 00000000 69B32D45 ; 1FA: int BookObj_GetBookID( BOOK* book );
 07EC: 00000000 05505844 ; 1FB: int wstrncmp( const wchar_t*, const wchar_t*, int );
@@ -407,7 +407,7 @@
 0A84: 00000000 79D03A45 ; 2A1: void GUIObject_SoftKeys_Hide( GUI* );
 0A88: 00000000 85D03A45 ; 2A2: void GUIObject_SoftKeys_Show( GUI* );
 0A8C: 00000000 09B83A45 ; 2A3: DISP_OBJ* DispObject_SoftKeys_Get( void );
-0A90: 00000000 39EF3745 ; 2A4: int StandbyBackground_SetImage( int type, int, int, const wchar_t* path, const wchar_t* fname, int );
+0A90: 00000000 39EF3745 ; 2A4: int ThemeImage_SetImage( int theme_image_type, int _zero, int __zero, const wchar_t* path, const wchar_t* fname, int wallp_scaling);
 0A94: 00000000 F10D3A45 ; 2A5: GUI* CreateYesNoQuestionVA( int zero, ... );
 0A98: 00000000 21A03445 ; 2A6: void ListMenu_SetItemSecondLineText( GUI_LIST*, int elem_num, TEXTID );
 0A9C: 00000000 956AEE44 ; 2A7: void _REQUEST_OAF_START_APPLICATION( const int* sync, int __zero, MIDP_DESC*, int ___zero );
@@ -480,8 +480,8 @@
 0BA8: 00000000 95952E45 ; 2EA: int MainInput_getCurPos( GUI* );
 0BAC: 00000000 65952E45 ; 2EB: void MainInput_Hide( GUI* );
 0BB0: 00000000 05973A45 ; 2EC: void DispObject_SoftKeys_RestoreDefaultAction( DISP_OBJ*, int action );
-0BB4: 00000000 FD3DE144 ; 2ED: TEXTID PNUM2Name( void* pnum, int isIconNeeded, int only_full_number_flag );
-0BB8: 00000000 4515E344 ; 2EE: int SpeedDial_GetPNUM( int _zero, char charter0__9, void* PNUM );
+0BB4: 00000000 FD3DE144 ; 2ED: TEXTID PNUM2Name( BCD_TEXT pnum, int isIconNeeded, int only_full_number_flag );
+0BB8: 00000000 4515E344 ; 2EE: int SpeedDial_GetPNUM( int _zero, char charter0__9, BCD_TEXT PNUM );
 0BBC: 00000000 A5FE2545 ; 2EF: void* MetaData_Desc_Create( wchar_t* path, wchar_t* name );
 0BC0: 00000000 65FF2545 ; 2F0: void MetaData_Desc_Destroy( void* MetaData_Desc );
 0BC4: 00000000 A5FF2545 ; 2F1: wchar_t* MetaData_Desc_GetTags( void* MetaData_Desc, int tagID );
@@ -656,21 +656,21 @@
 0E68: 00000000 29BAE044 ; 39A: int Settings_ShowNumber_Get( char* state );
 0E6C: 00000000 25CCA144 ; 39B: GVI_BMP GVI_CreateBitmap( int xsize, int ysize, int bpp );
 0E70: 00000000 65ECA144 ; 39C: GVI_GC GVI_CreateMemoryGC( GVI_BMP bitmap );
-0E74: 00000000 29D57444 ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc ); :
+0E74: 00000000 29D57444 ; 39D: void GVI_DeleteMemoryGC( GVI_GC gc );
 0E78: 00000000 9DC63145 ; 39E: int StringInput_DispObject_SetLanguage( DISP_OBJ_STRING_INPUT*, int langID, int flag );
 0E7C: 00000000 65111E45 ; 39F: int List_InsertSorted( LIST* list, void* item, int (*cmp_proc)( void*, void* ) );
 0E80: 00000000 319F3445 ; 3A0: int ListMenu_SetItemIcon( GUI_LIST*, int Item, wchar_t unk_FFFF, int mode, IMAGEID );
 0E84: 00000000 41F9E744 ; 3A1: void wstrnupr( wchar_t* wstr, int maxlen );
 0E88: 00000000 A9111145 ; 3A2: void wstrnlwr( wchar_t* wstr, int maxlen );
-0E8C: 00000000 81A33445 ; 3A3: int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll ); ;
-0E90: 00000000 A9093945 ; 3A4: void GUIObject_SetTitleTextColor( GUI*, int color ); ;
-0E94: 00000000 A5B23445 ; 3A5: void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro ); ;
+0E8C: 00000000 81A33445 ; 3A3: int ListMenu_SetItemTextScroll( GUI_LIST*, int scroll );
+0E90: 00000000 A9093945 ; 3A4: void GUIObject_SetTitleTextColor( GUI*, int color );
+0E94: 00000000 A5B23445 ; 3A5: void GUIObject_SetListTextColor( GUI*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
 0E98: 00000000 AD553845 ; 3A6: void DispObject_SetTitleTextColor( DISP_OBJ*, int color );
-0E9C: 00000000 E5CA3345 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro ); ;
-0EA0: 00000000 A1CA3345 ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, IMAGEID ); ;
-0EA4: 00000000 BDCA3345 ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, IMAGEID ); ;
-0EA8: 00000000 E5553845 ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, IMAGEID ); ;
-0EAC: 00000000 45143945 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, TEXTID ); ;
+0E9C: 00000000 E5CA3345 ; 3A7: void DispObject_SetListTextColor( DISP_OBJ*, int unk1, int list_color, int unk2, int unk3, int list_select_color, int unk4, int _zerro );
+0EA0: 00000000 A1CA3345 ; 3A8: void DispObject_SetCursorImage( DISP_OBJ*, IMAGEID );
+0EA4: 00000000 BDCA3345 ; 3A9: void DispObject_SetBackgroundImage( DISP_OBJ*, IMAGEID );
+0EA8: 00000000 E5553845 ; 3AA: void DispObject_SetTitleBackgroundImage( DISP_OBJ*, IMAGEID );
+0EAC: 00000000 45143945 ; 3AB: void TabMenuBar_SetTabTitle( GUI_TABMENUBAR*, int tab_num, TEXTID );
 0EB0: 00000000 FD013945 ; 3AC: BOOK* GUIObject_GetBook( GUI* );
 0EB4: 00000000 3D963A45 ; 3AD: u16 SoftKeys_GetSelectedAction( void );
 0EB8: 00000000 D9912E45 ; 3AE: void MonitorFeedback_SetTimer( GUI_FEEDBACK*, int time, void (*callback)(BOOK*) );
@@ -715,8 +715,12 @@
 0F54: 00000000 FD843845 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 B5043945 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 0F5C: 00000000 79263245 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
-0F60: 00000000 15316544 ; 3D8: void str2PNUM( void* pnum, char* str, int len, int max_len );
+0F60: 00000000 15316544 ; 3D8: void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 0F64: 00000000 C9D8E244 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
+0F68: 00000000 45F23745 ; 3DA: int ThemeImage_Delete( int theme_image_type );
+;0F6C: xxxxxxxx yyyyyyyy ; 3DB:
+;0F70: xxxxxxxx yyyyyyyy ; 3DC:
+;0F74: xxxxxxxx yyyyyyyy ; 3DD: void GUIObject_SoftKeys_SubActionPressedNotification( GUI*, u16 actionID, BOOL );
 
 
 
