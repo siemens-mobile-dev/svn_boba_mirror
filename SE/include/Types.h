@@ -211,6 +211,8 @@ typedef int (*DISP_OBJ_ONCREATE_METHOD)(DISP_OBJ*);
 typedef void (*DISP_OBJ_ONCLOSE_METHOD)(DISP_OBJ*);
 typedef void (*DISP_OBJ_ONREDRAW_METHOD)(DISP_OBJ*, int, int, int);
 typedef void (*DISP_OBJ_ONKEY_METHOD)(DISP_OBJ*, int scan_code, int unk, int repeat_num, int key_mode);
+typedef void (*DISP_OBJ_ONCONFIG_METHOD)(DISP_OBJ*, int unk, int DisplayWidth, int DisplayHeight);
+typedef void (*DISP_OBJ_ONLAYOUT_METHOD)(DISP_OBJ*, void* layoutstruct);
 typedef void (*DISP_OBJ_METHOD)(DISP_OBJ*);
 
 typedef struct DISP_DESC

@@ -179,9 +179,13 @@ private:
 	{
 		db->onRefresh();
 	}
-	static void __onLayout( T* db )
+	static void __onLayout( T* db, void* layoutstruct )
 	{
-		db->onLayout();
+		db->onLayout( layoutstruct );
+	}
+	static void __onConfig( T* db, int unk, int DisplayWidth, int DisplayHeight )
+	{
+		db->onConfig( unk, DisplayWidth, DisplayHeight );
 	}
 public:
 	static void DispDescCreate( DISP_DESC* desc )
@@ -193,7 +197,8 @@ public:
 		DISP_DESC_SetOnRedraw( desc, (DISP_OBJ_ONREDRAW_METHOD)__onDraw );
 		DISP_DESC_SetOnKey( desc, (DISP_OBJ_ONKEY_METHOD)__onKey );
 		DISP_DESC_SetOnRefresh( desc, (DISP_OBJ_METHOD)__onRefresh );
-		DISP_DESC_SetOnLayout( desc, (DISP_OBJ_METHOD)__onLayout );
+		DISP_DESC_SetOnLayout( desc, (DISP_OBJ_ONLAYOUT_METHOD)__onLayout );
+		DISP_DESC_SetOnConfig( desc, (DISP_OBJ_ONCONFIG_METHOD)__onConfig );
 	}
 
 	static char* getName();
@@ -205,7 +210,8 @@ public:
 	void onDraw( int a, int b, int c ){}
 	void onDestroy(){}
 	void onRefresh(){}
-	void onLayout(){}
+	void onLayout( void* layoutstruct ){}
+	void onConfig( int unk, int DisplayWidth, int DisplayHeight ){}
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -304,7 +310,7 @@ class CGuiOneOfMany : public CStdGui
 protected:
 	static int __onmessage( CGUIMessage* msg );
 public:
-    //OneOfMany_SetOnMessage
+	//OneOfMany_SetOnMessage
 	CGuiOneOfMany( CBook* book, int display = 0 );
 	virtual int OnMessage( CGUIMessage* msg );
 
