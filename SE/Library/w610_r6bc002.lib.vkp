@@ -297,9 +297,9 @@
 08CC: 00000000 15D03445 ; 233: DISP_OBJ_METHOD DispObject_GetMethod06( DISP_OBJ* );
 ;08D0: xxxxxxxx yyyyyyyy ; 234: void DISP_DESC_SetMethod07( DISP_DESC*, void (*)( void* ) );
 ;08D4: xxxxxxxx yyyyyyyy ; 235: DISP_OBJ_METHOD DispObject_GetMethod07( DISP_OBJ* );
-08D8: 00000000 1DCF3445 ; 236: void DISP_DESC_SetOnLayout( DISP_DESC*, DISP_OBJ_METHOD );
+08D8: 00000000 1DCF3445 ; 236: void DISP_DESC_SetOnLayout( DISP_DESC*, DISP_OBJ_ONLAYOUT_METHOD );
 08DC: 00000000 4DD03445 ; 237: DISP_OBJ_METHOD DispObject_GetOnLayout( DISP_OBJ* );
-08E0: 00000000 21CF3445 ; 238: void DISP_DESC_SetOnConfig( DISP_DESC*, void (*)( void* ) );
+08E0: 00000000 21CF3445 ; 238: void DISP_DESC_SetOnConfig( DISP_DESC*, DISP_OBJ_ONCONFIG_METHOD );
 ;08E4: xxxxxxxx yyyyyyyy ; 239: DISP_OBJ_METHOD DispObject_GetOnConfig( DISP_OBJ* );
 ;08E8: xxxxxxxx yyyyyyyy ; 23A: void DISP_DESC_SetMethod0A( DISP_DESC*, void (*)( void* ) );
 ;08EC: xxxxxxxx yyyyyyyy ; 23B: DISP_OBJ_METHOD DispObject_GetMethod0A( DISP_OBJ* );
@@ -715,7 +715,7 @@
 0F54: 00000000 A5343545 ; 3D5: void DispObject_SetAnimation( DISP_OBJ*, int style );
 0F58: 00000000 5DB43545 ; 3D6: void GUIObject_SetZOrder( GUI*, char, GUI* );
 0F5C: 00000000 19D62E45 ; 3D7: int StringInput_GetCursorPosition( GUI*, u16* pos, char* _zero );
-0F60: 00000000 4DE66244 ; 3D8: void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
+0F60: 00000000 89DB2245 ; 3D8: void str2PNUM( BCD_TEXT pnum, char* str, int len, int max_len );
 0F64: 00000000 91D4DF44 ; 3D9: void pb_ui_search_bk_create_search_menu( int BookID, int mode );
 0F68: 00000000 E5A13445 ; 3DA: int ThemeImage_Delete( int theme_image_type );
 ;0F6C: xxxxxxxx yyyyyyyy ; 3DB:

@@ -1156,7 +1156,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>..\classlib\fixedstd</state>
+          <state>$PROJ_DIR$\..\classlib\fixedstd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>

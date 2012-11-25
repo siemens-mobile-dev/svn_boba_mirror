@@ -18,8 +18,8 @@ protected:
 	static int FindBookExCallback(BOOK* book ,int * param);
 	static int NewKey( int key, int r1, int mode, CDaemonBook* book, DISP_OBJ* );
 
-	DECLARE_PAGE_DESC_MEMBER(base_page)
-	DECLARE_PAGE_DESC_MEMBER(main_page)
+	DECLARE_PAGE_DESC_MEMBER(base_page);
+	DECLARE_PAGE_DESC_MEMBER(main_page);
 
 public:
 	CDaemonBook();

@@ -4,7 +4,7 @@
 #define MYBOOKBASEPAGE "SMSViewRewritten_BOOK_BasePage"
 #define ABOUTTEXT "SMSView rewritten.\nGreetz to DuMOHsmol"
 
-#include "softkeyutil.hpp"
+#include "../classlib/softkeyutil.hpp"
 
 int CMyBook::TerminateElf( CBook** pbookmanbook, CMyBook* book )
 {
@@ -123,7 +123,7 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 		return 0;
 	GUI_LIST* guimsglist = NULL;
 	DISP_OBJ* dispmsglist;
-	
+
 	for( int i = 0; i < msguilistbook->xguilist->guilist->FirstFree; i++ )
 	{
 		GUI_LIST* tmpguimsglist = reinterpret_cast<GUI_LIST*>( List_Get( msguilistbook->xguilist->guilist, i ) );

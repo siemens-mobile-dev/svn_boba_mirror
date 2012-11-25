@@ -651,6 +651,10 @@ template<typename T, typename TBOOK> PAGEHOOKPROC MKPAGEHOOKPROC( int(*param)(vo
 
 #define MODIFYUIPAGEHOOK( event, proc, ClientData, mode ) ModifyUIPageHook( event, MKPAGEHOOKPROC(proc), ClientData, mode )
 
+// other -----------------------------------------------------------------------
+
+typedef char* BCD_TEXT;
+
 // events ----------------------------------------------------------------------
 
 typedef struct CALLMANAGER_EVENT_DATA
@@ -658,7 +662,7 @@ typedef struct CALLMANAGER_EVENT_DATA
 	char CallID;
 	char CallType;
 	char CallState;
-	int* PNUM;
+	BCD_TEXT PNUM;
 	char unk1;
 	char unk2;
 	char CallCause;
@@ -671,7 +675,7 @@ typedef struct CALLMANAGER_EVENT_DATA_A2
 	char unk2;
 	char CallType;
 	char CallState;
-	int* PNUM;
+	BCD_TEXT PNUM;
 	char unk3;
 	char unk4;
 	char CallCause;
@@ -1172,10 +1176,6 @@ template<typename T> TIMERPROC MKTIMERPROC( void(*param)(u16,T*) )
 
 #define TIMER_RESET( timer, time, onTimer, lparam ) Timer_ReSet( timer, time, MKTIMERPROC(onTimer), lparam )
 #define TIMER_SET( time, onTimer, lparam ) Timer_Set( time, MKTIMERPROC(onTimer), lparam )
-
-// other -----------------------------------------------------------------------
-
-typedef char* BCD_TEXT;
 
 //pb_ui_search_bk_create_search_menu
 #define MODE_PB		0x0001

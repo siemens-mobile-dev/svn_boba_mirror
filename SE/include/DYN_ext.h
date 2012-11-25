@@ -559,6 +559,7 @@ extern const int DB_CMD_EDIT ;
 extern const int DB_CMD_SETITEMTEXT ;
 extern const int UI_CONNECTIONMANAGER_SESSION_CREATED_EVENT ;
 extern const int VAR_ARG_TIMEINP_TIME_FORMAT_SEC ;
+extern const int ACTION_MORELIST ;
 extern const int MEMORYSTICK_INSERTED_EVENT ;
 extern const int MEMORYSTICK_REMOVED_EVENT ;
 extern const int USSD_REQUEST_RECIEVED_EVENT ;

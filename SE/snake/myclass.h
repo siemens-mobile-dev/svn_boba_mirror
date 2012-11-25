@@ -163,8 +163,8 @@ class CMyBook:public CBook
   static int OnMyKey(int key,int r,int mode,CMyBook* mybook,DISP_OBJ*);
   ~CMyBook(void);
   CGuiBase*gui;
-  DECLARE_PAGE_DESC_MEMBER(base_page)
-  DECLARE_PAGE_DESC_MEMBER(main_page)
+  DECLARE_PAGE_DESC_MEMBER(base_page);
+  DECLARE_PAGE_DESC_MEMBER(main_page);
 public:
   CMyBook(void);
 };

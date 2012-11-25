@@ -372,7 +372,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////
 
-#define DECLARE_PAGE_DESC_MEMBER( name ) static const PAGE_DESC name; static const PAGE_MSG name##__PAGE_MSG__[];
+#define DECLARE_PAGE_DESC_MEMBER( name ) static const PAGE_DESC name; static const PAGE_MSG name##__PAGE_MSG__[]
 
 #define DECLARE_PAGE_DESC_BEGIN( objname, name ) \
 	const PAGE_DESC objname = {name, 0, objname##__PAGE_MSG__}; \

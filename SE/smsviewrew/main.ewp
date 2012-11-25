@@ -1156,7 +1156,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>..\classlib\fixedstd</state>
+          <state>$PROJ_DIR$\..\classlib\fixedstd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1169,7 +1169,7 @@
         <option>
           <name>CCInlineThreshold</name>
           <version>0</version>
-          <state>1</state>
+          <state>2</state>
         </option>
       </data>
     </settings>
@@ -1673,10 +1673,10 @@
     <name>$PROJ_DIR$\mybook.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\softkeyutil.cpp</name>
+    <name>$PROJ_DIR$\..\classlib\softkeyutil.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\softkeyutil.hpp</name>
+    <name>$PROJ_DIR$\..\classlib\softkeyutil.hpp</name>
   </file>
 </project>
 

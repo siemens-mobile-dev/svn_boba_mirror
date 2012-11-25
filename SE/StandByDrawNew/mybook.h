@@ -8,19 +8,19 @@
 class CMyBook:public CBook
 {
 	CGuiBase* gui;
-	
-    DECLARE_PAGE_DESC_MEMBER(base_page)
+
+	DECLARE_PAGE_DESC_MEMBER(base_page);
 protected:
-    ~CMyBook();
-    static int FindBookExCallback(BOOK* book ,int * param);
+	~CMyBook();
+	static int FindBookExCallback(BOOK* book ,int * param);
 public:
-    CMyBook();
+	CMyBook();
 
 
-    static int TerminateElf(CBook** pbookmanbook, CBook* book);
-    static int ShowAuthorInfo(CBook** pbookmanbook, CBook* book);
+	static int TerminateElf(CBook** pbookmanbook, CBook* book);
+	static int ShowAuthorInfo(CBook** pbookmanbook, CBook* book);
 
-    static CMyBook* GetExisting();
+	static CMyBook* GetExisting();
 };
 
 #endif

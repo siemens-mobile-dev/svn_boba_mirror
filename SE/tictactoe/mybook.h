@@ -9,7 +9,7 @@ class CMyBook:public CBook
 {
 	CGuiBase* gui;
 
-	DECLARE_PAGE_DESC_MEMBER(base_page)
+	DECLARE_PAGE_DESC_MEMBER(base_page);
 protected:
 	~CMyBook();
 public:
