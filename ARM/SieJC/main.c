@@ -105,7 +105,7 @@ const char OS[] = "SGOLD";
 const char OS_postfix[] = "_ELF-Platform";
 
 //IPC
-const char ipc_my_name[32]=IPC_SIEJC_NAME;
+const char ipc_my_name[128]=IPC_SIEJC_NAME;
 const char ipc_xtask_name[]=IPC_XTASK_NAME;
 IPC_REQ gipc;
 #ifdef SCRP
