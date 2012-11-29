@@ -2,9 +2,12 @@
 
 #define MYBOOKNAME "SMSViewRewritten"
 #define MYBOOKBASEPAGE "SMSViewRewritten_BOOK_BasePage"
-#define ABOUTTEXT "SMSView rewritten.\nGreetz to DuMOHsmol"
+#define ABOUTTEXT "SMSView rewritten.\n" __DATE__ "\nGreetz to DuMOHsmol"
 
 #include "../classlib/softkeyutil.hpp"
+
+void elfexit();
+
 
 int CMyBook::TerminateElf( CBook** pbookmanbook, CMyBook* book )
 {
@@ -15,7 +18,7 @@ int CMyBook::TerminateElf( CBook** pbookmanbook, CMyBook* book )
 
 int CMyBook::ShowAuthorInfo( CBook** pbookmanbook, CMyBook* book )
 {
-	MessageBox( EMPTY_TEXTID, STR(ABOUTTEXT), NOIMAGE, 1 , 5000, *pbookmanbook );
+	MessageBox( EMPTY_TEXTID, TextID_Create( ABOUTTEXT, ENC_LAT1, TEXTID_ANY_LEN ), NOIMAGE, 1 , 5000, *pbookmanbook );
 	return 1;
 }
 
@@ -49,7 +52,7 @@ CMyBook::~CMyBook()
 	if( !blockbooks.empty() )
 		MODIFYUIPAGEHOOK( CANCEL_EVENT, _HookAction, this, PAGE_HOOK_REMOVE );
 
-	SUBPROC( mfree_adr(), &ELF_BEGIN );
+	elfexit();
 }
 
 
@@ -80,7 +83,8 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 	if( mode != KBD_SHORT_PRESS )
 		return 0;
 
-	if( key != KEY_LEFT && key != KEY_RIGHT && key != KEY_STAR && key != KEY_DIEZ )
+	if( (key != KEY_LEFT) && (key != KEY_RIGHT) && (key != KEY_STAR) && (key != KEY_DIEZ)
+       && (key != KEY_UP) && (key != KEY_DOWN) )
 		return 0;
 
 	//topbook - текущая книга (должен быть вьюер смс/ммс)
@@ -91,6 +95,7 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 	bool ismms = 0==strcmp( topbook->xbook->name, "SmilViewer Book" );
 
 	//для ммс не меняем кнопки лево/право
+    //надо ли игнорировать также вверх/вниз?
 	if( ismms )
 		if( key == KEY_LEFT || key == KEY_RIGHT )
 			return 0;
@@ -131,8 +136,7 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 		if( !strcmp( "ListObject", DispObject_GetName( dispmsglist ) ) )
 		{
 			guimsglist = tmpguimsglist;
-			break;
-		}
+        }
 	}
 	//нет у книги листа - выход
 	if( !guimsglist )
@@ -143,6 +147,17 @@ int CMyBook::HookCBKey( int key, int repeat_count, int mode, DISP_OBJ* hooked_di
 	if( !FindSoftkey( dispmsglist, msguilistbook, strid_viewmsg )
 		&& !FindSoftkey( dispmsglist, msguilistbook, strid_view ) )
 		return 0;
+
+	if(key==KEY_UP)
+    {
+        DispObject_GetOnKey(hooked_disp) ( hooked_disp, KEY_LEFT, 0, repeat_count, mode);
+        return -1;
+    }
+	if(key==KEY_DOWN)
+    {
+        DispObject_GetOnKey(hooked_disp) ( hooked_disp, KEY_RIGHT, 0, repeat_count, mode);
+        return -1;
+    }
 
 	int cnt = ListMenu_GetItemCount( guimsglist );
 	int cur = ListMenu_GetSelectedItem( guimsglist );
