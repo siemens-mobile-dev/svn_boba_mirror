@@ -6,6 +6,9 @@ extern int const cfgCapaType;
 extern int const cfgCapaDiv;
 extern int const cfgCapaFont;
 extern int const cfgCapaCorner;
+extern int const cfgCapaThrMin;
+extern int const cfgCapaThrPrf;
+extern int const cfgCapaThrSnd;
 extern const char cfgCapa[4];
 extern int uiWidth, uiHeight;
 
@@ -27,7 +30,8 @@ static void init(int rewidth){
     Capa_sensor.type=0;
   Capa_sensor.corner=cfgCapaCorner;
   Capa_sensor.div=cfgCapaDiv;
-  ws=AllocWS(10);
+  if (!ws)
+    ws=AllocWS(10);
 }
 
 static void deinit(){
@@ -36,6 +40,9 @@ static void deinit(){
 
 static void tick(){
   Capa = NM_Get_IRE();
+  if (Capa<cfgCapaThrMin&&cfgCapaThrPrf==GetProfile()){
+    PlaySound(0,0,0,cfgCapaThrSnd,0);
+  }
 }
 
 static WSHDR *getText(const int x,const int h){

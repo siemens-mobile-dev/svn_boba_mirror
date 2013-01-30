@@ -27,7 +27,8 @@ static void init(int rewidth){
     Temp_sensor.type=0;
   Temp_sensor.corner=cfgTempCorner;
   Temp_sensor.div=cfgTempDiv;
-  ws=AllocWS(8);
+  if (!ws)
+    ws=AllocWS(8);
 }
 
 static void deinit(){

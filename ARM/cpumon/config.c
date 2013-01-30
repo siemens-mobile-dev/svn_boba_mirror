@@ -137,6 +137,16 @@ __root const CFG_HDR cfghdr32={CFG_LEVEL,"Bat Capacity",1,0};
 
   __root const CFG_HDR cfghdr36 = {CFG_COLOR, "Color", 0, 0};
   __root const char cfgCapa[4] = {0xff,0,0,100};
+
+  __root const CFG_HDR cfghdr50={CFG_LEVEL,"Threshold",1,0};
+    __root const CFG_HDR cfghdr51 = {CFG_INT, "Min*10", 0, 10000};
+    __root const int cfgCapaThrMin = 500;
+    __root const CFG_HDR cfghdr52 = {CFG_INT, "Profile", 0, 7};
+    __root const int cfgCapaThrPrf = 0;
+    __root const CFG_HDR cfghdr53 = {CFG_INT, "Sound", 0, 1000};
+    __root const int cfgCapaThrSnd = 103;
+  __root const CFG_HDR cfghdr54={CFG_LEVEL,"",0,0};
+
 __root const CFG_HDR cfghdr37={CFG_LEVEL,"",0,0};
 
 //Temperature
