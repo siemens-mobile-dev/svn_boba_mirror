@@ -29,9 +29,10 @@ void clse(){
 int sock;
 int connect_state;
 char buf[512];
+char req_buf[256];
 
 int pbuf;
-
+int DNR_ID=0;
 
 
 typedef struct
@@ -65,7 +66,8 @@ int atoi(char *attr)
 extern const char HOST[128];
 void create_connect(void)
 {
-  unsigned int ip;  
+  TDate td; TTime tt;
+  int starttime = 0, prev_t, err, ***p_res;
   SOCK_ADDR sa;
   //Устанавливаем соединение
   connect_state=0;
@@ -78,15 +80,64 @@ void create_connect(void)
 //    sa.ip=htonl(IP_ADDR(212,192,122,109));    
     sa.port=htons(13);
 //    sa.ip=htonl(IP_ADDR(89,178,137,184));    
-
-    sa.ip=htonl(IP_ADDR(192,43,244,18));          
+  
+    sa.ip=htonl(IP_ADDR(216,119,63,113));          
     
-    ip=str2ip(HOST);
-  if (ip!=0xFFFFFFFF)    sa.ip=ip;      
     
+    err=async_gethostbyname("time.nist.gov",&p_res,&DNR_ID);
+    GetDateTime(&td, &tt);
+    starttime = 10;
+    prev_t = tt.sec;
+    while (err)
+    { 
+      if(tt.sec != prev_t)
+      {
+        err=async_gethostbyname("time.nist.gov",&p_res,&DNR_ID);
+        sprintf(buf, "%d, %02X\r\n%d", starttime, err,tt.sec);
+        //ShowMSG(1,(int)buf);
+        if(!starttime--) break;
+      }
+      prev_t = tt.sec;
+      GetDateTime(&td, &tt);
+    }
+    if (!err && p_res)
+      if (p_res[3])
+      {
+        sa.ip=p_res[3][0][0];
+        sprintf(buf, "%s\n(IP: %d.%d.%d.%d)", "time.nist.gov", 
+                sa.ip&0xFF, (sa.ip>>8)&0xFF, (sa.ip>>16)&0xFF, (sa.ip>>24)&0xFF);
+//        ShowMSG(1,(int)buf);
+      }
+  
+    err=async_gethostbyname(HOST,&p_res,&DNR_ID);
+    GetDateTime(&td, &tt);
+    starttime = 10;
+    prev_t = tt.sec;
+    while (err)
+    { 
+      if(tt.sec != prev_t)
+      {
+        err=async_gethostbyname(HOST,&p_res,&DNR_ID);
+        if(!starttime--) break;
+      }
+      prev_t = tt.sec;
+      GetDateTime(&td, &tt);
+    }
+    if (!err && p_res)
+      if (p_res[3])
+      {
+        sa.ip=p_res[3][0][0];
+        sprintf(buf, "%s\n(IP: %d.%d.%d.%d)", HOST, 
+                sa.ip&0xFF, (sa.ip>>8)&0xFF, (sa.ip>>16)&0xFF, (sa.ip>>24)&0xFF);
+  //      ShowMSG(1,(int)buf);
+      }
+  
+    sprintf(buf, "(Server IP:\n %d.%d.%d.%d)", sa.ip&0xFF, (sa.ip>>8)&0xFF, (sa.ip>>16)&0xFF, (sa.ip>>24)&0xFF);
+    ShowMSG(1,(int)buf);
+        
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
-        //    ShowMSG(1,(int)"state 2");
+      //ShowMSG(1,(int)"state 2");
       connect_state=1;
     }
     else{
@@ -99,8 +150,6 @@ void create_connect(void)
   }
 }
 
-
-char req_buf[256];
 
 void send_req(void)
 {
@@ -123,7 +172,7 @@ void get_answer(void)
 {
 
   int i=pbuf;
-  if (i==511)
+  if (i>=511)
     end_socket();
   else
   {
@@ -164,7 +213,10 @@ void Parsing()
   //example of ans: 54462 07-12-28 18:55:44 00 0 0 744.7 UTC(NIST) *
 
   
-  if (pbuf<24){  ShowMSG(1,(int)"Not all data transmited");
+  if (pbuf<24)
+  {  
+    ShowMSG(1,(int)pbuf);
+    ShowMSG(1,(int)"Not all data transmited");
 //    if (pbuf!=4){  ShowMSG(1,(int)"Not all data transmited");
 //     CloseCSM( MAINCSM_ID);
   return;
@@ -296,6 +348,7 @@ int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
       case ENIP_SOCK_REMOTE_CLOSED:
         //Закрыт со стороны сервера
         if (connect_state) SUBPROC((void *)end_socket);
+            SUBPROC((void *)Parsing);
 //                CloseCSM( MAINCSM_ID);
         break;
       case ENIP_SOCK_CLOSED:
@@ -357,6 +410,7 @@ int main()
 {
   memset(buf,0,sizeof(buf));
   InitConfig();
+  str2ip("time.nist.gov");
   char dummy[sizeof(MAIN_CSM)];
   UpdateCSMname();
   LockSched();
