@@ -15,12 +15,17 @@ int pbuf;
 int scr_w;
 int scr_h;
 
+int attemp = 0;
+
 static IMGHDR TextIMG;
 unsigned* TextIMG_bmp;
 
 void create_connect(void);
 void do_start_connection(void)
 {
+//  char message[256];
+//  sprintf(message, "%s%i", "Try ", ++attemp);
+//  ShowMSG(1,(int)message);
   SUBPROC((void *)create_connect);
 }
 
@@ -33,6 +38,7 @@ void StartGPRS(void)
 void create_connect(void)
 {
   SOCK_ADDR sa;
+  
   //Устанавливаем соединение
   weath.Temp[0]=0;  
   connect_state=0;
@@ -64,10 +70,14 @@ void create_connect(void)
   {
     sa.family=1;
     sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(78,24,218,208));
+//    sa.ip=htonl(IP_ADDR(98,225,33,212));
+    sa.ip=htonl(IP_ADDR(212,33,225,98));
+//    sa.ip=htonl(IP_ADDR(78,24,218,208));
+
     if (connect(sock,&sa,sizeof(sa))!=-1)
     {
       connect_state=1;
+//      ShowMSG(1,(int)"Connected!");
       REDRAW();
     }
     else
@@ -113,6 +123,8 @@ void send_req(void){
   char cc2=*(p+1);
   char nc=*(p+2);
 
+//  ShowMSG(1,(int)"Request...");
+
   snprintf(req_buf,99, "GET /w/w.php?mcc=%i&mnc=%i&lac=%i&ci=%i"
     " HTTP/1.0\r\nHost: igps.boba.su\r\n\r\n",
     (cc1&0x0F)*100+(cc1>>4)*10+(cc2&0x0F),
@@ -156,6 +168,7 @@ void GenerateString(){
                 SHOW_CITY     ? weath.City       : ""
          );
 //    utf82win(sss,(const char *)sss);
+//    log_data(sss);
     ascii2ws(ews, sss);
     for(int i = 0; i < TextIMG.h*TextIMG.w; i++)
       ((unsigned*)TextIMG.bitmap)[i] = 0;
@@ -199,8 +212,11 @@ int valuemid(char *min,char *max){
 
 void Parsing(){
     if ((!buf)||(!pbuf)) return; 
+//          ShowMSG(1,(int)buf);
+
     if (!strstr(buf,"200 OK")) return;
-    
+
+//    log_data(buf);
     int vmid;
     //главная картинка
     char *tod=findtag(buf,"TOD:");
@@ -443,6 +459,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         if (connect_state==2)
         {
           //Если посылали send
+//          ShowMSG(1,(int)"Answer recieved");
           SUBPROC((void *)get_answer);
         }
         else
@@ -455,6 +472,7 @@ int maincsm_onmessage(CSM_RAM* data,GBS_MSG* msg)
         if (connect_state) SUBPROC((void *)end_socket);
         break;
       case ENIP_SOCK_CLOSED:
+//          ShowMSG(1,(int)"Socket closed");
         //Закрыт вызовом closesocket
         SUBPROC((void *)Parsing);
         CountTime();
