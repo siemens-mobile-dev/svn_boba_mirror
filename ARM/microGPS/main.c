@@ -72,7 +72,7 @@ void create_connect(void){
   if (sock!=-1){
     sa.family=1;
     sa.port=htons(80);
-    sa.ip=htonl(IP_ADDR(78,24,218,208));
+    sa.ip=htonl(IP_ADDR(212,33,225,98));
     if (connect(sock,&sa,sizeof(sa))!=-1){
       connect_state=1;
       REDRAW();
